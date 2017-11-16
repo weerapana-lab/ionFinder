@@ -1,0 +1,10 @@
+testFiles/*
+bin/*
+.DS_Store
+.RData
+.Rhistory
+.Rproj.user
+.git
+ms2_anotator.Rproj
+ms2_anotator.xcodeproj
+
