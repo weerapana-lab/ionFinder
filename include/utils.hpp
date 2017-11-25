@@ -144,6 +144,7 @@ namespace utils{
 	string trimTraling(const string&);
 	string trimLeading(const string&);
 	string trim(const string&);
+	void trimAll(vector<string>&);
 	bool isCommentLine(string);
 	inline string removeSubstr(string, string);
 	inline string removeChars(char, string);
@@ -169,6 +170,7 @@ namespace utils{
 	template <typename _Tp, size_t N> _Tp* end(_Tp(&arr)[N]) {
 		return &arr[0]+N;
 	}
+	template<typename _Tp> bool inRange(_Tp, _Tp, _Tp);
 }
 
 #endif /* utils_hpp */

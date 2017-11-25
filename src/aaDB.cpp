@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "aaDB.hpp"
+#include "../include/aaDB.hpp"
 
 aaDB::AminoAcid::AminoAcid(string line)
 {
@@ -40,7 +40,7 @@ bool aaDB::AADB::readInAADB(string _aaDBLoc)
 	return true;
 }
 
-bool aaDB::AADB::readInModDB(string _modDBLoc, aaDB::AADB::aminoAcidsDBType& modsTemp)
+bool aaDB::AADB::readInModDB(string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
 {
 	utils::File file(_modDBLoc);
 	if(!file.read())
@@ -68,7 +68,7 @@ bool aaDB::AADB::readInModDB(string _modDBLoc, aaDB::AADB::aminoAcidsDBType& mod
 	return true;
 }//end of function
 
-void aaDB::AADB::addStaticMod(const aaDB::AADB::aminoAcidsDBType& modsTemp, bool showWarnings)
+void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showWarnings)
 {
 	for(aaDB::AADB::itType it = modsTemp.begin(); it != modsTemp.end(); ++it)
 	{
@@ -77,7 +77,7 @@ void aaDB::AADB::addStaticMod(const aaDB::AADB::aminoAcidsDBType& modsTemp, bool
 		if(aminoAcidsDB.find(tempSymbol) == aminoAcidsDB.end())
 		{
 			if(showWarnings)
-				cout << "Could not find " << tempSymbol << " in aaDB!" << endl;
+				cerr << "Could not find " << tempSymbol << " in aaDB!" << endl;
 			continue;
 		} else {
 			aminoAcidsDB[tempSymbol] += it->second.getMass();
@@ -88,7 +88,7 @@ void aaDB::AADB::addStaticMod(const aaDB::AADB::aminoAcidsDBType& modsTemp, bool
 bool aaDB::AADB::initalize(string aaDBLoc, string modDBLoc, bool showWarnings)
 {
 	//read in files containing aa masses and modifications
-	aaDB::AADB::aminoAcidsDBType modsTemp;
+	aaDB::aminoAcidsDBType modsTemp;
 	if(!readInModDB(modDBLoc, modsTemp) || !readInAADB(aaDBLoc))
 		return false;
 	
@@ -97,6 +97,19 @@ bool aaDB::AADB::initalize(string aaDBLoc, string modDBLoc, bool showWarnings)
 	
 	return true;
 }
+
+bool aaDB::AADB::initalize(string aaDBLoc, const aaDB::aminoAcidsDBType& mods, bool showWarnings)
+{
+	//read in files containing aa masses and modifications
+	if(!readInAADB(aaDBLoc))
+		return false;
+	
+	//add static mods to aadb
+	addStaticMod(mods, showWarnings);
+	
+	return true;
+}
+
 
 double aaDB::AADB::getMW(string aa) const
 {

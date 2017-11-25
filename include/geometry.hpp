@@ -21,6 +21,8 @@ namespace geometry{
 	class Rect;
 	class Vector2D;
 	
+	string const NA_STR = "NA";
+	
 	inline bool valueInRange(double, double, double);
 	inline double dist(const Point&, const Point&);
 	
@@ -66,16 +68,12 @@ namespace geometry{
 		
 	public:
 		
-		size_t overlapNum;
-		
 		Rect() : Point() {
 			width = 0; height = 0;
-			overlapNum = 0;
 		}
 		Rect(double _x, double _y, double _width, double _height) : Point(_x, _y){
 			width = _width;
 			height = _height;
-			overlapNum = 0;
 		}
 		~Rect() {}
 		
@@ -85,15 +83,23 @@ namespace geometry{
 					width == comp.width && height == comp.height);
 		}
 		
-		bool operator < (const Rect& comp) const{
-			return overlapNum < comp.overlapNum;
-		}
-		
 		double getWidth() const{
 			return width;
 		}
 		double getHeight() const{
 			return height;
+		}
+		Point getTLC() const{
+			Point ret;
+			ret.x = (x - width/2);
+			ret.y = (y + height/2);
+			return ret;
+		}
+		Point getBRC() const{
+			Point ret;
+			ret.x = (x + width/2);
+			ret.y = (y - height/2);
+			return ret;
 		}
 	};
 	
@@ -159,33 +165,43 @@ namespace geometry{
 	class DataLabel{
 	private:
 		string label;
+		bool includeLabel;
 		Point dataPoint;
 	
 	public:
 		Line arrow;
 		Rect labelLoc;
 		Vector2D movement;
-		
+		bool forceLabel;
+		size_t overlapNum;
 		
 		DataLabel(){
-			label = "";
+			label = NA_STR;
 			arrow = Line();
 			labelLoc = Rect();
 			movement = Vector2D();
+			forceLabel = false;
+			includeLabel = false;
 		}
 		
+		void setIncludeLabel(bool boo){
+			includeLabel = boo;
+		}
 		void setLabel(string str){
 			label = str;
 		}
 		string getLabel() const{
 			return label;
 		}
+		bool getIncludeLabel() const{
+			return includeLabel;
+		}
 		
 		bool operator > (const DataLabel& comp) const{
-			return labelLoc.overlapNum > comp.labelLoc.overlapNum;
+			return overlapNum > comp.overlapNum;
 		}
 		bool operator < (const DataLabel& comp) const{
-			return labelLoc.overlapNum < comp.labelLoc.overlapNum;
+			return overlapNum < comp.overlapNum;
 		}
 		bool operator == (const DataLabel& comp) const{
 			return labelLoc == comp.labelLoc;

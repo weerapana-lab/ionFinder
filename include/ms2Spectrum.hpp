@@ -1,13 +1,13 @@
 //
-//  ms2.hpp
+//  ms2Spectrum.hpp
 //  ms2_anotator
 //
-//  Created by Aaron Maurais on 11/6/17.
+//  Created by Aaron Maurais on 11/20/17.
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#ifndef ms2_hpp
-#define ms2_hpp
+#ifndef ms2Spectrum_hpp
+#define ms2Spectrum_hpp
 
 #include <iostream>
 #include <fstream>
@@ -16,32 +16,38 @@
 #include <cassert>
 #include <list>
 #include <algorithm>
-#include "utils.hpp"
-#include "peptide.hpp"
-#include "geometry.hpp"
-#include "calcLableLocs.hpp"
+#include "../include/utils.hpp"
+#include "../include/peptide.hpp"
+#include "../include/geometry.hpp"
+#include "../include/calcLableLocs.hpp"
 
 namespace ms2{
 	
-	size_t const NUM_DIGITS_IN_SCAN = 6;
-	
-	string const SPECTRUM_COL_HEADERS [] = {"mz", "intensity", "label",
-		"formated_label", "label_x", "label_y"};
+	string const SPECTRUM_COL_HEADERS [] = {"mz", "intensity", "label", "includeLabel",
+		"ionType", "formatedLabel", "labelX", "labelY"};
 	size_t const NUM_SPECTRUM_COL_HEADERS_SHORT = 2;
-	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 6;
+	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 8;
+	string const NA_STR = "NA";
 	
-	double const DEFAULT_MAX_PERC = 5;
-	double const DEFAULT_X_PADDING = 5;
-	double const DEFAULT_Y_PADDING = 50;
+	string const BEGIN_METADATA = "<metadata>";
+	string const END_METADATA = "</metadata>";
+	string const BEGIN_SPECTRUM = "<spectrum>";
+	string const END_SPECTRUM = "</spectrum>";
+	
+	double const LABEL_MZ_TOLERANCE = 0.25;
+	double const POINT_PADDING = 1;
+	double const DEFAULT_MAX_PERC = 1;	double const DEFAULT_X_PADDING = 50;
+	double const DEFAULT_Y_PADDING = 6;
 	double const DEFAULT_X_OFFSET = 0;
-	double const DEFAULT_Y_OFFSET = 5;
+	double const DEFAULT_Y_OFFSET = 3;
 	size_t const LABEL_TOP = 200;
 	
-	class Ms2File;
 	class Spectrum;
 	class Ion;
 	class DataPoint;
-	struct DataPointComparison;
+	struct DataPointIntComparison;
+	struct DataPointMZComparison;
+	struct DataPointDoubleMZComparison;
 	
 	class Ion{
 	public:
@@ -84,28 +90,32 @@ namespace ms2{
 	class DataPoint : public Ion{
 		friend class Spectrum;
 	private:
-		bool includeLabel;
+		bool labeledIon;
 		geometry::DataLabel label;
 		string formatedLabel;
 		bool topAbundant;
+		string ionType;
 		
 	public:
 		DataPoint() : Ion(){
 			label = geometry::DataLabel();
-			includeLabel = false;
+			labeledIon = false;
 			topAbundant = false;
-			formatedLabel = "";
+			formatedLabel = NA_STR;
+			ionType = "blank";
 		}
 		DataPoint(double _mz, double _int) : Ion(_mz, _int){
 			label = geometry::DataLabel();
-			includeLabel = false;
+			labeledIon = false;
 			topAbundant = false;
-			formatedLabel = "";
+			formatedLabel = NA_STR;
+			ionType = "blank";
 		}
 		~DataPoint () {}
 		
-		void setIncludeLabel(bool _lab){
-			includeLabel = _lab;
+		void setLabeledIon(bool _lab){
+			labeledIon = _lab;
+			label.forceLabel = labeledIon;
 		}
 		
 		void setLabel(string str){
@@ -117,18 +127,30 @@ namespace ms2{
 		void setTopAbundant(bool boo){
 			topAbundant = boo;
 		}
+		void setForceLabel(bool boo){
+			label.forceLabel = boo;
+		}
+		void setIonType(string str){
+			ionType = str;
+		}
 		
 		string getLabel() const{
 			return label.getLabel();
 		}
+		bool getLabeledIon() const{
+			return labeledIon;
+		}
 		bool getIncludeLabel() const{
-			return includeLabel;
+			return label.getIncludeLabel();
 		}
 		bool getTopAbundant() const{
 			return topAbundant;
 		}
 		string getFormatedLabel() const{
 			return formatedLabel;
+		}
+		string getIonType() const{
+			return ionType;
 		}
 		
 		//for utils::insertSorted()
@@ -137,18 +159,34 @@ namespace ms2{
 		}
 	};
 	
-	struct DataPointComparison {
+	struct DataPointIntComparison {
 		bool const operator()(DataPoint *lhs, DataPoint *rhs) const{
 			return lhs->insertComp(*rhs);
 		}
 	};
 	
+	struct DataPointMZComparison {
+		bool const operator()(const DataPoint& lhs, const DataPoint& rhs) const{
+			return lhs.getMZ() < rhs.getMZ();
+		}
+	};
+	
+	/*struct DataPointDoubleMZComparison {
+	 bool const operator()(const DataPoint& it, double val) const{
+	 return it.getMZ() < val;
+	 }
+	 
+	 bool const operator()(double val, const DataPoint& it) const{
+	 return val < it.getMZ();
+	 }
+	 };*/
+	
 	class Spectrum{
 		friend class Ms2File;
 	private:
-		typedef std::vector<ms2::DataPoint> ionVecType;
-		typedef std::map<ms2::Ion::mz_intType, ionVecType> ionsType;
-		typedef ionsType::const_iterator ionsTypeIt;
+		typedef std::vector<ms2::DataPoint> ionListType;
+		typedef ionListType::const_iterator ionsTypeConstIt;
+		typedef ionListType::iterator ionsTypeIt;
 		
 		//metadata
 		int scanNumber;
@@ -163,15 +201,19 @@ namespace ms2{
 		double minInt;
 		double minMZ;
 		double maxMZ;
+		double mzRange;
+		string sequence;
 		
 		//match stats
 		double ionPercent;
 		double spScore;
 		
-		ionsType ions;
+		ionListType ions;
 		
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
+		ionsTypeIt upperBound(double);
+		ionsTypeIt lowerBound(double);
 		
 	public:
 		Spectrum()
@@ -190,6 +232,8 @@ namespace ms2{
 			spScore = 0;
 			minMZ = 0;
 			maxMZ = 0;
+			mzRange = 0;
+			sequence = "";
 		}
 		~Spectrum() {}
 		
@@ -200,6 +244,7 @@ namespace ms2{
 			return maxInt;
 		}
 		void labelSpectrum(const peptide::Peptide& peptide,
+						   double labelTolerance = LABEL_MZ_TOLERANCE,
 						   bool calclabels = true, size_t labelTop = LABEL_TOP);
 		void calcLabelPos(double maxPerc,
 						  double offset_x, double offset_y,
@@ -209,51 +254,6 @@ namespace ms2{
 		void printSpectrum(ostream&, bool) const;
 		void printLabeledSpectrum(ostream&, bool) const;
 	};
-	
-	class Ms2File{
-	private:
-		//file buffer vars
-		char* buffer;
-		unsigned long size;
-		string delim;
-		utils::newline_type delimType;
-		int beginLine;
-		
-		//metadata
-		string fname;
-		string firstScan, lastScan;
-		string dataType;
-		string scanType;
-		static int mdNum;
-		
-		bool getMetaData();
-		const char* makeOffsetQuery(string) const;
-		const char* makeOffsetQuery(size_t) const;
-		
-	public:
-		Ms2File() {
-			size = 0;
-			fname = "";
-		}
-		Ms2File(string _fname){
-			fname = _fname;
-			size = 0;
-		}
-		~Ms2File(){
-			delete [] buffer;
-		}
-		
-		//modifers
-		bool read(string);
-		bool read();
-		
-		//properties
-		bool getScan(string, Spectrum&) const;
-		bool getScan(size_t, Spectrum&) const;
-	};
-	
-	int Ms2File::mdNum = 4;
-	
-}//end of namespace
+}
 
-#endif /* ms2_hpp */
+#endif /* ms2Spectrum_hpp */

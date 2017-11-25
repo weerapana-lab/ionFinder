@@ -2,6 +2,7 @@
 #include <Rcpp.h>
 #include <sstream>
 #include <cassert>
+#include <stdexcept>
 
 using namespace Rcpp;
 using namespace std;

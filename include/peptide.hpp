@@ -14,18 +14,15 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
-#include "utils.hpp"
-#include "aaDB.hpp"
+#include "../include/utils.hpp"
+#include "../include/aaDB.hpp"
+#include "../include/params.hpp"
 
 using namespace std;
 
 namespace peptide{
+	
 	//namsepace scoped constants
-	//string const HOME = getenv("HOME");
-	string const AA_MASS_LOCATION = "/Users/Aaron/Xcode_projects/ms2_anotator/aaMasses.txt";
-	string const DEFAULT_MOD_LOCATION = "/Users/Aaron/Xcode_projects/ms2_anotator/staticModifications.txt";
-	int const MAX_FRAGMENT_CHARGE = 2;
-	int const MIN_FRAGMENT_CHARGE = 1;
 	const char* DIFFMODS = "*";
 	
 	//foward class declarations
@@ -88,6 +85,9 @@ namespace peptide{
 		double getMZ() const{
 			return getMZ(charge);
 		}
+		int getCharge() const{
+			return charge;
+		}
 		string makeChargeLable() const;
 	};//end of class
 	
@@ -100,11 +100,13 @@ namespace peptide{
 		PeptideIon() : Ion() {
 			modified = false;
 			modMass = 0;
+			mod = '\0';
 		}
 		PeptideIon(double _mass) : Ion() {
 			initalizeFromMass(_mass);
 			modified = false;
 			modMass = 0;
+			mod = '\0';
 		}
 		
 		void setMod(char _mod, double _modMass){
@@ -142,8 +144,12 @@ namespace peptide{
 		//properties
 		string getIonStr() const;
 		string getFormatedLabel() const;
+		template <typename _Tp>	string getFormatedLabel(_Tp) const;
 		size_t getMZ_int() const{
 			return mz_int;
+		}
+		char getBY() const{
+			return b_y;
 		}
 	};
 	
@@ -172,9 +178,8 @@ namespace peptide{
 		}
 		~Peptide() {}
 		
-		void initalize(string modMassDBLoc, bool _calcFragments = true,
-					   string aaMassDBLoc = AA_MASS_LOCATION);
-		void calcFragments(int minCharge = MIN_FRAGMENT_CHARGE, int maxCharge = MAX_FRAGMENT_CHARGE);
+		void initalize(const params::Params&, bool _calcFragments = true);
+		void calcFragments(int, int);
 		double calcMass();
 		void printFragments(ostream&) const;
 		
@@ -189,13 +194,20 @@ namespace peptide{
 			return fragments[i].getMZ_int();
 		}
 		double getFragmentMZ(size_t i) const{
-			return fragments[i].getMZ();
+			return fragments[i].getMZ(fragments[i].getCharge());
 		}
 		string getFragmentLabel(size_t i) const{
 			return fragments[i].getIonStr();
 		}
 		string getFormatedLabel(size_t i) const{
 			return fragments[i].getFormatedLabel();
+		}
+		template<typename _Tp>
+		string getFormatedLabel(size_t i, _Tp num) const{
+			return fragments[i].getFormatedLabel(num);
+		}
+		char getBY(size_t i) const{
+			return fragments[i].getBY();
 		}
 	};//end of class
 	

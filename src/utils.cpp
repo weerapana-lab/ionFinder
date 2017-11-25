@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "utils.hpp"
+#include "../include/utils.hpp"
 
 namespace utils{
 	
@@ -334,8 +334,8 @@ namespace utils{
 	//return true if str can be converted to a double
 	bool isDouble(string str)
 	{
-		if(str.empty() || ((!isdigit(str[0])) && (str[0] != '-') && (str[0] != '+')))
-		return false ;
+		if(str.empty() || (!isdigit(str[0]) && (str[0] != '-') && (str[0] != '+') && (str[0] != '.')))
+		   return false ;
 		
 		char * p ;
 		strtod(str.c_str(), &p);
@@ -421,6 +421,12 @@ namespace utils{
 		if(str.empty())
 		return "";
 		return trimLeading(trimTraling(str));
+	}
+	
+	void trimAll(vector<string>& elems)
+	{
+		for(vector<string>::iterator it = elems.begin(); it != elems.end(); ++it)
+			(*it) = trim((*it));
 	}
 	
 	//returns true if line begins with COMMENT_SYMBOL, ignoring leading whitespace
@@ -528,6 +534,12 @@ namespace utils{
 			num /= 10;
 		}
 		return count;
+	}
+	
+	template<typename _Tp>
+	bool inRange(_Tp value, _Tp compare, _Tp range)
+	{
+		return abs(value - compare) <= range;
 	}
 }
 

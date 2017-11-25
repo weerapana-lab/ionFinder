@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "geometry.hpp"
+#include "../include/geometry.hpp"
 
 inline bool geometry::valueInRange(double value, double min, double max){
 	return (value >= min) && (value <= max);
@@ -22,11 +22,26 @@ void geometry::Point::move(const geometry::Vector2D& mv){
 
 bool geometry::Rect::intersects(const geometry::Rect& comp) const
 {
-	bool xOverlap = valueInRange(x, comp.x, comp.x + comp.width) ||
+	/*bool xOverlap = valueInRange(x, comp.x, comp.x + comp.width) ||
 		valueInRange(comp.x, x, x + width);
 	
 	bool yOverlap = valueInRange(y, comp.y, comp.y + comp.height) ||
 		valueInRange(comp.y, y, y + height);
 	
-	return xOverlap && yOverlap;
+	return xOverlap && yOverlap;*/
+	
+	Point l1 = getTLC();
+	Point r1 = getBRC();
+	Point l2 = comp.getTLC();
+	Point r2 = comp.getBRC();
+	
+	// If one rectangle is on left side of other
+	if (l1.x > r2.x || l2.x > r1.x)
+		return false;
+	
+	// If one rectangle is above other
+	if (l1.y < r2.y || l2.y < r1.y)
+		return false;
+	
+	return true;
 }

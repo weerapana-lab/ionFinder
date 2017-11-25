@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <map>
-#include "utils.hpp"
+#include "../include/utils.hpp"
 
 using namespace std;
 
@@ -23,6 +23,8 @@ namespace aaDB{
 	
 	class AminoAcid;
 	class AADB;
+	
+	typedef map<string, AminoAcid> aminoAcidsDBType;
 	
 	class AminoAcid{
 	private:
@@ -51,6 +53,9 @@ namespace aaDB{
 			mass = _add.mass;
 			modification = _add.modification;
 		}
+		void setMass(double _mass){
+			mass = _mass;
+		}
 		
 		//properties
 		string getSymbol() const{
@@ -64,7 +69,6 @@ namespace aaDB{
 
 	class AADB{
 	private:
-		typedef map<string, AminoAcid> aminoAcidsDBType;
 		typedef aminoAcidsDBType::const_iterator itType;
 		aminoAcidsDBType aminoAcidsDB;
 		
@@ -80,6 +84,7 @@ namespace aaDB{
 		
 		//modifers
 		bool initalize(string aaDBLoc, string modDBLoc, bool showWarnings = true);
+		bool initalize(string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
 		
 		//properties
 		double calcMW(string sequence, bool addNTerm = true, bool addCTerm = true) const;

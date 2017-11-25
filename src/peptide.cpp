@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "peptide.hpp"
+#include "../include/peptide.hpp"
 
 string peptide::Ion::makeChargeLable() const
 {
@@ -45,6 +45,19 @@ string peptide::FragmentIon::getFormatedLabel() const
 	return str;
 }
 
+template <typename _Tp>
+string peptide::FragmentIon::getFormatedLabel(_Tp _num) const
+{
+	string str = "atop(" + string(1, b_y) + "[" + utils::toString(num) + "]" + mod;
+	
+	if(charge > 1)
+		str += "^\"" + makeChargeLable() + "\"";
+	
+	str += "," + utils::toString(_num) + ")";
+	
+	return str;
+}
+
 void peptide::Peptide::calcFragments(int minCharge, int maxCharge)
 {
 	fragments.clear();
@@ -55,7 +68,7 @@ void peptide::Peptide::calcFragments(int minCharge, int maxCharge)
 		for(int j = minCharge; j <= maxCharge; j++)
 		{
 			string beg = sequence.substr(0, i + 1);
-			string end = sequence.substr(i);
+			string end = sequence.substr(i + 1);
 			
 			peptide::PepIonIt beg_beg = aminoAcids.begin();
 			peptide::PepIonIt beg_end = beg_beg + i + 1;
@@ -66,11 +79,12 @@ void peptide::Peptide::calcFragments(int minCharge, int maxCharge)
 			//maybe some other time
 			
 			fragments.push_back(FragmentIon('b', i + 1, j,
-											peptide::calcMass(aminoAcids, beg_beg, beg_end),
-											aminoAcids[i].makeModLable()));
+				peptide::calcMass(aminoAcids, beg_beg, beg_end),
+				aminoAcids[i].makeModLable()));
 			fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
-											peptide::calcMass(aminoAcids, end_beg, end_end),
-											aminoAcids[i].makeModLable()));
+				peptide::calcMass(aminoAcids, end_beg, end_end) +
+				aminoAcidMasses.getMW("N_term") + aminoAcidMasses.getMW("C_term"),
+				aminoAcids[i].makeModLable()));
 		}
 	}
 }
@@ -119,15 +133,15 @@ double peptide::Peptide::calcMass()
 	return getMass();
 }
 
-void peptide::Peptide::initalize(string modMassDB, bool _calcFragments, string aaMassDBLoc)
+void peptide::Peptide::initalize(const params::Params& pars, bool _calcFragments)
 {
 	initalized = true;
-	if(!aminoAcidMasses.initalize(aaMassDBLoc, modMassDB))
+	if(!aminoAcidMasses.initalize(pars.getAAMassFileLoc(), pars.getSmodFileLoc()))
 		throw runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
 	calcMass();
 	fixDiffMod();
 	if(_calcFragments)
-		calcFragments();
+		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge());
 }
 
 void peptide::Peptide::printFragments(ostream& out) const
