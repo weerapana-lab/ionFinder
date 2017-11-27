@@ -275,3 +275,17 @@ List getSpectrum(string fname)
 }
 
 
+
+
+#include <Rcpp.h>
+// getSpectrum
+List getSpectrum(string fname);
+RcppExport SEXP sourceCpp_1_getSpectrum(SEXP fnameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type fname(fnameSEXP);
+    rcpp_result_gen = Rcpp::wrap(getSpectrum(fname));
+    return rcpp_result_gen;
+END_RCPP
+}

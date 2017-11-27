@@ -17,7 +17,7 @@ using namespace std;
 namespace params{
 	
 	//program file locations
-	string const PROG_WD = string(getenv("HOME")) + "/Xcode_projects/ms2_anotator";
+	string const PROG_WD = string(getenv("HOME")) + "/scripts/ms2_anotator";
 	string const PROG_DB = PROG_WD + "/db";
 	string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
@@ -25,6 +25,8 @@ namespace params{
 	string const PROG_USAGE_FNAME = PROG_DB + "/usage.txt";
 	
 	string const DEFAULT_SMOD_NAME = "staticModifications.txt";
+	
+	string const PARAM_ERROR_MESSAGE = " is an invalid argument for ";
 	
 	class InFile;
 	class Params;
@@ -70,12 +72,18 @@ namespace params{
 		bool dtaSpecified, seqParSpecified;
 		bool ms2Specified, scanSpecified;
 		bool smodSpecified;
+		bool mzSpecified;
+		bool minIntensitySpecified;
 		
 		//program paramaters
 		int minFragCharge;
 		int maxFragCharge;
 		double matchTolerance;
 		double minLabelIntensity;
+		double minMZ;
+		double maxMZ;
+		double minIntensity;
+		bool includeAllIons;
 		
 		void displayHelp() const{
 			utils::systemCommand("man " + PROG_HELP_FILE);
@@ -101,6 +109,12 @@ namespace params{
 			maxFragCharge = 1;
 			matchTolerance = 0.25;
 			minLabelIntensity = 0;
+			minMZ = 0;
+			maxMZ = 0;
+			mzSpecified = false;
+			minIntensity = 0;
+			minIntensitySpecified = false;
+			includeAllIons = true;
 			
 			seqSpecified = false;
 			dtaSpecified = false;
@@ -115,10 +129,10 @@ namespace params{
 		string getWD() const{
 			return wd;
 		}
-		size_t getMinFragCharge() const{
+		int getMinFragCharge() const{
 			return minFragCharge;
 		}
-		size_t getMaxFragCharge() const{
+		int getMaxFragCharge() const{
 			return maxFragCharge;
 		}
 		string getSmodFileLoc() const{
@@ -127,11 +141,38 @@ namespace params{
 		string getAAMassFileLoc() const{
 			return aaMassFile;
 		}
+		double getMatchTolerance() const{
+			return matchTolerance;
+		}
+		double getMinMZ() const{
+			return minMZ;
+		}
+		double getMaxMZ() const{
+			return maxMZ;
+		}
+		bool getMZSpecified() const{
+			return mzSpecified;
+		}
+		bool getMinIntensitySpecified() const{
+			return minIntensitySpecified;
+		}
+		bool getIncludeAllIons() const{
+			return includeAllIons;
+		}
+		double getMinLabelIntensity() const{
+			return minLabelIntensity;
+		}
+		double getMinIntensity() const{
+			return minIntensity;
+		}
 		bool getForce() const{
 			return force;
 		}
 		int getInputMode() const{
 			return inputMode;
+		}
+		bool getWDSpecified() const{
+			return wdSpecified;
 		}
 	};
 }

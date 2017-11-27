@@ -1,8 +1,10 @@
 
-library(ggplot2)
+require(ggplot2, warn.conflicts = FALSE, quietly = TRUE)
 
-Rcpp::sourceCpp(paste(PROG_WD_HOME, '/cppFunctions.cpp', sep = ""))
-Rcpp::sourceCpp(paste(PROG_WD_HOME, '/spectrum.cpp', sep = ""))
+PROG_WD_HOME = paste(Sys.getenv("HOME"), "/scripts/ms2_anotator/rscripts", sep = "")
+Rcpp::sourceCpp(paste(PROG_WD_HOME, '/src/cppFunctions.cpp', sep = ""), cacheDir = paste(PROG_WD_HOME, "/lib/cppFunctions", sep = ""))
+Rcpp::sourceCpp(paste(PROG_WD_HOME, '/src/spectrum.cpp', sep = ""), cacheDir = paste(PROG_WD_HOME, "/lib/spectrum", sep = ""))
+source(paste(PROG_WD_HOME, "/functions.R", sep = ""), echo=FALSE)
 
 makeSpectrum <- function(specDat)
 {
@@ -91,7 +93,16 @@ makeSpectrum <- function(specDat)
     BOT_LABEL_BEGIN_X = BOT_LABEL_BEGIN_X + SEQ_SPACE
   }
   
-  return(spectrum)
+  return(list(ofname = makeOfName(specDat), spectrum = spectrum))
 }
 
+makeAllSpectrum <- function(spectraFiles)
+{
+  ret <- list()
+  for(i in 1:length(spectraFiles))
+  {
+    ret[[i]] <- makeSpectrum(spectraFiles[[i]])
+  }
+  return(ret)
+}
 

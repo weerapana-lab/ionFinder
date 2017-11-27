@@ -161,7 +161,7 @@ void labels::Labels::spaceOutAlg2()
 			{
 				if(!it1->first->forceLabel) //if it is not a labeled b or y ion
 				{
-					/*for(pointsListType::iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it1)
+					for(pointsListType::iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it1)
 					{
 						if((!(*it2)->forceLabel) && overlapsStaticDataPoints(*it2))
 						{
@@ -174,7 +174,7 @@ void labels::Labels::spaceOutAlg2()
 						it1->first->setIncludeLabel(false);
 					}
 					//check if it overlaps any static data points
-					/*else if(overlapsStaticDataPoints(it1->first))
+					else if(overlapsStaticDataPoints(it1->first))
 					{
 						it1->first->setIncludeLabel(false);
 					}//end of else

@@ -55,6 +55,9 @@ namespace scanData{
 		void setParentFile(string str){
 			parentFile = str;
 		}
+		void setCharge(double _charge){
+			charge = _charge;
+		}
 		
 		string getParentFile() const{
 			return parentFile;

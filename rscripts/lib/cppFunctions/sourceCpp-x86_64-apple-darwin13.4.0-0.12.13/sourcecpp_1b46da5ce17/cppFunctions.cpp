@@ -166,3 +166,76 @@ string fixOD(string str)
 }
 
 
+
+
+#include <Rcpp.h>
+// getSubscriptNum
+string getSubscriptNum(string str);
+RcppExport SEXP sourceCpp_1_getSubscriptNum(SEXP strSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type str(strSEXP);
+    rcpp_result_gen = Rcpp::wrap(getSubscriptNum(str));
+    return rcpp_result_gen;
+END_RCPP
+}
+// makeIonLabels
+StringVector makeIonLabels(string letter, int count, char dir);
+RcppExport SEXP sourceCpp_1_makeIonLabels(SEXP letterSEXP, SEXP countSEXP, SEXP dirSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type letter(letterSEXP);
+    Rcpp::traits::input_parameter< int >::type count(countSEXP);
+    Rcpp::traits::input_parameter< char >::type dir(dirSEXP);
+    rcpp_result_gen = Rcpp::wrap(makeIonLabels(letter, count, dir));
+    return rcpp_result_gen;
+END_RCPP
+}
+// makeIonLabelsExp
+StringVector makeIonLabelsExp(string letter, int count, char dir);
+RcppExport SEXP sourceCpp_1_makeIonLabelsExp(SEXP letterSEXP, SEXP countSEXP, SEXP dirSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type letter(letterSEXP);
+    Rcpp::traits::input_parameter< int >::type count(countSEXP);
+    Rcpp::traits::input_parameter< char >::type dir(dirSEXP);
+    rcpp_result_gen = Rcpp::wrap(makeIonLabelsExp(letter, count, dir));
+    return rcpp_result_gen;
+END_RCPP
+}
+// makeSeqVec
+StringVector makeSeqVec(string seq);
+RcppExport SEXP sourceCpp_1_makeSeqVec(SEXP seqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type seq(seqSEXP);
+    rcpp_result_gen = Rcpp::wrap(makeSeqVec(seq));
+    return rcpp_result_gen;
+END_RCPP
+}
+// isArg
+bool isArg(string arg);
+RcppExport SEXP sourceCpp_1_isArg(SEXP argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type arg(argSEXP);
+    rcpp_result_gen = Rcpp::wrap(isArg(arg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fixOD
+string fixOD(string str);
+RcppExport SEXP sourceCpp_1_fixOD(SEXP strSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< string >::type str(strSEXP);
+    rcpp_result_gen = Rcpp::wrap(fixOD(str));
+    return rcpp_result_gen;
+END_RCPP
+}

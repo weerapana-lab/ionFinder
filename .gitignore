@@ -7,4 +7,4 @@ bin/*
 .git
 ms2_anotator.Rproj
 ms2_anotator.xcodeproj
-
+rplots/*

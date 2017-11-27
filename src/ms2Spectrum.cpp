@@ -8,21 +8,25 @@
 
 #include "../include/ms2Spectrum.hpp"
 
+void ms2::Spectrum::writeMetaData(ostream& out) const
+{
+	assert(out);
+	out << ms2::BEGIN_METADATA << endl
+	<< "precursorFile" << OUT_DELIM << precursorFile << endl
+	<< "scanNumber" << OUT_DELIM << scanNumber << endl
+	<< "retTime" << OUT_DELIM << retTime << endl
+	<< "precursorCharge" << OUT_DELIM << precursorCharge << endl
+	<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << endl;
+	out.unsetf(std::ios::scientific);
+	out << "precursorScan" << OUT_DELIM << precursorScan << endl
+	<< ms2::END_METADATA << endl << ms2::BEGIN_SPECTRUM << endl;
+}
+
 void ms2::Spectrum::printSpectrum(ostream& out, bool includeMetaData) const
 {
 	assert(out);
 	if(includeMetaData)
-	{
-		out << ms2::BEGIN_METADATA << endl
-		<< "precursorFile" << OUT_DELIM << precursorFile << endl
-		<< "scanNumber" << OUT_DELIM << scanNumber << endl
-		<< "retTime" << OUT_DELIM << retTime << endl
-		<< "precursorCharge" << OUT_DELIM << precursorCharge << endl << std::scientific
-		<< "precursorInt" << OUT_DELIM << precursorInt << endl;
-		out.unsetf(std::ios::scientific);
-		out << "precursorScan" << OUT_DELIM << precursorScan << endl
-		<< ms2::END_METADATA << endl << ms2::BEGIN_SPECTRUM << endl;
-	}
+		writeMetaData(out);
 	
 	for(size_t i = 0; i < NUM_SPECTRUM_COL_HEADERS_SHORT; i++)
 	{
@@ -43,18 +47,7 @@ void ms2::Spectrum::printLabeledSpectrum(ostream& out, bool includeMetaData) con
 {
 	assert(out);
 	if(includeMetaData)
-	{
-		out << ms2::BEGIN_METADATA << endl
-		<< "sequence" << OUT_DELIM << sequence << endl
-		<< "precursorFile" << OUT_DELIM << precursorFile << endl
-		<< "scanNumber" << OUT_DELIM << scanNumber << endl
-		<< "retTime" << OUT_DELIM << retTime << endl
-		<< "precursorCharge" << OUT_DELIM << precursorCharge << endl << std::scientific
-		<< "precursorInt" << OUT_DELIM << precursorInt << endl;
-		out.unsetf(std::ios::scientific);
-		out << "precursorScan" << OUT_DELIM << precursorScan << endl
-		<< ms2::END_METADATA << endl << ms2::BEGIN_SPECTRUM << endl;
-	}
+		writeMetaData(out);
 	
 	for(size_t i = 0; i < NUM_SPECTRUM_COL_HEADERS_LONG; i++)
 	{
@@ -96,7 +89,7 @@ template<typename _Tp>
 void ms2::Spectrum::normalizeIonInts(_Tp _den)
 {
 	double den = getMaxIntensity() / _den;
-	for(ionListType::iterator it = ions.begin(); it != ions.end(); ++it)
+	for(ionVecType::iterator it = ions.begin(); it != ions.end(); ++it)
 		it->normalizeIntensity(den);
 	maxInt = _den;
 	minInt = 0;
@@ -107,7 +100,7 @@ void ms2::Spectrum::setLabelTop(size_t labelTop)
 	typedef list<ms2::DataPoint*> listType;
 	listType pointList;
 	
-	for(ionListType::iterator it = ions.begin(); it != ions.end(); ++it)
+	for(ionVecType::iterator it = ions.begin(); it != ions.end(); ++it)
 		pointList.push_back(&(*it));
 	
 	if(pointList.size() > labelTop)
@@ -118,6 +111,66 @@ void ms2::Spectrum::setLabelTop(size_t labelTop)
 	
 	for(listType::iterator it = pointList.begin(); it != pointList.end(); ++it)
 		(*it)->setTopAbundant(true);
+}
+
+void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
+{
+	//sort ions by mz
+	if(_sort)
+		sort(ions.begin(), ions.end(), DataPointMZComparison());
+	
+	ionsTypeIt begin = ions.begin();
+	ionsTypeIt end = ions.end();
+	
+	//find min mz
+	for(ionsTypeIt it = ions.begin(); it != ions.end(); ++it)
+	{
+		if(it->getMZ() <= minMZ)
+			continue;
+		else{
+			begin = it;
+			break;
+		}
+	}
+	//find max mz
+	for(ionsTypeIt it = begin; it != ions.end(); ++it)
+	{
+		if(it->getMZ() < maxMZ)
+		{
+			end = it;
+			continue;
+		}
+		else break;
+	}
+	
+	minMZ = begin->getMZ();
+	maxMZ = end->getMZ();
+	mzRange = maxMZ - minMZ;
+	ions = ionVecType(begin, end);
+}
+
+void ms2::Spectrum::removeUnlabeledIons()
+{
+	for(ionsTypeIt it = ions.begin(); it != ions.end();)
+		if(!it->getForceLabel())
+			ions.erase(it);
+		else ++it;
+	
+	minMZ = ions.begin()->getMZ();
+	maxMZ = ions.end()->getMZ();
+	mzRange = maxMZ - minMZ;
+}
+
+void ms2::Spectrum::removeIntensityBelow(double minInt)
+{
+	for(ionsTypeIt it = ions.begin(); it != ions.end();)
+		if(it->getIntensity() < minInt)
+			ions.erase(it);
+		else ++it;
+	
+	minMZ = ions.begin()->getMZ();
+	maxMZ = ions.end()->getMZ();
+	mzRange = maxMZ - minMZ;
 }
 
 ms2::Spectrum::ionsTypeIt ms2::Spectrum::lowerBound(double _mz)
@@ -143,7 +196,7 @@ ms2::Spectrum::ionsTypeIt ms2::Spectrum::lowerBound(double _mz)
 }
 
 void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
-								  double labelTolerance, bool calcLables, size_t labelTop)
+								  const params::Params& pars, bool calcLables, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
@@ -154,7 +207,9 @@ void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
 	listType::iterator label;
 	
 	setLabelTop(labelTop);
-	sort(ions.begin(), ions.end(), DataPointMZComparison());
+	sort(ions.begin(), ions.end(), DataPointMZComparison()); //sort ions by mz
+	if(pars.getMZSpecified())
+		setMZRange(pars.getMinMZ(), pars.getMaxMZ(), false);
 	
 	for(size_t i = 0; i < len; i++)
 	{
@@ -164,7 +219,8 @@ void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
 		//get ions whithin labelTolerance
 		for(ionsTypeIt it = ions.begin(); it != ions.end(); ++it)
 			if(it->getTopAbundant())
-				if(utils::inRange(it->getMZ(), tempMZ, labelTolerance))
+				if(utils::inRange(it->getMZ(), tempMZ, pars.getMatchTolerance()) //check that it->mz is in range
+				   && (it->getIntensity() > pars.getMinLabelIntensity())) //check that it->int is sufficiently high
 					rangeList.push_back(&(*it));
 		
 		if(rangeList.size() == 0)
@@ -174,7 +230,6 @@ void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
 		if(rangeList.size() == 1)
 		{
 			(*label)->setLabel(peptide.getFragmentLabel(i));
-			//(*label)->setFormatedLabel(peptide.getFormatedLabel(i, (*label)->getMZ()));
 			(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
 			(*label)->setLabeledIon(true);
 			(*label)->label.setIncludeLabel(true);
@@ -182,6 +237,7 @@ void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
 		}
 		else
 		{
+			//iterate through all ions whithin matchTolerance range to get one with max intensity
 			double tempMax = (*label)->getIntensity();
 			for(listType::iterator it = rangeList.begin(); it != rangeList.end(); ++it)
 			{
@@ -190,7 +246,6 @@ void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
 			}
 			
 			(*label)->setLabel(peptide.getFragmentLabel(i));
-			//(*label)->setFormatedLabel(peptide.getFormatedLabel(i, (*label)->getMZ()));
 			(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
 			(*label)->setLabeledIon(true);
 			(*label)->label.setIncludeLabel(true);
@@ -200,6 +255,14 @@ void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
 	}//end of for
 	ionPercent = (double(labledCount) / double(len)) * 100;
 	
+	//remove unlabeled ions if necisary
+	if(!pars.getIncludeAllIons())
+		removeUnlabeledIons();
+	
+	//remove ions below specified intensity
+	if(!pars.getMinIntensitySpecified())
+		removeIntensityBelow(pars.getMinIntensity());
+	
 	if(calcLables)
 		calcLabelPos();
 }//end of function
@@ -208,7 +271,7 @@ void ms2::Spectrum::makePoints(labels::Labels& labs, double maxPerc,
 							   double offset_x, double offset_y,
 							   double x_padding, double y_padding)
 {
-	for(ionListType::iterator it = ions.begin(); it != ions.end(); ++it)
+	for(ionVecType::iterator it = ions.begin(); it != ions.end(); ++it)
 	{
 		if(it->getIntensity() >= maxPerc || it->getLabeledIon())
 		{
@@ -252,3 +315,5 @@ void ms2::Spectrum::calcLabelPos(double maxPerc,
 	//copy corrected points to spectrum
 	//copyPointsToSpectrum(points);
 }
+
+

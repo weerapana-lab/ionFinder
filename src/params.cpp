@@ -92,7 +92,6 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				return false;
 			}
 			sequestParams = utils::absPath(argv[i]);
-			inputMode = 1;
 			continue;
 		}
 		if(!strcmp(argv[i], "--printSmod"))
@@ -131,6 +130,28 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 			maxFragCharge = utils::toInt(argv[i]);
 			continue;
 		}
+		if(!strcmp(argv[i], "-minMZ"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			minMZ = utils::toDouble(argv[i]);
+			mzSpecified = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "-maxMZ"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			maxMZ = utils::toDouble(argv[i]);
+			mzSpecified = true;
+			continue;
+		}
 		if(!strcmp(argv[i], "-minLabInt"))
 		{
 			if(!utils::isArg(argv[++i]))
@@ -141,6 +162,38 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 			minLabelIntensity = utils::toInt(argv[i]);
 			continue;
 		}
+		if(!strcmp(argv[i], "-minInt"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			minIntensity = utils::toDouble(argv[i]);
+			minIntensitySpecified = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "-incAllIons"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+			{
+				cerr << argv[i] << params::PARAM_ERROR_MESSAGE << "incAllIons" << endl;
+				return false;
+			}
+			includeAllIons = utils::toInt(argv[i]);
+			continue;
+		}
+		else{
+			cerr << argv[i] << " is an invalid argument." << endl;
+			usage();
+			return false;
+		}
+		
 	}
 	
 	//fix options

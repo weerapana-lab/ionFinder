@@ -36,8 +36,7 @@ namespace ms2{
 	
 	double const LABEL_MZ_TOLERANCE = 0.25;
 	double const POINT_PADDING = 1;
-	double const DEFAULT_MAX_PERC = 1;	double const DEFAULT_X_PADDING = 50;
-	double const DEFAULT_Y_PADDING = 6;
+	double const DEFAULT_MAX_PERC = 1;
 	double const DEFAULT_X_OFFSET = 0;
 	double const DEFAULT_Y_OFFSET = 3;
 	size_t const LABEL_TOP = 200;
@@ -47,7 +46,6 @@ namespace ms2{
 	class DataPoint;
 	struct DataPointIntComparison;
 	struct DataPointMZComparison;
-	struct DataPointDoubleMZComparison;
 	
 	class Ion{
 	public:
@@ -140,6 +138,9 @@ namespace ms2{
 		bool getLabeledIon() const{
 			return labeledIon;
 		}
+		bool getForceLabel() const{
+			return label.forceLabel;
+		}
 		bool getIncludeLabel() const{
 			return label.getIncludeLabel();
 		}
@@ -171,22 +172,12 @@ namespace ms2{
 		}
 	};
 	
-	/*struct DataPointDoubleMZComparison {
-	 bool const operator()(const DataPoint& it, double val) const{
-	 return it.getMZ() < val;
-	 }
-	 
-	 bool const operator()(double val, const DataPoint& it) const{
-	 return val < it.getMZ();
-	 }
-	 };*/
-	
 	class Spectrum{
 		friend class Ms2File;
 	private:
-		typedef std::vector<ms2::DataPoint> ionListType;
-		typedef ionListType::const_iterator ionsTypeConstIt;
-		typedef ionListType::iterator ionsTypeIt;
+		typedef std::vector<ms2::DataPoint> ionVecType;
+		typedef ionVecType::const_iterator ionsTypeConstIt;
+		typedef ionVecType::iterator ionsTypeIt;
 		
 		//metadata
 		int scanNumber;
@@ -208,10 +199,13 @@ namespace ms2{
 		double ionPercent;
 		double spScore;
 		
-		ionListType ions;
+		ionVecType ions;
 		
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
+		void setMZRange(double minMZ, double maxMZ, bool _sort = true);
+		void removeUnlabeledIons();
+		void removeIntensityBelow(double minInt);
 		ionsTypeIt upperBound(double);
 		ionsTypeIt lowerBound(double);
 		
@@ -243,14 +237,18 @@ namespace ms2{
 		double getMaxIntensity() const{
 			return maxInt;
 		}
+		double getPrecursorCharge() const{
+			return precursorCharge;
+		}
 		void labelSpectrum(const peptide::Peptide& peptide,
-						   double labelTolerance = LABEL_MZ_TOLERANCE,
+						   const params::Params& pars,
 						   bool calclabels = true, size_t labelTop = LABEL_TOP);
 		void calcLabelPos(double maxPerc,
 						  double offset_x, double offset_y,
 						  double padding_x, double padding_y);
 		void calcLabelPos();
 		
+		void writeMetaData(ostream&) const;
 		void printSpectrum(ostream&, bool) const;
 		void printLabeledSpectrum(ostream&, bool) const;
 	};

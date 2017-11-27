@@ -17,6 +17,8 @@ int main(int argc, char* argv[])
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
+	cout << "ms2_annotator v1.0" << endl;
+	
 	scanData::scansType scans;
 	//get scan numbers from DTAFilter file if suplied by user
 	if(pars.getInputMode() == 1)
@@ -39,7 +41,7 @@ int main(int argc, char* argv[])
 					   pars.inFile.getScan(), pars.inFile.getInfile()));
 	}
 	
-	for(scanData::scansType::const_iterator it = scans.begin(); it != scans.end(); ++it)
+	for(scanData::scansType::iterator it = scans.begin(); it != scans.end(); ++it)
 	{
 		//initalize peptide with user suplied sequence
 		peptide::Peptide pep(it->getSequence());
@@ -53,12 +55,16 @@ int main(int argc, char* argv[])
 		if(!file.getScan(it->getScanNum(), spectrum))
 			cout << "scan not found" << endl;
 		else {
+			if(pars.getInputMode() == 0)
+				it->setCharge(spectrum.getPrecursorCharge());
 			spectrum.normalizeIonInts(100);
-			spectrum.labelSpectrum(pep);
+			spectrum.labelSpectrum(pep, pars);
 			spectrum.calcLabelPos();
-			ofstream outF(it->getOfname());
+			ofstream outF(it->getOfname().c_str());
 			spectrum.printLabeledSpectrum(outF, true);
-			cout << "Spectrum file written to ./" << utils::baseName(it->getOfname()) << endl;
+			if(pars.getWDSpecified())
+				cout << "Spectrum file written to " << it->getOfname() << endl;
+			else cout << "Spectrum file written to ./" << utils::baseName(it->getOfname()) << endl;
 		}
 	}
 	
