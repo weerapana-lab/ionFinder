@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/params.hpp"
+#include <params.hpp>
 
 bool params::Params::getArgs(int argc, const char* const argv [])
 {
@@ -29,9 +29,10 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				return false;
 			}
 			wd = utils::absPath(argv[i]);
+			wdSpecified = true;
 			if(!utils::dirExists(wd))
 			{
-				cerr << "Specified direectory does not exist." << endl;
+				std::cerr << "Specified direectory does not exist." << std::endl;
 				return false;
 			}
 			continue;
@@ -43,7 +44,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			inFile.sequence = string(argv[i]);
+			inFile.sequence =std::string(argv[i]);
 			seqSpecified = true;
 			
 			continue;
@@ -92,12 +93,13 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				return false;
 			}
 			sequestParams = utils::absPath(argv[i]);
+			seqParSpecified = true;
 			continue;
 		}
-		if(!strcmp(argv[i], "--printSmod"))
+		if(!strcmp(argv[i], "-printSmod"))
 		{
 			if(!writeSmod(wd))
-				cerr << "Could not write new smod file!" << endl;
+				std::cerr << "Could not write new smod file!" << std::endl;
 			return false;
 		}
 		if(!strcmp(argv[i], "-mt") || !strcmp(argv[i], "--matchTolerance"))
@@ -138,7 +140,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				return false;
 			}
 			minMZ = utils::toDouble(argv[i]);
-			mzSpecified = true;
+			minMzSpecified = true;
 			continue;
 		}
 		if(!strcmp(argv[i], "-maxMZ"))
@@ -149,7 +151,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				return false;
 			}
 			maxMZ = utils::toDouble(argv[i]);
-			mzSpecified = true;
+			maxMzSpecified = true;
 			continue;
 		}
 		if(!strcmp(argv[i], "-minLabInt"))
@@ -182,14 +184,21 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				cerr << argv[i] << params::PARAM_ERROR_MESSAGE << "incAllIons" << endl;
+				std::cerr << argv[i] << params::PARAM_ERROR_MESSAGE << "incAllIons" << std::endl;
 				return false;
 			}
 			includeAllIons = utils::toInt(argv[i]);
 			continue;
 		}
+		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
+		{
+			std::cout << "annotate_ms2 " << BIN_VERSION << std::endl;
+			std::cout << "Last git commit: " << GIT_DATE << std::endl;
+			std::cout << "git revision: " << GIT_COMMIT << std::endl;
+			return false;
+		}
 		else{
-			cerr << argv[i] << " is an invalid argument." << endl;
+			std::cerr << argv[i] << " is an invalid argument." << std::endl;
 			usage();
 			return false;
 		}
@@ -207,7 +216,7 @@ bool params::Params::checkParams() const
 {
 	if(!seqSpecified)
 	{
-		cerr << endl << "Sequence must be specified" << endl;
+		std::cerr << "Sequence must be specified" << std::endl;
 		usage();
 		return false;
 	}
@@ -215,7 +224,7 @@ bool params::Params::checkParams() const
 	{
 		if(!(scanSpecified && ms2Specified))
 		{
-			cerr << endl << "Scan number and .ms2 file must be specified" << endl;
+			std::cerr << std::endl << "Scan number and .ms2 file must be specified" << std::endl;
 			usage();
 			return false;
 		}
@@ -235,30 +244,30 @@ void params::Params::usage() const
 	assert(file.read());
 	
 	while(!file.end())
-		cerr << file.getLine() << endl;
+		std::cerr << file.getLine() << std::endl;
 }
 
-bool params::Params::writeSmod(string _wd) const
+bool params::Params::writeSmod(std::string _wd) const
 {
 	if(_wd[_wd.length() - 1] != '/')
 		_wd += "/";
-	ofstream outF((_wd + params::DEFAULT_SMOD_NAME).c_str());
+	std::ofstream outF((_wd + params::DEFAULT_SMOD_NAME).c_str());
 	utils::File staticMods(params::PROG_DEFAULT_SMOD_FILE);
 	if(!outF || !staticMods.read())
 		return false;
 	
 	if(wdSpecified)
-		cerr << endl << "Generating " << _wd << DEFAULT_SMOD_NAME << endl;
-	else cerr << endl <<"Generating ./" << DEFAULT_SMOD_NAME << endl;
+		std::cerr << std::endl << "Generating " << _wd << DEFAULT_SMOD_NAME << std::endl;
+	else std::cerr << std::endl <<"Generating ./" << DEFAULT_SMOD_NAME << std::endl;
 	
-	outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << endl
-	<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << endl
-	<< "<staticModifications>" << endl;
+	outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << std::endl
+	<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << std::endl
+	<< "<staticModifications>" << std::endl;
 	
 	while(!staticMods.end())
-		outF << staticMods.getLine() << endl;
+		outF << staticMods.getLine() << std::endl;
 	
-	outF << endl << "</staticModifications>" << endl;
+	outF << std::endl << "</staticModifications>" << std::endl;
 	
 	return true;
 }

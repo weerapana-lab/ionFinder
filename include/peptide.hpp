@@ -14,11 +14,11 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
-#include "../include/utils.hpp"
-#include "../include/aaDB.hpp"
-#include "../include/params.hpp"
 
-using namespace std;
+#include <utils.hpp>
+#include <aaDB.hpp>
+#include <params.hpp>
+#include <sequestParams.hpp>
 
 namespace peptide{
 	
@@ -32,16 +32,16 @@ namespace peptide{
 	class Peptide;
 	class FragmentIon;
 	
-	typedef vector<PeptideIon> PepIonVecType;
+	typedef std::vector<PeptideIon> PepIonVecType;
 	typedef PepIonVecType::const_iterator PepIonIt;
 	
 	//foward function declarations
 	double calcMass(double mz, int charge);
 	double calcMZ(double mass, int charge);
-	double calcMass(string sequence);
+	double calcMass(std::string sequence);
 	double calcMass(const PepIonVecType& sequence,
 					PepIonIt begin, PepIonIt end);
-	double calcMass(const vector<PeptideIon>& sequence);
+	double calcMass(const std::vector<PeptideIon>& sequence);
 	
 	class Species{
 	protected:
@@ -88,7 +88,7 @@ namespace peptide{
 		int getCharge() const{
 			return charge;
 		}
-		string makeChargeLable() const;
+		std::string makeChargeLable() const;
 	};//end of class
 	
 	class PeptideIon : public Ion{
@@ -112,10 +112,9 @@ namespace peptide{
 		void setMod(char _mod, double _modMass){
 			mod = _mod;
 			modMass = _modMass;
-			modified = true;
 		}
 		
-		string makeModLable() const;
+		std::string makeModLable() const;
 		double getModMass() const{
 			return modMass;
 		}
@@ -129,10 +128,10 @@ namespace peptide{
 		char b_y;
 		size_t num;
 		size_t mz_int;
-		string mod;
+		std::string mod;
 		
 	public:
-		FragmentIon(char _b_y, int _num, int _charge, double _mass, string _mod) : Ion() {
+		FragmentIon(char _b_y, int _num, int _charge, double _mass, std::string _mod) : Ion() {
 			b_y = _b_y;
 			num = _num;
 			mod = _mod;
@@ -142,9 +141,8 @@ namespace peptide{
 		~FragmentIon() {}
 		
 		//properties
-		string getIonStr() const;
-		string getFormatedLabel() const;
-		template <typename _Tp>	string getFormatedLabel(_Tp) const;
+		std::string getIonStr() const;
+		std::string getFormatedLabel() const;
 		size_t getMZ_int() const{
 			return mz_int;
 		}
@@ -155,11 +153,12 @@ namespace peptide{
 	
 	class Peptide : public Ion{
 	private:
-		typedef vector<FragmentIon> FragmentIonType;
+		typedef std::vector<FragmentIon> FragmentIonType;
 		typedef FragmentIonType::const_iterator FragmentIonItType;
 		
-		string sequence;
-		vector<PeptideIon> aminoAcids;
+		std::string sequence;
+		std::string fullSequence;
+		std::vector<PeptideIon> aminoAcids;
 		bool initalized;
 		aaDB::AADB aminoAcidMasses;
 		FragmentIonType fragments;
@@ -170,10 +169,12 @@ namespace peptide{
 		//constructors
 		Peptide() : Ion(){
 			sequence = "";
+			fullSequence = sequence;
 			initalized = false;
 		}
-		Peptide(string _sequence) : Ion(){
+		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
+			fullSequence = sequence;
 			initalized = false;
 		}
 		~Peptide() {}
@@ -181,11 +182,14 @@ namespace peptide{
 		void initalize(const params::Params&, bool _calcFragments = true);
 		void calcFragments(int, int);
 		double calcMass();
-		void printFragments(ostream&) const;
+		void printFragments(std::ostream&) const;
 		
 		//properties
-		string getSequence() const{
+		std::string getSequence() const{
 			return sequence;
+		}
+		std::string getFullSequence() const{
+			return fullSequence;
 		}
 		size_t getNumFragments() const{
 			return fragments.size();
@@ -196,14 +200,14 @@ namespace peptide{
 		double getFragmentMZ(size_t i) const{
 			return fragments[i].getMZ(fragments[i].getCharge());
 		}
-		string getFragmentLabel(size_t i) const{
+		std::string getFragmentLabel(size_t i) const{
 			return fragments[i].getIonStr();
 		}
-		string getFormatedLabel(size_t i) const{
+		std::string getFormatedLabel(size_t i) const{
 			return fragments[i].getFormatedLabel();
 		}
 		template<typename _Tp>
-		string getFormatedLabel(size_t i, _Tp num) const{
+		std::string getFormatedLabel(size_t i, _Tp num) const{
 			return fragments[i].getFormatedLabel(num);
 		}
 		char getBY(size_t i) const{

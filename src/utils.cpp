@@ -6,13 +6,13 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/utils.hpp"
+#include <utils.hpp>
 
 namespace utils{
 	
 	/*############# File ###############*/
 	
-	bool File::read(string _fname)
+	bool File::read(std::string _fname)
 	{
 		fname = _fname;
 		return read();
@@ -21,16 +21,16 @@ namespace utils{
 	bool File::read()
 	{
 		if(fname.empty())
-			throw runtime_error("File must be specified!");
+			throw std::runtime_error("File must be specified!");
 		
-		ifstream inF(fname.c_str());
+		std::ifstream inF(fname.c_str());
 		
 		if(!inF)
 			return false;
 		
 		delimType = detectLineEnding(inF);
 		if(delimType == unknown)
-			throw runtime_error("Invalid delimiter in file: " + fname + "!");
+			throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
 		delim = utils::getDelim(delimType);
 		
 		inF.seekg(0, inF.end);
@@ -53,39 +53,39 @@ namespace utils{
 		}
 	}
 	
-	inline string File::getLine()
+	inline std::string File::getLine()
 	{
-		string ret;
+		std::string ret;
 		utils::getLine(ss, ret, delim, beginLine);
 		return ret;
 	}
 	
-	inline string File::getLine_skip()
+	inline std::string File::getLine_skip()
 	{
-		string ret;
+		std::string ret;
 		do{
 			utils::getLine(ss, ret, delim, beginLine);
 		} while ((isCommentLine(ret) || ret.empty()) && ss);
 		return ret;
 	}
 	
-	inline string File::getLine_trim()
+	inline std::string File::getLine_trim()
 	{
-		string ret;
+		std::string ret;
 		utils::getLineTrim(ss, ret, delim, beginLine);
 		return ret;
 	}
 	
-	inline string File::getLine_skip_trim()
+	inline std::string File::getLine_skip_trim()
 	{
-		string ret;
+		std::string ret;
 		do{
 			utils::getLineTrim(ss, ret, delim, beginLine);
 		} while ((isCommentLine(ret) || ret.empty()) && ss);
 		return ret;
 	}
 	
-	inline string File::getLine_trim_skip()
+	inline std::string File::getLine_trim_skip()
 	{
 		return getLine_skip_trim();
 	}
@@ -96,7 +96,7 @@ namespace utils{
 	/*  file utilities */
 	/*******************/
 	
-	newline_type detectLineEnding_killStream(ifstream& inF) {
+	newline_type detectLineEnding_killStream(std::ifstream& inF) {
 		char tmp;
 		while(inF){
 			inF.get(tmp);
@@ -112,11 +112,11 @@ namespace utils{
 		return unknown;
 	}
 	
-	newline_type detectLineEnding(ifstream& inF)
+	newline_type detectLineEnding(std::ifstream& inF)
 	{
 		if(!inF)
-			throw runtime_error("Bad file stream!");
-		const streampos p = inF.tellg();
+			throw std::runtime_error("Bad file stream!");
+		const std::streampos p = inF.tellg();
 		const newline_type ret = detectLineEnding_killStream(inF);
 		inF.seekg(p);
 		return ret;
@@ -133,12 +133,12 @@ namespace utils{
 				break;
 			case unknown : return '\n';
 				break;
-			default : throw runtime_error("Invalid type!");
+			default : throw std::runtime_error("Invalid type!");
 				break;
 		}
 	}
 	
-	string getDelimStr(newline_type type)
+	std::string getDelimStr(newline_type type)
 	{
 		switch(type){
 				case lf : return "\n";
@@ -149,7 +149,7 @@ namespace utils{
 					break;
 				case unknown : return "\n";
 					break;
-			default : throw runtime_error("Invalid type!");
+			default : throw std::runtime_error("Invalid type!");
 				break;
 		}
 	}
@@ -168,38 +168,38 @@ namespace utils{
 		return stat(path, &buffer) == 0;
 	}
 	
-	bool fileExists(string path)
+	bool fileExists(std::string path)
 	{
 		return fileExists(path.c_str());
 	}
 	
-	bool dirExists(string path)
+	bool dirExists(std::string path)
 	{
 		return dirExists(path.c_str());
 	}
 	
 	//returns dirrectory from which program is run
-	string pwd()
+	std::string pwd()
 	{
 		char temp[PATH_MAX + 1];
-		return (getcwd(temp, PATH_MAX) ? string(temp) : string(""));
+		return (getcwd(temp, PATH_MAX) ? std::string(temp) : std::string(""));
 	}
 	
 	//resolves relative and symbolic file references
-	string absPath(const char* _fname)
+	std::string absPath(const char* _fname)
 	{
 		char fbuff [PATH_MAX + 1];
 		realpath(_fname, fbuff);
-		return string(fbuff);
+		return std::string(fbuff);
 	}
 	
 	//resolves relative and symbolic file references
-	string absPath(string _fname)
+	std::string absPath(std::string _fname)
 	{
 		return(absPath(_fname.c_str()));
 	}
 	
-	bool ls(const char* path, vector<string>& files)
+	bool ls(const char* path, std::vector<std::string>& files)
 	{
 		files.clear();
 		DIR* dirFile = opendir(path);
@@ -225,21 +225,21 @@ namespace utils{
 		return true;
 	}
 	
-	bool ls(const char* path, vector<string>& files, string extension)
+	bool ls(const char* path, std::vector<std::string>& files, std::string extension)
 	{
 		files.clear();
-		vector<string> allFiles;
+		std::vector<std::string> allFiles;
 		if(!ls(path, allFiles))
 		return false;
 		
-		for(vector<string>::iterator it = allFiles.begin(); it != allFiles.end(); ++it)
+		for(std::vector<std::string>::iterator it = allFiles.begin(); it != allFiles.end(); ++it)
 		if(endsWith(*it, extension))
 		files.push_back(*it);
 		return true;
 	}
 	
-	//exicutes string arg as bash command
-	void systemCommand(string command)
+	//exicutes std::string arg as bash command
+	void systemCommand(std::string command)
 	{
 		system(command.c_str());
 	}
@@ -250,15 +250,15 @@ namespace utils{
 	{
 		//get abs path and make sure that it dosen't already exist
 		//return false if it does
-		string rpath = absPath(path);
+		std::string rpath = absPath(path);
 		if(dirExists(rpath))
 		return false;
 		
 		//make sure that parent dir exists
 		//return false if not
 		size_t pos = rpath.find_last_of("/");
-		assert(pos != string::npos);
-		string parentDir = rpath.substr(0, pos);
+		assert(pos != std::string::npos);
+		std::string parentDir = rpath.substr(0, pos);
 		if(!dirExists(parentDir))
 		return false;
 		
@@ -291,12 +291,12 @@ namespace utils{
 	/*  type conversions */
 	/*********************/
 	
-	//converts num to string because to_string does not work with stl 98
+	//converts num to std::string because to_std::string does not work with stl 98
 	template <typename _Tp>
-	inline string toString(_Tp num)
+	inline std::string toString(_Tp num)
 	{
-		string str;
-		stringstream convert;
+		std::string str;
+		std::stringstream convert;
 		
 		convert << num;
 		convert >> str;
@@ -304,14 +304,14 @@ namespace utils{
 		return str;
 	}
 	
-	//converts string to int because atoi does not work with stl 98
-	//Pre: str must be a string with a valid interger conversion
-	inline int toInt(string str)
+	//converts std::string to int because atoi does not work with stl 98
+	//Pre: str must be a std::string with a valid interger conversion
+	inline int toInt(std::string str)
 	{
 		assert(isInteger(str));
 		
 		int num;
-		stringstream convert;
+		std::stringstream convert;
 		
 		convert << str;
 		convert >> num;
@@ -320,7 +320,7 @@ namespace utils{
 	}
 	
 	//return true if str can be converted to an int
-	bool isInteger(string str)
+	bool isInteger(std::string str)
 	{
 		if(str.empty() || ((!isdigit(str[0])) && (str[0] != '-') && (str[0] != '+')))
 		return false ;
@@ -332,7 +332,7 @@ namespace utils{
 	}
 	
 	//return true if str can be converted to a double
-	bool isDouble(string str)
+	bool isDouble(std::string str)
 	{
 		if(str.empty() || (!isdigit(str[0]) && (str[0] != '-') && (str[0] != '+') && (str[0] != '.')))
 		   return false ;
@@ -343,13 +343,13 @@ namespace utils{
 		return !(*p != '\0' || p == str);
 	}
 	
-	//converts string to int because stod does not work with some c++ compilers
-	//Precondition: str must be a string with a valid double conversion
-	double toDouble(string str)
+	//converts std::string to int because stod does not work with some c++ compilers
+	//Precondition: str must be a std::string with a valid double conversion
+	double toDouble(std::string str)
 	{
 		assert(isDouble(str));
 		double num;
-		stringstream convert;
+		std::stringstream convert;
 		
 		convert << str;
 		convert >> num;
@@ -358,41 +358,41 @@ namespace utils{
 	}
 	
 	/*****************/
-	/*  string utils */
+	/* std::string utils */
 	/*****************/
 	
 	//returns true if findTxt is found in whithinTxt and false if it it not
-	inline bool strContains(string findTxt, string whithinTxt)
+	inline bool strContains(std::string findTxt, std::string whithinTxt)
 	{
-		return whithinTxt.find(findTxt) != string::npos;
+		return whithinTxt.find(findTxt) != std::string::npos;
 	}
 	
 	//overloaded version of strContains, handels findTxt as char
-	inline bool strContains(char findTxt, string whithinTxt)
+	inline bool strContains(char findTxt, std::string whithinTxt)
 	{
-		return strContains(string(1, findTxt), whithinTxt);
+		return strContains(std::string(1, findTxt), whithinTxt);
 	}
 	
-	inline bool startsWith(string whithinStr, string findStr)
+	inline bool startsWith(std::string whithinStr, std::string findStr)
 	{
 		return (whithinStr.find(findStr) == 0);
 	}
 	
-	inline bool endsWith(string whithinStr, string findStr)
+	inline bool endsWith(std::string whithinStr, std::string findStr)
 	{
 		size_t pos = whithinStr.rfind(findStr);
-		if(pos == string::npos)
+		if(pos == std::string::npos)
 		return false;
 		
 		return (whithinStr.substr(pos) == findStr);
 	}
 	
 	//split str by delim and populate each split into elems
-	inline void split (const string& str, const char delim, vector<string>& elems)
+	inline void split (const std::string& str, const char delim, std::vector<std::string>& elems)
 	{
 		elems.clear();
-		stringstream ss (str);
-		string item;
+		std::stringstream ss (str);
+		std::string item;
 		
 		while(getline(ss, item, delim)) {
 			elems.push_back(item);
@@ -400,7 +400,7 @@ namespace utils{
 	}
 	
 	//remove trailing WHITESPACE
-	string trimTraling(const string& str)
+	std::string trimTraling(const std::string& str)
 	{
 		if(str.empty())
 		return "";
@@ -408,7 +408,7 @@ namespace utils{
 	}
 	
 	//remove leading WHITESPACE
-	string trimLeading(const string& str)
+	std::string trimLeading(const std::string& str)
 	{
 		if(str.empty())
 		return "";
@@ -416,35 +416,35 @@ namespace utils{
 	}
 	
 	//remove trailing and leading WHITESPACE
-	string trim(const string& str)
+	std::string trim(const std::string& str)
 	{
 		if(str.empty())
 		return "";
 		return trimLeading(trimTraling(str));
 	}
 	
-	void trimAll(vector<string>& elems)
+	void trimAll(std::vector<std::string>& elems)
 	{
-		for(vector<string>::iterator it = elems.begin(); it != elems.end(); ++it)
+		for(std::vector<std::string>::iterator it = elems.begin(); it != elems.end(); ++it)
 			(*it) = trim((*it));
 	}
 	
 	//returns true if line begins with COMMENT_SYMBOL, ignoring leading whitespace
-	bool isCommentLine(string line)
+	bool isCommentLine(std::string line)
 	{
 		line = trimLeading(line);
 		return line.substr(0, COMMENT_SYMBOL.length()) == COMMENT_SYMBOL;
 	}
 	
 	//gets new line from is and removes trailing and leading whitespace
-	inline void getLineTrim(istream& is, string& line, char delim, size_t beginLine)
+	inline void getLineTrim(std::istream& is, std::string& line, char delim, size_t beginLine)
 	{
 		utils::getLine(is, line, delim, beginLine);
 		line = trim(line);
 	}
 	
 	//gets new line from is and handels non zero start to line
-	inline void getLine(istream& is, string& line, char delim, size_t beginLine)
+	inline void getLine(std::istream& is, std::string& line, char delim, size_t beginLine)
 	{
 		getline(is, line, delim);
 		if(beginLine > 0)
@@ -452,38 +452,38 @@ namespace utils{
 	}
 	
 	//removes findStr from whithinStr and returns whithinStr
-	inline string removeSubstr(string findStr, string whithinStr)
+	inline std::string removeSubstr(std::string findStr, std::string whithinStr)
 	{
-		string::size_type i = whithinStr.find(findStr);
+		std::string::size_type i = whithinStr.find(findStr);
 		
-		if(i != string::npos)
+		if(i !=std::string::npos)
 		whithinStr.erase(i, findStr.length());
 		
 		return whithinStr;
 	}
 	
-	inline string removeChars(char findChar, string wStr)
+	inline std::string removeChars(char findChar, std::string wStr)
 	{
 		wStr.erase(remove(wStr.begin(), wStr.end(), findChar), wStr.end());
 		return wStr;
 	}
 	
-	string toLower(string str)
+	std::string toLower(std::string str)
 	{
 		transform(str.begin(), str.end(), str.begin(), ::tolower);
 		return str;
 	}
 	
-	string repeat(string str, size_t numTimes)
+	std::string repeat(std::string str, size_t numTimes)
 	{
-		string ret = "";
+		std::string ret = "";
 		assert(!str.empty());
 		for(int i = 0; i < numTimes; i++)
 		ret += str;
 		return ret;
 	}
 	
-	//Find string 'str' in data buffer 'buf' of length 'len'.
+	//Find std::string 'str' in data buffer 'buf' of length 'len'.
 	size_t offset(const char* buf, size_t len, const char* str)
 	{
 		return std::search(buf, buf + len, str, str + strlen(str)) - buf;
@@ -507,7 +507,7 @@ namespace utils{
 		else return !isFlag(tok);
 	}
 	
-	string ascTime()
+	std::string ascTime()
 	{
 		//get current time
 		const char* curTime;
@@ -516,7 +516,7 @@ namespace utils{
 		time(&rawTime);
 		timeInfo = localtime(&rawTime);
 		curTime = asctime(timeInfo);
-		return(string(curTime));
+		return(std::string(curTime));
 	}
 	
 	template <typename _Tp>
@@ -536,12 +536,44 @@ namespace utils{
 		return count;
 	}
 	
-	template<typename _Tp>
-	bool inRange(_Tp value, _Tp compare, _Tp range)
+	//template<typename _Tp>
+	bool inRange(double value, double compare, double range)
 	{
 		return abs(value - compare) <= range;
 	}
-}
+	
+	//get int from std::cin between min and max
+	//continue asking for input untill user suplies valid value
+	int getInt(int min, int max)
+	{
+		std::string choice;
+		int ret = min - 1;
+		bool good;
+		do{
+			choice.clear();
+			std::cin.sync();
+			std::getline(std::cin, choice);
+			choice = utils::trim(choice);
+			if(utils::isInteger(choice))
+			{
+				ret = utils::toInt(choice);
+				if(ret >= min && ret <= max){
+					good = true;
+				}
+				else{
+					good = false;
+					std::cout << "Invalid choice!" << std::endl << "Enter choice: ";
+				}
+			}
+			else{
+				good = false;
+				std::cout << "Invalid choice!" << std::endl << "Enter choice: ";
+			}
+		} while(!good);
+		return ret;
+	}//end of fxn
+	
+}//end of namespace
 
 
 

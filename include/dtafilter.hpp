@@ -13,10 +13,8 @@
 #include <fstream>
 #include <vector>
 #include <cstring>
-#include "utils.hpp"
-#include "scanData.hpp"
-
-using namespace std;
+#include <utils.hpp>
+#include <scanData.hpp>
 
 namespace dtafilter{
 
@@ -26,21 +24,21 @@ namespace dtafilter{
 	private:
 		char* buffer;
 		unsigned long size;
-		string delim;
+		std::string delim;
 		utils::newline_type delimType;
 		int beginLine;
-		string fname;
+		std::string fname;
 		
 		size_t getBeginLine(size_t) const;
 		size_t getEndLine(size_t) const;
-		string getScanLine(size_t) const;
+		std::string getScanLine(size_t) const;
 		
 	public:
 		DtaFilterFile(){
 			size = 0;
 			fname = "";
 		}
-		DtaFilterFile(string _fname){
+		DtaFilterFile(std::string _fname){
 			size = 0;
 			fname = _fname;
 		}
@@ -49,12 +47,12 @@ namespace dtafilter{
 		}
 		
 		//modifers
-		bool read(string);
+		bool read(std::string);
 		bool read();
 		
-		bool getFirstScan(const string&, scanData::Scan&) const;
-		void getScans(const string&, scanData::scansType&) const;
-		bool getScan(const string& _seq, scanData::scansType& _scans, bool force = true) const;
+		bool getFirstScan(const std::string&, scanData::Scan&) const;
+		void getScans(const std::string&, scanData::scansType&) const;
+		bool getScan(const std::string& _seq, scanData::scansType& _scans, bool force = true) const;
 	};
 }
 

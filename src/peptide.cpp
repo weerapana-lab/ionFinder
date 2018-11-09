@@ -6,9 +6,9 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/peptide.hpp"
+#include <peptide.hpp>
 
-string peptide::Ion::makeChargeLable() const
+std::string peptide::Ion::makeChargeLable() const
 {
 	if(charge > 0)
 		return utils::toString(charge) + "+";
@@ -19,41 +19,31 @@ string peptide::Ion::makeChargeLable() const
 	else return utils::toString(charge);
 }
 
-string peptide::PeptideIon::makeModLable() const
+std::string peptide::PeptideIon::makeModLable() const
 {
 	if(modified)
-		return string(1, mod);
+		return std::string(1, mod);
 	else return "";
 }
 
-string peptide::FragmentIon::getIonStr() const
+std::string peptide::FragmentIon::getIonStr() const
 {
-	string str;
-	str = string(1, b_y) + utils::toString(num) + mod;
+	std::string str;
+	str =std::string(1, b_y) + utils::toString(num) + mod;
 	if(charge > 1)
 		str += " " + makeChargeLable();
 	return str;
 }
 
-string peptide::FragmentIon::getFormatedLabel() const
+std::string peptide::FragmentIon::getFormatedLabel() const
 {
-	string str = string(1, b_y) + "[" + utils::toString(num) + "]" + mod;
+	std::string str =std::string(1, b_y) + "[" + utils::toString(num) + "]";
+	
+	if(!mod.empty())
+		str += " *\"" + mod + "\"";
 	
 	if(charge > 1)
 		str += "^\"" + makeChargeLable() + "\"";
-	
-	return str;
-}
-
-template <typename _Tp>
-string peptide::FragmentIon::getFormatedLabel(_Tp _num) const
-{
-	string str = "atop(" + string(1, b_y) + "[" + utils::toString(num) + "]" + mod;
-	
-	if(charge > 1)
-		str += "^\"" + makeChargeLable() + "\"";
-	
-	str += "," + utils::toString(_num) + ")";
 	
 	return str;
 }
@@ -67,15 +57,15 @@ void peptide::Peptide::calcFragments(int minCharge, int maxCharge)
 	{
 		for(int j = minCharge; j <= maxCharge; j++)
 		{
-			string beg = sequence.substr(0, i + 1);
-			string end = sequence.substr(i + 1);
+			std::string beg = sequence.substr(0, i + 1);
+			std::string end = sequence.substr(i + 1);
 			
 			peptide::PepIonIt beg_beg = aminoAcids.begin();
 			peptide::PepIonIt beg_end = beg_beg + i + 1;
 			peptide::PepIonIt end_beg = beg_beg + i;
 			peptide::PepIonIt end_end = aminoAcids.end();
 			
-			//add if statement here to include un-mod fragments
+			//TODO: add if statement here to include un-mod fragments
 			//maybe some other time
 			
 			fragments.push_back(FragmentIon('b', i + 1, j,
@@ -98,9 +88,9 @@ void peptide::Peptide::fixDiffMod()
 		//check that current char is not a mod char
 		for(const char* p = DIFFMODS; *p; p++)
 			if(sequence[i] == *p)
-				throw runtime_error("Invalid peptide sequence!");
+				throw std::runtime_error("Invalid peptide sequence!");
 		
-		//if not at second to last AA search for diff mod
+		//if not at second to last AA, search for diff mod
 		if((i + 1) < sequence.length())
 		{
 			//iterate through diffmods
@@ -127,7 +117,7 @@ void peptide::Peptide::fixDiffMod()
 double peptide::Peptide::calcMass()
 {
 	if(!initalized)
-		throw runtime_error("Peptide must be initalized to calc mass!");
+		throw std::runtime_error("Peptide must be initalized to calc mass!");
 	
 	initalizeFromMass(aminoAcidMasses.calcMW(sequence));
 	return getMass();
@@ -136,19 +126,30 @@ double peptide::Peptide::calcMass()
 void peptide::Peptide::initalize(const params::Params& pars, bool _calcFragments)
 {
 	initalized = true;
-	if(!aminoAcidMasses.initalize(pars.getAAMassFileLoc(), pars.getSmodFileLoc()))
-		throw runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
+	if(pars.getSeqParSpecified())
+	{
+		seqpar::SequestParamsFile spFile(pars.getSeqParFname());
+		if(!spFile.read())
+			throw std::runtime_error("Could not read sequest params file!");
+		
+		if(!aminoAcidMasses.initalize(pars.getAAMassFileLoc(), spFile.getAAMap()))
+			throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
+	}
+	else {
+		if(!aminoAcidMasses.initalize(pars.getAAMassFileLoc(), pars.getSmodFileLoc()))
+			throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
+	}
 	calcMass();
 	fixDiffMod();
 	if(_calcFragments)
 		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge());
 }
 
-void peptide::Peptide::printFragments(ostream& out) const
+void peptide::Peptide::printFragments(std::ostream& out) const
 {
 	assert(out);
 	for(FragmentIonItType it = fragments.begin(); it != fragments.end(); ++it)
-		out << it->getIonStr() << ": " << it->getMZ() << endl;
+		out << it->getIonStr() << ": " << it->getMZ() <<std::endl;
 }
 
 double peptide::calcMass(double mz, int charge){

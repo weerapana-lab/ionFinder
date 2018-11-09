@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/sequestParams.hpp"
+#include <sequestParams.hpp>
 
 void seqpar::SequestParamsFile::initSmodMap()
 {
@@ -33,50 +33,45 @@ void seqpar::SequestParamsFile::initSmodMap()
 	smodMap["add_R_Arginine"] = "R";
 	smodMap["add_Y_Tyrosine"] = "Y";
 	smodMap["add_W_Tryptophan"] = "W";
-	
-	smodMap["add_X_LorI"] = seqpar::BAD_SMOD;
-	smodMap["add_B_avg_NandD"] = seqpar::BAD_SMOD;
-	smodMap["add_Z_avg_QandE"] = seqpar::BAD_SMOD;
 }
 
-bool seqpar::SequestParamsFile::read(string _fname)
+bool seqpar::SequestParamsFile::read(std::string _fname)
 {
 	if(fname.empty())
-		throw runtime_error("fname must be specified!");
+		throw std::runtime_error("fname must be specified!");
 	
 	utils::File file(fname);
 	if(!file.read())
 		return false;
 	
-	string line;
-	vector<string> elems;
+	std::string line;
+	std::vector<std::string> elems;
 	while(!file.end())
 	{
-		line = utils::trim(file.getLine_skip_trim());
+		line = file.getLine_skip_trim();
 		if(utils::strContains('=', line))
 		{
-		
 			utils::split(line, '=', elems);
 			utils::trimAll(elems);
 			
-			if(smodMap.find(elems[0]) != smodMap.end())
+			if(smodMap.find(elems[0]) != smodMap.end()) //if line contains smod for an aa
 			{
-				string modMass = elems[1];
-				string aa = smodMap[elems[0]];
+				std::string modMass = elems[1];
+				std::string aa = smodMap[elems[0]];
 				modMass = utils::trim(modMass.substr(0, modMass.find(";")));
 				aaMap[aa] = aaDB::AminoAcid(aa, 0, utils::toDouble(modMass));
 			}
-			else if(elems[0] == DIFF_MOD_LINE)
+			else if(elems[0] == DIFF_MOD_LINE) //if line is diffmod line
 			{
-				string diffModsLine = elems[1];
+				std::string diffModsLine = elems[1];
 				elems.clear();
-				istringstream iss(diffModsLine);
-				for(string s; iss >> s; )
+				std::istringstream iss(diffModsLine);
+				for(std::string s; iss >> s; )
 					elems.push_back(s);
 				
 				if(elems.size() > 2)
 				{
-					cerr << "Multiple diffmods detected. Use smod file with multiple diffmods" << endl;
+					std::cerr << "Multiple diffmods detected. Use smod file with multiple diffmods." << std::endl;
 					return false;
 				}
 				aaMap["*"] = aaDB::AminoAcid("*", 0, utils::toDouble(elems[0]));

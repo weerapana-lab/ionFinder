@@ -12,8 +12,6 @@
 #include <cmath>
 #include <iostream>
 
-using namespace std;
-
 namespace geometry{
 	
 	class Point;
@@ -21,7 +19,7 @@ namespace geometry{
 	class Rect;
 	class Vector2D;
 	
-	string const NA_STR = "NA";
+	std::string const NA_STR = "NA";
 	
 	inline bool valueInRange(double, double, double);
 	inline double dist(const Point&, const Point&);
@@ -160,12 +158,16 @@ namespace geometry{
 			end = Point(beg.getX() + mov.getH(), end.getY() + mov.getV());
 		}
 		~Line() {}
+		double length() const{
+			return dist(beg, end);
+		}
 	};
 	
 	class DataLabel{
 	private:
-		string label;
+		std::string label;
 		bool includeLabel;
+		bool includeArrow;
 		Point dataPoint;
 	
 	public:
@@ -182,19 +184,23 @@ namespace geometry{
 			movement = Vector2D();
 			forceLabel = false;
 			includeLabel = false;
+			includeArrow = false;
 		}
 		
 		void setIncludeLabel(bool boo){
 			includeLabel = boo;
 		}
-		void setLabel(string str){
+		void setLabel(std::string str){
 			label = str;
 		}
-		string getLabel() const{
+		std::string getLabel() const{
 			return label;
 		}
 		bool getIncludeLabel() const{
 			return includeLabel;
+		}
+		bool getIncludeArrow() const{
+			return includeArrow;
 		}
 		
 		bool operator > (const DataLabel& comp) const{

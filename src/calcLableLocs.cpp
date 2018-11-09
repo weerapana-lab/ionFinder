@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/calcLableLocs.hpp"
+#include <calcLableLocs.hpp>
 
 void labels::Labels::countAllOverlapNum()
 {
@@ -39,9 +39,9 @@ size_t labels::Labels::getOverlapNum(const labels::Labels::labType& lab) const
 
 void labels::Labels::getOverlap(labels::Labels::labType* lab, pointsListType& overlapList) const
 {
-	//if(lab->getLabel() == "946.405")
-	//	cout << "found!";
-	//labType temp;
+	/*if(lab->getLabel() == "y2")
+		std::cout << "found!";
+	labType* temp;*/
 	
 	overlapList.clear();
 	lab->overlapNum = 0;
@@ -50,8 +50,18 @@ void labels::Labels::getOverlap(labels::Labels::labType* lab, pointsListType& ov
 		if((*it)->labelLoc == lab->labelLoc)
 			continue;
 		
+		if(!(*it)->getIncludeLabel())
+			continue;
+		
+		/*if((*it)->getLabel() == "b3")
+		{
+			std::cout << "found!";
+			//temp = *it;
+		}*/
+		
 		if(lab->labelLoc.intersects((*it)->labelLoc))
 		{
+			//temp = *it;
 			overlapList.push_back((*it));
 			lab->overlapNum++;
 		}
@@ -63,32 +73,14 @@ void labels::Labels::populateGraph(labels::Labels::graphType& graph) const
 	graph.clear();
 	for(pointsListType::const_iterator it = labeledPoints.begin(); it != labeledPoints.end(); ++it)
 	{
+		if(!(*it)->getIncludeLabel())
+			continue;
 		pointsListType tempList;
 		getOverlap((*it), tempList);
 		if((*it)->overlapNum > 0)
 			graph[(*it)] = tempList;
 	}
 }
-
-/*void labels::Labels::spaceOut()
-{
-	sortByOverlap();
-	stack<labType*> sta;
-	list<labType*> tempPoints = points;
-	
-	while(tempPoints.front()->labelLoc.overlapNum >= 1)
-	{
-		sta.push(tempPoints.front());
-		tempPoints.pop_front();
-		sortByOverlap();
-	}
-
-	while(sta.size() >= 1)
-	{
-		
-	}
-	
-}*/
 
 geometry::Point labels::Labels::getCenter(const pointsListType& _list) const
 {
@@ -127,14 +119,14 @@ bool labels::Labels::overlapsStaticDataPoints(const labels::Labels::labType* con
 	return false;
 }
 
-void labels::Labels::spaceOutAlg2()
+void labels::Labels::spaceOut(labels::Labels::labType* lab, labels::Labels::pointsListType& overlapList)
 {
-	labeledPoints.unique();
-	dataPoints.unique();
 	
+}
+
+void labels::Labels::addStaticLables()
+{
 	graphType graph;
-	//size_t i = 0;
-	
 	populateGraph(graph); //populate graph of overlaping points
 	sortByY(); //sort labeledPoints by intensity
 	
@@ -149,87 +141,58 @@ void labels::Labels::spaceOutAlg2()
 			}
 		}//end of if
 	}//end of for
-	
-	/*do {
-		sortByOverlap();
-		populateGraph(graph);
-		
-		for(graphType::iterator it1 = graph.begin(); it1 != graph.end(); ++it1)
-		{
-			//if there are points overlaping current point
-			if(it1->first->overlapNum > 0)
-			{
-				if(!it1->first->forceLabel) //if it is not a labeled b or y ion
-				{
-					for(pointsListType::iterator it2 = it1->second.begin(); it2 != it1->second.end(); ++it1)
-					{
-						if((!(*it2)->forceLabel) && overlapsStaticDataPoints(*it2))
-						{
-							(*it2)->setIncludeLabel(false);
-							//it1->second.remove(*it2);
-						}
-					}
-					if(!maxInList(it1->first, it1->second)) //if it is not max int in labels it overlaps
-					{
-						it1->first->setIncludeLabel(false);
-					}
-					//check if it overlaps any static data points
-					else if(overlapsStaticDataPoints(it1->first))
-					{
-						it1->first->setIncludeLabel(false);
-					}//end of else
-				}//end of if
-				else {
-					continue;
-				}//end of else
-			}//end of if
-		}//end of for
-		i++;
-	} while(labeledPoints.front()->overlapNum > 0 && i < maxIterations);*/
-}//end of fxn
+}
 
-void labels::Labels::spaceOutAlg1()
+void labels::Labels::addArows()
+{
+	for(pointsListType::iterator it = labeledPoints.begin(); it != labeledPoints.end(); ++it)
+	{
+		if((*it)->getIncludeLabel() && (*it)->movement.getMagnitude() > 0)
+		{
+			if((*it)->movement.getH() > arrowThresholdH  || (*it)->movement.getV() > arrowThresholdV)
+			{
+				double begX = (*it)->labelLoc.getX();
+				double begY = (*it)->labelLoc.getX();
+				(*it)->arrow = geometry::Line(begX, begY,
+											  begX + (*it)->movement.getH(),
+											  begY + (*it)->movement.getV());
+			}
+		}
+	}
+}
+
+void labels::Labels::spaceOutAlg2()
 {
 	labeledPoints.unique();
 	dataPoints.unique();
 	
-	sortByOverlap();
 	graphType graph;
-	size_t i = 0;
-	while(labeledPoints.front()->overlapNum > 0)
+	//size_t numIterations = 0;
+	
+	for(pointsListType::iterator it = labeledPoints.begin(); it != labeledPoints.end(); ++it)
 	{
+		if((*it)->labelLoc.getY() < nudgeThreshold)
+			(*it)->movement = geometry::Vector2D((nudgeAmt - (*it)->labelLoc.getY()), 0);
+	}
+	
+	addStaticLables();
+	
+	/*do{
 		sortByOverlap();
 		populateGraph(graph);
 		
-		//geometry::Vector2D tempCent();
-		for(graphType::iterator it = graph.begin(); it != graph.end(); ++it)
+		if(labeledPoints.front()->overlapNum > 0)
 		{
-			geometry::Point localCenter = getCenter(it->second);
-			
-			geometry::Vector2D tempV(geometry::Point(it->first->labelLoc.getX(),
-													 it->first->labelLoc.getY()),
-									 localCenter);
-			geometry::Vector2D tempC(center,
-									 geometry::Point(it->first->labelLoc.getX(),
-													 it->first->labelLoc.getY()));
-			
-			tempV /= localVecDiv;
-			tempC /= centerVecDiv;
-			
-			//tempC += tempV;
-			tempV += tempC;
-									 
-			
-			it->first->labelLoc.move(tempV);
-			
-			//addVectorToList(tempV, it->second);
-		}
-		cout << i << endl;
-		i++;
-	}
+			spaceOut(labeledPoints.front(), graph[labeledPoints.front()]);
+		}//end of if
+		
+		numIterations++;
+	} while(labeledPoints.front()->overlapNum > 0 && numIterations < maxIterations);
 	
-}
-
+	addStaticLables();*/
+	addArows();
+	
+}//end of fxn
 
 
 

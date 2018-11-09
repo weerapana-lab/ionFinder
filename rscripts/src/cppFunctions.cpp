@@ -118,7 +118,7 @@ StringVector makeIonLabelsExp(string letter, int count, char dir)
 }
 
 // [[Rcpp::export]]
-StringVector makeSeqVec(string seq)
+StringVector makeSeqVec(string seq, bool fixDiffMods = true)
 {
   bool modFound = false;
   char mod = '\0';
@@ -126,21 +126,24 @@ StringVector makeSeqVec(string seq)
   
   for(size_t i = 0; i < seq.length(); i++)
   {
-    if((i + 1) < seq.length())
+    if(fixDiffMods)
     {
-      //iterate through diffmods
-      for(const char* p = DIFFMODS; *p; p++)
+      if((i + 1) < seq.length())
       {
-        //check if next char in sequence is diff mod char
-        if(seq[i + 1] == *p)
+        //iterate through diffmods
+        for(const char* p = DIFFMODS; *p; p++)
         {
-          modFound = true;
-          mod = seq[i + 1];
-          seq.erase(i + 1, 1);
-          break;
-        }//end of if
-      }//end of for
-    }//end of if
+          //check if next char in sequence is diff mod char
+          if(seq[i + 1] == *p)
+          {
+            modFound = true;
+            mod = seq[i + 1];
+            seq.erase(i + 1, 1);
+            break;
+          }//end of if
+        }//end of for
+      }//end of if
+    }//end if
     if(modFound)
     {
       ret.push_back(seq[i] + string(1, mod));

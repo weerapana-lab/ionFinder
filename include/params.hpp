@@ -10,23 +10,21 @@
 #define params_hpp
 
 #include <iostream>
-#include "../include/utils.hpp"
-
-using namespace std;
+#include <utils.hpp>
 
 namespace params{
 	
 	//program file locations
-	string const PROG_WD = string(getenv("HOME")) + "/scripts/ms2_anotator";
-	string const PROG_DB = PROG_WD + "/db";
-	string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
-	string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
-	string const PROG_HELP_FILE = PROG_DB + "/help.man";
-	string const PROG_USAGE_FNAME = PROG_DB + "/usage.txt";
+	std::string const PROG_WD =std::string(getenv("HOME")) + "/local/ms2_anotator";
+	std::string const PROG_DB = PROG_WD + "/db";
+	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
+	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
+	std::string const PROG_HELP_FILE = PROG_DB + "/helpFile.man";
+	std::string const PROG_USAGE_FNAME = PROG_DB + "/usage.txt";
 	
-	string const DEFAULT_SMOD_NAME = "staticModifications.txt";
+	std::string const DEFAULT_SMOD_NAME = "staticModifications.txt";
 	
-	string const PARAM_ERROR_MESSAGE = " is an invalid argument for ";
+	std::string const PARAM_ERROR_MESSAGE = " is an invalid argument for ";
 	
 	class InFile;
 	class Params;
@@ -34,8 +32,8 @@ namespace params{
 	class InFile{
 		friend class Params;
 	private:
-		string infile;
-		string sequence;
+		std::string infile;
+		std::string sequence;
 		int scan;
 		
 	public:
@@ -46,10 +44,10 @@ namespace params{
 		}
 		~InFile() {}
 		
-		string getInfile() const{
+		std::string getInfile() const{
 			return infile;
 		}
-		string getSeq() const{
+		std::string getSeq() const{
 			return sequence;
 		}
 		int getScan() const{
@@ -59,20 +57,21 @@ namespace params{
 	
 	class Params{
 	private:
-		string wd;
-		string aaMassFile;
-		string smodFile;
+		std::string wd;
+		std::string aaMassFile;
+		std::string smodFile;
 		bool force;
 		int inputMode;
 		bool wdSpecified;
-		string sequestParams;
-		string ofname;
+		std::string sequestParams;
+		std::string ofname;
 		
 		bool seqSpecified;
 		bool dtaSpecified, seqParSpecified;
 		bool ms2Specified, scanSpecified;
 		bool smodSpecified;
-		bool mzSpecified;
+		bool minMzSpecified;
+		bool maxMzSpecified;
 		bool minIntensitySpecified;
 		
 		//program paramaters
@@ -84,13 +83,15 @@ namespace params{
 		double maxMZ;
 		double minIntensity;
 		bool includeAllIons;
+		std::string multipleMatchCompare;
+		
 		
 		void displayHelp() const{
 			utils::systemCommand("man " + PROG_HELP_FILE);
 		}
 		void usage() const;
 		bool checkParams() const;
-		bool writeSmod(string) const;
+		bool writeSmod(std::string) const;
 		
 	public:
 		InFile inFile;
@@ -111,7 +112,8 @@ namespace params{
 			minLabelIntensity = 0;
 			minMZ = 0;
 			maxMZ = 0;
-			mzSpecified = false;
+			minMzSpecified = false;
+			maxMzSpecified = false;
 			minIntensity = 0;
 			minIntensitySpecified = false;
 			includeAllIons = true;
@@ -126,7 +128,8 @@ namespace params{
 		
 		bool getArgs(int, const char* const[]);
 		
-		string getWD() const{
+		//properties
+		std::string getWD() const{
 			return wd;
 		}
 		int getMinFragCharge() const{
@@ -135,10 +138,10 @@ namespace params{
 		int getMaxFragCharge() const{
 			return maxFragCharge;
 		}
-		string getSmodFileLoc() const{
+		std::string getSmodFileLoc() const{
 			return smodFile;
 		}
-		string getAAMassFileLoc() const{
+		std::string getAAMassFileLoc() const{
 			return aaMassFile;
 		}
 		double getMatchTolerance() const{
@@ -151,7 +154,13 @@ namespace params{
 			return maxMZ;
 		}
 		bool getMZSpecified() const{
-			return mzSpecified;
+			return maxMzSpecified || minMzSpecified;
+		}
+		bool getMinMZSpecified() const{
+			return minMzSpecified;
+		}
+		bool getMaxMZSpecified() const{
+			return maxMzSpecified;
 		}
 		bool getMinIntensitySpecified() const{
 			return minIntensitySpecified;
@@ -165,6 +174,9 @@ namespace params{
 		double getMinIntensity() const{
 			return minIntensity;
 		}
+		std::string getMultipleMatchCompare() const{
+			return multipleMatchCompare;
+		}
 		bool getForce() const{
 			return force;
 		}
@@ -173,6 +185,12 @@ namespace params{
 		}
 		bool getWDSpecified() const{
 			return wdSpecified;
+		}
+		bool getSeqParSpecified() const{
+			return seqParSpecified;
+		}
+		std::string getSeqParFname() const{
+			return sequestParams;
 		}
 	};
 }

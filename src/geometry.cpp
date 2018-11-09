@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/geometry.hpp"
+#include <geometry.hpp>
 
 inline bool geometry::valueInRange(double value, double min, double max){
 	return (value >= min) && (value <= max);

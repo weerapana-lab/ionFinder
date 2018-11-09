@@ -16,23 +16,24 @@
 #include <cassert>
 #include <list>
 #include <algorithm>
-#include "../include/utils.hpp"
-#include "../include/peptide.hpp"
-#include "../include/geometry.hpp"
-#include "../include/calcLableLocs.hpp"
+#include <utils.hpp>
+#include <peptide.hpp>
+#include <geometry.hpp>
+#include <calcLableLocs.hpp>
 
 namespace ms2{
 	
-	string const SPECTRUM_COL_HEADERS [] = {"mz", "intensity", "label", "includeLabel",
-		"ionType", "formatedLabel", "labelX", "labelY"};
+	std::string const SPECTRUM_COL_HEADERS [] = {"mz", "intensity", "label", "includeLabel",
+		"ionType", "formatedLabel", "labelX", "labelY", "includeArrow", "arrowBegX",
+		"arrowBegY", "arrowEndX", "arrowEndX"};
 	size_t const NUM_SPECTRUM_COL_HEADERS_SHORT = 2;
-	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 8;
-	string const NA_STR = "NA";
+	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 13;
+	std::string const NA_STR = "NA";
 	
-	string const BEGIN_METADATA = "<metadata>";
-	string const END_METADATA = "</metadata>";
-	string const BEGIN_SPECTRUM = "<spectrum>";
-	string const END_SPECTRUM = "</spectrum>";
+	std::string const BEGIN_METADATA = "<metadata>";
+	std::string const END_METADATA = "</metadata>";
+	std::string const BEGIN_SPECTRUM = "<spectrum>";
+	std::string const END_SPECTRUM = "</spectrum>";
 	
 	double const LABEL_MZ_TOLERANCE = 0.25;
 	double const POINT_PADDING = 1;
@@ -49,16 +50,16 @@ namespace ms2{
 	
 	class Ion{
 	public:
-		typedef int mz_intType;
+		//typedef int mz_intType;
 		Ion(){
 			intensity = 0;
 			mz = 0;
-			mz_int = 0;
+			//mz_int = 0;
 		}
 		Ion(double _mz, double _int){
 			mz = _mz;
 			intensity = _int;
-			mz_int = utils::round(mz); //mz_int is rounded here
+			//mz_int = utils::round(mz); //mz_int is rounded here
 		}
 		~Ion() {};
 		
@@ -73,16 +74,16 @@ namespace ms2{
 		double getMZ() const{
 			return mz;
 		}
-		mz_intType getMZInt() const{
+		/*mz_intType getMZInt() const{
 			return mz_int;
-		}
+		}*/
 		
-		void write(ofstream&) const;
+		void write(std::ofstream&) const;
 	protected:
 		
 		double intensity;
 		double mz;
-		mz_intType mz_int;
+		//mz_intType mz_int;
 	};
 	
 	class DataPoint : public Ion{
@@ -90,9 +91,9 @@ namespace ms2{
 	private:
 		bool labeledIon;
 		geometry::DataLabel label;
-		string formatedLabel;
+		std::string formatedLabel;
 		bool topAbundant;
-		string ionType;
+		std::string ionType;
 		
 	public:
 		DataPoint() : Ion(){
@@ -116,10 +117,10 @@ namespace ms2{
 			label.forceLabel = labeledIon;
 		}
 		
-		void setLabel(string str){
+		void setLabel(std::string str){
 			label.setLabel(str);
 		}
-		void setFormatedLabel(string str){
+		void setFormatedLabel(std::string str){
 			formatedLabel = str;
 		}
 		void setTopAbundant(bool boo){
@@ -128,11 +129,11 @@ namespace ms2{
 		void setForceLabel(bool boo){
 			label.forceLabel = boo;
 		}
-		void setIonType(string str){
+		void setIonType(std::string str){
 			ionType = str;
 		}
 		
-		string getLabel() const{
+		std::string getLabel() const{
 			return label.getLabel();
 		}
 		bool getLabeledIon() const{
@@ -141,28 +142,25 @@ namespace ms2{
 		bool getForceLabel() const{
 			return label.forceLabel;
 		}
-		bool getIncludeLabel() const{
-			return label.getIncludeLabel();
-		}
 		bool getTopAbundant() const{
 			return topAbundant;
 		}
-		string getFormatedLabel() const{
+		std::string getFormatedLabel() const{
 			return formatedLabel;
 		}
-		string getIonType() const{
+		std::string getIonType() const{
 			return ionType;
 		}
 		
 		//for utils::insertSorted()
-		inline bool insertComp(const DataPoint& comp) const{
+		inline bool insertCompare(const DataPoint& comp) const{
 			return intensity > comp.intensity;
 		}
 	};
 	
 	struct DataPointIntComparison {
 		bool const operator()(DataPoint *lhs, DataPoint *rhs) const{
-			return lhs->insertComp(*rhs);
+			return lhs->insertCompare(*rhs);
 		}
 	};
 	
@@ -179,21 +177,24 @@ namespace ms2{
 		typedef ionVecType::const_iterator ionsTypeConstIt;
 		typedef ionVecType::iterator ionsTypeIt;
 		
-		//metadata
+		//static metadata
 		int scanNumber;
 		int scanNumInt;
 		double retTime;
 		double precursorInt;
-		string precursorFile;
+		std::string precursorFile;
 		int precursorScan;
 		int precursorCharge;
 		double precursorMZ;
+		std::string sequence;
+		std::string fullSequence;
+		
+		//dynamic metadata
 		double maxInt;
 		double minInt;
 		double minMZ;
 		double maxMZ;
 		double mzRange;
-		string sequence;
 		
 		//match stats
 		double ionPercent;
@@ -206,8 +207,9 @@ namespace ms2{
 		void setMZRange(double minMZ, double maxMZ, bool _sort = true);
 		void removeUnlabeledIons();
 		void removeIntensityBelow(double minInt);
-		ionsTypeIt upperBound(double);
-		ionsTypeIt lowerBound(double);
+		double calcMaxInt() const;
+		double calcMinInt() const;
+		void updateDynamicMetadata();
 		
 	public:
 		Spectrum()
@@ -242,15 +244,15 @@ namespace ms2{
 		}
 		void labelSpectrum(const peptide::Peptide& peptide,
 						   const params::Params& pars,
-						   bool calclabels = true, size_t labelTop = LABEL_TOP);
+						   size_t labelTop = LABEL_TOP);
 		void calcLabelPos(double maxPerc,
 						  double offset_x, double offset_y,
 						  double padding_x, double padding_y);
 		void calcLabelPos();
 		
-		void writeMetaData(ostream&) const;
-		void printSpectrum(ostream&, bool) const;
-		void printLabeledSpectrum(ostream&, bool) const;
+		void writeMetaData(std::ostream&) const;
+		void printSpectrum(std::ostream&, bool) const;
+		void printLabeledSpectrum(std::ostream&, bool) const;
 	};
 }
 

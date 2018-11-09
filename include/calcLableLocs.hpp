@@ -13,15 +13,11 @@
 #include <queue>
 #include <map>
 #include <iostream>
-#include "../include/geometry.hpp"
-
-using namespace std;
+#include <geometry.hpp>
 
 namespace labels{
-	
-	double const CENTER_VEC_DIV = 1;
-	double const LOCAL_VEC_DIV = 1;
-	
+
+	double const ARROW_THRESHOLD_DIV = 97.3528;
 	
 	class Labels;
 	struct OverlapNumComparison;
@@ -34,12 +30,15 @@ namespace labels{
 		typedef std::map<labType*, pointsListType> graphType;
 		typedef std::list<geometry::Rect> dataListType;
 		
-		Labels(double _xMin, double _xMax, double _yMin = 0, double _yMax = 100){
-			//Min = _xMin; xMax = _xMax; yMin = _yMin; yMax = _yMax;
+		Labels(double _xMin, double _xMax, double _yMin = 0, double _yMax = 100,
+			   double _nudgeThreshold = 1, double _nudgeAmt = 5){
+			xMin = _xMin; xMax = _xMax; yMin = _yMin; yMax = _yMax;
 			center = geometry::Point(((_xMin + _xMax)/2), ((_yMin + _yMax)/2));
 			maxIterations = 100;
-			centerVecDiv = CENTER_VEC_DIV;
-			localVecDiv = LOCAL_VEC_DIV;
+			nudgeThreshold = _nudgeThreshold;
+			nudgeAmt = _nudgeAmt;
+			arrowThresholdH = (xMax - xMin) / ARROW_THRESHOLD_DIV;
+			arrowThresholdV = (yMax - yMin) / ARROW_THRESHOLD_DIV;
 		}
 		~Labels(){}
 		
@@ -50,7 +49,6 @@ namespace labels{
 			labeledPoints.push_back(_new);
 		}
 		
-		
 		void spaceOutAlg1();
 		void spaceOutAlg2();
 		
@@ -58,11 +56,11 @@ namespace labels{
 		pointsListType labeledPoints;
 		dataListType dataPoints;
 		
-		//double xMin, xMax, yMin, yMax;
+		double xMin, xMax, yMin, yMax;
 		geometry::Point center;
 		size_t maxIterations;
-		double centerVecDiv;
-		double localVecDiv;
+		double nudgeThreshold, nudgeAmt;
+		double arrowThresholdH, arrowThresholdV;
 		
 		void countAllOverlapNum();
 		size_t getOverlapNum(const labType&) const;
@@ -72,6 +70,9 @@ namespace labels{
 		void getOverlap(labType*, pointsListType&) const;
 		geometry::Point getCenter(const pointsListType&) const;
 		void addVectorToList(geometry::Vector2D, pointsListType&) const;
+		void spaceOut(labType*, pointsListType&);
+		void addStaticLables();
+		void addArows();
 		
 		bool maxInList(const labType* const, const pointsListType&) const;
 		bool overlapsStaticDataPoints(const labType* const) const;

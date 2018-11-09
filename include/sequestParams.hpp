@@ -12,22 +12,19 @@
 #include <iostream>
 #include <map>
 #include <stdexcept>
-#include "../include/utils.hpp"
-#include "../include/aaDB.hpp"
-
-using namespace std;
+#include <utils.hpp>
+#include <aaDB.hpp>
 
 namespace seqpar{
-	
-	string const BAD_SMOD = "BAD";
-	string const DIFF_MOD_LINE = "diff_search_options";
+
+	std::string const DIFF_MOD_LINE = "diff_search_options";
 	
 	class SequestParamsFile;
 	
 	class SequestParamsFile{
 	private:
-		map<string, string> smodMap;
-		string fname;
+		std::map<std::string,std::string> smodMap;
+		std::string fname;
 		aaDB::aminoAcidsDBType aaMap;
 		
 		void initSmodMap();
@@ -37,17 +34,19 @@ namespace seqpar{
 			initSmodMap();
 			fname = "";
 		}
-		SequestParamsFile(string _fname){
+		SequestParamsFile(std::string _fname){
 			initSmodMap();
 			fname = _fname;
 		}
 		
-		bool read(string);
+		bool read(std::string);
 		bool read(){
 			return read(fname);
 		}
 		
-		aaDB::aminoAcidsDBType getAAMap() const;		
+		aaDB::aminoAcidsDBType getAAMap() const{
+			return aaMap;
+		}
 	};
 }
 

@@ -19,7 +19,12 @@
 	#define PATH_MAX 1024
 #endif
 
+#ifndef BIN_VERSION
+	#define BIN_VERSION 1.0
+#endif
+
 #include <iostream>
+#include <gitVersion.hpp>
 #include "../src/utils.cpp"
 #include "../src/params.cpp"
 #include "../src/peptide.cpp"
@@ -31,6 +36,5 @@
 #include "../src/calcLableLocs.cpp"
 #include "../src/dtafilter.cpp"
 #include "../src/sequestParams.cpp"
-
 
 #endif /* ms2_annotator_hpp */

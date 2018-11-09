@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/scanData.hpp"
+#include <scanData.hpp>
 
 void scanData::Scan::clear()
 {
@@ -17,22 +17,22 @@ void scanData::Scan::clear()
 	fullSequence.clear();
 }
 
-string scanData::Scan::makeSequenceFromFullSequence(string fs) const
+std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
 {
 	fs = fs.substr(fs.find(".") + 1);
 	fs = fs.substr(0, fs.find_last_of("."));
 	return fs;
 }
 
-scanData::Scan::Scan(string line)
+scanData::Scan::Scan(std::string line)
 {
-	vector<string> elems;
+	std::vector<std::string> elems;
 	utils::split(line, IN_DELIM, elems);
 	fullSequence = elems[12];
 	sequence = makeSequenceFromFullSequence(fullSequence);
 	xcorr = elems[2];
 	
-	string scanLine = elems[1];
+	std::string scanLine = elems[1];
 	utils::split(scanLine, '.', elems);
 	
 	parentFile = elems[0] + ".ms2";
@@ -40,9 +40,9 @@ scanData::Scan::Scan(string line)
 	charge = utils::toInt(elems[3]);
 }
 
-string scanData::Scan::getOfname() const
+std::string scanData::Scan::getOfname() const
 {
-	string ret;
+	std::string ret;
 	ret = utils::removeExtension(parentFile);
 	ret += ("_" + sequence + "_" + utils::toString(scanNum));
 	if(charge != 0)

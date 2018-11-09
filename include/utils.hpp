@@ -38,14 +38,12 @@
 
 namespace utils{
 	
-	using namespace std;
-	
 	/******************************/
 	/* namespace scoped constants */
 	/*****************************/
 	
-	string const WHITESPACE = " \f\n\r\t\v";
-	string const COMMENT_SYMBOL = "#";
+	std::string const WHITESPACE = " \f\n\r\t\v";
+	std::string const COMMENT_SYMBOL = "#";
 	enum newline_type {lf, crlf, cr, unknown};
 	char const DEFAULT_LINE_DELIM = '\n';
 	size_t const DEFAULT_BEGIN_LINE = 0;
@@ -64,16 +62,16 @@ namespace utils{
 		char* buffer;
 		char delim;
 		newline_type delimType;
-		string fname;
+		std::string fname;
 		size_t beginLine;
-		stringstream ss;
+		std::stringstream ss;
 		unsigned long slen;
 	public:
 		File(){
 			buffer = nullptr;
 			slen = 0;
 		}
-		File(string str){
+		File(std::string str){
 			buffer = nullptr;
 			fname = str;
 			slen = 0;
@@ -81,19 +79,19 @@ namespace utils{
 		~File(){}
 		
 		//modifers
-		bool read(string);
+		bool read(std::string);
 		bool read();
-		inline string getLine();
-		inline string getLine_skip();
-		inline string getLine_trim();
-		inline string getLine_skip_trim();
-		inline string getLine_trim_skip();
+		inline std::string getLine();
+		inline std::string getLine_skip();
+		inline std::string getLine_trim();
+		inline std::string getLine_skip_trim();
+		inline std::string getLine_trim_skip();
 		
 		//properties
 		inline bool end(){
 			return (ss.tellg() >= slen);
 		}
-		inline string getFname() const{
+		inline std::string getFname() const{
 			return fname;
 		}
 		inline char getDelim() const{
@@ -110,58 +108,58 @@ namespace utils{
 	
 	//file utils
 	char getDelim(newline_type);
-	string getDelimStr(newline_type);
-	newline_type detectLineEnding_killStream(ifstream&);
-	newline_type detectLineEnding(ifstream&);
+	std::string getDelimStr(newline_type);
+	newline_type detectLineEnding_killStream(std::ifstream&);
+	newline_type detectLineEnding(std::ifstream&);
 	bool dirExists(const char*);
-	bool dirExists(string);
+	bool dirExists(std::string);
 	bool fileExists(const char*);
-	bool fileExists(string);
-	string pwd();
-	string absPath(string);
-	string absPath(const char*);
-	bool ls(const char*, vector<string>&);
-	bool ls(const char*, vector<string>&, string);
-	bool mkdir(string);
+	bool fileExists(std::string);
+	std::string pwd();
+	std::string absPath(std::string);
+	std::string absPath(const char*);
+	bool ls(const char*, std::vector<std::string>&);
+	bool ls(const char*, std::vector<std::string>&,std::string);
+	bool mkdir(std::string);
 	bool mkdir(const char*);
-	void systemCommand(string command);
+	void systemCommand(std::string command);
 	template<class _Tp> _Tp baseName(const _Tp& path, const _Tp& delims = "/\\");
 	template<class _Tp> _Tp removeExtension(const _Tp&);
 	template<class _Tp> _Tp getExtension(const _Tp&);
 	
 	//type conversions
-	template <typename _Tp> inline string toString(_Tp);
-	inline int toInt(string);
-	inline double toDouble(string);
-	bool isInteger(string);
+	template <typename _Tp> inline std::string toString(_Tp);
+	inline int toInt(std::string);
+	inline double toDouble(std::string);
+	bool isInteger(std::string);
 	
-	//string utils
-	inline bool strContains(string, string);
-	inline bool strContains(char, string);
-	inline bool startsWith(string whithinStr, string findStr);
-	inline bool endsWith(string whithinStr, string findStr);
-	inline void split (const string&, const char, vector<string>&);
-	string trimTraling(const string&);
-	string trimLeading(const string&);
-	string trim(const string&);
-	void trimAll(vector<string>&);
-	bool isCommentLine(string);
-	inline string removeSubstr(string, string);
-	inline string removeChars(char, string);
-	string toLower(string);
-	string repeat(string, size_t);
-	inline void getLineTrim(istream& is, string& line,
+	//std::string utils
+	inline bool strContains(std::string, std::string);
+	inline bool strContains(char, std::string);
+	inline bool startsWith(std::string whithinStr, std::string findStr);
+	inline bool endsWith(std::string whithinStr, std::string findStr);
+	inline void split (const std::string&, const char, std::vector<std::string>&);
+	std::string trimTraling(const std::string&);
+	std::string trimLeading(const std::string&);
+	std::string trim(const std::string&);
+	void trimAll(std::vector<std::string>&);
+	bool isCommentLine(std::string);
+	inline std::string removeSubstr(std::string,std::string);
+	inline std::string removeChars(char,std::string);
+	std::string toLower(std::string);
+	std::string repeat(std::string, size_t);
+	inline void getLineTrim(std::istream& is,std::string& line,
 							char delim = DEFAULT_LINE_DELIM, size_t beginLine = DEFAULT_BEGIN_LINE);
-	inline void getLine(istream& is, string& line,
+	inline void getLine(std::istream& is,std::string& line,
 						char delim = DEFAULT_LINE_DELIM, size_t beginLine = DEFAULT_BEGIN_LINE);
-	inline void getLine(const char* buffer, string& line, char delim = DEFAULT_LINE_DELIM);
+	inline void getLine(const char* buffer,std::string& line, char delim = DEFAULT_LINE_DELIM);
 	size_t offset(const char* buf, size_t len, const char* str);
 	
 	
 	//other
 	bool isFlag(const char*);
 	bool isArg(const char*);
-	string ascTime();
+	std::string ascTime();
 	template <typename _Tp> int round(_Tp);
 	template <typename _Tp> _Tp numDigits(_Tp);
 	template <typename _Tp, size_t N> _Tp* begin(_Tp(&arr)[N]) {
@@ -170,7 +168,9 @@ namespace utils{
 	template <typename _Tp, size_t N> _Tp* end(_Tp(&arr)[N]) {
 		return &arr[0]+N;
 	}
-	template<typename _Tp> bool inRange(_Tp, _Tp, _Tp);
+	//template<typename _Tp> bool inRange(_Tp, _Tp, _Tp);
+	bool inRange(double, double, double);
+	int getInt(int min, int max);
 }
 
 #endif /* utils_hpp */

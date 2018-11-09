@@ -6,15 +6,15 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/aaDB.hpp"
+#include <aaDB.hpp>
 
-aaDB::AminoAcid::AminoAcid(string line)
+aaDB::AminoAcid::AminoAcid(std::string line)
 {
 	size_t endOfLine = line.find(";");
 	line = line.substr(0, endOfLine);
 	line = utils::trim(line);
 	
-	vector<string> elems;
+	std::vector<std::string> elems;
 	utils::split(line, '\t', elems);
 	
 	symbol = elems[0];
@@ -22,13 +22,13 @@ aaDB::AminoAcid::AminoAcid(string line)
 	modification = 0;
 }
 
-bool aaDB::AADB::readInAADB(string _aaDBLoc)
+bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
 {
 	utils::File file (_aaDBLoc);
 	if(!file.read())
 		return false;
 	
-	string line;
+	std::string line;
 	do{
 		line = file.getLine_skip_trim();
 		aaDB::AminoAcid temp(line);
@@ -40,13 +40,13 @@ bool aaDB::AADB::readInAADB(string _aaDBLoc)
 	return true;
 }
 
-bool aaDB::AADB::readInModDB(string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
+bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
 {
 	utils::File file(_modDBLoc);
 	if(!file.read())
 		return false;
 	
-	string line;
+	std::string line;
 	int i = 0;
 	
 	do{
@@ -72,12 +72,12 @@ void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showW
 {
 	for(aaDB::AADB::itType it = modsTemp.begin(); it != modsTemp.end(); ++it)
 	{
-		string tempSymbol = it->second.getSymbol();
+		std::string tempSymbol = it->second.getSymbol();
 		//check that item from modsTemp exists in aadb
 		if(aminoAcidsDB.find(tempSymbol) == aminoAcidsDB.end())
 		{
 			if(showWarnings)
-				cerr << "Could not find " << tempSymbol << " in aaDB!" << endl;
+				std::cerr << "Could not find " << tempSymbol << " in aaDB!" << std::endl;
 			continue;
 		} else {
 			aminoAcidsDB[tempSymbol] += it->second.getMass();
@@ -85,7 +85,7 @@ void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showW
 	}//end for
 }//end function
 
-bool aaDB::AADB::initalize(string aaDBLoc, string modDBLoc, bool showWarnings)
+bool aaDB::AADB::initalize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings)
 {
 	//read in files containing aa masses and modifications
 	aaDB::aminoAcidsDBType modsTemp;
@@ -98,7 +98,7 @@ bool aaDB::AADB::initalize(string aaDBLoc, string modDBLoc, bool showWarnings)
 	return true;
 }
 
-bool aaDB::AADB::initalize(string aaDBLoc, const aaDB::aminoAcidsDBType& mods, bool showWarnings)
+bool aaDB::AADB::initalize(std::string aaDBLoc, const aaDB::aminoAcidsDBType& mods, bool showWarnings)
 {
 	//read in files containing aa masses and modifications
 	if(!readInAADB(aaDBLoc))
@@ -111,7 +111,7 @@ bool aaDB::AADB::initalize(string aaDBLoc, const aaDB::aminoAcidsDBType& mods, b
 }
 
 
-double aaDB::AADB::getMW(string aa) const
+double aaDB::AADB::getMW(std::string aa) const
 {
 	aaDB::AADB::itType it = aminoAcidsDB.find(aa);
 	if(it == aminoAcidsDB.end())
@@ -121,10 +121,10 @@ double aaDB::AADB::getMW(string aa) const
 
 double aaDB::AADB::getMW(char aa) const
 {
-	return getMW(string(1, aa));
+	return getMW(std::string(1, aa));
 }
 
-double aaDB::AADB::calcMW(string sequence, bool addNTerm, bool addCTerm) const
+double aaDB::AADB::calcMW(std::string sequence, bool addNTerm, bool addCTerm) const
 {
 	double mass = 0;
 	size_t len = sequence.length();

@@ -17,19 +17,19 @@ namespace scanData{
 	
 	class Scan;
 	
-	typedef vector<Scan> scansType;
-	string const OF_EXT = ".spectrum";
+	typedef std::vector<Scan> scansType;
+	std::string const OF_EXT = ".spectrum";
 	
 	class Scan{
 	private:
-		string parentFile;
+		std::string parentFile;
 		size_t scanNum;
-		string sequence;
-		string fullSequence;
+		std::string sequence;
+		std::string fullSequence;
 		int charge;
-		string xcorr;
+		std::string xcorr;
 		
-		string makeSequenceFromFullSequence(string) const;	
+		std::string makeSequenceFromFullSequence(std::string) const;	
 	public:
 		Scan(){
 			parentFile = "";
@@ -37,47 +37,47 @@ namespace scanData{
 			sequence = "";
 			charge = 0;
 		}
-		Scan(string _sequence, size_t _scanNum, string _parentFile){
+		Scan(std::string _sequence, size_t _scanNum,std::string _parentFile){
 			sequence = _sequence;
 			fullSequence = _sequence;
 			scanNum = _scanNum;
 			parentFile = _parentFile;
 		}
 		
-		Scan (string);
+		Scan (std::string);
 		~Scan() {}
 		
 		void clear();
 		
-		void setSequence(string _seq){
+		void setSequence(std::string _seq){
 			sequence = _seq;
 		}
-		void setParentFile(string str){
+		void setParentFile(std::string str){
 			parentFile = str;
 		}
 		void setCharge(double _charge){
 			charge = _charge;
 		}
 		
-		string getParentFile() const{
+		std::string getParentFile() const{
 			return parentFile;
 		}
 		size_t getScanNum() const{
 			return scanNum;
 		}
-		string getSequence() const{
+		std::string getSequence() const{
 			return sequence;
 		}
-		string getFullSequence() const{
+		std::string getFullSequence() const{
 			return fullSequence;
 		}
 		int getCharge() const{
 			return charge;
 		}
-		string getXcorr() const{
+		std::string getXcorr() const{
 			return xcorr;
 		}
-		string getOfname() const;
+		std::string getOfname() const;
 	};
 }
 

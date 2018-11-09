@@ -6,9 +6,9 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/ms2.hpp"
+#include <ms2.hpp>
 
-bool ms2::Ms2File::read(string _fname)
+bool ms2::Ms2File::read(std::string _fname)
 {
 	fname = _fname;
 	return read();
@@ -17,14 +17,14 @@ bool ms2::Ms2File::read(string _fname)
 bool ms2::Ms2File::read()
 {
 	if(fname.empty())
-		throw runtime_error("File must be specified!");
-	ifstream inF(fname.c_str());
+		throw std::runtime_error("File must be specified!");
+	std::ifstream inF(fname.c_str());
 	if(!inF)
 		return false;
 	
 	delimType = utils::detectLineEnding(inF);
 	if(delimType == utils::unknown)
-		throw runtime_error("Invalid delimiter in file: " + fname + "!");
+		throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
 	delim = utils::getDelimStr(delimType);
 	if(delimType == utils::crlf)
 		beginLine = 1;
@@ -42,14 +42,14 @@ bool ms2::Ms2File::read()
 bool ms2::Ms2File::getMetaData()
 {
 	//find header in buffer and put it into ss
-	stringstream ss;
-	string line;
+	std::stringstream ss;
+	std::string line;
 	size_t end = utils::offset(buffer, size, "LastScan") + 100;
 	for(size_t i = 0; i < end; i++)
 		ss.put(*(buffer + i));
 	size_t sLen = ss.str().length();
 	
-	vector<string> elems;
+	std::vector<std::string> elems;
 	int mdCount = 0;
 	char _delim = utils::getDelim(delimType);
 	//iterate throuth ss to find metadata
@@ -63,9 +63,9 @@ bool ms2::Ms2File::getMetaData()
 			else if(elems[1] == "DataType")
 				dataType = elems[2];
 			else if(elems[1] == "FirstScan")
-				firstScan = elems[2];
+				firstScan = utils::toInt(elems[2]);
 			else if(elems[1] == "LastScan")
-				lastScan = elems[2];
+				lastScan = utils::toInt(elems[2]);
 			else continue;
 			mdCount++;
 		}
@@ -74,13 +74,13 @@ bool ms2::Ms2File::getMetaData()
 	//check that md is good
 	if(scanType == "MS2" &&
 	   dataType == "Centroid" &&
-	   utils::toInt(firstScan) <= utils::toInt(lastScan) &&
+	   firstScan <= lastScan &&
 	   mdCount == mdNum)
 		return true;
 	return false;
 }
 
-const char* ms2::Ms2File::makeOffsetQuery(string queryScan) const
+const char* ms2::Ms2File::makeOffsetQuery(std::string queryScan) const
 {
 	size_t qsInt = utils::toInt(queryScan);
 	return makeOffsetQuery(qsInt);
@@ -92,33 +92,42 @@ const char* ms2::Ms2File::makeOffsetQuery(size_t queryScan) const
 	size_t numDigitsQuery = utils::numDigits(queryScan);
 	int repeatNum = int(numDigitsFinal - numDigitsQuery);
 	
-	string ret = "S\t" +
+	std::string ret = "S\t" +
 		utils::repeat("0", repeatNum) + utils::toString(queryScan) +
 		"\t" + utils::repeat("0", repeatNum) + utils::toString(queryScan);
 	
 	return ret.c_str();
 }
 
-bool ms2::Ms2File::getScan(string queryScan, Spectrum& scan) const
+bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const
 {
 	return getScan(utils::toInt(queryScan), scan);
 }
 
 bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 {
+	if(!((queryScan >= firstScan) && (queryScan <= lastScan)))
+	{
+		std::cout << "queryScan not in file scan range!" << std::endl;
+		return false;
+	}
+	
 	scan.clear();
 	const char* query = makeOffsetQuery(queryScan);
 	size_t scanOffset = utils::offset(buffer, size, query);
 	if(scanOffset == size)
+	{
+		std::cout << "queryScan could not be found!" << std::endl;
 		return false;
+	}
 	
 	const char* _delim = delim.c_str();
 	char* _scan = strtok(strdup(buffer + scanOffset), _delim);
-	vector<string> elems;
+	std::vector<std::string> elems;
 	size_t numIons = 0;
 	
 	do{
-		string line = string(_scan);
+		std::string line = std::string(_scan);
 		utils::split(line, IN_DELIM, elems);
 		if(_scan[0] == 'S')
 		{
@@ -145,11 +154,11 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 			utils::split(line, IN_DELIM, elems);
 			scan.precursorCharge = utils::toInt(elems[1]);
 		}
-		else if(utils::isInteger(string(1, _scan[0]))){
+		else if(utils::isInteger(std::string(1, _scan[0]))){
 			
 			utils::split(line, ' ', elems);
 			assert(elems.size() == 2);
-			DataPoint tempIon (utils::toDouble(elems[0]), utils::toDouble(elems[1]));
+			ms2::DataPoint tempIon (utils::toDouble(elems[0]), utils::toDouble(elems[1]));
 			
 			if(numIons == 0)
 			{

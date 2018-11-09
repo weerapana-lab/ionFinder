@@ -6,9 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/ms2_annotator.hpp"
-
-using namespace std;
+#include <ms2_annotator.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +15,7 @@ int main(int argc, char* argv[])
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
-	cout << "ms2_annotator v1.0" << endl;
+	std::cout << "ms2_annotator v" << BIN_VERSION << std::endl;
 	
 	scanData::scansType scans;
 	//get scan numbers from DTAFilter file if suplied by user
@@ -26,11 +24,14 @@ int main(int argc, char* argv[])
 		dtafilter::DtaFilterFile filterFile(pars.inFile.getInfile());
 		if(!filterFile.read())
 		{
-			cout << "Failed to read DTAFilter file" << endl;
+			std::cout << "Failed to read DTAFilter file" << std::endl;
 			return -1;
 		}
 		if(!filterFile.getScan(pars.inFile.getSeq(), scans, pars.getForce()))
-			cout << "Scan not found" << endl;
+		{
+			std::cout << "Scan not found" << std::endl;
+			return -1;
+		}
 		
 		for(scanData::scansType::iterator it = scans.begin(); it != scans.end(); ++it)
 			it->setParentFile(pars.getWD() + it->getParentFile());
@@ -49,22 +50,28 @@ int main(int argc, char* argv[])
 		
 		ms2::Ms2File file(it->getParentFile());
 		if(!file.read())
-			cout << "Failed to read!" << endl;
+		{
+			std::cout << "Failed to read: " << it->getParentFile() << std::endl;
+			return -1;
+		}
 		
 		ms2::Spectrum spectrum;
 		if(!file.getScan(it->getScanNum(), spectrum))
-			cout << "scan not found" << endl;
+		{
+			std::cout << "scan not found!" << std::endl;
+			return -1;
+		}
 		else {
 			if(pars.getInputMode() == 0)
 				it->setCharge(spectrum.getPrecursorCharge());
-			spectrum.normalizeIonInts(100);
 			spectrum.labelSpectrum(pep, pars);
+			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
-			ofstream outF(it->getOfname().c_str());
+			std::ofstream outF(it->getOfname().c_str());
 			spectrum.printLabeledSpectrum(outF, true);
 			if(pars.getWDSpecified())
-				cout << "Spectrum file written to " << it->getOfname() << endl;
-			else cout << "Spectrum file written to ./" << utils::baseName(it->getOfname()) << endl;
+				std::cout << "Spectrum file written to " << it->getOfname() << std::endl;
+			else std::cout << "Spectrum file written to ./" << utils::baseName(it->getOfname()) << std::endl;
 		}
 	}
 	

@@ -6,9 +6,9 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include "../include/dtafilter.hpp"
+#include <dtafilter.hpp>
 
-bool dtafilter::DtaFilterFile::read(string _fname)
+bool dtafilter::DtaFilterFile::read(std::string _fname)
 {
 	fname = _fname;
 	return read();
@@ -17,14 +17,14 @@ bool dtafilter::DtaFilterFile::read(string _fname)
 bool dtafilter::DtaFilterFile::read()
 {
 	if(fname.empty())
-		throw runtime_error("File must be specified!");
-	ifstream inF(fname.c_str());
+		throw std::runtime_error("File must be specified!");
+	std::ifstream inF(fname.c_str());
 	if(!inF)
 		return false;
 	
 	delimType = utils::detectLineEnding(inF);
 	if(delimType == utils::unknown)
-		throw runtime_error("Invalid delimiter in file: " + fname + "!");
+		throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
 	delim = utils::getDelimStr(delimType);
 	if(delimType == utils::crlf)
 		beginLine = 1;
@@ -39,24 +39,50 @@ bool dtafilter::DtaFilterFile::read()
 	return true;
 }
 
-void dtafilter::DtaFilterFile::getScans(const string& _seq, scanData::scansType& _scans) const
+void dtafilter::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& _scans) const
 {
+	//std::cout << "getScans" << std::endl;
+	//int iterations = 0;
+	
 	_scans.clear();
 	const char* query = _seq.c_str();
-	char* instance;
-	instance = strstr(buffer, query);
+	size_t queryLen = strlen(query);
+	char* instance = buffer;
 	
-	while(instance != nullptr)
+	while(instance)
+	{
+		//std::cout << "it num " << iterations << std::endl;
+		//iterations++;
+		//std::cout << "pre inc" << std::endl;
+		//printf("%.*s\n", 100, instance);
+		if(strstr(instance, query) == NULL)
+		{
+			//std::cout << "breaking" << std::endl;
+			break;
+		}
+		instance = strstr(instance, query);
+		//std::cout << "post inc" << std::endl;
+		//printf("%.*s\n", 100, instance);
+		if(instance){
+			//std::cout << "push_back" << std::endl;
+			//std::cout << "offset is " << instance - buffer + 1 << std::endl;
+			_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
+			instance += queryLen;
+		}
+	}
+	
+	/*while(instance != nullptr)
 	{
 		_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
 		//_scans.back().setSequence(_seq);
+		std::cout << "getScans" << std::endl;
 		instance = strstr(instance + 1, query);
-	}
+	}*/
 }
 
-bool dtafilter::DtaFilterFile::getScan(const string& _seq, scanData::scansType& _scans, bool force) const
+bool dtafilter::DtaFilterFile::getScan(const std::string& _seq, scanData::scansType& _scans, bool force) const
 {
-	string outDelim = "\t";
+	std::string outDelim = "\t";
 	bool annotateAll = false;
 	int annotate = -1;
 	scanData::scansType scans;
@@ -64,52 +90,33 @@ bool dtafilter::DtaFilterFile::getScan(const string& _seq, scanData::scansType& 
 	getScans(_seq, scans);
 	if(scans.size() == 0)
 	{
-		cout << "Sequence: " << _seq << " not found in dtafilter file." << endl;
+		std::cout << "Sequence: " << _seq << " not found in dtafilter file." <<std::endl;
 		return false;
 	}
-	
+	if(scans.size() == 1){
+		annotate = 0;
+	}
 	if(scans.size() > 1 && !force)
 	{
-		cout << "Multiple matches found. Choose which scan you would like to annotate." << endl;
-		cout << endl << "Match_number" << outDelim << "Parent_file" << utils::repeat(outDelim, 2) << "Scan"
-		<< outDelim << "Xcorr" << outDelim << "Sequence" << outDelim << "Charge" << endl;
+		std::cout << "Multiple matches found. Choose which scan you would like to annotate." << std::endl;
+		std::cout << std::endl << "Match_number" << outDelim << "Parent_file" << utils::repeat(outDelim, 2) << "Scan"
+		<< outDelim << "Xcorr" << outDelim << "Sequence" << utils::repeat(outDelim, 2) << "Charge" << std::endl;
 		
 		size_t i = 0;
 		size_t len = scans.size();
 		for(; i < len; i++)
-			cout << i << ")" << outDelim << scans[i].getParentFile()
+		{
+			std::cout << i << ")" << outDelim << scans[i].getParentFile()
 			<< outDelim << scans[i].getScanNum()
 			<< outDelim << scans[i].getXcorr()
 			<< outDelim << scans[i].getFullSequence()
-			<< utils::repeat(outDelim, 2) << scans[i].getCharge() << outDelim << endl;
-		cout << i << ")" << outDelim << "Annotate all." << endl << "Enter choice: ";
+			<< utils::repeat(outDelim, 2) << scans[i].getCharge() << outDelim <<std::endl;
+		}
+		std::cout << i << ")" << outDelim << "Annotate all." << std::endl << "Enter choice: ";
 		
-		string choice;
-		bool good;
-		do{
-			choice.clear();
-			cin.sync();
-			std::getline(std::cin, choice);
-			choice = utils::trim(choice);
-			if(utils::isInteger(choice))
-			{
-				annotate = utils::toInt(choice);
-				if(annotate >= 0 && annotate <= scans.size())
-				{
-					if(annotate == scans.size())
-						annotateAll = true;
-					good = true;
-				}
-				else{
-					good = false;
-					cout << "Invalid choice!" << endl << "Enter choice: ";
-				}
-			}
-			else{
-				good = false;
-				cout << "Invalid choice!" << endl << "Enter choice: ";
-			}
-		} while(!good);
+		annotate = utils::getInt(0, int(scans.size()));
+		if(annotate == scans.size())
+			annotateAll = true;
 	}
 	
 	if(!annotateAll)
@@ -119,7 +126,7 @@ bool dtafilter::DtaFilterFile::getScan(const string& _seq, scanData::scansType& 
 	return true;
 }
 
-bool dtafilter::DtaFilterFile::getFirstScan(const string& _seq, scanData::Scan& _scan) const
+bool dtafilter::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::Scan& _scan) const
 {
 	_scan.clear();
 	
@@ -128,29 +135,31 @@ bool dtafilter::DtaFilterFile::getFirstScan(const string& _seq, scanData::Scan& 
 	size_t offset = utils::offset(buffer, size, query);
 	if(offset == size)
 	{
-		cerr << "Sequence: " << _seq << " not found in dtafilter file." << endl;
+		std::cerr << "Sequence: " << _seq << " not found in dtafilter file." <<std::endl;
 		return false;
 	}
 	
 	//initalize _scan
-	string line = getScanLine(offset);
+	std::string line = getScanLine(offset);
 	_scan = scanData::Scan(line);
 	//_scan.setSequence(_seq);
 	
 	return true;
 }
 
-string dtafilter::DtaFilterFile::getScanLine(size_t offset) const
+std::string dtafilter::DtaFilterFile::getScanLine(size_t offset) const
 {
+	//std::cout << "getScanLine" << std::endl;
 	size_t lineBegin = getBeginLine(offset);
 	size_t lineEnd = getEndLine(offset);
-	string line(buffer + lineBegin, (lineEnd - lineBegin));
+	std::string line(buffer + lineBegin, (lineEnd - lineBegin));
 	line = utils::trim(line);
 	return line;
 }
 
 size_t dtafilter::DtaFilterFile::getBeginLine(size_t offset) const
 {
+	//std::cout << "begin" << std::endl;
 	char _delim = delim[0];
 	while(*(buffer + offset) != _delim)
 	{
@@ -163,6 +172,7 @@ size_t dtafilter::DtaFilterFile::getBeginLine(size_t offset) const
 
 size_t dtafilter::DtaFilterFile::getEndLine(size_t offset) const
 {
+	//std::cout << "end" << std::endl;
 	char _delim = delim[0];
 	while(*(buffer + offset) != _delim)
 	{
@@ -172,6 +182,4 @@ size_t dtafilter::DtaFilterFile::getEndLine(size_t offset) const
 	}
 	return offset;
 }
-
-
 

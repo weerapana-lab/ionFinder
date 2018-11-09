@@ -15,9 +15,9 @@
 #include <cstring>
 #include <cassert>
 #include <list>
-#include "../include/utils.hpp"
-#include "../include/peptide.hpp"
-#include "../include/ms2Spectrum.hpp"
+#include <utils.hpp>
+#include <peptide.hpp>
+#include <ms2Spectrum.hpp>
 
 namespace ms2 {
 	
@@ -30,19 +30,19 @@ namespace ms2 {
 		//file buffer vars
 		char* buffer;
 		unsigned long size;
-		string delim;
+		std::string delim;
 		utils::newline_type delimType;
 		int beginLine;
 		
 		//metadata
-		string fname;
-		string firstScan, lastScan;
-		string dataType;
-		string scanType;
+		std::string fname;
+		size_t firstScan, lastScan;
+		std::string dataType;
+		std::string scanType;
 		static int mdNum;
 		
 		bool getMetaData();
-		const char* makeOffsetQuery(string) const;
+		const char* makeOffsetQuery(std::string) const;
 		const char* makeOffsetQuery(size_t) const;
 		
 	public:
@@ -50,7 +50,7 @@ namespace ms2 {
 			size = 0;
 			fname = "";
 		}
-		Ms2File(string _fname){
+		Ms2File(std::string _fname){
 			fname = _fname;
 			size = 0;
 		}
@@ -59,11 +59,11 @@ namespace ms2 {
 		}
 		
 		//modifers
-		bool read(string);
+		bool read(std::string);
 		bool read();
 		
 		//properties
-		bool getScan(string, Spectrum&) const;
+		bool getScan(std::string, Spectrum&) const;
 		bool getScan(size_t, Spectrum&) const;
 	};
 	

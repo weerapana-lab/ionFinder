@@ -11,24 +11,22 @@
 
 #include <iostream>
 #include <map>
-#include "../include/utils.hpp"
-
-using namespace std;
+#include <utils.hpp>
 
 namespace aaDB{
 	
-	string const SMOD_END_TAG = "</staticModifications>";
-	string const SMOD_BEGIN_TAG = "<staticModifications>";
+	std::string const SMOD_END_TAG = "</staticModifications>";
+	std::string const SMOD_BEGIN_TAG = "<staticModifications>";
 	int const MAX_PARAM_ITERATIONS = 1000;
 	
 	class AminoAcid;
 	class AADB;
 	
-	typedef map<string, AminoAcid> aminoAcidsDBType;
+	typedef std::map<std::string, AminoAcid> aminoAcidsDBType;
 	
 	class AminoAcid{
 	private:
-		string symbol;
+		std::string symbol;
 		double mass;
 		double modification;
 	
@@ -36,8 +34,8 @@ namespace aaDB{
 		AminoAcid(){
 			symbol = ""; mass = 0; modification = 0;
 		}
-		AminoAcid(string);
-		AminoAcid(string _symbol, double _mass, double _modification = 0){
+		AminoAcid(std::string);
+		AminoAcid(std::string _symbol, double _mass, double _modification = 0){
 			symbol = _symbol;
 			mass = _mass;
 			modification = _modification;
@@ -58,7 +56,7 @@ namespace aaDB{
 		}
 		
 		//properties
-		string getSymbol() const{
+		std::string getSymbol() const{
 			return symbol;
 		}
 		double getMass() const{
@@ -73,8 +71,8 @@ namespace aaDB{
 		aminoAcidsDBType aminoAcidsDB;
 		
 		//modifers
-		bool readInAADB(string);
-		bool readInModDB(string, aminoAcidsDBType&);
+		bool readInAADB(std::string);
+		bool readInModDB(std::string, aminoAcidsDBType&);
 		void addStaticMod(const aminoAcidsDBType&, bool);
 		
 	public:
@@ -83,12 +81,12 @@ namespace aaDB{
 		~AADB(){}
 		
 		//modifers
-		bool initalize(string aaDBLoc, string modDBLoc, bool showWarnings = true);
-		bool initalize(string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
+		bool initalize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings = true);
+		bool initalize(std::string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
 		
 		//properties
-		double calcMW(string sequence, bool addNTerm = true, bool addCTerm = true) const;
-		double getMW(string) const;
+		double calcMW(std::string sequence, bool addNTerm = true, bool addCTerm = true) const;
+		double getMW(std::string) const;
 		double getMW(char) const;
 	};//end of class
 	
