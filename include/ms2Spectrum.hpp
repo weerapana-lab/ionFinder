@@ -16,6 +16,8 @@
 #include <cassert>
 #include <list>
 #include <algorithm>
+#include <string>
+
 #include <utils.hpp>
 #include <peptide.hpp>
 #include <geometry.hpp>
@@ -235,14 +237,20 @@ namespace ms2{
 		
 		//modifers
 		void clear();
-		template<typename _Tp> void normalizeIonInts(_Tp den);
+		template<typename _Tp> void normalizeIonInts(_Tp _den){
+			double den = getMaxIntensity() / _den;
+			for(ionVecType::iterator it = ions.begin(); it != ions.end(); ++it)
+				it->normalizeIntensity(den);
+			
+			updateDynamicMetadata();
+		}
 		double getMaxIntensity() const{
 			return maxInt;
 		}
 		double getPrecursorCharge() const{
 			return precursorCharge;
 		}
-		void labelSpectrum(const peptide::Peptide& peptide,
+		void labelSpectrum(const PeptideNamespace::Peptide& peptide,
 						   const params::Params& pars,
 						   size_t labelTop = LABEL_TOP);
 		void calcLabelPos(double maxPerc,

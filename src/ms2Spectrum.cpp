@@ -125,16 +125,6 @@ void ms2::Spectrum::updateDynamicMetadata()
 	mzRange = maxMZ - minMZ;
 }
 
-template<typename _Tp>
-void ms2::Spectrum::normalizeIonInts(_Tp _den)
-{
-	double den = getMaxIntensity() / _den;
-	for(ionVecType::iterator it = ions.begin(); it != ions.end(); ++it)
-		it->normalizeIntensity(den);
-	
-	updateDynamicMetadata();
-}
-
 void ms2::Spectrum::setLabelTop(size_t labelTop)
 {
 	typedef std::list<ms2::DataPoint*> listType;
@@ -211,7 +201,7 @@ void ms2::Spectrum::removeIntensityBelow(double minInt)
 	updateDynamicMetadata();
 }
 
-void ms2::Spectrum::labelSpectrum(const peptide::Peptide& peptide,
+void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
 								  const params::Params& pars, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
@@ -301,8 +291,8 @@ void ms2::Spectrum::makePoints(labels::Labels& labs, double maxPerc,
 		{
 			if(!it->getLabeledIon())
 			{
-				it->setFormatedLabel(utils::toString(it->getMZ()));
-				it->setLabel(utils::toString(it->getMZ()));
+				it->setFormatedLabel(std::to_string(it->getMZ()));
+				it->setLabel(std::to_string(it->getMZ()));
 				it->label.setIncludeLabel(true);
 				it->label.labelLoc = geometry::Rect(it->getMZ() + offset_x,
 													it->getIntensity() + offset_y, x_padding, y_padding);

@@ -23,9 +23,16 @@
 	#define BIN_VERSION 1.0
 #endif
 
+#ifndef OUT_DELIM
+#define OUT_DELIM '\t'
+#endif
+
+#ifndef IN_DELIM
+#define IN_DELIM '\t'
+#endif
+
 #include <iostream>
-#include <gitVersion.hpp>
-#include "../src/utils.cpp"
+/*#include "../src/utils.cpp"
 #include "../src/params.cpp"
 #include "../src/peptide.cpp"
 #include "../src/aaDB.cpp"
@@ -35,6 +42,6 @@
 #include "../src/geometry.cpp"
 #include "../src/calcLableLocs.cpp"
 #include "../src/dtafilter.cpp"
-#include "../src/sequestParams.cpp"
+#include "../src/sequestParams.cpp"*/
 
 #endif /* ms2_annotator_hpp */

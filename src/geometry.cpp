@@ -8,11 +8,11 @@
 
 #include <geometry.hpp>
 
-inline bool geometry::valueInRange(double value, double min, double max){
+bool geometry::valueInRange(double value, double min, double max){
 	return (value >= min) && (value <= max);
 }
 
-inline double geometry::dist(const geometry::Point& p1, const geometry::Point& p2){
+double geometry::dist(const geometry::Point& p1, const geometry::Point& p2){
 	return sqrt(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2));
 }
 

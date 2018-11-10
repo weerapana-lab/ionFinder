@@ -9,3 +9,5 @@ ms2_anotator.Rproj
 ms2_anotator.xcodeproj
 rplots/*
 rscripts/lib/*
+helpFile.pdf
+obj/*

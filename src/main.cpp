@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include <ms2_annotator.hpp>
+#include <main.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 	for(scanData::scansType::iterator it = scans.begin(); it != scans.end(); ++it)
 	{
 		//initalize peptide with user suplied sequence
-		peptide::Peptide pep(it->getSequence());
+		PeptideNamespace::Peptide pep(it->getSequence());
 		pep.initalize(pars);
 		
 		ms2::Ms2File file(it->getParentFile());

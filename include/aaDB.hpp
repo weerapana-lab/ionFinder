@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <map>
+#include <string>
+
 #include <utils.hpp>
 
 namespace aaDB{

@@ -68,7 +68,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			inFile.scan = utils::toInt(argv[i]);
+			inFile.scan = std::stoi(argv[i]);
 			inputMode = 0;
 			scanSpecified = true;
 			continue;
@@ -109,7 +109,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			matchTolerance = utils::toDouble(argv[i]);
+			matchTolerance = std::stod(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-minC"))
@@ -119,7 +119,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			minFragCharge = utils::toInt(argv[i]);
+			minFragCharge = std::stoi(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-maxC"))
@@ -129,7 +129,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			maxFragCharge = utils::toInt(argv[i]);
+			maxFragCharge = std::stoi(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-minMZ"))
@@ -139,7 +139,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			minMZ = utils::toDouble(argv[i]);
+			minMZ = std::stod(argv[i]);
 			minMzSpecified = true;
 			continue;
 		}
@@ -150,7 +150,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			maxMZ = utils::toDouble(argv[i]);
+			maxMZ = std::stod(argv[i]);
 			maxMzSpecified = true;
 			continue;
 		}
@@ -161,7 +161,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			minLabelIntensity = utils::toInt(argv[i]);
+			minLabelIntensity = std::stoi(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-minInt"))
@@ -171,7 +171,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			minIntensity = utils::toDouble(argv[i]);
+			minIntensity = std::stod(argv[i]);
 			minIntensitySpecified = true;
 			continue;
 		}
@@ -187,14 +187,14 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				std::cerr << argv[i] << params::PARAM_ERROR_MESSAGE << "incAllIons" << std::endl;
 				return false;
 			}
-			includeAllIons = utils::toInt(argv[i]);
+			includeAllIons = std::stoi(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
 		{
 			std::cout << "annotate_ms2 " << BIN_VERSION << std::endl;
-			std::cout << "Last git commit: " << GIT_DATE << std::endl;
-			std::cout << "git revision: " << GIT_COMMIT << std::endl;
+			//std::cout << "Last git commit: " << GIT_DATE << std::endl;
+			//std::cout << "git revision: " << GIT_COMMIT << std::endl;
 			return false;
 		}
 		else{

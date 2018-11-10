@@ -10,7 +10,10 @@
 #define params_hpp
 
 #include <iostream>
+#include <string>
+
 #include <utils.hpp>
+#include <ms2_annotator.hpp>
 
 namespace params{
 	

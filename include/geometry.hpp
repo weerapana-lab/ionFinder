@@ -21,8 +21,8 @@ namespace geometry{
 	
 	std::string const NA_STR = "NA";
 	
-	inline bool valueInRange(double, double, double);
-	inline double dist(const Point&, const Point&);
+	bool valueInRange(double, double, double);
+	double dist(const Point&, const Point&);
 	
 	class Point{
 		friend double dist(const Point&, const Point&);

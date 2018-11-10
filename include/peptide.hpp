@@ -14,16 +14,14 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
+#include <string>
 
 #include <utils.hpp>
 #include <aaDB.hpp>
 #include <params.hpp>
 #include <sequestParams.hpp>
 
-namespace peptide{
-	
-	//namsepace scoped constants
-	const char* DIFFMODS = "*";
+namespace PeptideNamespace{
 	
 	//foward class declarations
 	class Species;
@@ -71,7 +69,7 @@ namespace peptide{
 		
 		//modifers
 		void initializeFromMZ(double _mz, int _charge){
-			mass = peptide::calcMass(_mz, _charge);
+			mass = calcMass(_mz, _charge);
 			charge = _charge;
 		}
 		void initalizeFromMass(double _mass, int _charge = 1){
@@ -80,7 +78,7 @@ namespace peptide{
 		}
 		
 		double getMZ(int _charge) const{
-			return peptide::calcMZ(mass, _charge);
+			return calcMZ(mass, _charge);
 		}
 		double getMZ() const{
 			return getMZ(charge);
@@ -163,7 +161,7 @@ namespace peptide{
 		aaDB::AADB aminoAcidMasses;
 		FragmentIonType fragments;
 		
-		void fixDiffMod();
+		void fixDiffMod(const char* diffmods = "*");
 	
 	public:
 		//constructors

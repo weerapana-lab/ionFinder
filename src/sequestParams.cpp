@@ -59,7 +59,7 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 				std::string modMass = elems[1];
 				std::string aa = smodMap[elems[0]];
 				modMass = utils::trim(modMass.substr(0, modMass.find(";")));
-				aaMap[aa] = aaDB::AminoAcid(aa, 0, utils::toDouble(modMass));
+				aaMap[aa] = aaDB::AminoAcid(aa, 0, std::stod(modMass));
 			}
 			else if(elems[0] == DIFF_MOD_LINE) //if line is diffmod line
 			{
@@ -74,7 +74,7 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 					std::cerr << "Multiple diffmods detected. Use smod file with multiple diffmods." << std::endl;
 					return false;
 				}
-				aaMap["*"] = aaDB::AminoAcid("*", 0, utils::toDouble(elems[0]));
+				aaMap["*"] = aaDB::AminoAcid("*", 0, std::stod(elems[0]));
 			}
 		}
 	}

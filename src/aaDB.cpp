@@ -18,7 +18,7 @@ aaDB::AminoAcid::AminoAcid(std::string line)
 	utils::split(line, '\t', elems);
 	
 	symbol = elems[0];
-	mass = utils::toDouble(elems[1]);
+	mass = std::stod(elems[1]);
 	modification = 0;
 }
 

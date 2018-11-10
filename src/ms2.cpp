@@ -8,6 +8,8 @@
 
 #include <ms2.hpp>
 
+int ms2::Ms2File::mdNum = 4;
+
 bool ms2::Ms2File::read(std::string _fname)
 {
 	fname = _fname;
@@ -63,9 +65,9 @@ bool ms2::Ms2File::getMetaData()
 			else if(elems[1] == "DataType")
 				dataType = elems[2];
 			else if(elems[1] == "FirstScan")
-				firstScan = utils::toInt(elems[2]);
+				firstScan = std::stoi(elems[2]);
 			else if(elems[1] == "LastScan")
-				lastScan = utils::toInt(elems[2]);
+				lastScan = std::stoi(elems[2]);
 			else continue;
 			mdCount++;
 		}
@@ -82,7 +84,7 @@ bool ms2::Ms2File::getMetaData()
 
 const char* ms2::Ms2File::makeOffsetQuery(std::string queryScan) const
 {
-	size_t qsInt = utils::toInt(queryScan);
+	size_t qsInt = std::stoi(queryScan);
 	return makeOffsetQuery(qsInt);
 }
 
@@ -93,15 +95,15 @@ const char* ms2::Ms2File::makeOffsetQuery(size_t queryScan) const
 	int repeatNum = int(numDigitsFinal - numDigitsQuery);
 	
 	std::string ret = "S\t" +
-		utils::repeat("0", repeatNum) + utils::toString(queryScan) +
-		"\t" + utils::repeat("0", repeatNum) + utils::toString(queryScan);
+		utils::repeat("0", repeatNum) + std::to_string(queryScan) +
+		"\t" + utils::repeat("0", repeatNum) + std::to_string(queryScan);
 	
 	return ret.c_str();
 }
 
 bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const
 {
-	return getScan(utils::toInt(queryScan), scan);
+	return getScan(std::stoi(queryScan), scan);
 }
 
 bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
@@ -133,32 +135,32 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		{
 			assert(elems.size() == 4);
 			utils::split(line, IN_DELIM, elems);
-			scan.scanNumber = utils::toInt(elems[2]);
-			scan.precursorMZ = utils::toDouble(elems[3]);
+			scan.scanNumber = std::stoi(elems[2]);
+			scan.precursorMZ = std::stod(elems[3]);
 		}
 		else if(_scan[0] == 'I')
 		{
 			assert(elems.size() == 3);
 			utils::split(line, IN_DELIM, elems);
 			if(elems[1] == "RetTime")
-				scan.retTime = utils::toDouble(elems[2]);
+				scan.retTime = std::stod(elems[2]);
 			else if(elems[1] == "PrecursorInt")
-				scan.precursorInt = utils::toDouble(elems[2]);
+				scan.precursorInt = std::stod(elems[2]);
 			else if(elems[1] == "PrecursorFile")
 				scan.precursorFile = utils::removeExtension(elems[2]);
 			else if(elems[1] == "PrecursorScan")
-				scan.precursorScan = utils::toInt(elems[2]);
+				scan.precursorScan = std::stoi(elems[2]);
 		}
 		else if(_scan[0] == 'Z'){
 			assert(elems.size() == 3);
 			utils::split(line, IN_DELIM, elems);
-			scan.precursorCharge = utils::toInt(elems[1]);
+			scan.precursorCharge = std::stoi(elems[1]);
 		}
 		else if(utils::isInteger(std::string(1, _scan[0]))){
 			
 			utils::split(line, ' ', elems);
 			assert(elems.size() == 2);
-			ms2::DataPoint tempIon (utils::toDouble(elems[0]), utils::toDouble(elems[1]));
+			ms2::DataPoint tempIon (std::stod(elems[0]), std::stod(elems[1]));
 			
 			if(numIons == 0)
 			{

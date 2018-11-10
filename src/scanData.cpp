@@ -36,17 +36,17 @@ scanData::Scan::Scan(std::string line)
 	utils::split(scanLine, '.', elems);
 	
 	parentFile = elems[0] + ".ms2";
-	scanNum = utils::toInt(elems[1]);
-	charge = utils::toInt(elems[3]);
+	scanNum = std::stoi(elems[1]);
+	charge = std::stoi(elems[3]);
 }
 
 std::string scanData::Scan::getOfname() const
 {
 	std::string ret;
 	ret = utils::removeExtension(parentFile);
-	ret += ("_" + sequence + "_" + utils::toString(scanNum));
+	ret += ("_" + sequence + "_" + std::to_string(scanNum));
 	if(charge != 0)
-		ret += ("_" + utils::toString(charge));
+		ret += ("_" + std::to_string(charge));
 	ret += OF_EXT;
 	
 	return ret;

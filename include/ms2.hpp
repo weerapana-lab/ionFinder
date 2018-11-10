@@ -15,6 +15,8 @@
 #include <cstring>
 #include <cassert>
 #include <list>
+#include <string>
+
 #include <utils.hpp>
 #include <peptide.hpp>
 #include <ms2Spectrum.hpp>
@@ -66,9 +68,7 @@ namespace ms2 {
 		bool getScan(std::string, Spectrum&) const;
 		bool getScan(size_t, Spectrum&) const;
 	};
-	
-	int Ms2File::mdNum = 4;
-	
+		
 }//end of namespace
 
 #endif /* ms2_hpp */
