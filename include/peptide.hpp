@@ -125,7 +125,7 @@ namespace PeptideNamespace{
 	private:
 		char b_y;
 		size_t num;
-		size_t mz_int;
+		//size_t mz_int;
 		std::string mod;
 		
 	public:
@@ -134,16 +134,16 @@ namespace PeptideNamespace{
 			num = _num;
 			mod = _mod;
 			initalizeFromMass(_mass, _charge);
-			mz_int = utils::round(getMZ());
+			//mz_int = utils::round(getMZ());
 		}
 		~FragmentIon() {}
 		
 		//properties
 		std::string getIonStr() const;
 		std::string getFormatedLabel() const;
-		size_t getMZ_int() const{
-			return mz_int;
-		}
+		//size_t getMZ_int() const{
+		//	return mz_int;
+		//}
 		char getBY() const{
 			return b_y;
 		}
@@ -192,9 +192,9 @@ namespace PeptideNamespace{
 		size_t getNumFragments() const{
 			return fragments.size();
 		}
-		size_t getFragmentMZ_int(size_t i) const{
-			return fragments[i].getMZ_int();
-		}
+		//size_t getFragmentMZ_int(size_t i) const{
+		//	return fragments[i].getMZ_int();
+		//}
 		double getFragmentMZ(size_t i) const{
 			return fragments[i].getMZ(fragments[i].getCharge());
 		}
