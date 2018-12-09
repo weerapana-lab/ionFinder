@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include <params.hpp>
+#include <ms2_annotator/params.hpp>
 
 bool params::Params::getArgs(int argc, const char* const argv [])
 {

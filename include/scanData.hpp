@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <string>
 
-#include <params.hpp>
+#include <ms2_annotator/params.hpp>
 
 namespace scanData{
 	

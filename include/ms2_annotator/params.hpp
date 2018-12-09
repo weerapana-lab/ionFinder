@@ -13,7 +13,7 @@
 #include <string>
 
 #include <utils.hpp>
-#include <ms2_annotator.hpp>
+#include <ms2_annotator/ms2_annotator.hpp>
 
 namespace params{
 	

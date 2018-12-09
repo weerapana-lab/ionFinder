@@ -10,7 +10,7 @@
 #define main_hpp
 
 #include <utils.hpp>
-#include <params.hpp>
+#include <ms2_annotator/params.hpp>
 #include <peptide.hpp>
 #include <aaDB.hpp>
 #include <scanData.hpp>

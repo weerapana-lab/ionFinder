@@ -18,7 +18,7 @@
 
 #include <utils.hpp>
 #include <aaDB.hpp>
-#include <params.hpp>
+#include <ms2_annotator/params.hpp>
 #include <sequestParams.hpp>
 
 namespace PeptideNamespace{

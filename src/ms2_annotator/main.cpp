@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include <main.hpp>
+#include <ms2_annotator/main.hpp>
 
 int main(int argc, char* argv[])
 {

@@ -2,89 +2,16 @@
 <Workspace
    version = "1.0">
    <Group
-      location = "group:../include"
-      name = "include">
+      location = "group:/Users/Aaron/local/ms2_anotator/src/ms2_annotator/citFinder"
+      name = "citFinder">
       <FileRef
-         location = "group:calcLableLocs.hpp">
+         location = "group:../../../include/citFinder/main.hpp">
       </FileRef>
       <FileRef
-         location = "group:gitVersion.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:ms2.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:main.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:params.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:ms2Spectrum.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:ms2_annotator.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:dtafilter.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:peptide.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:scanData.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:geometry.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:utils.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:aaDB.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:sequestParams.hpp">
-      </FileRef>
-   </Group>
-   <Group
-      location = "group:../src"
-      name = "src">
-      <FileRef
-         location = "group:scanData.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:utils.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:geometry.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:aaDB.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:sequestParams.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:dtafilter.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:peptide.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:ms2Spectrum.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:calcLableLocs.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:ms2.cpp">
+         location = "group:citFinder.hpp">
       </FileRef>
       <FileRef
          location = "group:main.cpp">
-      </FileRef>
-      <FileRef
-         location = "group:params.cpp">
       </FileRef>
    </Group>
    <FileRef
