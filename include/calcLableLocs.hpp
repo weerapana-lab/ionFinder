@@ -70,7 +70,7 @@ namespace labels{
 		void getOverlap(labType*, pointsListType&) const;
 		geometry::Point getCenter(const pointsListType&) const;
 		void addVectorToList(geometry::Vector2D, pointsListType&) const;
-		void spaceOut(labType*, pointsListType&);
+		//void spaceOut(labType*, pointsListType&);
 		void addStaticLables();
 		void addArows();
 		

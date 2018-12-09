@@ -119,10 +119,7 @@ bool labels::Labels::overlapsStaticDataPoints(const labels::Labels::labType* con
 	return false;
 }
 
-void labels::Labels::spaceOut(labels::Labels::labType* lab, labels::Labels::pointsListType& overlapList)
-{
-	
-}
+//void labels::Labels::spaceOut(labels::Labels::labType* lab, labels::Labels::pointsListType& overlapList){}
 
 void labels::Labels::addStaticLables()
 {

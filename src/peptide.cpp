@@ -52,6 +52,10 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 {
 	fragments.clear();
 	
+	double nTerm = aminoAcidMasses.getMW("N_term");
+	double cTerm = aminoAcidMasses.getMW("C_term");
+	double hMass = aminoAcidMasses.getMW("H_mass");
+	
 	size_t len = aminoAcids.size();
 	for(int i = 0; i < len; i++)
 	{
@@ -69,14 +73,19 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 			//maybe some other time
 			
 			fragments.push_back(FragmentIon('b', i + 1, j,
-				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end),
+				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end) + nTerm,
 				aminoAcids[i].makeModLable()));
 			fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
-				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) +
-				aminoAcidMasses.getMW("N_term") + aminoAcidMasses.getMW("C_term"),
+				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass * 2 + cTerm,
 				aminoAcids[i].makeModLable()));
 		}
 	}
+	/*for(auto it = fragments.begin(); it != fragments.end(); ++it)
+	{
+		std::cout << it->getFormatedLabel() << '\t' << it->getMass() << '\t';
+		++it;
+		std::cout << it->getFormatedLabel() << '\t' << it->getMass() << '\n';
+	}*/
 }
 
 void PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)
