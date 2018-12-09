@@ -32,16 +32,5 @@
 #endif
 
 #include <iostream>
-/*#include "../src/utils.cpp"
-#include "../src/params.cpp"
-#include "../src/peptide.cpp"
-#include "../src/aaDB.cpp"
-#include "../src/scanData.cpp"
-#include "../src/ms2.cpp"
-#include "../src/ms2Spectrum.cpp"
-#include "../src/geometry.cpp"
-#include "../src/calcLableLocs.cpp"
-#include "../src/dtafilter.cpp"
-#include "../src/sequestParams.cpp"*/
 
 #endif /* ms2_annotator_hpp */
