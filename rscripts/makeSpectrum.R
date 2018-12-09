@@ -10,7 +10,8 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
 {
   dat <- specDat$spectrum
   dat$label <- as.character(dat$label)
-  dat$ionType <- as.character(dat$ionType)
+  #dat$ionType <- as.character(dat$ionType)
+  dat$ionType <- factor(x = dat$ionType, levels = c('blank', 'b', 'y'))
   dat$formatedLabel <- as.character(dat$formatedLabel)
   
   SEQ_STAR <- makeSeqVec(specDat$metaData$fullSequence, !simpleSequence)
