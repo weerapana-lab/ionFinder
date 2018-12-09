@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9398C29A1E80B0C500B0AE23"
-               BuildableName = "ms2_anotator"
-               BlueprintName = "ms2_anotator"
-               ReferencedContainer = "container:ms2_anotator.xcodeproj">
+               BlueprintIdentifier = "93A61C9521BDD98600364A03"
+               BuildableName = "ms2_annotator"
+               BlueprintName = "ms2_annotator"
+               ReferencedContainer = "container:ms2_annotator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9398C29A1E80B0C500B0AE23"
-            BuildableName = "ms2_anotator"
-            BlueprintName = "ms2_anotator"
-            ReferencedContainer = "container:ms2_anotator.xcodeproj">
+            BlueprintIdentifier = "93A61C9521BDD98600364A03"
+            BuildableName = "ms2_annotator"
+            BlueprintName = "ms2_annotator"
+            ReferencedContainer = "container:ms2_annotator.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -55,46 +55,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9398C29A1E80B0C500B0AE23"
-            BuildableName = "ms2_anotator"
-            BlueprintName = "ms2_anotator"
-            ReferencedContainer = "container:ms2_anotator.xcodeproj">
+            BlueprintIdentifier = "93A61C9521BDD98600364A03"
+            BuildableName = "ms2_annotator"
+            BlueprintName = "ms2_annotator"
+            ReferencedContainer = "container:ms2_annotator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-sp /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy/sequest.params"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-d /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-dta /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy/DTASelect-filter.txt"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-p K.ALAVSDLNR.A"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-d /Users/Aaron/local/ms2_anotator/testFiles"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-p V.CLLNNFYPR.E"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-dta /Users/Aaron/local/ms2_anotator/testFiles/DTASelect-filter.txt"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-sp /Users/Aaron/local/ms2_anotator/testFiles/sequest.params"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -108,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9398C29A1E80B0C500B0AE23"
-            BuildableName = "ms2_anotator"
-            BlueprintName = "ms2_anotator"
-            ReferencedContainer = "container:ms2_anotator.xcodeproj">
+            BlueprintIdentifier = "93A61C9521BDD98600364A03"
+            BuildableName = "ms2_annotator"
+            BlueprintName = "ms2_annotator"
+            ReferencedContainer = "container:ms2_annotator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
