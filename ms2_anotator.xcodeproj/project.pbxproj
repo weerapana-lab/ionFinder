@@ -186,7 +186,7 @@
 				93A61CD821BDE0E500364A03 /* main.cpp */,
 			);
 			name = citFinder;
-			path = /Users/Aaron/local/ms2_anotator/src/ms2_annotator/citFinder;
+			path = /Users/Aaron/local/ms2_anotator/src/citFinder;
 			sourceTree = "<absolute>";
 		};
 /* End PBXGroup section */
