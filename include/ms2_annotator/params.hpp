@@ -16,7 +16,7 @@
 #include <utils.hpp>
 #include <ms2_annotator/ms2_annotator.hpp>
 
-namespace params{
+namespace ms2_annotator{
 	
 	//program file locations
 	std::string const PROG_HELP_FILE = base::PROG_DB + "/helpFile.man";
@@ -66,7 +66,7 @@ namespace params{
 		std::string sequestParams;
 		std::string ofname;*/
 		
-		//bool seqSpecified;
+		bool seqSpecified;
 		//bool dtaSpecified, seqParSpecified;
 		bool ms2Specified, scanSpecified;
 		bool minMzSpecified;
@@ -109,7 +109,7 @@ namespace params{
 			minIntensitySpecified = false;
 			includeAllIons = true;
 			
-			//seqSpecified = false;
+			seqSpecified = false;
 			dtaSpecified = false;
 			seqParSpecified = false;
 			smodSpecified = false;

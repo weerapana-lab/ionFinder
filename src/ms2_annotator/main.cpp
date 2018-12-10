@@ -11,7 +11,7 @@
 int main(int argc, char* argv[])
 {
 	//get args
-	params::Params pars;
+	ms2_annotator::Params pars;
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
