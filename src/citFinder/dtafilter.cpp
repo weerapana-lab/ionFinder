@@ -13,6 +13,7 @@ void citFinder::Scan::operator = (const citFinder::Scan& rhs)
 	_parentProtein = rhs._parentProtein;
 	_parentID = rhs._parentID;
 	_matchDirection = rhs._matchDirection;
+	_sampleName = rhs._sampleName;
 	parentFile = rhs.parentFile;
 	scanNum = rhs.scanNum;
 	sequence = rhs.sequence;
@@ -51,6 +52,7 @@ bool citFinder::Scan::parse_matchDir_ID_Protein(std::string str)
 }
 
 bool citFinder::readFilterFile(std::string fname,
+							   std::string sampleName,
 							   std::vector<citFinder::Scan>& scans,
 							   bool skipReverse)
 {
@@ -85,6 +87,7 @@ bool citFinder::readFilterFile(std::string fname,
 				
 				Scan baseScan;
 				baseScan.parse_matchDir_ID_Protein(elems[0]);
+				baseScan._sampleName = sampleName;
 				
 				while(!inF.eof())
 				{
@@ -117,7 +120,7 @@ bool citFinder::readFilterFiles(const citFinder::Params& params,
 	auto endIt = params.getFilterFiles().end();
 	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
 	{
-		if(!citFinder::readFilterFile(it->second, scans, !params.getIncludeReverse()))
+		if(!citFinder::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
 			return false;
 	}
 	

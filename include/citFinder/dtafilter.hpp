@@ -21,14 +21,15 @@ namespace citFinder{
 	
 	std::string const REVERSE_MATCH = "reverse_";
 	
-	bool readFilterFile(std::string fname,
+	bool readFilterFile(std::string fname, std::string sampleName,
 						std::vector<citFinder::Scan>& scans,
 						bool skipReverse = true);
 	bool readFilterFiles(const citFinder::Params&,
 						 std::vector<citFinder::Scan>&);
 	
 	class Scan : public scanData::Scan{
-		friend bool readFilterFile(std::string, std::vector<citFinder::Scan>&, bool);
+		friend bool readFilterFile(std::string, std::string,
+								   std::vector<citFinder::Scan>&, bool);
 	public:
 		enum class MatchDirection{FORWARD, REVERSE};
 		
@@ -36,6 +37,7 @@ namespace citFinder{
 		std::string _parentProtein;
 		std::string _parentID;
 		MatchDirection _matchDirection;
+		std::string _sampleName;
 		
 		MatchDirection strToMatchDirection(std::string) const;
 		bool parse_matchDir_ID_Protein(std::string);
