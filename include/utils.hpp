@@ -132,6 +132,7 @@ namespace utils{
 	bool mkdir(const char*);
 	void systemCommand(std::string command);
 	std::string baseName(std::string path, const std::string& delims = "/\\");
+	std::string dirName(std::string path, const std::string& delims = "/\\");
 	std::string removeExtension(const std::string&);
 	std::string getExtension(const std::string&);
 		

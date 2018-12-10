@@ -6,7 +6,7 @@
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include <dtafilter.hpp>
+#include <ms2_annotator/dtafilter.hpp>
 
 bool dtafilter::DtaFilterFile::read(std::string _fname)
 {

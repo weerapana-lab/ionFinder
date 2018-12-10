@@ -288,6 +288,11 @@ std::string utils::baseName(std::string path, const std::string& delims)
 	return path.substr(path.find_last_of(delims) + 1);
 }
 
+std::string utils::dirName(std::string path, const std::string& delims)
+{
+	return path.substr(0, path.find_last_of(delims));
+}
+
 std::string utils::removeExtension(const std::string& filename)
 {
 	typename std::string::size_type const p(filename.find_last_of('.'));

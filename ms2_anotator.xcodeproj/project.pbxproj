@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9342A87921BDFA1F00657FA7 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5B21BB325600364A03 /* utils.cpp */; };
+		9342A87C21BE116A00657FA7 /* dtafilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9342A87A21BE116900657FA7 /* dtafilter.cpp */; };
 		93A61C7521BB325600364A03 /* scanData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5A21BB325600364A03 /* scanData.cpp */; };
 		93A61C7621BB325600364A03 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5B21BB325600364A03 /* utils.cpp */; };
 		93A61C7721BB325600364A03 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5C21BB325600364A03 /* geometry.cpp */; };
@@ -47,6 +48,8 @@
 
 /* Begin PBXFileReference section */
 		9342A87821BDE64A00657FA7 /* paramsBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = paramsBase.hpp; path = include/paramsBase.hpp; sourceTree = SOURCE_ROOT; };
+		9342A87A21BE116900657FA7 /* dtafilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dtafilter.cpp; sourceTree = "<group>"; };
+		9342A87B21BE116A00657FA7 /* dtafilter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dtafilter.hpp; sourceTree = "<group>"; };
 		9398C29B1E80B0C500B0AE23 /* ms2_anotator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ms2_anotator; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A61C5A21BB325600364A03 /* scanData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scanData.cpp; sourceTree = "<group>"; };
 		93A61C5B21BB325600364A03 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
@@ -128,7 +131,6 @@
 				93A61C5C21BB325600364A03 /* geometry.cpp */,
 				93A61C5D21BB325600364A03 /* aaDB.cpp */,
 				93A61C5E21BB325600364A03 /* sequestParams.cpp */,
-				93A61C5F21BB325600364A03 /* dtafilter.cpp */,
 				93A61C6021BB325600364A03 /* peptide.cpp */,
 				93A61C6121BB325600364A03 /* ms2Spectrum.cpp */,
 				93A61C6221BB325600364A03 /* calcLableLocs.cpp */,
@@ -147,7 +149,6 @@
 				93A61CC821BDDFA700364A03 /* citFinder */,
 				93A61CCA21BDDFA700364A03 /* ms2_annotator */,
 				93A61C6C21BB325600364A03 /* ms2Spectrum.hpp */,
-				93A61C6E21BB325600364A03 /* dtafilter.hpp */,
 				93A61C6F21BB325600364A03 /* peptide.hpp */,
 				93A61C7021BB325600364A03 /* scanData.hpp */,
 				93A61C7121BB325600364A03 /* geometry.hpp */,
@@ -163,6 +164,7 @@
 			children = (
 				93A61CC921BDDFA700364A03 /* citFinder.hpp */,
 				93A61CDD21BDE3F100364A03 /* params.hpp */,
+				9342A87B21BE116A00657FA7 /* dtafilter.hpp */,
 				93A61CDB21BDE1A900364A03 /* main.hpp */,
 			);
 			path = citFinder;
@@ -171,6 +173,7 @@
 		93A61CCA21BDDFA700364A03 /* ms2_annotator */ = {
 			isa = PBXGroup;
 			children = (
+				93A61C6E21BB325600364A03 /* dtafilter.hpp */,
 				93A61CCB21BDDFA700364A03 /* main.hpp */,
 				93A61CCC21BDDFA700364A03 /* params.hpp */,
 				93A61CCD21BDDFA700364A03 /* ms2_annotator.hpp */,
@@ -183,6 +186,7 @@
 			children = (
 				93A61CCF21BDE07700364A03 /* main.cpp */,
 				93A61CD021BDE07700364A03 /* params.cpp */,
+				93A61C5F21BB325600364A03 /* dtafilter.cpp */,
 			);
 			path = ms2_annotator;
 			sourceTree = "<group>";
@@ -191,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				93A61CD821BDE0E500364A03 /* main.cpp */,
+				9342A87A21BE116900657FA7 /* dtafilter.cpp */,
 				93A61CDC21BDE3F100364A03 /* params.cpp */,
 			);
 			name = citFinder;
@@ -296,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9342A87921BDFA1F00657FA7 /* utils.cpp in Sources */,
+				9342A87C21BE116A00657FA7 /* dtafilter.cpp in Sources */,
 				93A61CDE21BDE3F100364A03 /* params.cpp in Sources */,
 				93A61CDA21BDE0EF00364A03 /* main.cpp in Sources */,
 			);

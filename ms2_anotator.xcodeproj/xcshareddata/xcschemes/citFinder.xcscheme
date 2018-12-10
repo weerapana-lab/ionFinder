@@ -64,15 +64,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-d /Users/Aaron/local/ms2_anotator/testFiles/rorpad_hr"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/Aaron/local/ms2_anotator/testFiles"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i 1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

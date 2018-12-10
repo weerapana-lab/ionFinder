@@ -16,6 +16,7 @@ int main(int argc, const char** argv)
 	
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
+		
 	
 	return 0;
 }
