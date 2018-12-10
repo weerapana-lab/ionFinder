@@ -62,6 +62,21 @@ bool citFinder::Params::getArgs(int argc, const char* const argv[])
 			_inputMode = intToInputModes(atoi(argv[i]));
 			continue;
 		}
+		if(!strcmp(argv[i], "-rev"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+			{
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "includeReverse" << std::endl;
+				return false;
+			}
+			_includeReverse = std::stoi(argv[i]);
+			continue;
+		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
 		{
 			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;

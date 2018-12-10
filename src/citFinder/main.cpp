@@ -17,7 +17,7 @@ int main(int argc, const char** argv)
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
 	std::vector<citFinder::Scan> scans;
-	if(!citFinder::readFilterFiles(pars.getFilterFiles(), scans))
+	if(!citFinder::readFilterFiles(pars, scans))
 	{
 		std::cerr << "Failed!" << NEW_LINE;
 		return -1;

@@ -51,7 +51,8 @@ bool citFinder::Scan::parse_matchDir_ID_Protein(std::string str)
 }
 
 bool citFinder::readFilterFile(std::string fname,
-							   std::vector<citFinder::Scan>& scans)
+							   std::vector<citFinder::Scan>& scans,
+							   bool skipReverse)
 {
 	std::ifstream inF(fname);
 	if(!inF) return false;
@@ -97,7 +98,9 @@ bool citFinder::readFilterFile(std::string fname,
 					
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
-					scans.push_back(newScan);
+					if(skipReverse && newScan._matchDirection == citFinder::Scan::MatchDirection::REVERSE)
+						continue;
+					else scans.push_back(newScan);
 					
 				}//end of while
 				getNewLine = false;
@@ -108,12 +111,12 @@ bool citFinder::readFilterFile(std::string fname,
 	return true;
 }
 
-bool citFinder::readFilterFiles(const citFinder::Params::FilterFilesType& fileMap,
+bool citFinder::readFilterFiles(const citFinder::Params& params,
 								std::vector<citFinder::Scan>& scans)
 {
-	for(auto it = fileMap.begin(); it != fileMap.end(); ++it)
+	for(auto it = params.getFilterFiles().begin(); it != params.getFilterFiles().end(); ++it)
 	{
-		if(!citFinder::readFilterFile(it->second, scans))
+		if(!citFinder::readFilterFile(it->second, scans, !params.getIncludeReverse()))
 			return false;
 	}
 	

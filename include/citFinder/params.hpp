@@ -37,6 +37,8 @@ namespace citFinder{
 		inputModes _inputMode;
 		FilterFilesType _filterFiles;
 		
+		bool _includeReverse;
+		
 		inputModes intToInputModes(int) const;
 		bool getFlist();
 		
@@ -45,6 +47,7 @@ namespace citFinder{
 		Params() : ParamsBase(PROG_USAGE_FNAME, PROG_HELP_FILE){
 			_parentDir = "";
 			_inputMode = inputModes::SINGLE;
+			_includeReverse = false;
 		}
 		
 		//modifers
@@ -53,6 +56,9 @@ namespace citFinder{
 		//properties
 		const FilterFilesType& getFilterFiles() const{
 			return _filterFiles;
+		}
+		bool getIncludeReverse() const{
+			return _includeReverse;
 		}
 	};
 }
