@@ -8,7 +8,7 @@
 
 #include <citFinder/params.hpp>
 
-citFinder::Params::inputModes citFinder::Params::intToInputModes(int val) const
+CitFinder::Params::inputModes CitFinder::Params::intToInputModes(int val) const
 {
 	switch(val){
 		case 0 : return inputModes::SINGLE;
@@ -19,7 +19,7 @@ citFinder::Params::inputModes citFinder::Params::intToInputModes(int val) const
 	}
 }
 
-bool citFinder::Params::getArgs(int argc, const char* const argv[])
+bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 {
 	_wd = utils::pwd();
 	assert(utils::dirExists(_wd));
@@ -100,7 +100,7 @@ bool citFinder::Params::getArgs(int argc, const char* const argv[])
 	return true;
 }//end of getArgs
 
-bool citFinder::Params::getFlist()
+bool CitFinder::Params::getFlist()
 {
 	if(_inputMode == inputModes::SINGLE)
 	{

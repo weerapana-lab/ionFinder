@@ -10,32 +10,40 @@
 
 int main(int argc, const char** argv)
 {
-	citFinder::Params pars;
+	CitFinder::Params pars;
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
 	//read filter files
-	std::vector<citFinder::Scan> scans;
-	if(!citFinder::readFilterFiles(pars, scans))
+	std::vector<CitFinder::Scan> scans;
+	if(!CitFinder::readFilterFiles(pars, scans))
 	{
 		std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
 		return -1;
 	}
 	
 	//calculate fragments
+	ms2::Ms2File ms2File;
+	std::string curFname;
 	for(auto it = scans.begin(); it != scans.end(); ++it)
 	{
 		PeptideNamespace::Peptide pep(it->getSequence());
 		pep.initalize(pars);
 		
-		ms2::Ms2File file(it->getParentFile());
-		if(!file.read())
+		//read ms2 file if it hasn't been done yet
+		if(curFname != it->getParentFile())
 		{
-			std::cout << "Failed to read: " << it->getParentFile() << NEW_LINE;
-			return -1;
-		}
+			curFname = it->getParentFile();
+			if(!ms2File.read(curFname))
+			{
+				std::cout << "Failed to read: " << it->getParentFile() << NEW_LINE;
+				return -1;
+			}
+		}//end if
+		
+		
 	}
 	
 	//annotate spectra

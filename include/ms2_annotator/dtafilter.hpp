@@ -16,7 +16,7 @@
 #include <utils.hpp>
 #include <scanData.hpp>
 
-namespace dtafilter{
+namespace Ms2_annotator{
 
 	class DtaFilterFile;
 	

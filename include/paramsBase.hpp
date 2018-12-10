@@ -49,9 +49,8 @@ namespace base{
 		bool includeAllIons;
 		std::string multipleMatchCompare;
 		
-		//bool seqSpecified;
-		bool dtaSpecified, seqParSpecified;
 		bool smodSpecified;
+		bool seqParSpecified;
 		bool minMzSpecified;
 		bool maxMzSpecified;
 		bool minIntensitySpecified;
@@ -106,6 +105,7 @@ namespace base{
 			matchTolerance = 0.25;
 			minLabelIntensity = 0;
 			
+			seqParSpecified = false;
 			minMZ = 0;
 			maxMZ = 0;
 			minMzSpecified = false;
@@ -131,12 +131,6 @@ namespace base{
 		
 		bool getWDSpecified() const{
 			return wdSpecified;
-		}
-		bool getSeqParSpecified() const{
-			return seqParSpecified;
-		}
-		std::string getSeqParFname() const{
-			return sequestParams;
 		}
 		int getMinFragCharge() const{
 			return minFragCharge;
@@ -176,6 +170,12 @@ namespace base{
 		}
 		std::string getMultipleMatchCompare() const{
 			return multipleMatchCompare;
+		}
+		bool getSeqParSpecified() const{
+			return seqParSpecified;
+		}
+		std::string getSeqParFname() const{
+			return sequestParams;
 		}
 	};
 	

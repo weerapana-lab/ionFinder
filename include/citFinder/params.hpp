@@ -18,7 +18,7 @@
 #include <paramsBase.hpp>
 #include <utils.hpp>
 
-namespace citFinder{
+namespace CitFinder{
 	
 	//program file locations
 	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/citFinder/usage.txt";

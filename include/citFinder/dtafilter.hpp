@@ -16,20 +16,20 @@
 #include <scanData.hpp>
 #include <utils.hpp>
 
-namespace citFinder{
+namespace CitFinder{
 	class Scan;
 	
 	std::string const REVERSE_MATCH = "reverse_";
 	
 	bool readFilterFile(std::string fname, std::string sampleName,
-						std::vector<citFinder::Scan>& scans,
+						std::vector<CitFinder::Scan>& scans,
 						bool skipReverse = true);
-	bool readFilterFiles(const citFinder::Params&,
-						 std::vector<citFinder::Scan>&);
+	bool readFilterFiles(const CitFinder::Params&,
+						 std::vector<CitFinder::Scan>&);
 	
 	class Scan : public scanData::Scan{
 		friend bool readFilterFile(std::string, std::string,
-								   std::vector<citFinder::Scan>&, bool);
+								   std::vector<CitFinder::Scan>&, bool);
 	public:
 		enum class MatchDirection{FORWARD, REVERSE};
 		

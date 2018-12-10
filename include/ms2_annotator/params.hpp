@@ -16,7 +16,7 @@
 #include <utils.hpp>
 #include <ms2_annotator/ms2_annotator.hpp>
 
-namespace ms2_annotator{
+namespace Ms2_annotator{
 	
 	//program file locations
 	std::string const PROG_HELP_FILE = base::PROG_DB + "/helpFile.man";
@@ -58,6 +58,7 @@ namespace ms2_annotator{
 		
 		bool seqSpecified;
 		bool ms2Specified, scanSpecified;
+		bool dtaSpecified;
 		
 		//program paramaters
 		
@@ -75,7 +76,6 @@ namespace ms2_annotator{
 			
 			seqSpecified = false;
 			dtaSpecified = false;
-			seqParSpecified = false;
 			smodSpecified = false;
 			scanSpecified = false;
 			ms2Specified = false;

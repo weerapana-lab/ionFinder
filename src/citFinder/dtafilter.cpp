@@ -8,7 +8,7 @@
 
 #include <citFinder/dtafilter.hpp>
 
-void citFinder::Scan::operator = (const citFinder::Scan& rhs)
+void CitFinder::Scan::operator = (const CitFinder::Scan& rhs)
 {
 	_parentProtein = rhs._parentProtein;
 	_parentID = rhs._parentID;
@@ -22,14 +22,14 @@ void citFinder::Scan::operator = (const citFinder::Scan& rhs)
 	xcorr = rhs.xcorr;
 }
 
-citFinder::Scan::MatchDirection citFinder::Scan::strToMatchDirection(std::string str) const
+CitFinder::Scan::MatchDirection CitFinder::Scan::strToMatchDirection(std::string str) const
 {
 	if(utils::strContains(REVERSE_MATCH, utils::toLower(str)))
 		return MatchDirection::REVERSE;
 	return MatchDirection::FORWARD;
 }
 
-bool citFinder::Scan::parse_matchDir_ID_Protein(std::string str)
+bool CitFinder::Scan::parse_matchDir_ID_Protein(std::string str)
 {
 	std::vector<std::string> elems;
 	utils::split(str, '|', elems);
@@ -51,9 +51,9 @@ bool citFinder::Scan::parse_matchDir_ID_Protein(std::string str)
 	return true;
 }
 
-bool citFinder::readFilterFile(std::string fname,
+bool CitFinder::readFilterFile(std::string fname,
 							   std::string sampleName,
-							   std::vector<citFinder::Scan>& scans,
+							   std::vector<CitFinder::Scan>& scans,
 							   bool skipReverse)
 {
 	std::ifstream inF(fname);
@@ -101,7 +101,7 @@ bool citFinder::readFilterFile(std::string fname,
 					
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
-					if(skipReverse && newScan._matchDirection == citFinder::Scan::MatchDirection::REVERSE)
+					if(skipReverse && newScan._matchDirection == CitFinder::Scan::MatchDirection::REVERSE)
 						continue;
 					else scans.push_back(newScan);
 					
@@ -114,13 +114,13 @@ bool citFinder::readFilterFile(std::string fname,
 	return true;
 }
 
-bool citFinder::readFilterFiles(const citFinder::Params& params,
-								std::vector<citFinder::Scan>& scans)
+bool CitFinder::readFilterFiles(const CitFinder::Params& params,
+								std::vector<CitFinder::Scan>& scans)
 {
 	auto endIt = params.getFilterFiles().end();
 	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
 	{
-		if(!citFinder::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
+		if(!CitFinder::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
 			return false;
 	}
 	

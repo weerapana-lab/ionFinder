@@ -138,6 +138,8 @@ double PeptideNamespace::Peptide::calcMass()
 void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _calcFragments)
 {
 	initalized = true;
+	
+	//TODO migrate all this shit to another function
 	if(pars.getSeqParSpecified())
 	{
 		seqpar::SequestParamsFile spFile(pars.getSeqParFname());
@@ -160,6 +162,8 @@ void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _ca
 				throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
 		}
 	}
+	//
+	
 	calcMass();
 	fixDiffMod();
 	if(_calcFragments)

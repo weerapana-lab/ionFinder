@@ -8,13 +8,13 @@
 
 #include <ms2_annotator/dtafilter.hpp>
 
-bool dtafilter::DtaFilterFile::read(std::string _fname)
+bool Ms2_annotator::DtaFilterFile::read(std::string _fname)
 {
 	fname = _fname;
 	return read();
 }
 
-bool dtafilter::DtaFilterFile::read()
+bool Ms2_annotator::DtaFilterFile::read()
 {
 	if(fname.empty())
 		throw std::runtime_error("File must be specified!");
@@ -39,7 +39,7 @@ bool dtafilter::DtaFilterFile::read()
 	return true;
 }
 
-void dtafilter::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& _scans) const
+void Ms2_annotator::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& _scans) const
 {
 	//std::cout << "getScans" << NEW_LINE;
 	//int iterations = 0;
@@ -80,7 +80,7 @@ void dtafilter::DtaFilterFile::getScans(const std::string& _seq, scanData::scans
 	}*/
 }
 
-bool dtafilter::DtaFilterFile::getScan(const std::string& _seq, scanData::scansType& _scans, bool force) const
+bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq, scanData::scansType& _scans, bool force) const
 {
 	std::string outDelim = "\t";
 	bool annotateAll = false;
@@ -126,7 +126,7 @@ bool dtafilter::DtaFilterFile::getScan(const std::string& _seq, scanData::scansT
 	return true;
 }
 
-bool dtafilter::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::Scan& _scan) const
+bool Ms2_annotator::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::Scan& _scan) const
 {
 	_scan.clear();
 	
@@ -147,7 +147,7 @@ bool dtafilter::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::S
 	return true;
 }
 
-std::string dtafilter::DtaFilterFile::getScanLine(size_t offset) const
+std::string Ms2_annotator::DtaFilterFile::getScanLine(size_t offset) const
 {
 	//std::cout << "getScanLine" << NEW_LINE;
 	size_t lineBegin = getBeginLine(offset);
@@ -157,7 +157,7 @@ std::string dtafilter::DtaFilterFile::getScanLine(size_t offset) const
 	return line;
 }
 
-size_t dtafilter::DtaFilterFile::getBeginLine(size_t offset) const
+size_t Ms2_annotator::DtaFilterFile::getBeginLine(size_t offset) const
 {
 	//std::cout << "begin" << NEW_LINE;
 	char _delim = delim[0];
@@ -170,7 +170,7 @@ size_t dtafilter::DtaFilterFile::getBeginLine(size_t offset) const
 	return offset;
 }
 
-size_t dtafilter::DtaFilterFile::getEndLine(size_t offset) const
+size_t Ms2_annotator::DtaFilterFile::getEndLine(size_t offset) const
 {
 	//std::cout << "end" << NEW_LINE;
 	char _delim = delim[0];

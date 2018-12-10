@@ -8,7 +8,7 @@
 
 #include <ms2_annotator/params.hpp>
 
-bool ms2_annotator::Params::getArgs(int argc, const char* const argv [])
+bool Ms2_annotator::Params::getArgs(int argc, const char* const argv [])
 {
 	//get wd
 	_wd = utils::pwd();
@@ -212,7 +212,7 @@ bool ms2_annotator::Params::getArgs(int argc, const char* const argv [])
 	return checkParams();
 }
 
-bool ms2_annotator::Params::checkParams() const
+bool Ms2_annotator::Params::checkParams() const
 {
 	if(!seqSpecified)
 	{

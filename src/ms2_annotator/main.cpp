@@ -11,7 +11,7 @@
 int main(int argc, char* argv[])
 {
 	//get args
-	ms2_annotator::Params pars;
+	Ms2_annotator::Params pars;
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	//get scan numbers from DTAFilter file if suplied by user
 	if(pars.getInputMode() == 1)
 	{
-		dtafilter::DtaFilterFile filterFile(pars.inFile.getInfile());
+		Ms2_annotator::DtaFilterFile filterFile(pars.inFile.getInfile());
 		if(!filterFile.read())
 		{
 			std::cout << "Failed to read DTAFilter file" << NEW_LINE;
