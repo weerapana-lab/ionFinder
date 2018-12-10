@@ -135,6 +135,8 @@ namespace utils{
 	std::string dirName(std::string path, const std::string& delims = "/\\");
 	std::string removeExtension(const std::string&);
 	std::string getExtension(const std::string&);
+	std::istream& safeGetline(std::istream& is, std::string& t);
+	std::istream& safeGetline(std::istream& is, std::string& t, std::streampos& oldPos);
 		
 	//std::string utils
 	bool strContains(std::string, std::string);

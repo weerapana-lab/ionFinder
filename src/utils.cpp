@@ -305,6 +305,45 @@ std::string utils::getExtension(const std::string& filename)
 	return p > 0 && p != std::string::npos ? filename.substr(p) : filename;
 }
 
+std::istream& utils::safeGetline(std::istream& is, std::string& s, std::streampos& oldPos){
+	oldPos = is.tellg();
+	return utils::safeGetline(is, s);
+}
+
+std::istream& utils::safeGetline(std::istream& is, std::string& t)
+{
+	t.clear();
+	
+	// The characters in the stream are read one-by-one using a std::streambuf.
+	// That is faster than reading them one-by-one using the std::istream.
+	// Code that uses streambuf this way must be guarded by a sentry object.
+	// The sentry object performs various tasks,
+	// such as thread synchronization and updating the stream state.
+	
+	std::istream::sentry se(is, true);
+	std::streambuf* sb = is.rdbuf();
+	
+	while(true){
+		int c = sb->sbumpc();
+		switch (c) {
+			case '\n':
+				return is;
+			case '\r':
+				if(sb->sgetc() == '\n')
+					sb->sbumpc();
+				return is;
+				//case std::streambuf::traits_type::eof():
+			case -1:
+				// Also handle the case when the last line has no line ending
+				if(t.empty())
+					is.setstate(std::ios::eofbit);
+				return is;
+			default:
+				t += (char)c;
+		}
+	}
+}
+
 /*****************/
 /* std::string utils */
 /*****************/
