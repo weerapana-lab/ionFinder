@@ -10,6 +10,11 @@
 
 int main(int argc, const char** argv)
 {
+	citFinder::Params pars;
+	if(!pars.getArgs(argc, argv))
+		return -1;
+	
+	std::cout << "citFinder v" << BIN_VERSION << std::endl;
 	
 	
 	return 0;

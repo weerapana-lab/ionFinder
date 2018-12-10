@@ -84,10 +84,6 @@ namespace params{
 		bool includeAllIons;
 		std::string multipleMatchCompare;
 		
-		
-		void displayHelp() const{
-			utils::systemCommand("man " + PROG_HELP_FILE);
-		}
 		//void usage() const;
 		bool checkParams() const;
 		//bool writeSmod(std::string) const;
@@ -95,7 +91,7 @@ namespace params{
 	public:
 		InFile inFile;
 		
-		Params() : ParamsBase(PROG_USAGE_FNAME) {
+		Params() : ParamsBase(PROG_USAGE_FNAME, PROG_HELP_FILE) {
 			//wd = "";
 			//smodFile = PROG_DEFAULT_SMOD_FILE;
 			//aaMassFile = PROG_AA_MASS_LOCATION;

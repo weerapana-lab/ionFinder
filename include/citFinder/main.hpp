@@ -10,5 +10,6 @@
 
 #include <citFinder/citFinder.hpp>
 
+#include <citFinder/params.hpp>
 
 #endif /* main_h */

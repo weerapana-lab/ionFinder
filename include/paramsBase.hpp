@@ -33,6 +33,7 @@ namespace base{
 		std::string _aaMassFile;
 		std::string _smodFile;
 		std::string _usageFile;
+		std::string _helpFile;
 		bool wdSpecified;
 		std::string sequestParams;
 		std::string ofname;
@@ -73,13 +74,18 @@ namespace base{
 				std::cerr << file.getLine() << std::endl;
 		}
 		
+		void displayHelp() const{
+			utils::systemCommand("man " + _helpFile);
+		}
+		
 	public:
-		ParamsBase(std::string usageFile){
+		ParamsBase(std::string usageFile, std::string helpFile){
 			//file locations
 			_wd = "";
 			_smodFile = PROG_DEFAULT_SMOD_FILE;
 			_aaMassFile = PROG_AA_MASS_LOCATION;
 			_usageFile = usageFile;
+			_helpFile = helpFile;
 		}
 		
 		//modifers

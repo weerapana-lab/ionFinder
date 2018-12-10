@@ -31,6 +31,10 @@
 #define IN_DELIM '\t'
 #endif
 
+#ifndef NEW_LINE
+#define NEW_LINE '\n'
+#endif
+
 #include <iostream>
 
 #endif /* ms2_annotator_hpp */

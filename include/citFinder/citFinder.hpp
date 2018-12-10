@@ -31,8 +31,8 @@
 #define IN_DELIM '\t'
 #endif
 
-#ifndef NL
-#define NL '\n'
+#ifndef NEW_LINE
+#define NEW_LINE '\n'
 #endif
 
 //#include <iostream>
