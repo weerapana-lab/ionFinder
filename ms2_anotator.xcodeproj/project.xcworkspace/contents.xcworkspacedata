@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
-   <Group
-      location = "group:/Users/Aaron/local/ms2_anotator/src/ms2_annotator/citFinder"
-      name = "citFinder">
-      <FileRef
-         location = "group:../../../include/citFinder/main.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:citFinder.hpp">
-      </FileRef>
-      <FileRef
-         location = "group:main.cpp">
-      </FileRef>
-   </Group>
    <FileRef
       location = "self:">
    </FileRef>

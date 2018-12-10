@@ -35,7 +35,7 @@
 #define NL '\n'
 #endif
 
-#include <iostream>
+//#include <iostream>
 
 #endif /* citFinder_hpp */
 

@@ -11,8 +11,8 @@
 bool params::Params::getArgs(int argc, const char* const argv [])
 {
 	//get wd
-	wd = utils::pwd();
-	assert(utils::dirExists(wd));
+	_wd = utils::pwd();
+	assert(utils::dirExists(_wd));
 	
 	for(int i = 1; i < argc; i++)
 	{
@@ -28,9 +28,9 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			wd = utils::absPath(argv[i]);
+			_wd = utils::absPath(argv[i]);
 			wdSpecified = true;
-			if(!utils::dirExists(wd))
+			if(!utils::dirExists(_wd))
 			{
 				std::cerr << "Specified direectory does not exist." << std::endl;
 				return false;
@@ -98,7 +98,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 		}
 		if(!strcmp(argv[i], "-printSmod"))
 		{
-			if(!writeSmod(wd))
+			if(!writeSmod(_wd))
 				std::cerr << "Could not write new smod file!" << std::endl;
 			return false;
 		}
@@ -184,7 +184,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				std::cerr << argv[i] << params::PARAM_ERROR_MESSAGE << "incAllIons" << std::endl;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "incAllIons" << std::endl;
 				return false;
 			}
 			includeAllIons = std::stoi(argv[i]);
@@ -206,8 +206,8 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 	}
 	
 	//fix options
-	if(wd[wd.length() - 1] != '/')
-		wd += "/";
+	if(_wd[_wd.length() - 1] != '/')
+		_wd += "/";
 	
 	return checkParams();
 }
@@ -236,43 +236,5 @@ bool params::Params::checkParams() const
 	
 	return true;
 }
-
-//print program usage information located in PROG_USAGE_FNAME
-void params::Params::usage() const
-{
-	utils::File file(PROG_USAGE_FNAME);
-	assert(file.read());
-	
-	while(!file.end())
-		std::cerr << file.getLine() << std::endl;
-}
-
-bool params::Params::writeSmod(std::string _wd) const
-{
-	if(_wd[_wd.length() - 1] != '/')
-		_wd += "/";
-	std::ofstream outF((_wd + params::DEFAULT_SMOD_NAME).c_str());
-	utils::File staticMods(params::PROG_DEFAULT_SMOD_FILE);
-	if(!outF || !staticMods.read())
-		return false;
-	
-	if(wdSpecified)
-		std::cerr << std::endl << "Generating " << _wd << DEFAULT_SMOD_NAME << std::endl;
-	else std::cerr << std::endl <<"Generating ./" << DEFAULT_SMOD_NAME << std::endl;
-	
-	outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << std::endl
-	<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << std::endl
-	<< "<staticModifications>" << std::endl;
-	
-	while(!staticMods.end())
-		outF << staticMods.getLine() << std::endl;
-	
-	outF << std::endl << "</staticModifications>" << std::endl;
-	
-	return true;
-}
-
-
-
 
 

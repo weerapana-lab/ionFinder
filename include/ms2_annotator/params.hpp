@@ -12,22 +12,19 @@
 #include <iostream>
 #include <string>
 
+#include <paramsBase.hpp>
 #include <utils.hpp>
 #include <ms2_annotator/ms2_annotator.hpp>
 
 namespace params{
 	
 	//program file locations
-	std::string const PROG_WD =std::string(getenv("HOME")) + "/local/ms2_anotator";
-	std::string const PROG_DB = PROG_WD + "/db";
-	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
-	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
-	std::string const PROG_HELP_FILE = PROG_DB + "/helpFile.man";
-	std::string const PROG_USAGE_FNAME = PROG_DB + "/usage.txt";
+	std::string const PROG_HELP_FILE = base::PROG_DB + "/helpFile.man";
+	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/usage.txt";
 	
-	std::string const DEFAULT_SMOD_NAME = "staticModifications.txt";
+	//std::string const DEFAULT_SMOD_NAME = "staticModifications.txt";
 	
-	std::string const PARAM_ERROR_MESSAGE = " is an invalid argument for ";
+	//std::string const PARAM_ERROR_MESSAGE = " is an invalid argument for ";
 	
 	class InFile;
 	class Params;
@@ -58,21 +55,20 @@ namespace params{
 		}
 	};
 	
-	class Params{
+	class Params : public base::ParamsBase{
 	private:
-		std::string wd;
-		std::string aaMassFile;
-		std::string smodFile;
+		//std::string wd;
+		//std::string aaMassFile;
+		//std::string smodFile;
 		bool force;
 		int inputMode;
-		bool wdSpecified;
+		/*bool wdSpecified;
 		std::string sequestParams;
-		std::string ofname;
+		std::string ofname;*/
 		
-		bool seqSpecified;
-		bool dtaSpecified, seqParSpecified;
+		//bool seqSpecified;
+		//bool dtaSpecified, seqParSpecified;
 		bool ms2Specified, scanSpecified;
-		bool smodSpecified;
 		bool minMzSpecified;
 		bool maxMzSpecified;
 		bool minIntensitySpecified;
@@ -92,17 +88,17 @@ namespace params{
 		void displayHelp() const{
 			utils::systemCommand("man " + PROG_HELP_FILE);
 		}
-		void usage() const;
+		//void usage() const;
 		bool checkParams() const;
-		bool writeSmod(std::string) const;
+		//bool writeSmod(std::string) const;
 		
 	public:
 		InFile inFile;
 		
-		Params() {
-			wd = "";
-			smodFile = PROG_DEFAULT_SMOD_FILE;
-			aaMassFile = PROG_AA_MASS_LOCATION;
+		Params() : ParamsBase(PROG_USAGE_FNAME) {
+			//wd = "";
+			//smodFile = PROG_DEFAULT_SMOD_FILE;
+			//aaMassFile = PROG_AA_MASS_LOCATION;
 			force = false;
 			inputMode = 0;
 			wdSpecified = false;
@@ -132,21 +128,21 @@ namespace params{
 		bool getArgs(int, const char* const[]);
 		
 		//properties
-		std::string getWD() const{
+		/*std::string getWD() const{
 			return wd;
-		}
+		}*/
 		int getMinFragCharge() const{
 			return minFragCharge;
 		}
 		int getMaxFragCharge() const{
 			return maxFragCharge;
 		}
-		std::string getSmodFileLoc() const{
+		/*std::string getSmodFileLoc() const{
 			return smodFile;
 		}
 		std::string getAAMassFileLoc() const{
 			return aaMassFile;
-		}
+		}*/
 		double getMatchTolerance() const{
 			return matchTolerance;
 		}
@@ -186,7 +182,7 @@ namespace params{
 		int getInputMode() const{
 			return inputMode;
 		}
-		bool getWDSpecified() const{
+		/*bool getWDSpecified() const{
 			return wdSpecified;
 		}
 		bool getSeqParSpecified() const{
@@ -194,7 +190,7 @@ namespace params{
 		}
 		std::string getSeqParFname() const{
 			return sequestParams;
-		}
+		}*/
 	};
 }
 

@@ -20,6 +20,7 @@
 		93A61CD121BDE07700364A03 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61CCF21BDE07700364A03 /* main.cpp */; };
 		93A61CD221BDE07700364A03 /* params.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61CD021BDE07700364A03 /* params.cpp */; };
 		93A61CDA21BDE0EF00364A03 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61CD821BDE0E500364A03 /* main.cpp */; };
+		93A61CDE21BDE3F100364A03 /* params.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61CDC21BDE3F100364A03 /* params.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9342A87821BDE64A00657FA7 /* paramsBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = paramsBase.hpp; path = include/paramsBase.hpp; sourceTree = SOURCE_ROOT; };
 		9398C29B1E80B0C500B0AE23 /* ms2_anotator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ms2_anotator; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A61C5A21BB325600364A03 /* scanData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scanData.cpp; sourceTree = "<group>"; };
 		93A61C5B21BB325600364A03 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
@@ -75,6 +77,8 @@
 		93A61CD021BDE07700364A03 /* params.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = params.cpp; sourceTree = "<group>"; };
 		93A61CD821BDE0E500364A03 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		93A61CDB21BDE1A900364A03 /* main.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = main.hpp; sourceTree = "<group>"; };
+		93A61CDC21BDE3F100364A03 /* params.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = params.cpp; sourceTree = "<group>"; };
+		93A61CDD21BDE3F100364A03 /* params.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = params.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +142,7 @@
 				93A61C6721BB325600364A03 /* calcLableLocs.hpp */,
 				93A61C6821BB325600364A03 /* gitVersion.hpp */,
 				93A61C6921BB325600364A03 /* ms2.hpp */,
+				9342A87821BDE64A00657FA7 /* paramsBase.hpp */,
 				93A61CC821BDDFA700364A03 /* citFinder */,
 				93A61CCA21BDDFA700364A03 /* ms2_annotator */,
 				93A61C6C21BB325600364A03 /* ms2Spectrum.hpp */,
@@ -156,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				93A61CC921BDDFA700364A03 /* citFinder.hpp */,
+				93A61CDD21BDE3F100364A03 /* params.hpp */,
 				93A61CDB21BDE1A900364A03 /* main.hpp */,
 			);
 			path = citFinder;
@@ -184,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				93A61CD821BDE0E500364A03 /* main.cpp */,
+				93A61CDC21BDE3F100364A03 /* params.cpp */,
 			);
 			name = citFinder;
 			path = /Users/Aaron/local/ms2_anotator/src/citFinder;
@@ -288,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93A61CDA21BDE0EF00364A03 /* main.cpp in Sources */,
+				93A61CDE21BDE3F100364A03 /* params.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
