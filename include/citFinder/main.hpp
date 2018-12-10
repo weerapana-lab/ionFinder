@@ -9,7 +9,7 @@
 #define main_hpp
 
 #include <citFinder/citFinder.hpp>
-
 #include <citFinder/params.hpp>
+#include <citFinder/dtafilter.hpp>
 
-#endif /* main_h */
+#endif /* main_hpp */

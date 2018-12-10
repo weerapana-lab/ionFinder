@@ -51,7 +51,9 @@ namespace citFinder{
 		bool getArgs(int, const char* const[]);
 		
 		//properties
-		
+		const FilterFilesType& getFilterFiles() const{
+			return _filterFiles;
+		}
 	};
 }
 

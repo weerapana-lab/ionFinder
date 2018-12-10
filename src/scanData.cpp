@@ -24,7 +24,7 @@ std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
 	return fs;
 }
 
-scanData::Scan::Scan(std::string line)
+void scanData::Scan::initilizeFromLine(std::string line)
 {
 	std::vector<std::string> elems;
 	utils::split(line, IN_DELIM, elems);

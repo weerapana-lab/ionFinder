@@ -9,6 +9,56 @@
 #ifndef dtafilter_hpp
 #define dtafilter_hpp
 
-#include <stdio.h>
+#include <iostream>
+#include <fstream>
+
+#include <citFinder/params.hpp>
+#include <scanData.hpp>
+#include <utils.hpp>
+
+namespace citFinder{
+	class Scan;
+	
+	std::string const REVERSE_MATCH = "reverse_";
+	
+	bool readFilterFile(std::string, std::vector<citFinder::Scan>&);
+	bool readFilterFiles(const citFinder::Params::FilterFilesType&,
+						 std::vector<citFinder::Scan>&);
+	
+	class Scan : public scanData::Scan{
+		friend bool readFilterFile(std::string, std::vector<citFinder::Scan>&);
+	public:
+		enum class MatchDirection{FORWARD, REVERSE};
+		
+	private:
+		std::string _parentProtein;
+		std::string _parentID;
+		MatchDirection _matchDirection;
+		
+		MatchDirection strToMatchDirection(std::string) const;
+		bool parse_matchDir_ID_Protein(std::string);
+		
+	public:
+		Scan() : scanData::Scan(){
+			_parentProtein = "";
+			_parentID = "";
+			_matchDirection = MatchDirection::REVERSE;
+		}
+		
+		//modifers
+		void operator = (const Scan&);
+		
+		//properties
+		std::string getParentProtein() const{
+			return _parentProtein;
+		}
+		std::string getParentID() const{
+			return _parentID;
+		}
+		MatchDirection getMatchDirection() const{
+			return _matchDirection;
+		}
+	};
+}
 
 #endif /* dtafilter_hpp */
