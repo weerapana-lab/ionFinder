@@ -38,6 +38,9 @@
 #ifndef OUT_DELIM
 	#define OUT_DELIM '\t'
 #endif
+#ifndef NEW_LINE
+#define NEW_LINE '\n'
+#endif
 
 namespace utils{
 	

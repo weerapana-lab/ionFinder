@@ -14,7 +14,7 @@ int main(int argc, const char** argv)
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
-	std::cout << "citFinder v" << BIN_VERSION << std::endl;
+	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
 	
 	return 0;

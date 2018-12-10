@@ -51,17 +51,17 @@ namespace base{
 				return false;
 			
 			if(wdSpecified)
-				std::cerr << std::endl << "Generating " << wd << base::DEFAULT_SMOD_NAME << std::endl;
-			else std::cerr << std::endl <<"Generating ./" << base::DEFAULT_SMOD_NAME << std::endl;
+				std::cerr << NEW_LINE << "Generating " << wd << base::DEFAULT_SMOD_NAME << NEW_LINE;
+			else std::cerr << NEW_LINE <<"Generating ./" << base::DEFAULT_SMOD_NAME << NEW_LINE;
 			
-			outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << std::endl
-			<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << std::endl
-			<< "<staticModifications>" << std::endl;
+			outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << NEW_LINE
+			<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << NEW_LINE
+			<< "<staticModifications>" << NEW_LINE;
 			
 			while(!staticMods.end())
-				outF << staticMods.getLine() << std::endl;
+				outF << staticMods.getLine() << NEW_LINE;
 			
-			outF << std::endl << "</staticModifications>" << std::endl;
+			outF << NEW_LINE << "</staticModifications>" << NEW_LINE;
 			
 			return true;
 		}
@@ -71,7 +71,7 @@ namespace base{
 			assert(file.read());
 			
 			while(!file.end())
-				std::cerr << file.getLine() << std::endl;
+				std::cerr << file.getLine() << NEW_LINE;
 		}
 		
 		void displayHelp() const{

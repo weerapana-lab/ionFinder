@@ -77,7 +77,7 @@ void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showW
 		if(aminoAcidsDB.find(tempSymbol) == aminoAcidsDB.end())
 		{
 			if(showWarnings)
-				std::cerr << "Could not find " << tempSymbol << " in aaDB!" << std::endl;
+				std::cerr << "Could not find " << tempSymbol << " in aaDB!" << NEW_LINE;
 			continue;
 		} else {
 			aminoAcidsDB[tempSymbol] += it->second.getMass();

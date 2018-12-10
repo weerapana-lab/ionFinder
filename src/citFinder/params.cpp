@@ -42,7 +42,7 @@ bool citFinder::Params::getArgs(int argc, const char* const argv[])
 			wdSpecified = true;
 			if(!utils::dirExists(_wd))
 			{
-				std::cerr << "Specified direectory does not exist." << std::endl;
+				std::cerr << "Specified direectory does not exist." << NEW_LINE;
 				return false;
 			}
 			continue;
@@ -56,7 +56,7 @@ bool citFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "inputMode" << std::endl;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "inputMode" << NEW_LINE;
 				return false;
 			}
 			_inputMode = intToInputModes(atoi(argv[i]));
@@ -64,11 +64,11 @@ bool citFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
 		{
-			std::cout << "citFinder " << BIN_VERSION << std::endl;
+			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;
 			return false;
 		}
 		else{
-			std::cerr << argv[i] << " is an invalid argument." << std::endl;
+			std::cerr << argv[i] << " is an invalid argument." << NEW_LINE;
 			usage();
 			return false;
 		}//end of else

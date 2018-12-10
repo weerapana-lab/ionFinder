@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
-	std::cout << "ms2_annotator v" << BIN_VERSION << std::endl;
+	std::cout << "ms2_annotator v" << BIN_VERSION << NEW_LINE;
 	
 	scanData::scansType scans;
 	//get scan numbers from DTAFilter file if suplied by user
@@ -24,12 +24,12 @@ int main(int argc, char* argv[])
 		dtafilter::DtaFilterFile filterFile(pars.inFile.getInfile());
 		if(!filterFile.read())
 		{
-			std::cout << "Failed to read DTAFilter file" << std::endl;
+			std::cout << "Failed to read DTAFilter file" << NEW_LINE;
 			return -1;
 		}
 		if(!filterFile.getScan(pars.inFile.getSeq(), scans, pars.getForce()))
 		{
-			std::cout << "Scan not found" << std::endl;
+			std::cout << "Scan not found" << NEW_LINE;
 			return -1;
 		}
 		
@@ -51,14 +51,14 @@ int main(int argc, char* argv[])
 		ms2::Ms2File file(it->getParentFile());
 		if(!file.read())
 		{
-			std::cout << "Failed to read: " << it->getParentFile() << std::endl;
+			std::cout << "Failed to read: " << it->getParentFile() << NEW_LINE;
 			return -1;
 		}
 		
 		ms2::Spectrum spectrum;
 		if(!file.getScan(it->getScanNum(), spectrum))
 		{
-			std::cout << "scan not found!" << std::endl;
+			std::cout << "scan not found!" << NEW_LINE;
 			return -1;
 		}
 		else {
@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
 			std::ofstream outF(it->getOfname().c_str());
 			spectrum.printLabeledSpectrum(outF, true);
 			if(pars.getWDSpecified())
-				std::cout << "Spectrum file written to " << it->getOfname() << std::endl;
-			else std::cout << "Spectrum file written to ./" << utils::baseName(it->getOfname()) << std::endl;
+				std::cout << "Spectrum file written to " << it->getOfname() << NEW_LINE;
+			else std::cout << "Spectrum file written to ./" << utils::baseName(it->getOfname()) << NEW_LINE;
 		}
 	}
 	

@@ -32,7 +32,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 			wdSpecified = true;
 			if(!utils::dirExists(_wd))
 			{
-				std::cerr << "Specified direectory does not exist." << std::endl;
+				std::cerr << "Specified direectory does not exist." << NEW_LINE;
 				return false;
 			}
 			continue;
@@ -99,7 +99,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 		if(!strcmp(argv[i], "-printSmod"))
 		{
 			if(!writeSmod(_wd))
-				std::cerr << "Could not write new smod file!" << std::endl;
+				std::cerr << "Could not write new smod file!" << NEW_LINE;
 			return false;
 		}
 		if(!strcmp(argv[i], "-mt") || !strcmp(argv[i], "--matchTolerance"))
@@ -184,7 +184,7 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "incAllIons" << std::endl;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "incAllIons" << NEW_LINE;
 				return false;
 			}
 			includeAllIons = std::stoi(argv[i]);
@@ -192,13 +192,13 @@ bool params::Params::getArgs(int argc, const char* const argv [])
 		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
 		{
-			std::cout << "annotate_ms2 " << BIN_VERSION << std::endl;
-			//std::cout << "Last git commit: " << GIT_DATE << std::endl;
-			//std::cout << "git revision: " << GIT_COMMIT << std::endl;
+			std::cout << "annotate_ms2 " << BIN_VERSION << NEW_LINE;
+			//std::cout << "Last git commit: " << GIT_DATE << NEW_LINE;
+			//std::cout << "git revision: " << GIT_COMMIT << NEW_LINE;
 			return false;
 		}
 		else{
-			std::cerr << argv[i] << " is an invalid argument." << std::endl;
+			std::cerr << argv[i] << " is an invalid argument." << NEW_LINE;
 			usage();
 			return false;
 		}
@@ -216,7 +216,7 @@ bool params::Params::checkParams() const
 {
 	if(!seqSpecified)
 	{
-		std::cerr << "Sequence must be specified" << std::endl;
+		std::cerr << "Sequence must be specified" << NEW_LINE;
 		usage();
 		return false;
 	}
@@ -224,7 +224,7 @@ bool params::Params::checkParams() const
 	{
 		if(!(scanSpecified && ms2Specified))
 		{
-			std::cerr << std::endl << "Scan number and .ms2 file must be specified" << std::endl;
+			std::cerr << NEW_LINE << "Scan number and .ms2 file must be specified" << NEW_LINE;
 			usage();
 			return false;
 		}

@@ -498,12 +498,12 @@ int utils::getInt(int min, int max)
 			}
 			else{
 				good = false;
-				std::cout << "Invalid choice!" << std::endl << "Enter choice: ";
+				std::cout << "Invalid choice!" << NEW_LINE << "Enter choice: ";
 			}
 		}
 		else{
 			good = false;
-			std::cout << "Invalid choice!" << std::endl << "Enter choice: ";
+			std::cout << "Invalid choice!" << NEW_LINE << "Enter choice: ";
 		}
 	} while(!good);
 	return ret;

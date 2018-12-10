@@ -158,7 +158,7 @@ void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 {
 	assert(out);
 	for(FragmentIonItType it = fragments.begin(); it != fragments.end(); ++it)
-		out << it->getIonStr() << ": " << it->getMZ() <<std::endl;
+		out << it->getIonStr() << ": " << it->getMZ() <<NEW_LINE;
 }
 
 double PeptideNamespace::calcMass(double mz, int charge){
