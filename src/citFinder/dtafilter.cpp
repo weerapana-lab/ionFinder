@@ -114,7 +114,8 @@ bool citFinder::readFilterFile(std::string fname,
 bool citFinder::readFilterFiles(const citFinder::Params& params,
 								std::vector<citFinder::Scan>& scans)
 {
-	for(auto it = params.getFilterFiles().begin(); it != params.getFilterFiles().end(); ++it)
+	auto endIt = params.getFilterFiles().end();
+	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
 	{
 		if(!citFinder::readFilterFile(it->second, scans, !params.getIncludeReverse()))
 			return false;

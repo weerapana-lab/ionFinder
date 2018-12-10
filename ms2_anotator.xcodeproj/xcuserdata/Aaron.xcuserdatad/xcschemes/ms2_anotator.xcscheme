@@ -64,35 +64,35 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-sp /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy/sequest.params"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-dta /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy/DTASelect-filter.txt"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p K.ALAVSDLNR.A"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/Aaron/local/ms2_anotator/testFiles"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p V.CLLNNFYPR.E"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-dta /Users/Aaron/local/ms2_anotator/testFiles/DTASelect-filter.txt"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sp /Users/Aaron/local/ms2_anotator/testFiles/sequest.params"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

@@ -16,12 +16,20 @@ int main(int argc, const char** argv)
 	
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
+	//read filter files
 	std::vector<citFinder::Scan> scans;
 	if(!citFinder::readFilterFiles(pars, scans))
 	{
-		std::cerr << "Failed!" << NEW_LINE;
+		std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
 		return -1;
 	}
+	
+	//calculate fragments
+	
+	
+	//annotate spectra
+	
+	//write data
 	
 	return 0;
 }

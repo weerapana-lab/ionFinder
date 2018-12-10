@@ -158,7 +158,8 @@ namespace PeptideNamespace{
 		std::string fullSequence;
 		std::vector<PeptideIon> aminoAcids;
 		bool initalized;
-		aaDB::AADB aminoAcidMasses;
+		static aaDB::AADB* aminoAcidMasses;
+		static bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
 		
 		void fixDiffMod(const char* diffmods = "*");
