@@ -229,11 +229,11 @@ bool utils::ls(const char* path, std::vector<std::string>& files, std::string ex
 	files.clear();
 	std::vector<std::string> allFiles;
 	if(!ls(path, allFiles))
-	return false;
+		return false;
 	
 	for(std::vector<std::string>::iterator it = allFiles.begin(); it != allFiles.end(); ++it)
-	if(endsWith(*it, extension))
-	files.push_back(*it);
+		if(endsWith(*it, extension))
+			files.push_back(*it);
 	return true;
 }
 
@@ -268,8 +268,10 @@ bool utils::mkdir(const char* path)
 	return dirExists(rpath);
 }
 
-std::string utils::baseName(const std::string& path, const std::string& delims)
+std::string utils::baseName(std::string path, const std::string& delims)
 {
+	if(path[path.length() - 1] == '/')
+		path = path.substr(0, path.length() - 1);
 	return path.substr(path.find_last_of(delims) + 1);
 }
 
