@@ -177,6 +177,19 @@ bool utils::dirExists(std::string path)
 	return dirExists(path.c_str());
 }
 
+bool utils::isDir(std::string path)
+{
+	return utils::isDir(path.c_str());
+}
+
+bool utils::isDir(const char* path)
+{
+	struct stat buffer;
+	if(stat(path, &buffer) != 0)
+		std::cerr << path << " does not exist!";
+	return S_ISDIR(buffer.st_mode);
+}
+
 //returns dirrectory from which program is run
 std::string utils::pwd()
 {

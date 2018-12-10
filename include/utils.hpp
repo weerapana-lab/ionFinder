@@ -118,15 +118,17 @@ namespace utils{
 	bool dirExists(std::string);
 	bool fileExists(const char*);
 	bool fileExists(std::string);
+	bool isDir(const char*);
+	bool isDir(std::string);
 	std::string pwd();
 	std::string absPath(std::string);
 	std::string absPath(const char*);
 	bool ls(const char*, std::vector<std::string>&);
-	bool ls(const char*, std::vector<std::string>&,std::string);
+	bool ls(const char*, std::vector<std::string>&, std::string);
 	bool mkdir(std::string);
 	bool mkdir(const char*);
 	void systemCommand(std::string command);
-	std::string baseName(const std::string& path, const std::string& delims = "/\\");
+	std::string baseName(std::string path, const std::string& delims = "/\\");
 	std::string removeExtension(const std::string&);
 	std::string getExtension(const std::string&);
 		
