@@ -25,7 +25,18 @@ int main(int argc, const char** argv)
 	}
 	
 	//calculate fragments
-	
+	for(auto it = scans.begin(); it != scans.end(); ++it)
+	{
+		PeptideNamespace::Peptide pep(it->getSequence());
+		pep.initalize(pars);
+		
+		ms2::Ms2File file(it->getParentFile());
+		if(!file.read())
+		{
+			std::cout << "Failed to read: " << it->getParentFile() << NEW_LINE;
+			return -1;
+		}
+	}
 	
 	//annotate spectra
 	

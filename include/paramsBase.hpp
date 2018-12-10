@@ -43,9 +43,18 @@ namespace base{
 		double matchTolerance;
 		double minLabelIntensity;
 		
+		double minMZ;
+		double maxMZ;
+		double minIntensity;
+		bool includeAllIons;
+		std::string multipleMatchCompare;
+		
 		//bool seqSpecified;
 		bool dtaSpecified, seqParSpecified;
 		bool smodSpecified;
+		bool minMzSpecified;
+		bool maxMzSpecified;
+		bool minIntensitySpecified;
 		
 		bool writeSmod(std::string wd) const{
 			if(_wd[_wd.length() - 1] != '/')
@@ -96,6 +105,14 @@ namespace base{
 			maxFragCharge = 1;
 			matchTolerance = 0.25;
 			minLabelIntensity = 0;
+			
+			minMZ = 0;
+			maxMZ = 0;
+			minMzSpecified = false;
+			maxMzSpecified = false;
+			minIntensity = 0;
+			minIntensitySpecified = false;
+			includeAllIons = true;
 		}
 		
 		//modifers
@@ -132,6 +149,33 @@ namespace base{
 		}
 		double getMinLabelIntensity() const{
 			return minLabelIntensity;
+		}
+		double getMinMZ() const{
+			return minMZ;
+		}
+		double getMaxMZ() const{
+			return maxMZ;
+		}
+		bool getMZSpecified() const{
+			return maxMzSpecified || minMzSpecified;
+		}
+		bool getMinMZSpecified() const{
+			return minMzSpecified;
+		}
+		bool getMaxMZSpecified() const{
+			return maxMzSpecified;
+		}
+		bool getMinIntensitySpecified() const{
+			return minIntensitySpecified;
+		}
+		bool getIncludeAllIons() const{
+			return includeAllIons;
+		}
+		double getMinIntensity() const{
+			return minIntensity;
+		}
+		std::string getMultipleMatchCompare() const{
+			return multipleMatchCompare;
 		}
 	};
 	

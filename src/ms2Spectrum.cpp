@@ -202,7 +202,7 @@ void ms2::Spectrum::removeIntensityBelow(double minInt)
 }
 
 void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
-								  const params::Params& pars, size_t labelTop)
+								  const base::ParamsBase& pars, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
