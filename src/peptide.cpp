@@ -135,11 +135,8 @@ double PeptideNamespace::Peptide::calcMass()
 	return getMass();
 }
 
-void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _calcFragments)
+void PeptideNamespace::Peptide::initAminoAcidsMasses(const base::ParamsBase& pars)
 {
-	initalized = true;
-	
-	//TODO migrate all this shit to another function
 	if(pars.getSeqParSpecified())
 	{
 		seqpar::SequestParamsFile spFile(pars.getSeqParFname());
@@ -162,12 +159,20 @@ void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _ca
 				throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
 		}
 	}
-	//
+	aminoAcidMassesInitilized = true;
+}
+
+void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _calcFragments)
+{
+	//initilize aminoAcidMasses if necissary
+	if(!aminoAcidMassesInitilized)
+		initAminoAcidsMasses(pars);
 	
 	calcMass();
 	fixDiffMod();
 	if(_calcFragments)
 		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge());
+	initalized = true;
 }
 
 void PeptideNamespace::Peptide::printFragments(std::ostream& out) const

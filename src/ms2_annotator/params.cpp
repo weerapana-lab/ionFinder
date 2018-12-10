@@ -92,7 +92,7 @@ bool Ms2_annotator::Params::getArgs(int argc, const char* const argv [])
 				usage();
 				return false;
 			}
-			sequestParams = utils::absPath(argv[i]);
+			sequestParamsFname = utils::absPath(argv[i]);
 			seqParSpecified = true;
 			continue;
 		}

@@ -36,6 +36,7 @@ namespace CitFinder{
 		std::string _parentDir;
 		inputModes _inputMode;
 		FilterFilesType _filterFiles;
+		std::string _dtaFilterBase;
 		
 		bool _includeReverse;
 		
@@ -48,6 +49,7 @@ namespace CitFinder{
 			_parentDir = "";
 			_inputMode = inputModes::SINGLE;
 			_includeReverse = false;
+			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 		}
 		
 		//modifers

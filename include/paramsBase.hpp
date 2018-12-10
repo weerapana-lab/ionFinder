@@ -35,7 +35,7 @@ namespace base{
 		std::string _usageFile;
 		std::string _helpFile;
 		bool wdSpecified;
-		std::string sequestParams;
+		std::string sequestParamsFname;
 		std::string ofname;
 		
 		int minFragCharge;
@@ -118,6 +118,11 @@ namespace base{
 		//modifers
 		bool getArgs(int, const char* const[]);
 		
+		void setSeqParFname(std::string path){
+			sequestParamsFname = path;
+			seqParSpecified = true;
+		}
+		
 		//properties
 		std::string getWD() const{
 			return _wd;
@@ -175,7 +180,7 @@ namespace base{
 			return seqParSpecified;
 		}
 		std::string getSeqParFname() const{
-			return sequestParams;
+			return sequestParamsFname;
 		}
 	};
 	

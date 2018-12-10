@@ -62,6 +62,16 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			_inputMode = intToInputModes(atoi(argv[i]));
 			continue;
 		}
+		if(!strcmp(argv[i], "-dta"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			_dtaFilterBase = utils::absPath(argv[i]);
+			continue;
+		}
 		if(!strcmp(argv[i], "-rev"))
 		{
 			if(!utils::isArg(argv[++i]))
@@ -105,7 +115,7 @@ bool CitFinder::Params::getFlist()
 	if(_inputMode == inputModes::SINGLE)
 	{
 		std::string baseName = utils::baseName(_wd);
-		_filterFiles[baseName] = _wd + DEFAULT_FILTER_FILE_NAME;
+		_filterFiles[baseName] = _wd + _dtaFilterBase;
 	}
 	else if(_inputMode == inputModes::RECURSIVE)
 	{
@@ -117,7 +127,7 @@ bool CitFinder::Params::getFlist()
 		{
 			if(utils::isDir(_wd + *it))
 			{
-				std::string fname = _wd + *it + "/" + DEFAULT_FILTER_FILE_NAME;
+				std::string fname = _wd + *it + "/" + _dtaFilterBase;
 				std::cout << fname << NEW_LINE;
 				if(utils::fileExists(fname))
 					_filterFiles[utils::baseName(*it)] = fname;

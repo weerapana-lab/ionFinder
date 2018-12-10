@@ -178,6 +178,7 @@ namespace PeptideNamespace{
 		}
 		~Peptide() {}
 		
+		static void initAminoAcidsMasses(const base::ParamsBase&);
 		void initalize(const base::ParamsBase&, bool _calcFragments = true);
 		void calcFragments(int, int);
 		double calcMass();

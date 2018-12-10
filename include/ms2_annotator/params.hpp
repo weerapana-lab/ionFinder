@@ -71,7 +71,7 @@ namespace Ms2_annotator{
 			force = false;
 			inputMode = 0;
 			wdSpecified = false;
-			sequestParams = "";
+			sequestParamsFname = "";
 			ofname = "";
 			
 			seqSpecified = false;
