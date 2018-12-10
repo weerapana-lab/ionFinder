@@ -38,7 +38,12 @@ namespace base{
 		std::string sequestParams;
 		std::string ofname;
 		
-		bool seqSpecified;
+		int minFragCharge;
+		int maxFragCharge;
+		double matchTolerance;
+		double minLabelIntensity;
+		
+		//bool seqSpecified;
 		bool dtaSpecified, seqParSpecified;
 		bool smodSpecified;
 		
@@ -86,6 +91,11 @@ namespace base{
 			_aaMassFile = PROG_AA_MASS_LOCATION;
 			_usageFile = usageFile;
 			_helpFile = helpFile;
+			
+			minFragCharge = 1;
+			maxFragCharge = 1;
+			matchTolerance = 0.25;
+			minLabelIntensity = 0;
 		}
 		
 		//modifers
@@ -110,6 +120,18 @@ namespace base{
 		}
 		std::string getSeqParFname() const{
 			return sequestParams;
+		}
+		int getMinFragCharge() const{
+			return minFragCharge;
+		}
+		int getMaxFragCharge() const{
+			return maxFragCharge;
+		}
+		double getMatchTolerance() const{
+			return matchTolerance;
+		}
+		double getMinLabelIntensity() const{
+			return minLabelIntensity;
 		}
 	};
 	

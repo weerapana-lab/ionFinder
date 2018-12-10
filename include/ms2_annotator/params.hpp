@@ -74,10 +74,10 @@ namespace params{
 		bool minIntensitySpecified;
 		
 		//program paramaters
-		int minFragCharge;
-		int maxFragCharge;
-		double matchTolerance;
-		double minLabelIntensity;
+		//int minFragCharge;
+		//int maxFragCharge;
+		//double matchTolerance;
+		//double minLabelIntensity;
 		double minMZ;
 		double maxMZ;
 		double minIntensity;
@@ -101,10 +101,6 @@ namespace params{
 			sequestParams = "";
 			ofname = "";
 			
-			minFragCharge = 1;
-			maxFragCharge = 1;
-			matchTolerance = 0.25;
-			minLabelIntensity = 0;
 			minMZ = 0;
 			maxMZ = 0;
 			minMzSpecified = false;
@@ -113,7 +109,7 @@ namespace params{
 			minIntensitySpecified = false;
 			includeAllIons = true;
 			
-			seqSpecified = false;
+			//seqSpecified = false;
 			dtaSpecified = false;
 			seqParSpecified = false;
 			smodSpecified = false;
@@ -126,22 +122,22 @@ namespace params{
 		//properties
 		/*std::string getWD() const{
 			return wd;
-		}*/
+		}
 		int getMinFragCharge() const{
 			return minFragCharge;
 		}
 		int getMaxFragCharge() const{
 			return maxFragCharge;
 		}
-		/*std::string getSmodFileLoc() const{
+		std::string getSmodFileLoc() const{
 			return smodFile;
 		}
 		std::string getAAMassFileLoc() const{
 			return aaMassFile;
-		}*/
+		}
 		double getMatchTolerance() const{
 			return matchTolerance;
-		}
+		}*/
 		double getMinMZ() const{
 			return minMZ;
 		}
@@ -163,9 +159,9 @@ namespace params{
 		bool getIncludeAllIons() const{
 			return includeAllIons;
 		}
-		double getMinLabelIntensity() const{
+		/*double getMinLabelIntensity() const{
 			return minLabelIntensity;
-		}
+		}*/
 		double getMinIntensity() const{
 			return minIntensity;
 		}

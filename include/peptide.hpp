@@ -178,7 +178,7 @@ namespace PeptideNamespace{
 		}
 		~Peptide() {}
 		
-		void initalize(const params::Params&, bool _calcFragments = true);
+		void initalize(const base::ParamsBase&, bool _calcFragments = true);
 		void calcFragments(int, int);
 		double calcMass();
 		void printFragments(std::ostream&) const;

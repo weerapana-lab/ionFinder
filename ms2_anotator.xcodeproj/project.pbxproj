@@ -10,6 +10,9 @@
 		9342A87921BDFA1F00657FA7 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5B21BB325600364A03 /* utils.cpp */; };
 		9342A87C21BE116A00657FA7 /* dtafilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9342A87A21BE116900657FA7 /* dtafilter.cpp */; };
 		9342A87D21BE1EB400657FA7 /* scanData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5A21BB325600364A03 /* scanData.cpp */; };
+		9342A87E21BEEC0200657FA7 /* peptide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C6021BB325600364A03 /* peptide.cpp */; };
+		9342A87F21BEEECC00657FA7 /* aaDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5D21BB325600364A03 /* aaDB.cpp */; };
+		9342A88021BEEEDC00657FA7 /* sequestParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5E21BB325600364A03 /* sequestParams.cpp */; };
 		93A61C7521BB325600364A03 /* scanData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5A21BB325600364A03 /* scanData.cpp */; };
 		93A61C7621BB325600364A03 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5B21BB325600364A03 /* utils.cpp */; };
 		93A61C7721BB325600364A03 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5C21BB325600364A03 /* geometry.cpp */; };
@@ -301,11 +304,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9342A88021BEEEDC00657FA7 /* sequestParams.cpp in Sources */,
 				9342A87921BDFA1F00657FA7 /* utils.cpp in Sources */,
 				9342A87C21BE116A00657FA7 /* dtafilter.cpp in Sources */,
 				93A61CDE21BDE3F100364A03 /* params.cpp in Sources */,
 				9342A87D21BE1EB400657FA7 /* scanData.cpp in Sources */,
+				9342A87F21BEEECC00657FA7 /* aaDB.cpp in Sources */,
 				93A61CDA21BDE0EF00364A03 /* main.cpp in Sources */,
+				9342A87E21BEEC0200657FA7 /* peptide.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

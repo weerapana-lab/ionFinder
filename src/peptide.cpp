@@ -135,7 +135,7 @@ double PeptideNamespace::Peptide::calcMass()
 	return getMass();
 }
 
-void PeptideNamespace::Peptide::initalize(const params::Params& pars, bool _calcFragments)
+void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _calcFragments)
 {
 	initalized = true;
 	if(pars.getSeqParSpecified())
