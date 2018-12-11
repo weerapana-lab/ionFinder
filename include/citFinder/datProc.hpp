@@ -22,9 +22,13 @@
 
 namespace CitFinder{
 
+	class AminoAcid;
+	class Peptide;
+	
 	bool findFragments(std::vector<PeptideNamespace::Peptide>&,
 					   const std::vector<Dtafilter::Scan>&,
 					   CitFinder::Params&);
+	
 }
 
 #endif /* datProc_hpp */

@@ -239,7 +239,6 @@ namespace PeptideNamespace{
 		}
 	};//end of class
 	
-	
 }//end of namespace
 
 #endif /* peptide_hpp */

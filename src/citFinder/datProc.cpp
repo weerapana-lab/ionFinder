@@ -17,7 +17,7 @@ bool CitFinder::findFragments(std::vector<PeptideNamespace::Peptide>& peptides,
 	std::string curWD;
 	for(auto it = scans.begin(); it != scans.end(); ++it)
 	{
-		//read ms2 file if it hasn't been done yet
+		//read ms2 files if it hasn't been done yet
 		if(curSample != it->getSampleName())
 		{
 			//read ms2 files
@@ -46,8 +46,7 @@ bool CitFinder::findFragments(std::vector<PeptideNamespace::Peptide>& peptides,
 			}
 			
 			//re-init Peptide::AminoAcidMasses for each sample
-			std::string temp = pars.getWD() + "/sequest.params";
-			pars.setSeqParFname(temp);
+			pars.setSeqParFname(pars.getWD() + "/sequest.params");
 			PeptideNamespace::Peptide::initAminoAcidsMasses(pars);
 		}//end if
 		
@@ -79,7 +78,6 @@ bool CitFinder::findFragments(std::vector<PeptideNamespace::Peptide>& peptides,
 		spectrum.calcLabelPos();
 		std::ofstream outF("/Users/Aaron/local/ms2_anotator/testFiles/nl_test.spectrum");
 		spectrum.printLabeledSpectrum(outF, true);
-		
 	}
 	return true;
 }
