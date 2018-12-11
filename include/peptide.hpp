@@ -125,24 +125,45 @@ namespace PeptideNamespace{
 	};
 	
 	class FragmentIon : public Ion{
+	public:
+		enum class IonType{B, Y, B_NL, Y_NL};
+		
 	private:
 		char b_y;
 		int num;
 		std::string mod;
 		bool found;
+		IonType _ionType;
+		double modMass; //represents nl mass
 		
 	public:
-		FragmentIon(char _b_y, int _num, int _charge, double _mass, std::string _mod) : Ion() {
+		FragmentIon(char _b_y, int _num, int _charge, double _mass,
+					double _modMass, std::string _mod) : Ion() {
 			b_y = _b_y;
 			num = _num;
 			mod = _mod;
+			modMass = _modMass;
 			initalizeFromMass(_mass, _charge);
 			found = false;
+			_ionType = strToIonType(_b_y);
+		}
+		FragmentIon(IonType ionType, int _num, int _charge, double _mass,
+					double _modMass, std::string _mod) : Ion() {
+			num = _num;
+			mod = _mod;
+			modMass = _modMass;
+			initalizeFromMass(_mass, _charge);
+			found = false;
+			_ionType = ionType;
+			b_y = ionTypeToStr()[0];
 		}
 		~FragmentIon() {}
 		
 		void setFound(bool boo){
 			found = boo;
+		}
+		void setIonType(IonType it){
+			_ionType = it;
 		}
 		
 		//properties
@@ -160,6 +181,14 @@ namespace PeptideNamespace{
 		bool getFound() const{
 			return found;
 		}
+		IonType getIonType() const{
+			return _ionType;
+		}
+		static IonType strToIonType(std::string);
+		static IonType strToIonType(char c){
+			return strToIonType(std::string(1, c));
+		}
+		std::string ionTypeToStr() const;
 	};
 	
 	class Peptide : public Ion{
