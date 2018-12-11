@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.680832"
+            timestampString = "566255545.1891479"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
             landmarkName = "PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType&amp; vec, PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)"
             landmarkType = "7">
          </BreakpointContent>
@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.680895"
+            timestampString = "566255545.189222"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
             landmarkName = "PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)"
             landmarkType = "7">
          </BreakpointContent>
@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.680958"
+            timestampString = "566255545.189274"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "242"
+            endingLineNumber = "242"
             landmarkName = "PeptideNamespace::calcMZ(double mass, int charge)"
             landmarkType = "7">
          </BreakpointContent>
@@ -330,11 +330,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.6814851"
+            timestampString = "566255545.189463"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
             landmarkName = "PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)"
             landmarkType = "7">
          </BreakpointContent>
@@ -346,11 +346,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.6815521"
+            timestampString = "566255545.189514"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "PeptideNamespace::Peptide::calcMass()"
             landmarkType = "7">
          </BreakpointContent>
@@ -362,11 +362,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.681613"
+            timestampString = "566255545.189569"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "119"
-            endingLineNumber = "119"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)"
             landmarkType = "7">
          </BreakpointContent>
@@ -378,11 +378,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.681674"
+            timestampString = "566255545.18962"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)"
             landmarkType = "7">
          </BreakpointContent>
@@ -394,11 +394,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.681734"
+            timestampString = "566255545.189665"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
             landmarkName = "PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)"
             landmarkType = "7">
          </BreakpointContent>
@@ -410,11 +410,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.681796"
+            timestampString = "566255545.18971"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "PeptideNamespace::PeptideIon::makeModLable()"
             landmarkType = "7">
          </BreakpointContent>
@@ -426,11 +426,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.681856"
+            timestampString = "566255545.189754"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
             landmarkName = "PeptideNamespace::FragmentIon::getIonStr()"
             landmarkType = "7">
          </BreakpointContent>
@@ -682,11 +682,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.682428"
+            timestampString = "566255545.190061"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
             landmarkName = "PeptideNamespace::FragmentIon::getFormatedLabel()"
             landmarkType = "7">
          </BreakpointContent>
@@ -698,11 +698,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.6824909"
+            timestampString = "566255545.190112"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "PeptideNamespace::FragmentIon::getFormatedLabel()"
             landmarkType = "7">
          </BreakpointContent>
@@ -714,11 +714,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.682572"
+            timestampString = "566255545.190159"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
             landmarkName = "PeptideNamespace::FragmentIon::getFormatedLabel()"
             landmarkType = "7">
          </BreakpointContent>
@@ -730,11 +730,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.682631"
+            timestampString = "566255545.190205"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
+            startingLineNumber = "94"
+            endingLineNumber = "94"
             landmarkName = "PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1375,7 +1375,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "216"
             endingLineNumber = "216"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1439,7 +1439,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "230"
             endingLineNumber = "230"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1599,7 +1599,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "246"
             endingLineNumber = "246"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1771,7 +1771,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "229"
             endingLineNumber = "229"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1883,7 +1883,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "286"
             endingLineNumber = "286"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1978,7 +1978,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "267"
             endingLineNumber = "267"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2069,11 +2069,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.685867"
+            timestampString = "566255545.191357"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
             landmarkName = "PeptideNamespace::Peptide::printFragments(std::ostream&amp; out)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2085,11 +2085,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.685935"
+            timestampString = "566255545.191409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
             landmarkName = "PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)"
             landmarkType = "7">
             <Locations>
@@ -2133,11 +2133,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.685998"
+            timestampString = "566255545.191461"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
             landmarkName = "PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2225,11 +2225,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/citFinder/main.cpp"
-            timestampString = "566186801.686373"
+            timestampString = "566255545.191588"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "17"
@@ -2458,7 +2458,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "253"
             endingLineNumber = "253"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2474,7 +2474,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "249"
             endingLineNumber = "249"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2490,7 +2490,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "242"
             endingLineNumber = "242"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2506,7 +2506,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "235"
             endingLineNumber = "235"
-            landmarkName = "ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
+            landmarkName = "ms2::Spectrum::labelSpectrum(Peptide::Peptide&amp; peptide, const base::ParamsBase&amp; pars, size_t labelTop)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2517,11 +2517,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/peptide.cpp"
-            timestampString = "566186801.687603"
+            timestampString = "566255545.192175"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "PeptideNamespace::Peptide::addNeutralLoss(const std::vector&lt;double&gt;&amp; losses)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2533,13 +2533,29 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/citFinder/main.cpp"
-            timestampString = "566186801.687658"
+            timestampString = "566255545.19223"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "29"
             endingLineNumber = "29"
             landmarkName = "main(int argc, const char** argv)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "include/geometry.hpp"
+            timestampString = "566255538.255173"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
