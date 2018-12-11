@@ -159,7 +159,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		else if(utils::isInteger(std::string(1, _scan[0]))){
 			
 			utils::split(line, ' ', elems);
-			assert(elems.size() == 2);
+			assert(elems.size() >= 2);
 			ms2::DataPoint tempIon (std::stod(elems[0]), std::stod(elems[1]));
 			
 			if(numIons == 0)
