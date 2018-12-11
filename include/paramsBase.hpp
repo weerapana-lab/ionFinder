@@ -102,7 +102,7 @@ namespace base{
 			
 			minFragCharge = 1;
 			maxFragCharge = 1;
-			matchTolerance = 0.25;
+			matchTolerance = 1.0;
 			minLabelIntensity = 0;
 			
 			seqParSpecified = false;
