@@ -6,9 +6,9 @@
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
-#include <citFinder/dtafilter.hpp>
+#include <dtafilter.hpp>
 
-void CitFinder::Scan::operator = (const CitFinder::Scan& rhs)
+void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 {
 	_parentProtein = rhs._parentProtein;
 	_parentID = rhs._parentID;
@@ -22,14 +22,14 @@ void CitFinder::Scan::operator = (const CitFinder::Scan& rhs)
 	xcorr = rhs.xcorr;
 }
 
-CitFinder::Scan::MatchDirection CitFinder::Scan::strToMatchDirection(std::string str) const
+Dtafilter::Scan::MatchDirection Dtafilter::Scan::strToMatchDirection(std::string str) const
 {
 	if(utils::strContains(REVERSE_MATCH, utils::toLower(str)))
 		return MatchDirection::REVERSE;
 	return MatchDirection::FORWARD;
 }
 
-bool CitFinder::Scan::parse_matchDir_ID_Protein(std::string str)
+bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
 {
 	std::vector<std::string> elems;
 	utils::split(str, '|', elems);
@@ -51,9 +51,9 @@ bool CitFinder::Scan::parse_matchDir_ID_Protein(std::string str)
 	return true;
 }
 
-bool CitFinder::readFilterFile(std::string fname,
+bool Dtafilter::readFilterFile(std::string fname,
 							   std::string sampleName,
-							   std::vector<CitFinder::Scan>& scans,
+							   std::vector<Dtafilter::Scan>& scans,
 							   bool skipReverse)
 {
 	std::ifstream inF(fname);
@@ -101,7 +101,7 @@ bool CitFinder::readFilterFile(std::string fname,
 					
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
-					if(skipReverse && newScan._matchDirection == CitFinder::Scan::MatchDirection::REVERSE)
+					if(skipReverse && newScan._matchDirection == Dtafilter::Scan::MatchDirection::REVERSE)
 						continue;
 					else scans.push_back(newScan);
 					
@@ -114,13 +114,13 @@ bool CitFinder::readFilterFile(std::string fname,
 	return true;
 }
 
-bool CitFinder::readFilterFiles(const CitFinder::Params& params,
-								std::vector<CitFinder::Scan>& scans)
+bool Dtafilter::readFilterFiles(const CitFinder::Params& params,
+								std::vector<Dtafilter::Scan>& scans)
 {
 	auto endIt = params.getFilterFiles().end();
 	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
 	{
-		if(!CitFinder::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
+		if(!Dtafilter::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
 			return false;
 	}
 	

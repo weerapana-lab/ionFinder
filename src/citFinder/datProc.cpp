@@ -8,8 +8,8 @@
 
 #include <citFinder/datProc.hpp>
 
-bool CitFinder::calcFragments(std::vector<PeptideNamespace::Peptide>& peptides,
-							  const std::vector<CitFinder::Scan>& scans,
+bool CitFinder::findFragments(std::vector<PeptideNamespace::Peptide>& peptides,
+							  const std::vector<Dtafilter::Scan>& scans,
 							  CitFinder::Params& pars)
 {
 	std::map<std::string, ms2::Ms2File> ms2Map;
@@ -73,6 +73,13 @@ bool CitFinder::calcFragments(std::vector<PeptideNamespace::Peptide>& peptides,
 			return false;
 		}
 		spectrum.labelSpectrum(peptides.back(), pars);
+		
+		//temp for debuging
+		spectrum.normalizeIonInts(100);
+		spectrum.calcLabelPos();
+		std::ofstream outF("/Users/Aaron/local/ms2_anotator/testFiles/nl_test.spectrum");
+		spectrum.printLabeledSpectrum(outF, true);
+		
 	}
 	return true;
 }

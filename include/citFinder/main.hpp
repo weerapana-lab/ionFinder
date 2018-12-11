@@ -10,7 +10,7 @@
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
-#include <citFinder/dtafilter.hpp>
+#include <dtafilter.hpp>
 #include <citFinder/datProc.hpp>
 
 #include <peptide.hpp>

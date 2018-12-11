@@ -15,15 +15,15 @@
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
-#include <citFinder/dtafilter.hpp>
+#include <dtafilter.hpp>
 
 #include <peptide.hpp>
 #include <ms2.hpp>
 
 namespace CitFinder{
 
-	bool calcFragments(std::vector<PeptideNamespace::Peptide>&,
-					   const std::vector<CitFinder::Scan>&,
+	bool findFragments(std::vector<PeptideNamespace::Peptide>&,
+					   const std::vector<Dtafilter::Scan>&,
 					   CitFinder::Params&);
 }
 

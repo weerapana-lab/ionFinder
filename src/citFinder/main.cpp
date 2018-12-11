@@ -17,16 +17,16 @@ int main(int argc, const char** argv)
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
 	//read filter files
-	std::vector<CitFinder::Scan> scans;
-	if(!CitFinder::readFilterFiles(pars, scans))
+	std::vector<Dtafilter::Scan> scans;
+	if(!Dtafilter::readFilterFiles(pars, scans))
 	{
 		std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
 		return -1;
 	}
 	
-	//calculate fragments
+	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
-	CitFinder::calcFragments(peptides, scans, pars);
+	CitFinder::findFragments(peptides, scans, pars);
 	
 	//annotate spectra
 	
