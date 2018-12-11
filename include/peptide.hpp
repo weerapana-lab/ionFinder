@@ -41,6 +41,9 @@ namespace PeptideNamespace{
 					PepIonIt begin, PepIonIt end);
 	double calcMass(const std::vector<PeptideIon>& sequence);
 	
+	//class declarations
+	
+	///base class for peptide species
 	class Species{
 	protected:
 		double mass;
@@ -56,7 +59,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	//class declarations
+	///base class for all ions
 	class Ion : public Species{
 	protected:
 		int charge;
@@ -124,6 +127,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
+	///Used to represent b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
 		enum class IonType{B, Y, B_NL, Y_NL};
@@ -134,7 +138,7 @@ namespace PeptideNamespace{
 		std::string mod;
 		bool found;
 		IonType _ionType;
-		double modMass; //represents nl mass
+		double modMass; ///represents nl mass
 		
 	public:
 		FragmentIon(char _b_y, int _num, int _charge, double _mass,
@@ -156,6 +160,17 @@ namespace PeptideNamespace{
 			found = false;
 			_ionType = ionType;
 			b_y = ionTypeToStr()[0];
+		}
+		///copy constructor
+		FragmentIon(const FragmentIon& rhs){
+			b_y = rhs.b_y;
+			num = rhs.num;
+			mod = rhs.mod;
+			found = rhs.found;
+			_ionType = rhs._ionType;
+			modMass = rhs.modMass;
+			charge = rhs.charge;
+			mass = rhs.mass;
 		}
 		~FragmentIon() {}
 		
