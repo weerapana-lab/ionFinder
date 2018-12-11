@@ -153,7 +153,10 @@ std::string utils::getDelimStr(utils::newline_type type)
 	}
 }
 
-//returns true if folder at end of path exists and false if it does not
+/**
+ returns true if folder at end of path exists and false if it does not
+ @param path path of file to test
+ */
 bool utils::dirExists (const char* path)
 {
 	struct stat buffer;
@@ -182,6 +185,7 @@ bool utils::isDir(std::string path)
 	return utils::isDir(path.c_str());
 }
 
+///checks whether file is directory
 bool utils::isDir(const char* path)
 {
 	struct stat buffer;

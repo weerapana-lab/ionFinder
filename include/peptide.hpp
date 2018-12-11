@@ -41,6 +41,9 @@ namespace PeptideNamespace{
 					PepIonIt begin, PepIonIt end);
 	double calcMass(const std::vector<PeptideIon>& sequence);
 	
+	//class declarations
+	
+	///base class for peptide species
 	class Species{
 	protected:
 		double mass;
@@ -56,7 +59,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	//class declarations
+	///base class for all ions
 	class Ion : public Species{
 	protected:
 		int charge;
@@ -124,25 +127,58 @@ namespace PeptideNamespace{
 		}
 	};
 	
+	///Used to represent b and y peptide ions
 	class FragmentIon : public Ion{
+	public:
+		enum class IonType{B, Y, B_NL, Y_NL};
+		
 	private:
 		char b_y;
 		int num;
 		std::string mod;
 		bool found;
+		IonType _ionType;
+		double modMass; //represents nl mass
 		
 	public:
-		FragmentIon(char _b_y, int _num, int _charge, double _mass, std::string _mod) : Ion() {
+		FragmentIon(char _b_y, int _num, int _charge, double _mass,
+					double _modMass, std::string _mod) : Ion() {
 			b_y = _b_y;
 			num = _num;
 			mod = _mod;
+			modMass = _modMass;
 			initalizeFromMass(_mass, _charge);
 			found = false;
+			_ionType = strToIonType(_b_y);
+		}
+		FragmentIon(IonType ionType, int _num, int _charge, double _mass,
+					double _modMass, std::string _mod) : Ion() {
+			num = _num;
+			mod = _mod;
+			modMass = _modMass;
+			initalizeFromMass(_mass, _charge);
+			found = false;
+			_ionType = ionType;
+			b_y = ionTypeToStr()[0];
+		}
+		///copy constructor
+		FragmentIon(const FragmentIon& rhs){
+			b_y = rhs.b_y;
+			num = rhs.num;
+			mod = rhs.mod;
+			found = rhs.found;
+			_ionType = rhs._ionType;
+			modMass = rhs.modMass;
+			charge = rhs.charge;
+			mass = rhs.mass;
 		}
 		~FragmentIon() {}
 		
 		void setFound(bool boo){
 			found = boo;
+		}
+		void setIonType(IonType it){
+			_ionType = it;
 		}
 		
 		//properties
@@ -160,6 +196,14 @@ namespace PeptideNamespace{
 		bool getFound() const{
 			return found;
 		}
+		IonType getIonType() const{
+			return _ionType;
+		}
+		static IonType strToIonType(std::string);
+		static IonType strToIonType(char c){
+			return strToIonType(std::string(1, c));
+		}
+		std::string ionTypeToStr() const;
 	};
 	
 	class Peptide : public Ion{

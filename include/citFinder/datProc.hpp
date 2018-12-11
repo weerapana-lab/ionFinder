@@ -29,6 +29,13 @@ namespace CitFinder{
 					   const std::vector<Dtafilter::Scan>&,
 					   CitFinder::Params&);
 	
+	///Class used to keep track of fragment ions which were found in sequence analysis.
+	class AminoAcid : public PeptideNamespace::FragmentIon{
+	private:
+		
+	public:
+		
+	};
 }
 
 #endif /* datProc_hpp */

@@ -8,6 +8,12 @@
 
 #include <citFinder/datProc.hpp>
 
+/**
+ Find peptide fragment ions in ms2 files.
+ @param peptides empty vector of peptides to be filled from data in scans.
+ @param scans vector of scans from filter file.
+ @param pars CitFinder params object.
+ */
 bool CitFinder::findFragments(std::vector<PeptideNamespace::Peptide>& peptides,
 							  const std::vector<Dtafilter::Scan>& scans,
 							  CitFinder::Params& pars)

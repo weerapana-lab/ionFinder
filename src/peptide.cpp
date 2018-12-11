@@ -11,6 +11,33 @@
 aaDB::AADB* PeptideNamespace::Peptide::aminoAcidMasses = nullptr;
 bool PeptideNamespace::Peptide::aminoAcidMassesInitilized = false;
 
+PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonType(std::string s)
+{
+	if(s == "b")
+		return IonType::B;
+	else if(s == "y")
+		return IonType::Y;
+	else if(utils::startsWith(s, "b-"))
+		return IonType::B_NL;
+	else if(utils::startsWith(s, "y-"))
+		return IonType::Y_NL;
+	else throw std::runtime_error("Unknown IonType!");
+}
+
+std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
+{
+	switch(_ionType){
+		case IonType::B : return "b";
+			break;
+		case IonType::Y : return "y";
+			break;
+		case IonType::B_NL : return "b-";
+			break;
+		case IonType::Y_NL : return "y-";
+			break;
+	}
+}
+
 std::string PeptideNamespace::Ion::makeChargeLable() const
 {
 	if(charge > 0)
@@ -76,10 +103,10 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 			//maybe some other time
 			
 			fragments.push_back(FragmentIon('b', i + 1, j,
-				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end) + nTerm,
+				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end) + nTerm, 0.0,
 				aminoAcids[i].makeModLable()));
 			fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
-				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass * 2 + cTerm,
+				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass * 2 + cTerm, 0.0,
 				aminoAcids[i].makeModLable()));
 		}
 	}
@@ -99,9 +126,18 @@ void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses
 		for(auto it2 = losses.begin(); it2 != losses.end(); ++it2)
 		{
 			int tempCharge = fragments[i].getCharge();
-			fragments.push_back(FragmentIon(fragments[i].getBY(), fragments[i].getNum(), tempCharge,
+			
+			//get new fragment type
+			PeptideNamespace::FragmentIon::IonType ionType;
+			if(fragments[i].getBY() == 'b')
+				ionType = PeptideNamespace::FragmentIon::IonType::B_NL;
+			else if(fragments[i].getBY() == 'y')
+				ionType = PeptideNamespace::FragmentIon::IonType::Y_NL;
+			else throw std::runtime_error("Unknown ion type!");
+				
+			fragments.push_back(FragmentIon(ionType, fragments[i].getNum(), tempCharge,
 											fragments[i].getMass() - (*it2 / tempCharge),
-											std::to_string((int)round(*it2) * -1)));
+											*it2, std::to_string((int)round(*it2) * -1)));
 		}
 	}
 }
