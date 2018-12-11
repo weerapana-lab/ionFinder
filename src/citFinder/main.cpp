@@ -25,26 +25,8 @@ int main(int argc, const char** argv)
 	}
 	
 	//calculate fragments
-	ms2::Ms2File ms2File;
-	std::string curFname;
-	for(auto it = scans.begin(); it != scans.end(); ++it)
-	{
-		PeptideNamespace::Peptide pep(it->getSequence());
-		pep.initalize(pars);
-		
-		//read ms2 file if it hasn't been done yet
-		if(curFname != it->getParentFile())
-		{
-			curFname = it->getParentFile();
-			if(!ms2File.read(curFname))
-			{
-				std::cout << "Failed to read: " << it->getParentFile() << NEW_LINE;
-				return -1;
-			}
-		}//end if
-		
-		
-	}
+	std::vector<PeptideNamespace::Peptide> peptides;
+	CitFinder::calcFragments(peptides, scans, pars);
 	
 	//annotate spectra
 	

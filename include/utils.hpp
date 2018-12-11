@@ -133,6 +133,7 @@ namespace utils{
 	void systemCommand(std::string command);
 	std::string baseName(std::string path, const std::string& delims = "/\\");
 	std::string dirName(std::string path, const std::string& delims = "/\\");
+	std::string parentDir(std::string path, char delim = '/');
 	std::string removeExtension(const std::string&);
 	std::string getExtension(const std::string&);
 	std::istream& safeGetline(std::istream& is, std::string& t);
@@ -159,7 +160,7 @@ namespace utils{
 						char delim = DEFAULT_LINE_DELIM, size_t beginLine = DEFAULT_BEGIN_LINE);
 	void getLine(const char* buffer,std::string& line, char delim = DEFAULT_LINE_DELIM);
 	size_t offset(const char* buf, size_t len, const char* str);
-	
+	void removeEmptyStrings(std::vector<std::string>&);
 	
 	//other
 	bool isInteger(const std::string & s);

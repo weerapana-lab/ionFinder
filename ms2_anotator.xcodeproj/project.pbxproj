@@ -17,6 +17,7 @@
 		9342A88221BF058100657FA7 /* ms2Spectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C6121BB325600364A03 /* ms2Spectrum.cpp */; };
 		9342A88321BF059100657FA7 /* calcLableLocs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C6221BB325600364A03 /* calcLableLocs.cpp */; };
 		9342A88421BF05A200657FA7 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5C21BB325600364A03 /* geometry.cpp */; };
+		9342A88721BF1E5200657FA7 /* datProc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9342A88521BF1E5200657FA7 /* datProc.cpp */; };
 		93A61C7521BB325600364A03 /* scanData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5A21BB325600364A03 /* scanData.cpp */; };
 		93A61C7621BB325600364A03 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5B21BB325600364A03 /* utils.cpp */; };
 		93A61C7721BB325600364A03 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A61C5C21BB325600364A03 /* geometry.cpp */; };
@@ -58,6 +59,8 @@
 		9342A87821BDE64A00657FA7 /* paramsBase.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = paramsBase.hpp; path = include/paramsBase.hpp; sourceTree = SOURCE_ROOT; };
 		9342A87A21BE116900657FA7 /* dtafilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dtafilter.cpp; sourceTree = "<group>"; };
 		9342A87B21BE116A00657FA7 /* dtafilter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dtafilter.hpp; sourceTree = "<group>"; };
+		9342A88521BF1E5200657FA7 /* datProc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = datProc.cpp; sourceTree = "<group>"; };
+		9342A88621BF1E5200657FA7 /* datProc.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = datProc.hpp; sourceTree = "<group>"; };
 		9398C29B1E80B0C500B0AE23 /* ms2_anotator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ms2_anotator; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A61C5A21BB325600364A03 /* scanData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scanData.cpp; sourceTree = "<group>"; };
 		93A61C5B21BB325600364A03 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utils.cpp; sourceTree = "<group>"; };
@@ -172,6 +175,7 @@
 			children = (
 				93A61CC921BDDFA700364A03 /* citFinder.hpp */,
 				93A61CDD21BDE3F100364A03 /* params.hpp */,
+				9342A88621BF1E5200657FA7 /* datProc.hpp */,
 				9342A87B21BE116A00657FA7 /* dtafilter.hpp */,
 				93A61CDB21BDE1A900364A03 /* main.hpp */,
 			);
@@ -203,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				93A61CD821BDE0E500364A03 /* main.cpp */,
+				9342A88521BF1E5200657FA7 /* datProc.cpp */,
 				9342A87A21BE116900657FA7 /* dtafilter.cpp */,
 				93A61CDC21BDE3F100364A03 /* params.cpp */,
 			);
@@ -314,12 +319,13 @@
 				9342A87C21BE116A00657FA7 /* dtafilter.cpp in Sources */,
 				9342A88221BF058100657FA7 /* ms2Spectrum.cpp in Sources */,
 				9342A88421BF05A200657FA7 /* geometry.cpp in Sources */,
+				9342A88721BF1E5200657FA7 /* datProc.cpp in Sources */,
 				9342A88121BF056800657FA7 /* ms2.cpp in Sources */,
 				93A61CDE21BDE3F100364A03 /* params.cpp in Sources */,
 				9342A87D21BE1EB400657FA7 /* scanData.cpp in Sources */,
 				9342A87F21BEEECC00657FA7 /* aaDB.cpp in Sources */,
-				93A61CDA21BDE0EF00364A03 /* main.cpp in Sources */,
 				9342A87E21BEEC0200657FA7 /* peptide.cpp in Sources */,
+				93A61CDA21BDE0EF00364A03 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

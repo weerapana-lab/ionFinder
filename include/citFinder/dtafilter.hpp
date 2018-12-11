@@ -62,6 +62,9 @@ namespace CitFinder{
 		MatchDirection getMatchDirection() const{
 			return _matchDirection;
 		}
+		std::string getSampleName() const{
+			return _sampleName;
+		}
 	};
 }
 

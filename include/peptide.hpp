@@ -119,14 +119,17 @@ namespace PeptideNamespace{
 		double getTotalMass() const{
 			return modMass + mass;
 		}
+		char getMod() const{
+			return mod;
+		}
 	};
 	
 	class FragmentIon : public Ion{
 	private:
 		char b_y;
-		size_t num;
-		//size_t mz_int;
+		int num;
 		std::string mod;
+		bool found;
 		
 	public:
 		FragmentIon(char _b_y, int _num, int _charge, double _mass, std::string _mod) : Ion() {
@@ -134,18 +137,28 @@ namespace PeptideNamespace{
 			num = _num;
 			mod = _mod;
 			initalizeFromMass(_mass, _charge);
-			//mz_int = utils::round(getMZ());
+			found = false;
 		}
 		~FragmentIon() {}
+		
+		void setFound(bool boo){
+			found = boo;
+		}
 		
 		//properties
 		std::string getIonStr() const;
 		std::string getFormatedLabel() const;
-		//size_t getMZ_int() const{
-		//	return mz_int;
-		//}
 		char getBY() const{
 			return b_y;
+		}
+		int getNum() const{
+			return num;
+		}
+		std::string getMod() const{
+			return mod;
+		}
+		bool getFound() const{
+			return found;
 		}
 	};
 	
@@ -161,6 +174,7 @@ namespace PeptideNamespace{
 		static aaDB::AADB* aminoAcidMasses;
 		static bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
+		int nMod; //number of modified residues
 		
 		void fixDiffMod(const char* diffmods = "*");
 	
@@ -170,19 +184,26 @@ namespace PeptideNamespace{
 			sequence = "";
 			fullSequence = sequence;
 			initalized = false;
+			nMod = 0;
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
 			fullSequence = sequence;
 			initalized = false;
+			nMod = 0;
 		}
 		~Peptide() {}
 		
 		static void initAminoAcidsMasses(const base::ParamsBase&);
 		void initalize(const base::ParamsBase&, bool _calcFragments = true);
 		void calcFragments(int, int);
+		void addNeutralLoss(const std::vector<double>&);
 		double calcMass();
 		void printFragments(std::ostream&) const;
+		
+		void setFound(size_t i, bool boo){
+			fragments[i].setFound(boo);
+		}
 		
 		//properties
 		std::string getSequence() const{
@@ -194,9 +215,6 @@ namespace PeptideNamespace{
 		size_t getNumFragments() const{
 			return fragments.size();
 		}
-		//size_t getFragmentMZ_int(size_t i) const{
-		//	return fragments[i].getMZ_int();
-		//}
 		double getFragmentMZ(size_t i) const{
 			return fragments[i].getMZ(fragments[i].getCharge());
 		}
@@ -212,6 +230,12 @@ namespace PeptideNamespace{
 		}
 		char getBY(size_t i) const{
 			return fragments[i].getBY();
+		}
+		bool getFound(size_t i) const{
+			return fragments[i].getFound();
+		}
+		int getNumMod() const{
+			return nMod;
 		}
 	};//end of class
 	

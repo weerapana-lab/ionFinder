@@ -25,31 +25,35 @@ namespace CitFinder{
 	std::string const PROG_HELP_FILE = base::PROG_DB + "/citFinder/helpFile.txt";
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
 	
+	double const DEFAULT_NEUTRAL_LOSS_MASS = 43.0058;
+	
 	class Params;
 	
 	class Params : public base::ParamsBase{
 	public:
-		enum class inputModes{SINGLE, RECURSIVE};
+		enum class InputModes{SINGLE, RECURSIVE};
 		typedef std::map<std::string, std::string> FilterFilesType;
 		
 	private:
 		std::string _parentDir;
-		inputModes _inputMode;
+		InputModes _inputMode;
 		FilterFilesType _filterFiles;
 		std::string _dtaFilterBase;
+		double _neutralLossMass;
 		
 		bool _includeReverse;
 		
-		inputModes intToInputModes(int) const;
+		InputModes intToInputModes(int) const;
 		bool getFlist();
 		
 	public:
 		
 		Params() : ParamsBase(PROG_USAGE_FNAME, PROG_HELP_FILE){
 			_parentDir = "";
-			_inputMode = inputModes::SINGLE;
+			_inputMode = InputModes::SINGLE;
 			_includeReverse = false;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
+			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 		}
 		
 		//modifers
@@ -61,6 +65,10 @@ namespace CitFinder{
 		}
 		bool getIncludeReverse() const{
 			return _includeReverse;
+		}
+		std::string getInputModeIndependentParentDir() const;
+		double getNeutralLossMass() const{
+			return _neutralLossMass;
 		}
 	};
 }

@@ -91,6 +91,21 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 	}*/
 }
 
+void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses)
+{
+	size_t len = fragments.size();
+	for(size_t i = 0; i < len; i++)
+	{
+		for(auto it2 = losses.begin(); it2 != losses.end(); ++it2)
+		{
+			int tempCharge = fragments[i].getCharge();
+			fragments.push_back(FragmentIon(fragments[i].getBY(), fragments[i].getNum(), tempCharge,
+											fragments[i].getMass() - (*it2 / tempCharge),
+											std::to_string((int)round(*it2) * -1)));
+		}
+	}
+}
+
 void PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)
 {
 	char mod = '\0';
@@ -119,8 +134,10 @@ void PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)
 			}//end of for
 		}//end of if
 		PeptideIon temp(aminoAcidMasses->getMW(sequence[i]));
-		if(modFound)
+		if(modFound){
 			temp.setMod(mod, aminoAcidMasses->getMW(mod));
+			nMod++;
+		}
 		aminoAcids.push_back(temp);
 		modFound = false;
 	}//end of for
@@ -164,6 +181,8 @@ void PeptideNamespace::Peptide::initAminoAcidsMasses(const base::ParamsBase& par
 
 void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _calcFragments)
 {
+	initalized = true;
+	
 	//initilize aminoAcidMasses if necissary
 	if(!aminoAcidMassesInitilized)
 		initAminoAcidsMasses(pars);
@@ -172,7 +191,6 @@ void PeptideNamespace::Peptide::initalize(const base::ParamsBase& pars, bool _ca
 	fixDiffMod();
 	if(_calcFragments)
 		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge());
-	initalized = true;
 }
 
 void PeptideNamespace::Peptide::printFragments(std::ostream& out) const

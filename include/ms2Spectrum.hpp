@@ -250,7 +250,7 @@ namespace ms2{
 		double getPrecursorCharge() const{
 			return precursorCharge;
 		}
-		void labelSpectrum(const PeptideNamespace::Peptide& peptide,
+		void labelSpectrum(PeptideNamespace::Peptide& peptide,
 						   const base::ParamsBase& pars,
 						   size_t labelTop = LABEL_TOP);
 		void calcLabelPos(double maxPerc,

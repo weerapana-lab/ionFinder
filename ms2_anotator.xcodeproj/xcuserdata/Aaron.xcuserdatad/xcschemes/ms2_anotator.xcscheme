@@ -64,19 +64,19 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-sp /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy/sequest.params"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-dta /Volumes/Data/msData/ms2_anotator/NCF1_pEGF_H_NCF1_mEGF_L_1/heavy/DTASelect-filter.txt"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p K.ALAVSDLNR.A"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-d /Users/Aaron/local/ms2_anotator/testFiles"
@@ -93,6 +93,26 @@
          <CommandLineArgument
             argument = "-sp /Users/Aaron/local/ms2_anotator/testFiles/sequest.params"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-d /Volumes/Data/msData/ms2_anotator/rorpad_hr"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-sp /Volumes/Data/msData/ms2_anotator/rorpad_hr/sequest.params"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-m /Volumes/Data/msData/ms2_anotator/rorpad_hr/ror_pad_hr.ms2"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-s 06914"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-p .CLALGMSR*DAVK."
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

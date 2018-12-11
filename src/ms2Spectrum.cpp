@@ -201,7 +201,7 @@ void ms2::Spectrum::removeIntensityBelow(double minInt)
 	updateDynamicMetadata();
 }
 
-void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
+void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 								  const base::ParamsBase& pars, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
@@ -234,8 +234,11 @@ void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
 		{
 			if(it->getTopAbundant())
 			{
-				if(utils::inRange(it->getMZ(), tempMZ, _labelTolerance) //check that it->mz is in range
-				   && (it->getIntensity() > pars.getMinLabelIntensity())) //check that it->int is sufficiently high
+				bool inRange = utils::inRange(it->getMZ(), tempMZ, _labelTolerance);
+				bool intenseEnough = (it->getIntensity() > pars.getMinLabelIntensity());
+				
+				if(inRange && //check that it->mz is in range
+				   intenseEnough) //check that it->int is sufficiently high
 					rangeList.push_back(&(*it));
 			}//end of if
 		}//end of for
@@ -267,6 +270,7 @@ void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
 		(*label)->setLabeledIon(true);
 		(*label)->label.setIncludeLabel(true);
 		(*label)->setIonType(std::string(1, peptide.getBY(i)));
+		peptide.setFound(i, true);
 		labledCount++;
 	}//end of for
 	ionPercent = (double(labledCount) / double(len)) * 100;

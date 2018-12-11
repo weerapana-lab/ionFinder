@@ -67,6 +67,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-dta DTASelect-filter_short.txt"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-d /Users/Aaron/local/ms2_anotator/testFiles"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -76,7 +80,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rev 1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

@@ -89,10 +89,10 @@ clean:
 	rm -f helpFile.pdf
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
 
-install: $(BINDIR)/$(EXE)
-	cp $(BINDIR)/$(EXE) $(INSTALL_DIR)/$(EXE)
+#install: $(BINDIR)/$(EXE)
+#	cp $(BINDIR)/$(EXE) $(INSTALL_DIR)/$(EXE)
 
-uninstall:
-	rm -fv $(INSTALL_DIR)/$(EXE)
+#uninstall:
+#	rm -fv $(INSTALL_DIR)/$(EXE)
 
 distclean: clean

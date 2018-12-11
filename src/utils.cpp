@@ -293,6 +293,28 @@ std::string utils::dirName(std::string path, const std::string& delims)
 	return path.substr(0, path.find_last_of(delims));
 }
 
+std::string utils::parentDir(std::string path, char delim)
+{
+	//split by delim
+	std::vector<std::string> elems;
+	utils::split(path, delim, elems);
+	utils::removeEmptyStrings(elems);
+	size_t len = elems.size();
+	
+	if(len == 0){
+		throw std::runtime_error("Delim not found!");
+	}
+	else if(len == 1){
+		return "/";
+	}
+	else{
+		std::string ret = "";
+		for(size_t i = 0; i < len - 1; i++)
+			ret += "/" + elems[i];
+		return ret;
+	}
+}
+
 std::string utils::removeExtension(const std::string& filename)
 {
 	typename std::string::size_type const p(filename.find_last_of('.'));
@@ -474,6 +496,16 @@ std::string utils::repeat(std::string str, size_t numTimes)
 size_t utils::offset(const char* buf, size_t len, const char* str)
 {
 	return std::search(buf, buf + len, str, str + strlen(str)) - buf;
+}
+
+void utils::removeEmptyStrings(std::vector<std::string>& elems)
+{
+	for(auto it = elems.begin(); it != elems.end();)
+	{
+		if(*it == "")
+			elems.erase(it);
+		else ++it;
+	}
 }
 
 /*********/

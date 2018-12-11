@@ -8,12 +8,12 @@
 
 #include <citFinder/params.hpp>
 
-CitFinder::Params::inputModes CitFinder::Params::intToInputModes(int val) const
+CitFinder::Params::InputModes CitFinder::Params::intToInputModes(int val) const
 {
 	switch(val){
-		case 0 : return inputModes::SINGLE;
+		case 0 : return InputModes::SINGLE;
 			break;
-		case 1 : return inputModes::RECURSIVE;
+		case 1 : return InputModes::RECURSIVE;
 			break;
 		default : throw std::runtime_error("Invalid type!");
 	}
@@ -69,7 +69,7 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 				usage();
 				return false;
 			}
-			_dtaFilterBase = utils::absPath(argv[i]);
+			_dtaFilterBase = argv[i];
 			continue;
 		}
 		if(!strcmp(argv[i], "-rev"))
@@ -85,6 +85,16 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 				return false;
 			}
 			_includeReverse = std::stoi(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--lossMass"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
@@ -112,12 +122,12 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 
 bool CitFinder::Params::getFlist()
 {
-	if(_inputMode == inputModes::SINGLE)
+	if(_inputMode == InputModes::SINGLE)
 	{
 		std::string baseName = utils::baseName(_wd);
 		_filterFiles[baseName] = _wd + _dtaFilterBase;
 	}
-	else if(_inputMode == inputModes::RECURSIVE)
+	else if(_inputMode == InputModes::RECURSIVE)
 	{
 		std::vector<std::string> files;
 		if(!utils::ls(_wd.c_str(), files))
@@ -137,4 +147,11 @@ bool CitFinder::Params::getFlist()
 			return false;
 	}
 	return true;
+}
+
+std::string CitFinder::Params::getInputModeIndependentParentDir() const
+{
+	if(_inputMode == InputModes::SINGLE)
+		return utils::parentDir(_wd);
+	return _wd;
 }
