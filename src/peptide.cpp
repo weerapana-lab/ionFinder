@@ -89,16 +89,16 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 	size_t len = aminoAcids.size();
 	for(int i = 0; i < len; i++)
 	{
+		std::string beg = sequence.substr(0, i + 1);
+		std::string end = sequence.substr(i + 1);
+		
+		PeptideNamespace::PepIonIt beg_beg = aminoAcids.begin();
+		PeptideNamespace::PepIonIt beg_end = beg_beg + i + 1;
+		PeptideNamespace::PepIonIt end_beg = beg_beg + i;
+		PeptideNamespace::PepIonIt end_end = aminoAcids.end();
+		
 		for(int j = minCharge; j <= maxCharge; j++)
 		{
-			std::string beg = sequence.substr(0, i + 1);
-			std::string end = sequence.substr(i + 1);
-			
-			PeptideNamespace::PepIonIt beg_beg = aminoAcids.begin();
-			PeptideNamespace::PepIonIt beg_end = beg_beg + i + 1;
-			PeptideNamespace::PepIonIt end_beg = beg_beg + i;
-			PeptideNamespace::PepIonIt end_end = aminoAcids.end();
-			
 			//TODO: add if statement here to include un-mod fragments
 			//maybe some other time
 			
