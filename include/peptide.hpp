@@ -133,7 +133,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	///Used to `t b and y peptide ions
+	///Used to reporesent b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
 		enum class IonType{B, Y, B_NL, Y_NL};
@@ -222,6 +222,13 @@ namespace PeptideNamespace{
 			return strToIonType(std::string(1, c));
 		}
 		std::string ionTypeToStr() const;
+		std::string getNLStr() const;
+		bool isModified() const{
+			return mod == "";
+		}
+		bool isNL() const{
+			return _ionType == IonType::B_NL || _ionType == IonType::Y_NL;
+		}
 	};
 	
 	class Peptide : public Ion{
@@ -295,6 +302,9 @@ namespace PeptideNamespace{
 		}
 		bool getFound(size_t i) const{
 			return fragments[i].getFound();
+		}
+		const FragmentIon& getFragment(size_t i) const{
+			return fragments[i];
 		}
 		int getNumMod() const{
 			return nMod;

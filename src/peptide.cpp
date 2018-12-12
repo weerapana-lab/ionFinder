@@ -24,6 +24,10 @@ PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonTy
 	else throw std::runtime_error("Unknown IonType!");
 }
 
+std::string PeptideNamespace::FragmentIon::getNLStr() const{
+	return std::string((nlMass < 1 ? "" : "+")) + std::to_string((int)round(nlMass));
+}
+
 std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
 {
 	switch(_ionType){
@@ -31,9 +35,9 @@ std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
 			break;
 		case IonType::Y : return "y";
 			break;
-		case IonType::B_NL : return "b-";
+		case IonType::B_NL : return "b" + getNLStr();
 			break;
-		case IonType::Y_NL : return "y-";
+		case IonType::Y_NL : return "y" + getNLStr();
 			break;
 	}
 }
@@ -62,6 +66,8 @@ std::string PeptideNamespace::FragmentIon::getIonStr() const
 	str =std::string(1, b_y) + std::to_string(num) + mod;
 	if(charge > 1)
 		str += " " + makeChargeLable();
+	if(isNL())
+		str += getNLStr();
 	return str;
 }
 
@@ -74,6 +80,9 @@ std::string PeptideNamespace::FragmentIon::getFormatedLabel() const
 	
 	if(charge > 1)
 		str += "^\"" + makeChargeLable() + "\"";
+	
+	if(isNL())
+		str += getNLStr();
 	
 	return str;
 }
