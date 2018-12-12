@@ -132,7 +132,7 @@ namespace PeptideNamespace{
 	public:
 		enum class IonType{B, Y, B_NL, Y_NL};
 		
-	private:
+	protected:
 		char b_y;
 		int num;
 		std::string mod;
@@ -141,6 +141,15 @@ namespace PeptideNamespace{
 		double modMass; //represents nl mass
 		
 	public:
+		///blank constructor
+		FragmentIon() : Ion(){
+			b_y = '\0';
+			num = 0;
+			mod = "";
+			found = false;
+			_ionType = IonType::B;
+			modMass = 0.0;
+		}
 		FragmentIon(char _b_y, int _num, int _charge, double _mass,
 					double _modMass, std::string _mod) : Ion() {
 			b_y = _b_y;
