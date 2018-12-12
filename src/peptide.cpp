@@ -97,6 +97,9 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 		PeptideNamespace::PepIonIt end_beg = beg_beg + i;
 		PeptideNamespace::PepIonIt end_end = aminoAcids.end();
 		
+		std::string modsB = PeptideNamespace::concatMods(aminoAcids, beg_beg, beg_end);
+		std::string modsY = PeptideNamespace::concatMods(aminoAcids, end_beg, end_end);
+		
 		for(int j = minCharge; j <= maxCharge; j++)
 		{
 			//TODO: add if statement here to include un-mod fragments
@@ -104,10 +107,10 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 			
 			fragments.push_back(FragmentIon('b', i + 1, j,
 				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end) + nTerm, 0.0,
-				aminoAcids[i].makeModLable()));
+				modsB));
 			fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
 				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass * 2 + cTerm, 0.0,
-				aminoAcids[i].makeModLable()));
+				modsY));
 		}
 	}
 	/*for(auto it = fragments.begin(); it != fragments.end(); ++it)
@@ -137,7 +140,8 @@ void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses
 				
 			fragments.push_back(FragmentIon(ionType, fragments[i].getNum(), tempCharge,
 											fragments[i].getMass() - (*it2 / tempCharge),
-											*it2, std::to_string((int)round(*it2) * -1)));
+											*it2 * -1, //losses are given positive. Convert to negative num here.
+											fragments[i].getMod()));
 		}
 	}
 }
@@ -248,7 +252,8 @@ double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec)
 	return PeptideNamespace::calcMass(vec, vec.begin(), vec.end());
 }
 
-double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec, PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
+double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec,
+								  PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
 	double ret = 0;
 	for(PeptideNamespace::PepIonIt it = begin; it != end; ++it)
@@ -256,7 +261,19 @@ double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec, Pe
 	return ret;
 }
 
-
-
-
+/**
+ Returns a string containing all the modifications in vec.
+ @param vec vector of PeptideIon(s)
+ @param begin iterator to start of vec
+ @param end iterator to end of vec
+ */
+std::string PeptideNamespace::concatMods(const PeptideNamespace::PepIonVecType& vec,
+								PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
+{
+	std::string ret = "";
+	for(PeptideNamespace::PepIonIt it = begin; it != end; ++it)
+		if(it->isModified())
+			ret += it->getMod();
+	return ret;
+}
 

@@ -40,6 +40,8 @@ namespace PeptideNamespace{
 	double calcMass(const PepIonVecType& sequence,
 					PepIonIt begin, PepIonIt end);
 	double calcMass(const std::vector<PeptideIon>& sequence);
+	std::string concatMods(const PepIonVecType& vec,
+						   PepIonIt begin, PepIonIt end);
 	
 	//class declarations
 	
@@ -113,6 +115,7 @@ namespace PeptideNamespace{
 		void setMod(char _mod, double _modMass){
 			mod = _mod;
 			modMass = _modMass;
+			modified = true;
 		}
 		
 		std::string makeModLable() const;
@@ -125,9 +128,12 @@ namespace PeptideNamespace{
 		char getMod() const{
 			return mod;
 		}
+		bool isModified() const{
+			return modified;
+		}
 	};
 	
-	///Used to represent b and y peptide ions
+	///Used to `t b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
 		enum class IonType{B, Y, B_NL, Y_NL};
@@ -135,10 +141,13 @@ namespace PeptideNamespace{
 	protected:
 		char b_y;
 		int num;
+		//!Represents all modifications found in fragment.
+		 /** i.e. if two modifications are present, mod will be "**" */
 		std::string mod;
 		bool found;
 		IonType _ionType;
-		double modMass; //represents nl mass
+		 //!Represents neutral loss mass
+		double nlMass;
 		
 	public:
 		///blank constructor
@@ -148,14 +157,14 @@ namespace PeptideNamespace{
 			mod = "";
 			found = false;
 			_ionType = IonType::B;
-			modMass = 0.0;
+			nlMass = 0.0;
 		}
 		FragmentIon(char _b_y, int _num, int _charge, double _mass,
 					double _modMass, std::string _mod) : Ion() {
 			b_y = _b_y;
 			num = _num;
 			mod = _mod;
-			modMass = _modMass;
+			nlMass = _modMass;
 			initalizeFromMass(_mass, _charge);
 			found = false;
 			_ionType = strToIonType(_b_y);
@@ -164,7 +173,7 @@ namespace PeptideNamespace{
 					double _modMass, std::string _mod) : Ion() {
 			num = _num;
 			mod = _mod;
-			modMass = _modMass;
+			nlMass = _modMass;
 			initalizeFromMass(_mass, _charge);
 			found = false;
 			_ionType = ionType;
@@ -177,7 +186,7 @@ namespace PeptideNamespace{
 			mod = rhs.mod;
 			found = rhs.found;
 			_ionType = rhs._ionType;
-			modMass = rhs.modMass;
+			nlMass = rhs.nlMass;
 			charge = rhs.charge;
 			mass = rhs.mass;
 		}
