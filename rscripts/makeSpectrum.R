@@ -11,7 +11,7 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
   dat <- specDat$spectrum
   dat$label <- as.character(dat$label)
   #dat$ionType <- as.character(dat$ionType)
-  dat$ionType <- factor(x = dat$ionType, levels = c('blank', 'b', 'y'))
+  dat$ionType <- factor(x = dat$ionType, levels = c('blank', 'b', 'y', 'y_nl', 'b_nl'))
   dat$formatedLabel <- as.character(dat$formatedLabel)
   
   SEQ_STAR <- makeSeqVec(specDat$metaData$fullSequence, !simpleSequence)
@@ -19,10 +19,11 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
   Y_IONS <- makeIonLabelsExp("y", length(SEQ_STAR) - 1, 'r')
   Y_COLOR = "red"
   B_COLOR = "blue"
+  Y_NL_COLOR = "green4"
+  B_NL_COLOR = "orange1"
   BLANK_COLOR = 'grey35'
   INCLUDE_ARROWS = (nrow(dat[dat$includeArrow,]) > 0)
   
-   
   MZ_RANGE <- max(dat$mz) - min(dat$mz)
   
   if(simpleSequence){
@@ -66,12 +67,12 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
                   parse = FALSE,
                   size = 3)
   }
-  mspect <- mspect + geom_text(data = subset(dat, dat$ionType == "b" | dat$ionType == 'y'),
+  mspect <- mspect + geom_text(data = subset(dat, dat$ionType == "b" | dat$ionType == 'y' | dat$ionType == 'y_nl' | dat$ionType == 'b_nl'),
               aes(label = formatedLabel, x = labelX, y = labelY + BY_LAB_OFFSET_Y),
               parse = TRUE,
               size = 3) +
     scale_y_continuous(breaks = y_labs, expand = c(0, 0), limits = c(0, Y_SCALE_LIM)) +
-    scale_color_manual(values = c("b" = B_COLOR, "blank" = BLANK_COLOR, "y" = Y_COLOR)) +
+    scale_color_manual(values = c("b" = B_COLOR, "blank" = BLANK_COLOR, "y" = Y_COLOR, "y_nl" = Y_NL_COLOR, "b_nl" = B_NL_COLOR)) +
     theme_classic() +
     theme(panel.grid = element_blank(),
           legend.position = "none") +

@@ -35,9 +35,9 @@ std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
 			break;
 		case IonType::Y : return "y";
 			break;
-		case IonType::B_NL : return "b" + getNLStr();
+		case IonType::B_NL : return "b_nl"; // + getNLStr();
 			break;
-		case IonType::Y_NL : return "y" + getNLStr();
+		case IonType::Y_NL : return "y_nl"; // + getNLStr();
 			break;
 	}
 }
@@ -246,7 +246,7 @@ void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 {
 	assert(out);
 	for(FragmentIonItType it = fragments.begin(); it != fragments.end(); ++it)
-		out << it->getIonStr() << ": " << it->getMZ() <<NEW_LINE;
+		out << it->getIonStr() << ": " << it->getMZ() << NEW_LINE;
 }
 
 double PeptideNamespace::calcMass(double mz, int charge){
@@ -261,6 +261,12 @@ double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec)
 	return PeptideNamespace::calcMass(vec, vec.begin(), vec.end());
 }
 
+/**
+ Returns sum of masss of amino acids in vec.
+ @param vec vector of PeptideIon(s)
+ @param begin iterator to start of vec
+ @param end iterator to end of vec
+ */
 double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec,
 								  PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
