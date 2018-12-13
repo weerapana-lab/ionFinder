@@ -1,0 +1,48 @@
+
+\documentclass{standalone}
+\usepackage{tikz,forest}
+\usetikzlibrary{arrows.meta}
+
+\forestset{
+    default preamble={
+        for tree={
+            base=bottom,
+            child anchor=north,
+            align=center,
+            s sep+=0.6cm,                      % or use: s sep +=1.5 cm ...
+    straight edge/.style={
+        edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
+        (!u.parent anchor) -- (.child anchor);}
+        },
+    if n children={0}
+        {tier=word, draw, thick, rectangle}
+        {draw, diamond, aspect=1.5, thick}, % ... and retain: aspect=2
+    if n=1{%
+        edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
+        (!u.parent anchor) -| (.child anchor) node[pos=.2, above] {Y};}
+        }{
+        edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
+        (!u.parent anchor) -| (.child anchor) node[pos=.2, above] {N};}
+        }
+        }
+     }
+ }
+
+
+\begin{document}
+\begin{forest}
+ [Spans\\Fragment?, tikz={\draw[{Latex}-, thick] (.north) --++ (0,1);}
+    [Neutral\\loss?
+        [Contains\\N or Q?
+            [Ambiguous NL\\(ambNLFrag)]
+            [Cit determining NL\\(detNLFrag)]
+        ] 
+        [Cit determining ion\\(detFrag)]
+    ]   
+    [Neutral\\loss?
+        [Artifact fragment\\(artNLFrag)]  
+        [Ambiguous ion\\(ambFrag)] 
+     ]   
+ ] 
+\end{forest}
+\end{document}
