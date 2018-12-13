@@ -27,6 +27,7 @@ namespace Dtafilter{
 	bool readFilterFiles(const CitFinder::Params&,
 						 std::vector<Dtafilter::Scan>&);
 	
+	
 	class Scan : public scanData::Scan{
 		friend bool readFilterFile(std::string, std::string,
 								   std::vector<Dtafilter::Scan>&, bool);

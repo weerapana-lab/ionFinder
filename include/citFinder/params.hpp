@@ -24,6 +24,12 @@ namespace CitFinder{
 	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/citFinder/usage.txt";
 	std::string const PROG_HELP_FILE = base::PROG_DB + "/citFinder/helpFile.txt";
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
+	//!default conflicting residues
+	/**
+	 This should probably be changed to blank string in a more general version
+	 of this program.
+	 */
+	std::string const DEFAULT_AMBIGIOUS_RESIDUES = "NQ";
 	
 	double const DEFAULT_NEUTRAL_LOSS_MASS = 43.0058;
 	
@@ -38,9 +44,13 @@ namespace CitFinder{
 		std::string _parentDir;
 		InputModes _inputMode;
 		FilterFilesType _filterFiles;
+		//!Default name of DTAFilter filter file to search for
 		std::string _dtaFilterBase;
+		//! mass of neutral loss to search for
 		double _neutralLossMass;
+		std::string _ambigiousResidues;
 		
+		//! should reverse peptide matches be considered
 		bool _includeReverse;
 		
 		InputModes intToInputModes(int) const;
@@ -54,6 +64,7 @@ namespace CitFinder{
 			_includeReverse = false;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
+			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
 		}
 		
 		//modifers
@@ -69,6 +80,9 @@ namespace CitFinder{
 		std::string getInputModeIndependentParentDir() const;
 		double getNeutralLossMass() const{
 			return _neutralLossMass;
+		}
+		std::string getAmbigiousResidues() const{
+			return _ambigiousResidues;
 		}
 	};
 }

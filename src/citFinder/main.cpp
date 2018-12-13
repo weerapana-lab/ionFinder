@@ -26,9 +26,11 @@ int main(int argc, const char** argv)
 	
 	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
-	CitFinder::findFragments(peptides, scans, pars);
+	CitFinder::findFragments(scans, peptides, pars);
 	
-	//annotate spectra
+	//analyze sequences
+	std::vector<CitFinder::PeptideStats> peptideStats;
+	CitFinder::analyzeSequences(scans, peptides, peptideStats, pars);
 	
 	//write data
 	

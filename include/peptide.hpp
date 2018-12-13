@@ -200,7 +200,7 @@ namespace PeptideNamespace{
 		}
 		
 		//properties
-		std::string getIonStr() const;
+		std::string getIonStr(bool includeMod = true) const;
 		std::string getFormatedLabel() const;
 		char getBY() const{
 			return b_y;

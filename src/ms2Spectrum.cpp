@@ -269,7 +269,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
 		(*label)->setLabeledIon(true);
 		(*label)->label.setIncludeLabel(true);
-		(*label)->setIonType(std::string(1, peptide.getBY(i)));
+		//(*label)->setIonType(std::string(1, peptide.getBY(i)));
+		(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
 		peptide.setFound(i, true);
 		labledCount++;
 	}//end of for

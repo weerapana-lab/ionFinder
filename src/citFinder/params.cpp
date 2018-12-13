@@ -24,6 +24,7 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 	_wd = utils::pwd();
 	assert(utils::dirExists(_wd));
 	
+	//!TODO: add all options to getArgs
 	for(int i = 1; i < argc; i++)
 	{
 		if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help"))

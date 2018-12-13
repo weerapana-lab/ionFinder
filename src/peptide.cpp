@@ -60,10 +60,9 @@ std::string PeptideNamespace::PeptideIon::makeModLable() const
 	else return "";
 }
 
-std::string PeptideNamespace::FragmentIon::getIonStr() const
+std::string PeptideNamespace::FragmentIon::getIonStr(bool includeMod) const
 {
-	std::string str;
-	str =std::string(1, b_y) + std::to_string(num) + mod;
+	std::string str = std::string(1, b_y) + std::to_string(num) + (includeMod ? mod : "");
 	if(charge > 1)
 		str += " " + makeChargeLable();
 	if(isNL())
