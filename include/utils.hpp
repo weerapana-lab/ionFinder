@@ -184,8 +184,28 @@ namespace utils{
 	template <typename _Tp, size_t N> _Tp* end(_Tp(&arr)[N]) {
 		return &arr[0]+N;
 	}
-	//template<typename _Tp> bool inRange(_Tp, _Tp, _Tp);
-	bool inRange(double, double, double);
+	/**
+	 Determin whether compare is between compare - range and compare + range.
+	 @param value reference value
+	 @param compare value to search for in range
+	 @param range the range
+	 @return True if compare is in range
+	 */
+	template<typename _Tp> bool inRange(_Tp value, _Tp compare, _Tp range){
+		return abs(value - compare) <= range;
+	}
+	
+	/**
+	 Determin whether comp is beg <= comp and comp <= end
+	 @param beg begining of range
+	 @param end end of range
+	 @param comp the value to search for in range
+	 @return True if comp is in range
+	 */
+	template<typename _Tp> bool inSpan(_Tp beg, _Tp end, _Tp comp){
+		return beg <= comp && comp <= end;
+	}
+	//bool inRange(double, double, double);
 	int getInt(int min, int max);
 }
 

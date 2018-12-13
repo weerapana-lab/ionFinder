@@ -543,10 +543,16 @@ std::string utils::ascTime()
 }
 
 //template<typename _Tp>
-bool utils::inRange(double value, double compare, double range)
+/*bool utils::inRange(double value, double compare, double range)
 {
 	return abs(value - compare) <= range;
-}
+}*/
+
+/*template<typename _Tp>
+bool utils::inRange(_Tp value, _Tp compare, _Tp range)
+{
+	return abs(value - compare) <= range;
+}*/
 
 bool utils::isInteger(const std::string & s)
 {
