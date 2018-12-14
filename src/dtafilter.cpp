@@ -89,6 +89,10 @@ bool Dtafilter::readFilterFile(std::string fname,
 				baseScan.parse_matchDir_ID_Protein(elems[0]);
 				baseScan._sampleName = sampleName;
 				
+				//extract shortened protein name and description
+				size_t endOfDescription = elems[8].find(" [");
+				baseScan._parentDescription = elems[8].substr(0, endOfDescription);
+				
 				while(!inF.eof())
 				{
 					if(getNewLine)
@@ -101,6 +105,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
+					newScan._unique = line[0] == '*';
 					if(skipReverse && newScan._matchDirection == Dtafilter::Scan::MatchDirection::REVERSE)
 						continue;
 					else scans.push_back(newScan);

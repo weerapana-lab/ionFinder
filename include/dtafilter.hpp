@@ -37,8 +37,10 @@ namespace Dtafilter{
 	private:
 		std::string _parentProtein;
 		std::string _parentID;
+		std::string _parentDescription;
 		MatchDirection _matchDirection;
 		std::string _sampleName;
+		bool _unique;
 		
 		MatchDirection strToMatchDirection(std::string) const;
 		bool parse_matchDir_ID_Protein(std::string);
@@ -47,6 +49,8 @@ namespace Dtafilter{
 		Scan() : scanData::Scan(){
 			_parentProtein = "";
 			_parentID = "";
+			_parentDescription = "";
+			_unique = false;
 			_matchDirection = MatchDirection::REVERSE;
 		}
 		
@@ -65,6 +69,12 @@ namespace Dtafilter{
 		}
 		std::string getSampleName() const{
 			return _sampleName;
+		}
+		std::string getParentDescription() const{
+			return _parentDescription;
+		}
+		bool getUnique() const{
+			return _unique;
 		}
 	};
 }
