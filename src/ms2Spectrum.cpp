@@ -226,7 +226,12 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	//iterate through all calculated fragment ions and label ions on spectrum if they are found
 	for(size_t i = 0; i < len; i++)
 	{
+		/*std::string temp = peptide.getFragment(i).getIonStr(false);
+		if(temp == "y8")
+			std::cout << "Found!" << std::endl;*/
+		
 		double tempMZ = peptide.getFragmentMZ(i);
+		
 		rangeList.clear();
 		
 		//get ions whithin _labelTolerance
@@ -251,28 +256,47 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		{
 			//iterate through all ions whithin matchTolerance range to get the one with max intensity
 			double tempMax = (*label)->getIntensity();
-			double tempMZdiff = (*label)->getMZ() - tempMZ;
+			double tempMZdiff = abs((*label)->getMZ() - tempMZ);
 			for(listType::iterator it = rangeList.begin(); it != rangeList.end(); ++it)
 			{
 				if(pars.getMultipleMatchCompare() == "intensity" || pars.getMultipleMatchCompare() == "int"){
 					if((*it)->getIntensity() > tempMax)
+					{
 						label = it;
+						tempMax = (*label)->getIntensity();
+					}
 				}
 				else if(pars.getMultipleMatchCompare() == "mz"){
 					if(((*it)->getMZ() - tempMZ) < tempMZdiff)
+					{
+						//TODO: test that this works
 						label = it;
+						tempMZdiff = abs((*label)->getMZ() - tempMZ);
+					}
+				}
+				else{
+					throw std::runtime_error("Unknown multipleMatchCompare method!");
 				}
 			}
 		}
 		
-		(*label)->setLabel(peptide.getFragmentLabel(i));
-		(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
-		(*label)->setLabeledIon(true);
-		(*label)->label.setIncludeLabel(true);
-		//(*label)->setIonType(std::string(1, peptide.getBY(i)));
-		(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
+		if((*label)->getLabeledIon())
+			std::cout << "Duplicate label found:" << (*label)->getLabel() << ", " <<
+			peptide.getFragmentLabel(i) << NEW_LINE;
+		
+		//if label is not already labeled or if peptide.getFragment(i) is not a NL
+		if(!(*label)->getLabeledIon() || !peptide.getFragment(i).isNL())
+		{
+			(*label)->setLabel(peptide.getFragmentLabel(i));
+			(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
+			(*label)->setLabeledIon(true);
+			(*label)->label.setIncludeLabel(true);
+			//(*label)->setIonType(std::string(1, peptide.getBY(i)));
+			(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
+			//peptide.setFound(i, true);
+			labledCount++;
+		}
 		peptide.setFound(i, true);
-		labledCount++;
 	}//end of for
 	ionPercent = (double(labledCount) / double(len)) * 100;
 	
