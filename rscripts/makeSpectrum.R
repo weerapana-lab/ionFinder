@@ -19,8 +19,8 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
   Y_IONS <- makeIonLabelsExp("y", length(SEQ_STAR) - 1, 'r')
   Y_COLOR = "red"
   B_COLOR = "blue"
-  Y_NL_COLOR = "green4"
-  B_NL_COLOR = "orange1"
+  Y_NL_COLOR = "orange1"
+  B_NL_COLOR = "green4"
   BLANK_COLOR = 'grey35'
   INCLUDE_ARROWS = (nrow(dat[dat$includeArrow,]) > 0)
   
