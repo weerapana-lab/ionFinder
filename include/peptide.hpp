@@ -200,6 +200,12 @@ namespace PeptideNamespace{
 		}
 		
 		//properties
+		double getMZ() const{
+			//return getMZ(charge);
+			if(b_y == 'b')
+				return calcMZ(mass - 1, charge);
+			return Ion::getMZ(charge);
+		}
 		std::string getIonStr(bool includeMod = true) const;
 		std::string getFormatedLabel() const;
 		char getBY() const{
@@ -285,7 +291,7 @@ namespace PeptideNamespace{
 			return fragments.size();
 		}
 		double getFragmentMZ(size_t i) const{
-			return fragments[i].getMZ(fragments[i].getCharge());
+			return fragments[i].getMZ();
 		}
 		std::string getFragmentLabel(size_t i) const{
 			return fragments[i].getIonStr();

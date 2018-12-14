@@ -126,7 +126,7 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 		std::cout << it->getIonStr() << '\t' << it->getMZ() << '\t';
 		++it;
 		std::cout << it->getIonStr() << '\t' << it->getMZ() << '\n';
-	}*/	
+	}*/
 }
 
 void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses)

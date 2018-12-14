@@ -227,7 +227,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	for(size_t i = 0; i < len; i++)
 	{
 		/*std::string temp = peptide.getFragment(i).getIonStr(false);
-		if(temp == "y8")
+		if(temp == "b11")
 			std::cout << "Found!" << std::endl;*/
 		
 		double tempMZ = peptide.getFragmentMZ(i);
