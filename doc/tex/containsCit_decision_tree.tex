@@ -9,14 +9,14 @@
             base=bottom,
             child anchor=north,
             align=center,
-            s sep+=0.6cm,                      % or use: s sep +=1.5 cm ...
+            s sep+=3cm,                      % or use: s sep +=1.5 cm ...
     straight edge/.style={
         edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
         (!u.parent anchor) -- (.child anchor);}
         },
     if n children={0}
         {tier=word, draw, thick, rectangle}
-        {draw, diamond, aspect=1.5, thick}, % ... and retain: aspect=2
+        {draw, diamond, aspect=2, thick}, % ... and retain: aspect=2
     if n=1{%
         edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
         (!u.parent anchor) -| (.child anchor) node[pos=.2, above] {Y};}
@@ -31,18 +31,21 @@
 
 \begin{document}
 \begin{forest}
- [Spans\\modification?, tikz={\draw[{Latex}-, thick] (.north) --++ (0,1);}
-    [Neutral\\loss?
-        [Contains\\N or Q?
-            [Ambiguous NL\\(ambNLFrag)]
-            [Cit determining NL\\(detNLFrag)]
-        ] 
-        [Cit determining ion\\(detFrag)]
+ [Peptide\\modified?, tikz={\draw[{Latex}-, thick] (.north) --++ (0,1);}
+    [Modification\\on C term?
+        [false]
+        [nDetNLFrag $> 1$\\and nDetFrag $\geq 1$
+            [true]
+            [nDetNLFrag $\geq1$\\and nDetFrag $\geq 1$
+                [likely]
+                [nAmbNlFrag $\geq 1$
+                    [ambiguous]
+                    [false]
+                ]
+            ]
+        ]
     ]   
-    [Neutral\\loss?
-        [Artifact fragment\\(artNLFrag)]  
-        [Ambiguous ion\\(ambFrag)] 
-     ]   
+    [false]   
  ] 
 \end{forest}
 \end{document}
