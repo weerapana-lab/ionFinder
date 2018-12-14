@@ -87,6 +87,8 @@ void CitFinder::PeptideStats::initStats()
 	ambNLFrag = "";
 	detNLFrag = "";
 	artNLFrag = "";
+	
+	containsCit = "false";
 }
 
 void CitFinder::PeptideStats::initModLocs(const char* diffmods)
@@ -177,8 +179,8 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 			{
 				if(containsAmbResidues(ambResidues)) //is amb NL frag
 				{
-					nAmbFrag++;
-					addChar(ionStr, ambFrag);
+					nAmbNLFrag++;
+					addChar(ionStr, ambNLFrag);
 				}
 				else //is det NL frag
 				{
@@ -236,6 +238,7 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
+		pepStat.calcContainsCit();
 		peptideStats.push_back(pepStat);
 	}//end if for it
 }//end of fxn
@@ -318,4 +321,96 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		spectrum.printLabeledSpectrum(outF, true);
 	}
 	return true;
+}
+
+void CitFinder::PeptideStats::calcContainsCit()
+{
+	containsCit = "false";
+	
+	//is the peptide modified?
+	if(modLocs.size() == 0) return;
+	
+	//is cit modification c terminal?
+	if(modLocs.size() == 1 && modLocs[0] == sequence.length() - 1) return;
+	
+	//is there a determining NL
+	if(nDetNLFrag > 1 && nDetFrag >= 1){
+		containsCit = "true";
+		return;
+	}
+	
+	//is there at least one detNLFrag and more than 1 detFrag
+	if(nDetNLFrag == 1 && nDetFrag >= 1){
+		containsCit = "likely";
+		return;
+	}
+	
+	if(nAmbNLFrag >= 1)
+		containsCit = "ambiguous";
+}
+
+/**
+ Prints peptide stats to out.
+ @param stats Peptiee stats to print.
+ @param out stream to print to.
+ */
+void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::ostream& out)
+{
+	assert(out);
+	
+	//build stat names vector
+	std::string statNames = "containsCit nFrag nDetFrag nDetNLFrag nAmbFrag nAmbNLFrag nArtNLFrag";
+	std::string listNames = " frag detFrag detNLFrag ambFrag ambNLFrag artNLFrag";
+	std::vector<std::string> allNames;
+	utils::split(statNames + listNames, ' ', allNames);
+	
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence charge unique xCorr scan parent_file sample_name";
+	std::vector<std::string> oHeaders;
+	utils::split(otherHeaders, ' ', oHeaders);
+	std::vector<std::string> headers;
+	headers.reserve(statNames.size() + oHeaders.size());
+	headers.insert(headers.end(), oHeaders.begin(), oHeaders.end());
+	headers.insert(headers.end(), allNames.begin(), allNames.end());
+	
+	//print headers
+	size_t len = headers.size();
+	for(size_t i = 0; i < len; i++){
+		if(i == 0)
+			out << headers[i];
+		else out << OUT_DELIM << headers[i];
+	}
+	out << NEW_LINE;
+	
+	//print data
+	for(auto it = stats.begin(); it != stats.end(); ++it)
+	{
+		//scan data
+		out << it->_scan->getParentID() << OUT_DELIM <<
+		it->_scan->getParentProtein() << OUT_DELIM <<
+		it->_scan->getParentDescription() << OUT_DELIM <<
+		it->_scan->getFullSequence() << OUT_DELIM <<
+		it->_scan->getSequence() << OUT_DELIM <<
+		it->_scan->getCharge() << OUT_DELIM <<
+		it->_scan->getUnique() << OUT_DELIM <<
+		it->_scan->getXcorr() << OUT_DELIM <<
+		it->_scan->getScanNum() << OUT_DELIM <<
+		it->_scan->getParentFile() << OUT_DELIM <<
+		it->_scan->getSampleName() << OUT_DELIM;
+		
+		//peptid analysis data
+		out << it->containsCit << OUT_DELIM <<
+		it->nFrag << OUT_DELIM <<
+		it->nDetFrag << OUT_DELIM <<
+		it->nDetNLFrag << OUT_DELIM <<
+		it->nAmbFrag << OUT_DELIM <<
+		it->nAmbNLFrag << OUT_DELIM <<
+		it->nArtNLFrag << OUT_DELIM <<
+		it->frag << OUT_DELIM <<
+		it->detFrag << OUT_DELIM <<
+		it->detNLFrag << OUT_DELIM <<
+		it->ambFrag << OUT_DELIM <<
+		it->ambNLFrag << OUT_DELIM <<
+		it->artNLFrag << OUT_DELIM <<
+		NEW_LINE;
+	}
 }

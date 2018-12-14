@@ -117,16 +117,16 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
 				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end) + nTerm, 0.0,
 				modsB));
 			fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
-				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass * 2 + cTerm, 0.0,
+				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass + cTerm, 0.0,
 				modsY));
 		}
 	}
 	/*for(auto it = fragments.begin(); it != fragments.end(); ++it)
 	{
-		std::cout << it->getFormatedLabel() << '\t' << it->getMass() << '\t';
+		std::cout << it->getIonStr() << '\t' << it->getMZ() << '\t';
 		++it;
-		std::cout << it->getFormatedLabel() << '\t' << it->getMass() << '\n';
-	}*/
+		std::cout << it->getIonStr() << '\t' << it->getMZ() << '\n';
+	}*/	
 }
 
 void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses)
@@ -145,7 +145,7 @@ void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses
 			else if(fragments[i].getBY() == 'y')
 				ionType = PeptideNamespace::FragmentIon::IonType::Y_NL;
 			else throw std::runtime_error("Unknown ion type!");
-				
+			
 			fragments.push_back(FragmentIon(ionType, fragments[i].getNum(), tempCharge,
 											fragments[i].getMass() - (*it2 / tempCharge),
 											*it2 * -1, //losses are given positive. Convert to negative num here.

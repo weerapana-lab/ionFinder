@@ -33,6 +33,13 @@ int main(int argc, const char** argv)
 	CitFinder::analyzeSequences(scans, peptides, peptideStats, pars);
 	
 	//write data
+	std::ofstream outF(pars.makeOfname());
+	if(!outF)
+	{
+		std::cerr << "Failed to write peptide stats!" << NEW_LINE;
+		return -1;
+	}
+	CitFinder::printPeptideStats(peptideStats, outF);
 	
 	return 0;
 }

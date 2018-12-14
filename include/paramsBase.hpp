@@ -99,11 +99,13 @@ namespace base{
 			_aaMassFile = PROG_AA_MASS_LOCATION;
 			_usageFile = usageFile;
 			_helpFile = helpFile;
+			ofname = "";
 			
 			minFragCharge = 1;
 			maxFragCharge = 1;
-			matchTolerance = 1.0;
+			matchTolerance = 0.5;
 			minLabelIntensity = 0;
+			multipleMatchCompare = "intensity";
 			
 			seqParSpecified = false;
 			minMZ = 0;

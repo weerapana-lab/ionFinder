@@ -65,6 +65,7 @@ namespace CitFinder{
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
+			ofname = "peptide_cit_stats.tsv";
 		}
 		
 		//modifers
@@ -83,6 +84,9 @@ namespace CitFinder{
 		}
 		std::string getAmbigiousResidues() const{
 			return _ambigiousResidues;
+		}
+		std::string makeOfname() const{
+			return _wd + "/" + ofname;
 		}
 	};
 }

@@ -38,7 +38,7 @@ namespace CitFinder{
 						  std::vector<PeptideStats>&,
 						  const CitFinder::Params&);
 	
-	bool printPeptideStats(const std::vector<PeptideStats>&,
+	void printPeptideStats(const std::vector<PeptideStats>&,
 						   std::ostream&);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
@@ -100,34 +100,37 @@ namespace CitFinder{
 									 std::vector<PeptideStats>&,
 									 const CitFinder::Params&);
 		
-		friend bool printPeptideStats(const std::vector<PeptideStats>&,
+		friend void printPeptideStats(const std::vector<PeptideStats>&,
 									  std::ostream&);
 	private:
-		//!Total fragment ions found
+		//!Total fragment ions
 		int nFrag;
-		//!Number fragments found without modification
+		//!Number fragments without modification
 		int nAmbFrag;
-		//!Number fragments found with modification
+		//!Number fragments with modification
 		int nDetFrag;
-		//!Number ambigious NL fragments found
+		//!Number ambigious NL fragments
 		int nAmbNLFrag;
-		//!Number determining NL fragments found
+		//!Number determining NL fragments
 		int nDetNLFrag;
-		//!Number of artifact NL fragments found
+		//!Number of artifact NL fragments
 		int nArtNLFrag;
 		
-		//!Fragment ions found
+		//!Fragment ions
 		std::string frag;
-		//!Fragments found without modification
+		//!Fragments without modification
 		std::string ambFrag;
-		//!Fragments found with modification
+		//!Fragments with modification
 		std::string detFrag;
-		//!Ambigious NL fragments found
+		//!Ambigious NL fragments
 		std::string ambNLFrag;
-		//!Determining NL fragments found
+		//!Determining NL fragments
 		std::string detNLFrag;
-		//!Artifact NL fragments found
+		//!Artifact NL fragments
 		std::string artNLFrag;
+		
+		//!Does peptide contain cit
+		std::string containsCit;
 		
 		//!Fragment deliminator in output
 		std::string _fragDelim;
@@ -149,6 +152,7 @@ namespace CitFinder{
 		void initModLocs(const char* diffmods = "*");
 		void addChar(std::string, std::string&);
 		bool containsAmbResidues(const std::string& ambResidues) const;
+		void calcContainsCit();
 	public:
 		PeptideStats(){
 			_scan = new Dtafilter::Scan;
@@ -181,7 +185,6 @@ namespace CitFinder{
 		//modifers
 		//void setScan(Dtafilter::Scan)
 		void addSeq(const CitFinder::RichFragmentIon&, const std::string&);
-		
 	};
 }
 
