@@ -52,6 +52,8 @@ namespace CitFinder{
 		
 		//! should reverse peptide matches be considered
 		bool _includeReverse;
+		//!Should annotaed spectra be printed?
+		bool _printSpectraFiles;
 		
 		InputModes intToInputModes(int) const;
 		bool getFlist();
@@ -62,6 +64,7 @@ namespace CitFinder{
 			_parentDir = "";
 			_inputMode = InputModes::SINGLE;
 			_includeReverse = false;
+			_printSpectraFiles = false;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
@@ -87,6 +90,9 @@ namespace CitFinder{
 		}
 		std::string makeOfname() const{
 			return _wd + "/" + ofname;
+		}
+		bool getPrintSpectraFiles() const{
+			return _printSpectraFiles;
 		}
 	};
 }
