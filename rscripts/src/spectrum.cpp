@@ -192,6 +192,7 @@ Rcpp::List getSpectrum(std::string fname)
   Rcpp::CharacterVector label;
   Rcpp::LogicalVector includeLabel;
   Rcpp::CharacterVector ionType;
+  Rcpp::CharacterVector ionNum;
   Rcpp::CharacterVector formatedLabel;
   Rcpp::NumericVector labelX;
   Rcpp::NumericVector labelY;
@@ -265,7 +266,7 @@ Rcpp::List getSpectrum(std::string fname)
           continue;
         }
         else {
-          if(elems.size() != 13)
+          if(elems.size() != 14)
             throw std::runtime_error("elems.size() != 13");
           
           mz.push_back(toDouble(elems[0]));
@@ -273,14 +274,15 @@ Rcpp::List getSpectrum(std::string fname)
           label.push_back(elems[2]);
           includeLabel.push_back(toInt(elems[3]));
           ionType.push_back(elems[4]);
-          formatedLabel.push_back(elems[5]);
-          labelX.push_back(toDouble(elems[6]));
-          labelY.push_back(toDouble(elems[7]));
-          includeArrow.push_back(toInt(elems[8]));
-          arrowBegX.push_back(toDouble(elems[9]));
-          arrowBegY.push_back(toDouble(elems[10]));
-          arrowEndX.push_back(toDouble(elems[11]));
-          arrowEndY.push_back(toDouble(elems[12]));
+          ionNum.push_back(elems[5]);
+          formatedLabel.push_back(elems[6]);
+          labelX.push_back(toDouble(elems[7]));
+          labelY.push_back(toDouble(elems[8]));
+          includeArrow.push_back(toInt(elems[9]));
+          arrowBegX.push_back(toDouble(elems[10]));
+          arrowBegY.push_back(toDouble(elems[11]));
+          arrowEndX.push_back(toDouble(elems[12]));
+          arrowEndY.push_back(toDouble(elems[13]));
         }
       }
     }
@@ -297,6 +299,7 @@ Rcpp::List getSpectrum(std::string fname)
                            Rcpp::Named("label") = label,
                            Rcpp::Named("includeLabel") = includeLabel,
                            Rcpp::Named("ionType") = ionType,
+                           Rcpp::Named("ionNum") = ionNum,
                            Rcpp::Named("formatedLabel") = formatedLabel,
                            Rcpp::Named("labelX") = labelX,
                            Rcpp::Named("labelY") = labelY,

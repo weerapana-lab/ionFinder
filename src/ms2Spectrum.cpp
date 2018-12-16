@@ -66,6 +66,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 		<< it->getLabel() << OUT_DELIM
 		<< it->label.getIncludeLabel() << OUT_DELIM
 		<< it->getIonType() << OUT_DELIM
+		<< it->getIonNum() << OUT_DELIM
 		<< it->getFormatedLabel() << OUT_DELIM
 		<< it->label.labelLoc.getX() << OUT_DELIM
 		<< it->label.labelLoc.getY() << OUT_DELIM
@@ -293,6 +294,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 			(*label)->label.setIncludeLabel(true);
 			//(*label)->setIonType(std::string(1, peptide.getBY(i)));
 			(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
+			(*label)->setIonNum(peptide.getFragment(i).getNum());
 			//peptide.setFound(i, true);
 			labledCount++;
 		}

@@ -26,10 +26,10 @@
 namespace ms2{
 	
 	std::string const SPECTRUM_COL_HEADERS [] = {"mz", "intensity", "label", "includeLabel",
-		"ionType", "formatedLabel", "labelX", "labelY", "includeArrow", "arrowBegX",
+		"ionType", "ionNum", "formatedLabel", "labelX", "labelY", "includeArrow", "arrowBegX",
 		"arrowBegY", "arrowEndX", "arrowEndX"};
 	size_t const NUM_SPECTRUM_COL_HEADERS_SHORT = 2;
-	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 13;
+	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 14;
 	std::string const NA_STR = "NA";
 	
 	std::string const BEGIN_METADATA = "<metadata>";
@@ -96,21 +96,25 @@ namespace ms2{
 		std::string formatedLabel;
 		bool topAbundant;
 		std::string ionType;
+		int ionNum;
 		
+		/**
+		 Initalize DataPoint stats with default values.
+		 */
+		void initStats(){
+			label = geometry::DataLabel();
+			labeledIon = false;
+			topAbundant = false;
+			formatedLabel = NA_STR;
+			ionType = "blank";
+			ionNum = 0;
+		}
 	public:
 		DataPoint() : Ion(){
-			label = geometry::DataLabel();
-			labeledIon = false;
-			topAbundant = false;
-			formatedLabel = NA_STR;
-			ionType = "blank";
+			initStats();
 		}
 		DataPoint(double _mz, double _int) : Ion(_mz, _int){
-			label = geometry::DataLabel();
-			labeledIon = false;
-			topAbundant = false;
-			formatedLabel = NA_STR;
-			ionType = "blank";
+			initStats();
 		}
 		~DataPoint () {}
 		
@@ -134,6 +138,9 @@ namespace ms2{
 		void setIonType(std::string str){
 			ionType = str;
 		}
+		void setIonNum(int num){
+			ionNum = num;
+		}
 		
 		std::string getLabel() const{
 			return label.getLabel();
@@ -152,6 +159,9 @@ namespace ms2{
 		}
 		std::string getIonType() const{
 			return ionType;
+		}
+		int getIonNum() const{
+			return ionNum;
 		}
 		
 		//for utils::insertSorted()
