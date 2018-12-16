@@ -24,6 +24,23 @@ std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
 	return fs;
 }
 
+std::string scanData::Scan::makeOfSequenceFromSequence(std::string s) const
+{
+	if(!utils::strContains('*', s))
+		return s;
+	
+	std::string ret = "";
+	size_t len = s.length();
+	for(int i = 0; i < len; i++)
+	{
+		if(s[i] == '*')
+			ret[ret.length() - 1] = std::tolower(ret.back());
+		else ret += s[i];
+	}
+	
+	return ret;
+}
+
 void scanData::Scan::initilizeFromLine(std::string line)
 {
 	std::vector<std::string> elems;
@@ -44,7 +61,7 @@ std::string scanData::Scan::getOfname() const
 {
 	std::string ret;
 	ret = utils::removeExtension(parentFile);
-	ret += ("_" + sequence + "_" + std::to_string(scanNum));
+	ret += ("_" + makeOfSequenceFromSequence(sequence) + "_" + std::to_string(scanNum));
 	if(charge != 0)
 		ret += ("_" + std::to_string(charge));
 	ret += OF_EXT;

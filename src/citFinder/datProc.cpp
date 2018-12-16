@@ -287,7 +287,13 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			}
 			
 			//re-init Peptide::AminoAcidMasses for each sample
-			pars.setSeqParFname(pars.getWD() + "/sequest.params");
+			std::string spFname = pars.getWD() + "/";
+			if(pars.getInputMode() == CitFinder::Params::InputModes::SINGLE)
+				spFname += "/sequest.params";
+			else
+				spFname += it->getSampleName() + "/sequest.params";
+				
+			pars.setSeqParFname(spFname);
 			PeptideNamespace::Peptide::initAminoAcidsMasses(pars);
 		}//end if
 		
@@ -314,11 +320,21 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		}
 		spectrum.labelSpectrum(peptides.back(), pars);
 		
-		//temp for debuging
-		spectrum.normalizeIonInts(100);
-		spectrum.calcLabelPos();
-		std::ofstream outF("/Users/Aaron/local/ms2_anotator/testFiles/nl_test.spectrum");
-		spectrum.printLabeledSpectrum(outF, true);
+		//print spectra file
+		if(pars.getPrintSpectraFiles())
+		{
+			std::string dirNameTemp = pars.getWD() + "/spectraFiles";
+			if(!utils::dirExists(dirNameTemp))
+				if(!utils::mkdir(dirNameTemp.c_str()))
+					return false;
+			spectrum.normalizeIonInts(100);
+			spectrum.calcLabelPos();
+			//spectrm.makeOf
+			std::string temp = it->getOfname();
+			std::ofstream outF((dirNameTemp + "/" + temp).c_str());
+			if(!outF) return false;
+			spectrum.printLabeledSpectrum(outF, true);
+		}
 	}
 	return true;
 }

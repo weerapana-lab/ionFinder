@@ -144,7 +144,6 @@ bool CitFinder::Params::getFlist()
 			if(utils::isDir(_wd + *it))
 			{
 				std::string fname = _wd + *it + "/" + _dtaFilterBase;
-				std::cout << fname << NEW_LINE;
 				if(utils::fileExists(fname))
 					_filterFiles[utils::baseName(*it)] = fname;
 			}

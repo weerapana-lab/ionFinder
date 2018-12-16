@@ -94,6 +94,9 @@ namespace CitFinder{
 		bool getPrintSpectraFiles() const{
 			return _printSpectraFiles;
 		}
+		InputModes getInputMode() const{
+			return _inputMode;
+		}
 	};
 }
 

@@ -32,7 +32,8 @@ namespace scanData{
 		int charge;
 		std::string xcorr;
 		
-		std::string makeSequenceFromFullSequence(std::string) const;	
+		std::string makeSequenceFromFullSequence(std::string) const;
+		std::string makeOfSequenceFromSequence(std::string) const;
 	public:
 		Scan(){
 			parentFile = "";
