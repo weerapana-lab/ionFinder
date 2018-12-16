@@ -169,4 +169,20 @@ std::string fixOD(std::string str)
   return str;
 }
 
+// [[Rcpp::export]]
+Rcpp::CharacterVector getFoundIons(Rcpp::CharacterVector ionTypes, Rcpp::CharacterVector ionNums)
+{
+  Rcpp::CharacterVector ret;
+  
+  size_t len = ionTypes.size();
+  if(len != ionNums.size())
+    throw std::runtime_error("ionTypes and ionNums must be the same length!");
+  
+  for(size_t i = 0; i < len; i++)
+    ret.push_back(std::string(1, ionTypes[i][0]) + std::string(ionNums[i]));
+  
+  
+  return ret;
+}
+
 
