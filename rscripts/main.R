@@ -7,13 +7,13 @@ require(tools, quietly = TRUE, warn.conflicts = FALSE)
 
 WD <- file_path_as_absolute("./")
 OD <- WD
-argv <- commandArgs(trailingOnly = TRUE)
-#argv <- commandArgs(trailingOnly = FALSE)
+#argv <- commandArgs(trailingOnly = TRUE)
+argv <- commandArgs(trailingOnly = FALSE)
 iBeg <- 1
 
 if(argv[1] == "RStudio")
 {
-  argv <- c("Rstudio", "/Users/Aaron/local/ms2_anotator/testFiles/nl_test.spectrum")
+  argv <- c("Rstudio", "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_hr/spectraFiles/ror_pad_hr_CLALGMSrDAVK_6914_2.spectrum")
   iBeg <-  2
 }
 
