@@ -88,12 +88,12 @@ StringVector makeIonLabels(string letter, int count, char dir)
   if(dir == 'f')
   {
     for(int i = 1; i <= count; i++)
-      ret.push_back(letter + getSubscriptNum(i));
+      ret.push_back(letter + toString(i));
   }
   else if(dir == 'r')
   {
     for(int i = count; i > 0; i--)
-      ret.push_back(letter + getSubscriptNum(i));
+      ret.push_back(letter + toString(i));
   }
   else throw runtime_error("Invalid choice for dir. Only f or r allowed.");
   return ret;
