@@ -7,8 +7,8 @@ require(tools, quietly = TRUE, warn.conflicts = FALSE)
 
 WD <- file_path_as_absolute("./")
 OD <- WD
-argv <- commandArgs(trailingOnly = TRUE)
-#argv <- commandArgs(trailingOnly = FALSE)
+#argv <- commandArgs(trailingOnly = TRUE)
+argv <- commandArgs(trailingOnly = FALSE)
 iBeg <- 1
 
 if(argv[1] == "RStudio")
