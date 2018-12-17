@@ -71,6 +71,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 		if(getNewLine)
 			utils::safeGetline(inF, line);
 		getNewLine = true;
+		line = utils::trimTraling(line);
 		
 		if(utils::strContains('%', line)) //find protein header lines by percent symbol for percent coverage
 		{
@@ -98,6 +99,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					if(getNewLine)
 						utils::safeGetline(inF, line);
 					getNewLine = true;
+					line = utils::trimTraling(line);
 					
 					//break if starting new protein or end of file
 					if(utils::strContains('%', line) || line == "\tProteins\tPeptide IDs\tSpectra")
