@@ -141,14 +141,16 @@ void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s)
 /**
  Tests whether sequence contains ambigious residues.
  @param ambResidues ambigious residues to search for
+ @param fragSeq sequence of fragment to search for ambigious residues.
  @return True if an ambigious residue is found.
 */
-bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues) const
+bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues,
+												  std::string fragSeq) const
 {
-	size_t len = sequence.length();
+	size_t len = fragSeq.length();
 	for(int i = 0; i < len; i++)
 		for(int j = 0; j < ambResidues.length(); j++)
-			if(sequence[i] == ambResidues[j])
+			if(fragSeq[i] == ambResidues[j])
 				return true;
 	return false;
 }
@@ -156,8 +158,6 @@ bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues
 void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 									 const std::string& ambResidues)
 {
-	//TODO: problem with artNlFrag
-	
 	//first check if seq is found in *this sequence
 	size_t beg, end;
 	if(!CitFinder::allignSeq(sequence, seq.getSequence(), beg, end))
@@ -165,7 +165,7 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 	
 	//increment total fragment ions found
 	nFrag++;
-	std::string ionStr = seq.getIonStr(false);
+	std::string ionStr = seq.getIonStr(true);
 	addChar(ionStr, frag);
 	
 	//check if seq spans any modified residues
@@ -177,7 +177,7 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 			//check if NL
 			if(seq.isNL())
 			{
-				if(containsAmbResidues(ambResidues)) //is amb NL frag
+				if(containsAmbResidues(ambResidues, seq.getSequence())) //is amb NL frag
 				{
 					nAmbNLFrag++;
 					addChar(ionStr, ambNLFrag);
@@ -222,6 +222,9 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
+		/*if(it->getSequence() == "RHLETVDGAKVVVLVNR")
+			std::cout << "Found!" << NEW_LINE;*/
+		
 		fragmentMap.clear();
 		fragmentMap.populateMap(it->getSequence());
 		//it->printFragments(std::cout);
@@ -231,6 +234,9 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		size_t nFragments = it->getNumFragments();
 		for(size_t i = 0; i < nFragments; i++)
 		{
+			/*if(it->getFragment(i).getIonStr(false) == "b14-43")
+				std::cout << "Found!" << NEW_LINE;*/
+			
 			if(it->getFragment(i).getFound())
 			{
 				CitFinder::RichFragmentIon fragTemp(it->getFragment(i));
@@ -346,8 +352,10 @@ void CitFinder::PeptideStats::calcContainsCit()
 	//is the peptide modified?
 	if(modLocs.size() == 0) return;
 	
-	//is cit modification c terminal?
-	if(modLocs.size() == 1 && modLocs[0] == sequence.length() - 1) return;
+	//is c terminal most cit modification on the c terminus?
+	//modLocs.back() works because modLocs are added in the order
+	//they appear in the sequence
+	if(modLocs.back() == sequence.length() - 1) return;
 	
 	//is there a determining NL
 	if(nDetNLFrag > 1 && nDetFrag >= 1){

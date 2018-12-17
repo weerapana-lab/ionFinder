@@ -151,7 +151,7 @@ namespace CitFinder{
 		void initStats();
 		void initModLocs(const char* diffmods = "*");
 		void addChar(std::string, std::string&);
-		bool containsAmbResidues(const std::string& ambResidues) const;
+		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
 	public:
 		PeptideStats(){
