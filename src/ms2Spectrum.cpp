@@ -210,6 +210,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	sequence = peptide.getSequence();
 	fullSequence = peptide.getFullSequence();
 	double _labelTolerance = pars.getMatchTolerance();
+	bool seqPrinted = false;
 	
 	typedef std::list<ms2::DataPoint*> listType;
 	listType rangeList;
@@ -281,9 +282,14 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 			}
 		}
 		
-		if((*label)->getLabeledIon())
-			std::cout << "Duplicate label found:" << (*label)->getLabel() << ", " <<
+		if((*label)->getLabeledIon()){
+			if(!seqPrinted){
+				std::cout << "In sequence: " << peptide.getSequence() << NEW_LINE;
+				seqPrinted = true;
+			}
+			std::cout << "\tDuplicate label found: " << (*label)->getLabel() << ", " <<
 			peptide.getFragmentLabel(i) << NEW_LINE;
+		}
 		
 		//if label is not already labeled or if peptide.getFragment(i) is not a NL
 		if(!(*label)->getLabeledIon() || !peptide.getFragment(i).isNL())
