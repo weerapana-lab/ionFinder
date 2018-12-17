@@ -139,7 +139,7 @@ bool Ms2_annotator::DtaFilterFile::getFirstScan(const std::string& _seq, scanDat
 		return false;
 	}
 	
-	//initalize _scan
+	//initialize _scan
 	std::string line = getScanLine(offset);
 	_scan = scanData::Scan(line);
 	//_scan.setSequence(_seq);

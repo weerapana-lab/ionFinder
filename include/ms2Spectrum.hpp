@@ -99,7 +99,7 @@ namespace ms2{
 		int ionNum;
 		
 		/**
-		 Initalize DataPoint stats with default values.
+		 Initialize DataPoint stats with default values.
 		 */
 		void initStats(){
 			label = geometry::DataLabel();

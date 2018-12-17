@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 	std::cout << "ms2_annotator v" << BIN_VERSION << NEW_LINE;
 	
 	scanData::scansType scans;
-	//get scan numbers from DTAFilter file if suplied by user
+	//get scan numbers from DTAFilter file if supplied by user
 	if(pars.getInputMode() == 1)
 	{
 		Ms2_annotator::DtaFilterFile filterFile(pars.inFile.getInfile());
@@ -44,9 +44,9 @@ int main(int argc, char* argv[])
 	
 	for(scanData::scansType::iterator it = scans.begin(); it != scans.end(); ++it)
 	{
-		//initalize peptide with user suplied sequence
+		//initialize peptide with user supplied sequence
 		PeptideNamespace::Peptide pep(it->getSequence());
-		pep.initalize(pars);
+		pep.initialize(pars);
 		
 		ms2::Ms2File file(it->getParentFile());
 		if(!file.read())

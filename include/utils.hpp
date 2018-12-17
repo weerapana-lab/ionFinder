@@ -185,7 +185,7 @@ namespace utils{
 		return &arr[0]+N;
 	}
 	/**
-	 Determin whether compare is between compare - range and compare + range.
+	 Determine whether compare is between compare - range and compare + range.
 	 @param value reference value
 	 @param compare value to search for in range
 	 @param range the range
@@ -196,8 +196,8 @@ namespace utils{
 	}
 	
 	/**
-	 Determin whether comp is beg <= comp and comp <= end
-	 @param beg begining of range
+	 Determine whether comp is beg <= comp and comp <= end
+	 @param beg beginning of range
 	 @param end end of range
 	 @param comp the value to search for in range
 	 @return True if comp is in range

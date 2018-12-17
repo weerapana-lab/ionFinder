@@ -261,10 +261,10 @@ void utils::systemCommand(std::string command)
 }
 
 //make dir.
-//returns true if sucessful
+//returns true if successful
 bool utils::mkdir(const char* path)
 {
-	//get abs path and make sure that it dosen't already exist
+	//get abs path and make sure that it doesn't already exist
 	//return false if it does
 	std::string rpath = absPath(path);
 	if(dirExists(rpath))
@@ -565,7 +565,7 @@ bool utils::isInteger(const std::string & s)
 }
 
 //get int from std::cin between min and max
-//continue asking for input untill user suplies valid value
+//continue asking for input until user suplies valid value
 int utils::getInt(int min, int max)
 {
 	std::string choice;

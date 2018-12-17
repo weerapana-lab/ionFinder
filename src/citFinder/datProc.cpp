@@ -51,10 +51,10 @@ void CitFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap)
 }
 
 /**
- Allign ref sequence to query sequence. To peptide sequences as strings are alligned.
+ Align ref sequence to query sequence. To peptide sequences as strings are aligned.
  @param ref The reference sequence to search.
  @param query The sequence to search for.
- @param beg Begining of match. If no match, left unchanged.
+ @param beg Beginning of match. If no match, left unchanged.
  @param end End of match. If no match, left unchanged.
  @return bool representing if match was found.
  */
@@ -139,10 +139,10 @@ void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s)
 }
 
 /**
- Tests whether sequence contains ambigious residues.
- @param ambResidues ambigious residues to search for
- @param fragSeq sequence of fragment to search for ambigious residues.
- @return True if an ambigious residue is found.
+ Tests whether sequence contains ambiguous residues.
+ @param ambResidues ambiguous residues to search for
+ @param fragSeq sequence of fragment to search for ambiguous residues.
+ @return True if an ambiguous residue is found.
 */
 bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues,
 												  std::string fragSeq) const
@@ -269,7 +269,7 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		{
 			//read ms2 files
 			ms2Map.clear();
-			//first get curent wd name
+			//first get current wd name
 			curSample = it->getSampleName();
 			curWD = pars.getInputModeIndependentParentDir() + "/" + curSample;
 			
@@ -303,9 +303,9 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			PeptideNamespace::Peptide::initAminoAcidsMasses(pars);
 		}//end if
 		
-		//initilize peptide object for current scan
+		//initialize peptide object for current scan
 		peptides.push_back(PeptideNamespace::Peptide (it->getSequence()));
-		peptides.back().initalize(pars);
+		peptides.back().initialize(pars);
 		
 		//calculate neutral loss combinations
 		int nMods = peptides.back().getNumMod();
@@ -375,7 +375,7 @@ void CitFinder::PeptideStats::calcContainsCit()
 
 /**
  Prints peptide stats to out.
- @param stats Peptiee stats to print.
+ @param stats Peptide stats to print.
  @param out stream to print to.
  */
 void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::ostream& out)

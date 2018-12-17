@@ -60,7 +60,7 @@ namespace Ms2_annotator{
 		bool ms2Specified, scanSpecified;
 		bool dtaSpecified;
 		
-		//program paramaters
+		//program parameters
 		
 		bool checkParams() const;
 		

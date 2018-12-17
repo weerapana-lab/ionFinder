@@ -124,7 +124,7 @@ bool labels::Labels::overlapsStaticDataPoints(const labels::Labels::labType* con
 void labels::Labels::addStaticLables()
 {
 	graphType graph;
-	populateGraph(graph); //populate graph of overlaping points
+	populateGraph(graph); //populate graph of overlapping points
 	sortByY(); //sort labeledPoints by intensity
 	
 	for(pointsListType::iterator it = labeledPoints.begin(); it != labeledPoints.end(); ++it)

@@ -54,7 +54,7 @@ bool ms2::Ms2File::getMetaData()
 	std::vector<std::string> elems;
 	int mdCount = 0;
 	char _delim = utils::getDelim(delimType);
-	//iterate throuth ss to find metadata
+	//iterate through ss to find metadata
 	while(ss.tellg() < sLen){
 		utils::getLine(ss, line, _delim, beginLine);
 		if(line[0] == 'H')

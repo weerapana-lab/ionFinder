@@ -236,7 +236,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		
 		rangeList.clear();
 		
-		//get ions whithin _labelTolerance
+		//get ions within _labelTolerance
 		for(ionsTypeIt it = ions.begin(); it != ions.end(); ++it)
 		{
 			if(it->getTopAbundant())
@@ -256,7 +256,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		label = rangeList.begin();
 		if(rangeList.size() > 1)
 		{
-			//iterate through all ions whithin matchTolerance range to get the one with max intensity
+			//iterate through all ions within matchTolerance range to get the one with max intensity
 			double tempMax = (*label)->getIntensity();
 			double tempMZdiff = abs((*label)->getMZ() - tempMZ);
 			for(listType::iterator it = rangeList.begin(); it != rangeList.end(); ++it)
@@ -358,7 +358,7 @@ void ms2::Spectrum::calcLabelPos(double maxPerc,
 								 double offset_x, double offset_y,
 								 double x_padding, double y_padding)
 {
-	//initalize points
+	//initialize points
 	labels::Labels labs(minMZ, maxMZ, minInt, maxInt);
 	
 	makePoints(labs, maxPerc, offset_x, offset_y, x_padding, y_padding);

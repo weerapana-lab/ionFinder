@@ -109,7 +109,7 @@ namespace CitFinder{
 		int nAmbFrag;
 		//!Number fragments with modification
 		int nDetFrag;
-		//!Number ambigious NL fragments
+		//!Number ambiguous NL fragments
 		int nAmbNLFrag;
 		//!Number determining NL fragments
 		int nDetNLFrag;
@@ -122,7 +122,7 @@ namespace CitFinder{
 		std::string ambFrag;
 		//!Fragments with modification
 		std::string detFrag;
-		//!Ambigious NL fragments
+		//!Ambiguous NL fragments
 		std::string ambNLFrag;
 		//!Determining NL fragments
 		std::string detNLFrag;
@@ -145,7 +145,7 @@ namespace CitFinder{
 		//!Positions of modifications
 		std::vector<size_t> modLocs;
 		
-		//!pointer to corresponging scan object
+		//!pointer to corresponding scan object
 		Dtafilter::Scan* _scan;
 		
 		void initStats();

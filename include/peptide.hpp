@@ -23,7 +23,7 @@
 
 namespace PeptideNamespace{
 	
-	//foward class declarations
+	//forward class declarations
 	class Species;
 	class Ion;
 	class PeptideIon;
@@ -33,7 +33,7 @@ namespace PeptideNamespace{
 	typedef std::vector<PeptideIon> PepIonVecType;
 	typedef PepIonVecType::const_iterator PepIonIt;
 	
-	//foward function declarations
+	//forward function declarations
 	double calcMass(double mz, int charge);
 	double calcMZ(double mass, int charge);
 	double calcMass(std::string sequence);
@@ -245,7 +245,7 @@ namespace PeptideNamespace{
 		std::string sequence;
 		std::string fullSequence;
 		std::vector<PeptideIon> aminoAcids;
-		bool initalized;
+		bool initialized;
 		static aaDB::AADB* aminoAcidMasses;
 		static bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
@@ -258,19 +258,19 @@ namespace PeptideNamespace{
 		Peptide() : Ion(){
 			sequence = "";
 			fullSequence = sequence;
-			initalized = false;
+			initialized = false;
 			nMod = 0;
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
 			fullSequence = sequence;
-			initalized = false;
+			initialized = false;
 			nMod = 0;
 		}
 		~Peptide() {}
 		
 		static void initAminoAcidsMasses(const base::ParamsBase&);
-		void initalize(const base::ParamsBase&, bool _calcFragments = true);
+		void initialize(const base::ParamsBase&, bool _calcFragments = true);
 		void calcFragments(int, int);
 		void addNeutralLoss(const std::vector<double>&);
 		double calcMass();
