@@ -77,7 +77,7 @@ void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showW
 		if(aminoAcidsDB.find(tempSymbol) == aminoAcidsDB.end())
 		{
 			if(showWarnings)
-				std::cerr << "Could not find " << tempSymbol << " in aaDB!" << std::endl;
+				std::cerr << "Could not find " << tempSymbol << " in aaDB!" << NEW_LINE;
 			continue;
 		} else {
 			aminoAcidsDB[tempSymbol] += it->second.getMass();
@@ -85,7 +85,7 @@ void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showW
 	}//end for
 }//end function
 
-bool aaDB::AADB::initalize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings)
+bool aaDB::AADB::initialize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings)
 {
 	//read in files containing aa masses and modifications
 	aaDB::aminoAcidsDBType modsTemp;
@@ -98,7 +98,7 @@ bool aaDB::AADB::initalize(std::string aaDBLoc, std::string modDBLoc, bool showW
 	return true;
 }
 
-bool aaDB::AADB::initalize(std::string aaDBLoc, const aaDB::aminoAcidsDBType& mods, bool showWarnings)
+bool aaDB::AADB::initialize(std::string aaDBLoc, const aaDB::aminoAcidsDBType& mods, bool showWarnings)
 {
 	//read in files containing aa masses and modifications
 	if(!readInAADB(aaDBLoc))

@@ -83,8 +83,8 @@ namespace aaDB{
 		~AADB(){}
 		
 		//modifers
-		bool initalize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings = true);
-		bool initalize(std::string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
+		bool initialize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings = true);
+		bool initialize(std::string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
 		
 		//properties
 		double calcMW(std::string sequence, bool addNTerm = true, bool addCTerm = true) const;

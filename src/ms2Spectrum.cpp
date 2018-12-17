@@ -11,17 +11,17 @@
 void ms2::Spectrum::writeMetaData(std::ostream& out) const
 {
 	assert(out);
-	out << ms2::BEGIN_METADATA << std::endl
-		<< "precursorFile" << OUT_DELIM << precursorFile << std::endl
-		<< "scanNumber" << OUT_DELIM << scanNumber << std::endl
-		<< "sequence" << OUT_DELIM << sequence << std::endl
-		<< "fullSequence" << OUT_DELIM << fullSequence << std::endl
-		<< "retTime" << OUT_DELIM << retTime << std::endl
-		<< "precursorCharge" << OUT_DELIM << precursorCharge << std::endl
-		<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << std::endl;
+	out << ms2::BEGIN_METADATA << NEW_LINE
+		<< "precursorFile" << OUT_DELIM << precursorFile << NEW_LINE
+		<< "scanNumber" << OUT_DELIM << scanNumber << NEW_LINE
+		<< "sequence" << OUT_DELIM << sequence << NEW_LINE
+		<< "fullSequence" << OUT_DELIM << fullSequence << NEW_LINE
+		<< "retTime" << OUT_DELIM << retTime << NEW_LINE
+		<< "precursorCharge" << OUT_DELIM << precursorCharge << NEW_LINE
+		<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << NEW_LINE;
 	out.unsetf(std::ios::scientific);
-	out << "precursorScan" << OUT_DELIM << precursorScan << std::endl
-		<< ms2::END_METADATA <<std::endl << ms2::BEGIN_SPECTRUM << std::endl;
+	out << "precursorScan" << OUT_DELIM << precursorScan << NEW_LINE
+		<< ms2::END_METADATA <<NEW_LINE << ms2::BEGIN_SPECTRUM << NEW_LINE;
 }
 
 void ms2::Spectrum::printSpectrum(std::ostream& out, bool includeMetaData) const
@@ -36,13 +36,13 @@ void ms2::Spectrum::printSpectrum(std::ostream& out, bool includeMetaData) const
 			out << SPECTRUM_COL_HEADERS[i];
 		else out << OUT_DELIM << SPECTRUM_COL_HEADERS[i];
 	}
-	out << std::endl;
+	out << NEW_LINE;
 	
 	for(ionsTypeConstIt it = ions.begin(); it != ions.end(); ++it)
-		out << it->getMZ() << OUT_DELIM << it->getIntensity() <<std::endl;
+		out << it->getMZ() << OUT_DELIM << it->getIntensity() <<NEW_LINE;
 	
 	if(includeMetaData)
-		out << ms2::END_SPECTRUM <<std::endl;
+		out << ms2::END_SPECTRUM <<NEW_LINE;
 }
 
 void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData) const
@@ -57,7 +57,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 			out << SPECTRUM_COL_HEADERS[i];
 		else out << OUT_DELIM << SPECTRUM_COL_HEADERS[i];
 	}
-	out << std::endl;
+	out << NEW_LINE;
 	
 	for(ionsTypeConstIt it = ions.begin(); it != ions.end(); ++it)
 	{
@@ -66,6 +66,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 		<< it->getLabel() << OUT_DELIM
 		<< it->label.getIncludeLabel() << OUT_DELIM
 		<< it->getIonType() << OUT_DELIM
+		<< it->getIonNum() << OUT_DELIM
 		<< it->getFormatedLabel() << OUT_DELIM
 		<< it->label.labelLoc.getX() << OUT_DELIM
 		<< it->label.labelLoc.getY() << OUT_DELIM
@@ -73,11 +74,11 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 		<< it->label.arrow.beg.getX() << OUT_DELIM
 		<< it->label.arrow.beg.getY() << OUT_DELIM
 		<< it->label.arrow.end.getX() << OUT_DELIM
-		<< it->label.arrow.end.getY() << std::endl;
+		<< it->label.arrow.end.getY() << NEW_LINE;
 	}
 	
 	if(includeMetaData)
-		out << ms2::END_SPECTRUM <<std::endl;
+		out << ms2::END_SPECTRUM <<NEW_LINE;
 }
 
 void ms2::Spectrum::clear()
@@ -201,14 +202,15 @@ void ms2::Spectrum::removeIntensityBelow(double minInt)
 	updateDynamicMetadata();
 }
 
-void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
-								  const params::Params& pars, size_t labelTop)
+void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
+								  const base::ParamsBase& pars, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
 	sequence = peptide.getSequence();
 	fullSequence = peptide.getFullSequence();
 	double _labelTolerance = pars.getMatchTolerance();
+	bool seqPrinted = false;
 	
 	typedef std::list<ms2::DataPoint*> listType;
 	listType rangeList;
@@ -226,16 +228,24 @@ void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
 	//iterate through all calculated fragment ions and label ions on spectrum if they are found
 	for(size_t i = 0; i < len; i++)
 	{
+		/*std::string temp = peptide.getFragment(i).getIonStr(false);
+		if(temp == "b11")
+			std::cout << "Found!" << std::endl;*/
+		
 		double tempMZ = peptide.getFragmentMZ(i);
+		
 		rangeList.clear();
 		
-		//get ions whithin _labelTolerance
+		//get ions within _labelTolerance
 		for(ionsTypeIt it = ions.begin(); it != ions.end(); ++it)
 		{
 			if(it->getTopAbundant())
 			{
-				if(utils::inRange(it->getMZ(), tempMZ, _labelTolerance) //check that it->mz is in range
-				   && (it->getIntensity() > pars.getMinLabelIntensity())) //check that it->int is sufficiently high
+				bool inRange = utils::inRange(it->getMZ(), tempMZ, _labelTolerance);
+				bool intenseEnough = (it->getIntensity() > pars.getMinLabelIntensity());
+				
+				if(inRange && //check that it->mz is in range
+				   intenseEnough) //check that it->int is sufficiently high
 					rangeList.push_back(&(*it));
 			}//end of if
 		}//end of for
@@ -246,28 +256,55 @@ void ms2::Spectrum::labelSpectrum(const PeptideNamespace::Peptide& peptide,
 		label = rangeList.begin();
 		if(rangeList.size() > 1)
 		{
-			//iterate through all ions whithin matchTolerance range to get the one with max intensity
+			//iterate through all ions within matchTolerance range to get the one with max intensity
 			double tempMax = (*label)->getIntensity();
-			double tempMZdiff = (*label)->getMZ() - tempMZ;
+			double tempMZdiff = abs((*label)->getMZ() - tempMZ);
 			for(listType::iterator it = rangeList.begin(); it != rangeList.end(); ++it)
 			{
 				if(pars.getMultipleMatchCompare() == "intensity" || pars.getMultipleMatchCompare() == "int"){
 					if((*it)->getIntensity() > tempMax)
+					{
 						label = it;
+						tempMax = (*label)->getIntensity();
+					}
 				}
 				else if(pars.getMultipleMatchCompare() == "mz"){
 					if(((*it)->getMZ() - tempMZ) < tempMZdiff)
+					{
+						//TODO: test that this works
 						label = it;
+						tempMZdiff = abs((*label)->getMZ() - tempMZ);
+					}
+				}
+				else{
+					throw std::runtime_error("Unknown multipleMatchCompare method!");
 				}
 			}
 		}
 		
-		(*label)->setLabel(peptide.getFragmentLabel(i));
-		(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
-		(*label)->setLabeledIon(true);
-		(*label)->label.setIncludeLabel(true);
-		(*label)->setIonType(std::string(1, peptide.getBY(i)));
-		labledCount++;
+		if((*label)->getLabeledIon()){
+			if(!seqPrinted){
+				std::cout << "In sequence: " << peptide.getSequence() << NEW_LINE;
+				seqPrinted = true;
+			}
+			std::cout << "\tDuplicate label found: " << (*label)->getLabel() << ", " <<
+			peptide.getFragmentLabel(i) << NEW_LINE;
+		}
+		
+		//if label is not already labeled or if peptide.getFragment(i) is not a NL
+		if(!(*label)->getLabeledIon() || !peptide.getFragment(i).isNL())
+		{
+			(*label)->setLabel(peptide.getFragmentLabel(i));
+			(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
+			(*label)->setLabeledIon(true);
+			(*label)->label.setIncludeLabel(true);
+			//(*label)->setIonType(std::string(1, peptide.getBY(i)));
+			(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
+			(*label)->setIonNum(peptide.getFragment(i).getNum());
+			//peptide.setFound(i, true);
+			labledCount++;
+		}
+		peptide.setFound(i, true);
 	}//end of for
 	ionPercent = (double(labledCount) / double(len)) * 100;
 	
@@ -321,7 +358,7 @@ void ms2::Spectrum::calcLabelPos(double maxPerc,
 								 double offset_x, double offset_y,
 								 double x_padding, double y_padding)
 {
-	//initalize points
+	//initialize points
 	labels::Labels labs(minMZ, maxMZ, minInt, maxInt);
 	
 	makePoints(labs, maxPerc, offset_x, offset_y, x_padding, y_padding);

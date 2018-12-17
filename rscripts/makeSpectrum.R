@@ -1,5 +1,7 @@
 
 require(ggplot2, warn.conflicts = FALSE, quietly = TRUE)
+#require(foreach, warn.conflicts = FALSE, quietly = TRUE)
+#require(doParallel, warn.conflicts = FALSE, quietly = TRUE)
 
 PROG_WD_HOME = paste(Sys.getenv("HOME"), "/local/ms2_anotator/rscripts", sep = "")
 Rcpp::sourceCpp(paste(PROG_WD_HOME, '/src/cppFunctions.cpp', sep = ""), cacheDir = paste(PROG_WD_HOME, "/lib/cppFunctions", sep = ""))
@@ -11,18 +13,22 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
   dat <- specDat$spectrum
   dat$label <- as.character(dat$label)
   #dat$ionType <- as.character(dat$ionType)
-  dat$ionType <- factor(x = dat$ionType, levels = c('blank', 'b', 'y'))
+  dat$ionType <- factor(x = dat$ionType, levels = c('blank', 'b', 'y', 'y_nl', 'b_nl'))
   dat$formatedLabel <- as.character(dat$formatedLabel)
   
   SEQ_STAR <- makeSeqVec(specDat$metaData$fullSequence, !simpleSequence)
-  B_IONS <- makeIonLabelsExp("b", length(SEQ_STAR) - 1, 'f')
-  Y_IONS <- makeIonLabelsExp("y", length(SEQ_STAR) - 1, 'r')
+  foundIons <- unique(getFoundIons(dat[dat$ionType != 'blank',]$ionType, dat[dat$ionType != 'blank',]$ionNum))
+  B_IONS_EXP <- makeIonLabelsExp("b", length(SEQ_STAR) - 1, 'f')
+  Y_IONS_EXP <- makeIonLabelsExp("y", length(SEQ_STAR) - 1, 'r')
+  B_IONS = makeIonLabels("b", length(SEQ_STAR) - 1, 'f')
+  Y_IONS <- makeIonLabels("y", length(SEQ_STAR) - 1, 'r')
   Y_COLOR = "red"
   B_COLOR = "blue"
+  Y_NL_COLOR = "orange1"
+  B_NL_COLOR = "green4"
   BLANK_COLOR = 'grey35'
   INCLUDE_ARROWS = (nrow(dat[dat$includeArrow,]) > 0)
   
-   
   MZ_RANGE <- max(dat$mz) - min(dat$mz)
   
   if(simpleSequence){
@@ -66,12 +72,12 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
                   parse = FALSE,
                   size = 3)
   }
-  mspect <- mspect + geom_text(data = subset(dat, dat$ionType == "b" | dat$ionType == 'y'),
+  mspect <- mspect + geom_text(data = subset(dat, dat$ionType == "b" | dat$ionType == 'y' | dat$ionType == 'y_nl' | dat$ionType == 'b_nl'),
               aes(label = formatedLabel, x = labelX, y = labelY + BY_LAB_OFFSET_Y),
               parse = TRUE,
               size = 3) +
     scale_y_continuous(breaks = y_labs, expand = c(0, 0), limits = c(0, Y_SCALE_LIM)) +
-    scale_color_manual(values = c("b" = B_COLOR, "blank" = BLANK_COLOR, "y" = Y_COLOR)) +
+    scale_color_manual(values = c("b" = B_COLOR, "blank" = BLANK_COLOR, "y" = Y_COLOR, "y_nl" = Y_NL_COLOR, "b_nl" = B_NL_COLOR)) +
     theme_classic() +
     theme(panel.grid = element_blank(),
           legend.position = "none") +
@@ -85,9 +91,9 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
   }
   
   if(simpleSequence){
-    mspect <- mspect + annotate("text", y = SEQ_Y_LEVLE - 5, x = SEQ_BEGIN_X, label = B_IONS[1], 
+    mspect <- mspect + annotate("text", y = SEQ_Y_LEVLE - 5, x = SEQ_BEGIN_X, label = B_IONS_EXP[1], 
                                     parse = TRUE, color = B_COLOR, hjust = 1) +
-      annotate("text", y = SEQ_Y_LEVLE + 5, x = SEQ_BEGIN_X, label = Y_IONS[1], parse = TRUE, 
+      annotate("text", y = SEQ_Y_LEVLE + 5, x = SEQ_BEGIN_X, label = Y_IONS_EXP[1], parse = TRUE, 
                color = Y_COLOR, hjust = 1)
     for(i in 1:length(SEQ_STAR)){
       SEQ_BEGIN_X = SEQ_BEGIN_X + SEQ_SPACE
@@ -95,9 +101,9 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
                                       label = SEQ_STAR[i], hjust = 0.5, family = "Courier")
     }
     SEQ_BEGIN_X = SEQ_BEGIN_X + SEQ_SPACE
-    mspect <- mspect + annotate("text", y = SEQ_Y_LEVLE - 5, x = SEQ_BEGIN_X, label = B_IONS[length(B_IONS)], 
+    mspect <- mspect + annotate("text", y = SEQ_Y_LEVLE - 5, x = SEQ_BEGIN_X, label = B_IONS_EXP[length(B_IONS_EXP)], 
                                     parse = TRUE, color = B_COLOR, hjust = 0) +
-      annotate("text", y = SEQ_Y_LEVLE + 5, x = SEQ_BEGIN_X, label = Y_IONS[length(Y_IONS)], 
+      annotate("text", y = SEQ_Y_LEVLE + 5, x = SEQ_BEGIN_X, label = Y_IONS_EXP[length(Y_IONS_EXP)], 
                parse = TRUE, color = Y_COLOR, hjust = 0)
   } else {
     
@@ -121,17 +127,32 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
       mspect <- mspect + annotate('text', y = SEQ_Y_LEVLE, x = SEQ_BEGIN_X, label = SEQ_STAR[i])
       if(i < length(SEQ_STAR))
       {
-        #vertical lines
-        mspect <- mspect + annotate('segment', x = LINE_BEGIN_X, xend = LINE_BEGIN_X, y = LINE_Y_BEGIN, yend = LINE_Y_END)
-        #top frag line
-        mspect <- mspect + annotate('segment', x = LINE_BEGIN_X, xend = TOP_FRAG_LINE_END_X, y = LINE_Y_END, yend = LINE_Y_END)
-        #bottom frag line
-        mspect <- mspect + annotate('segment', x = LINE_BEGIN_X, xend = BOTTOM_FRAG_LINE_END_X, y = LINE_Y_BEGIN, yend = LINE_Y_BEGIN)
-        #B and Y ions
-        mspect <- mspect + annotate('text', x = TOP_LABEL_BEGIN_X, y = TOP_LABEL_Y_LEVEL,
-                                        label = Y_IONS[i], parse = TRUE, size = 3, color = 'red')
-        mspect <- mspect + annotate('text', x = BOT_LABEL_BEGIN_X, y = BOT_LABEL_Y_LEVEL,
-                                        label = B_IONS[i], parse = TRUE, size = 3, color = 'blue')
+        bFound = B_IONS[i] %in% foundIons
+        yFound = Y_IONS[i] %in% foundIons
+        
+        if(bFound | yFound){
+          #vertical lines
+          mspect <- mspect + annotate('segment', x = LINE_BEGIN_X, xend = LINE_BEGIN_X, y = LINE_Y_BEGIN, yend = LINE_Y_END)
+        }
+        
+        if(bFound){
+          #bottom frag line
+          mspect <- mspect + annotate('segment', x = LINE_BEGIN_X, xend = BOTTOM_FRAG_LINE_END_X, y = LINE_Y_BEGIN, yend = LINE_Y_BEGIN)
+          
+          #b ion label
+          mspect <- mspect + annotate('text', x = BOT_LABEL_BEGIN_X, y = BOT_LABEL_Y_LEVEL,
+                                      label = B_IONS_EXP[i], parse = TRUE, size = 3, color = 'blue')
+        }
+        
+        if(yFound){
+          #top frag line
+          mspect <- mspect + annotate('segment', x = LINE_BEGIN_X, xend = TOP_FRAG_LINE_END_X, y = LINE_Y_END, yend = LINE_Y_END)
+          
+          #y ion label
+          mspect <- mspect + annotate('text', x = TOP_LABEL_BEGIN_X, y = TOP_LABEL_Y_LEVEL,
+                                          label = Y_IONS_EXP[i], parse = TRUE, size = 3, color = 'red')
+        }
+       
       }
       SEQ_BEGIN_X = SEQ_BEGIN_X + SEQ_SPACE
       LINE_BEGIN_X = LINE_BEGIN_X + SEQ_SPACE

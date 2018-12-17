@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <string>
 
-#include <params.hpp>
+#include <utils.hpp>
 
 namespace scanData{
 	
@@ -24,7 +24,7 @@ namespace scanData{
 	std::string const OF_EXT = ".spectrum";
 	
 	class Scan{
-	private:
+	protected:
 		std::string parentFile;
 		size_t scanNum;
 		std::string sequence;
@@ -32,7 +32,8 @@ namespace scanData{
 		int charge;
 		std::string xcorr;
 		
-		std::string makeSequenceFromFullSequence(std::string) const;	
+		std::string makeSequenceFromFullSequence(std::string) const;
+		std::string makeOfSequenceFromSequence(std::string) const;
 	public:
 		Scan(){
 			parentFile = "";
@@ -40,17 +41,21 @@ namespace scanData{
 			sequence = "";
 			charge = 0;
 		}
-		Scan(std::string _sequence, size_t _scanNum,std::string _parentFile){
-			sequence = _sequence;
+		Scan(std::string _sequence, size_t _scanNum, std::string _parentFile){
+			sequence = makeSequenceFromFullSequence(_sequence);
 			fullSequence = _sequence;
 			scanNum = _scanNum;
 			parentFile = _parentFile;
 		}
 		
-		Scan (std::string);
+		Scan (std::string line){
+			initilizeFromLine(line);
+		}
 		~Scan() {}
 		
+		//modifers
 		void clear();
+		void initilizeFromLine(std::string);
 		
 		void setSequence(std::string _seq){
 			sequence = _seq;

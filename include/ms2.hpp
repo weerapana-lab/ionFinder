@@ -51,6 +51,7 @@ namespace ms2 {
 		Ms2File() {
 			size = 0;
 			fname = "";
+			buffer = new char [size];
 		}
 		Ms2File(std::string _fname){
 			fname = _fname;

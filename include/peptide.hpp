@@ -18,12 +18,12 @@
 
 #include <utils.hpp>
 #include <aaDB.hpp>
-#include <params.hpp>
+#include <ms2_annotator/params.hpp>
 #include <sequestParams.hpp>
 
 namespace PeptideNamespace{
 	
-	//foward class declarations
+	//forward class declarations
 	class Species;
 	class Ion;
 	class PeptideIon;
@@ -33,14 +33,19 @@ namespace PeptideNamespace{
 	typedef std::vector<PeptideIon> PepIonVecType;
 	typedef PepIonVecType::const_iterator PepIonIt;
 	
-	//foward function declarations
+	//forward function declarations
 	double calcMass(double mz, int charge);
 	double calcMZ(double mass, int charge);
 	double calcMass(std::string sequence);
 	double calcMass(const PepIonVecType& sequence,
 					PepIonIt begin, PepIonIt end);
 	double calcMass(const std::vector<PeptideIon>& sequence);
+	std::string concatMods(const PepIonVecType& vec,
+						   PepIonIt begin, PepIonIt end);
 	
+	//class declarations
+	
+	///base class for peptide species
 	class Species{
 	protected:
 		double mass;
@@ -56,7 +61,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	//class declarations
+	///base class for all ions
 	class Ion : public Species{
 	protected:
 		int charge;
@@ -110,6 +115,7 @@ namespace PeptideNamespace{
 		void setMod(char _mod, double _modMass){
 			mod = _mod;
 			modMass = _modMass;
+			modified = true;
 		}
 		
 		std::string makeModLable() const;
@@ -119,33 +125,115 @@ namespace PeptideNamespace{
 		double getTotalMass() const{
 			return modMass + mass;
 		}
+		char getMod() const{
+			return mod;
+		}
+		bool isModified() const{
+			return modified;
+		}
 	};
 	
+	///Used to reporesent b and y peptide ions
 	class FragmentIon : public Ion{
-	private:
+	public:
+		enum class IonType{B, Y, B_NL, Y_NL};
+		
+	protected:
 		char b_y;
-		size_t num;
-		//size_t mz_int;
+		int num;
+		//!Represents all modifications found in fragment.
+		 /** i.e. if two modifications are present, mod will be "**" */
 		std::string mod;
+		bool found;
+		IonType _ionType;
+		 //!Represents neutral loss mass
+		double nlMass;
 		
 	public:
-		FragmentIon(char _b_y, int _num, int _charge, double _mass, std::string _mod) : Ion() {
+		///blank constructor
+		FragmentIon() : Ion(){
+			b_y = '\0';
+			num = 0;
+			mod = "";
+			found = false;
+			_ionType = IonType::B;
+			nlMass = 0.0;
+		}
+		FragmentIon(char _b_y, int _num, int _charge, double _mass,
+					double _modMass, std::string _mod) : Ion() {
 			b_y = _b_y;
 			num = _num;
 			mod = _mod;
+			nlMass = _modMass;
 			initalizeFromMass(_mass, _charge);
-			//mz_int = utils::round(getMZ());
+			found = false;
+			_ionType = strToIonType(_b_y);
+		}
+		FragmentIon(IonType ionType, int _num, int _charge, double _mass,
+					double _modMass, std::string _mod) : Ion() {
+			num = _num;
+			mod = _mod;
+			nlMass = _modMass;
+			initalizeFromMass(_mass, _charge);
+			found = false;
+			_ionType = ionType;
+			b_y = ionTypeToStr()[0];
+		}
+		///copy constructor
+		FragmentIon(const FragmentIon& rhs){
+			b_y = rhs.b_y;
+			num = rhs.num;
+			mod = rhs.mod;
+			found = rhs.found;
+			_ionType = rhs._ionType;
+			nlMass = rhs.nlMass;
+			charge = rhs.charge;
+			mass = rhs.mass;
 		}
 		~FragmentIon() {}
 		
+		void setFound(bool boo){
+			found = boo;
+		}
+		void setIonType(IonType it){
+			_ionType = it;
+		}
+		
 		//properties
-		std::string getIonStr() const;
+		double getMZ() const{
+			//return getMZ(charge);
+			if(b_y == 'b')
+				return calcMZ(mass - 1, charge);
+			return Ion::getMZ(charge);
+		}
+		std::string getIonStr(bool includeMod = true) const;
 		std::string getFormatedLabel() const;
-		//size_t getMZ_int() const{
-		//	return mz_int;
-		//}
 		char getBY() const{
 			return b_y;
+		}
+		int getNum() const{
+			return num;
+		}
+		std::string getMod() const{
+			return mod;
+		}
+		bool getFound() const{
+			return found;
+		}
+		IonType getIonType() const{
+			return _ionType;
+		}
+		static IonType strToIonType(std::string);
+		static IonType strToIonType(char c){
+			return strToIonType(std::string(1, c));
+		}
+		std::string ionTypeToStr() const;
+		std::string getNLStr() const;
+		bool isModified() const{
+			return mod == "";
+		}
+		bool isNL() const{
+			return _ionType == IonType::B_NL || _ionType == IonType::Y_NL;
 		}
 	};
 	
@@ -157,9 +245,11 @@ namespace PeptideNamespace{
 		std::string sequence;
 		std::string fullSequence;
 		std::vector<PeptideIon> aminoAcids;
-		bool initalized;
-		aaDB::AADB aminoAcidMasses;
+		bool initialized;
+		static aaDB::AADB* aminoAcidMasses;
+		static bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
+		int nMod; //number of modified residues
 		
 		void fixDiffMod(const char* diffmods = "*");
 	
@@ -168,19 +258,27 @@ namespace PeptideNamespace{
 		Peptide() : Ion(){
 			sequence = "";
 			fullSequence = sequence;
-			initalized = false;
+			initialized = false;
+			nMod = 0;
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
 			fullSequence = sequence;
-			initalized = false;
+			initialized = false;
+			nMod = 0;
 		}
 		~Peptide() {}
 		
-		void initalize(const params::Params&, bool _calcFragments = true);
+		static void initAminoAcidsMasses(const base::ParamsBase&);
+		void initialize(const base::ParamsBase&, bool _calcFragments = true);
 		void calcFragments(int, int);
+		void addNeutralLoss(const std::vector<double>&);
 		double calcMass();
 		void printFragments(std::ostream&) const;
+		
+		void setFound(size_t i, bool boo){
+			fragments[i].setFound(boo);
+		}
 		
 		//properties
 		std::string getSequence() const{
@@ -192,11 +290,8 @@ namespace PeptideNamespace{
 		size_t getNumFragments() const{
 			return fragments.size();
 		}
-		//size_t getFragmentMZ_int(size_t i) const{
-		//	return fragments[i].getMZ_int();
-		//}
 		double getFragmentMZ(size_t i) const{
-			return fragments[i].getMZ(fragments[i].getCharge());
+			return fragments[i].getMZ();
 		}
 		std::string getFragmentLabel(size_t i) const{
 			return fragments[i].getIonStr();
@@ -211,8 +306,16 @@ namespace PeptideNamespace{
 		char getBY(size_t i) const{
 			return fragments[i].getBY();
 		}
+		bool getFound(size_t i) const{
+			return fragments[i].getFound();
+		}
+		const FragmentIon& getFragment(size_t i) const{
+			return fragments[i];
+		}
+		int getNumMod() const{
+			return nMod;
+		}
 	};//end of class
-	
 	
 }//end of namespace
 

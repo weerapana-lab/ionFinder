@@ -1,185 +1,135 @@
 //
 //  dtafilter.cpp
-//  ms2_anotator
+//  citFinder
 //
-//  Created by Aaron Maurais on 11/21/17.
-//  Copyright © 2017 Aaron Maurais. All rights reserved.
+//  Created by Aaron Maurais on 12/9/18.
+//  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
 #include <dtafilter.hpp>
 
-bool dtafilter::DtaFilterFile::read(std::string _fname)
+void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 {
-	fname = _fname;
-	return read();
+	_parentProtein = rhs._parentProtein;
+	_parentID = rhs._parentID;
+	_matchDirection = rhs._matchDirection;
+	_sampleName = rhs._sampleName;
+	parentFile = rhs.parentFile;
+	scanNum = rhs.scanNum;
+	sequence = rhs.sequence;
+	fullSequence = rhs.fullSequence;
+	charge = rhs.charge;
+	xcorr = rhs.xcorr;
 }
 
-bool dtafilter::DtaFilterFile::read()
+Dtafilter::Scan::MatchDirection Dtafilter::Scan::strToMatchDirection(std::string str) const
 {
-	if(fname.empty())
-		throw std::runtime_error("File must be specified!");
-	std::ifstream inF(fname.c_str());
-	if(!inF)
-		return false;
-	
-	delimType = utils::detectLineEnding(inF);
-	if(delimType == utils::unknown)
-		throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
-	delim = utils::getDelimStr(delimType);
-	if(delimType == utils::crlf)
-		beginLine = 1;
-	else beginLine = 0;
-	
-	inF.seekg(0, inF.end);
-	size = inF.tellg();
-	inF.seekg(0, inF.beg);
-	buffer = new char [size];
-	if(!inF.read(buffer, size))
-		return false;
-	return true;
+	if(utils::strContains(REVERSE_MATCH, utils::toLower(str)))
+		return MatchDirection::REVERSE;
+	return MatchDirection::FORWARD;
 }
 
-void dtafilter::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& _scans) const
+bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
 {
-	//std::cout << "getScans" << std::endl;
-	//int iterations = 0;
+	std::vector<std::string> elems;
+	utils::split(str, '|', elems);
 	
-	_scans.clear();
-	const char* query = _seq.c_str();
-	size_t queryLen = strlen(query);
-	char* instance = buffer;
-	
-	while(instance)
-	{
-		//std::cout << "it num " << iterations << std::endl;
-		//iterations++;
-		//std::cout << "pre inc" << std::endl;
-		//printf("%.*s\n", 100, instance);
-		if(strstr(instance, query) == NULL)
-		{
-			//std::cout << "breaking" << std::endl;
-			break;
-		}
-		instance = strstr(instance, query);
-		//std::cout << "post inc" << std::endl;
-		//printf("%.*s\n", 100, instance);
-		if(instance){
-			//std::cout << "push_back" << std::endl;
-			//std::cout << "offset is " << instance - buffer + 1 << std::endl;
-			_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
-			instance += queryLen;
-		}
-	}
-	
-	/*while(instance != nullptr)
-	{
-		_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
-		//_scans.back().setSequence(_seq);
-		std::cout << "getScans" << std::endl;
-		instance = strstr(instance + 1, query);
-	}*/
-}
-
-bool dtafilter::DtaFilterFile::getScan(const std::string& _seq, scanData::scansType& _scans, bool force) const
-{
-	std::string outDelim = "\t";
-	bool annotateAll = false;
-	int annotate = -1;
-	scanData::scansType scans;
-	
-	getScans(_seq, scans);
-	if(scans.size() == 0)
-	{
-		std::cout << "Sequence: " << _seq << " not found in dtafilter file." <<std::endl;
-		return false;
-	}
-	if(scans.size() == 1){
-		annotate = 0;
-	}
-	if(scans.size() > 1 && !force)
-	{
-		std::cout << "Multiple matches found. Choose which scan you would like to annotate." << std::endl;
-		std::cout << std::endl << "Match_number" << outDelim << "Parent_file" << utils::repeat(outDelim, 2) << "Scan"
-		<< outDelim << "Xcorr" << outDelim << "Sequence" << utils::repeat(outDelim, 2) << "Charge" << std::endl;
+	try{
+		_matchDirection = strToMatchDirection(elems.at(0));
+		_parentID = elems.at(1);
 		
-		size_t i = 0;
-		size_t len = scans.size();
-		for(; i < len; i++)
-		{
-			std::cout << i << ")" << outDelim << scans[i].getParentFile()
-			<< outDelim << scans[i].getScanNum()
-			<< outDelim << scans[i].getXcorr()
-			<< outDelim << scans[i].getFullSequence()
-			<< utils::repeat(outDelim, 2) << scans[i].getCharge() << outDelim <<std::endl;
-		}
-		std::cout << i << ")" << outDelim << "Annotate all." << std::endl << "Enter choice: ";
-		
-		annotate = utils::getInt(0, int(scans.size()));
-		if(annotate == scans.size())
-			annotateAll = true;
+		size_t underScoreI = elems.at(2).find_last_of("_");
+		_parentProtein = elems.at(2).substr(0, underScoreI);
 	}
-	
-	if(!annotateAll)
-		_scans.push_back(scans[annotate]);
-	else _scans = scans;
-	
-	return true;
-}
-
-bool dtafilter::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::Scan& _scan) const
-{
-	_scan.clear();
-	
-	//get offset for _seq in file buffer
-	const char* query = _seq.c_str();
-	size_t offset = utils::offset(buffer, size, query);
-	if(offset == size)
-	{
-		std::cerr << "Sequence: " << _seq << " not found in dtafilter file." <<std::endl;
+	catch(std::out_of_range& e){
+		std::cerr << "\n Error parsing protein id for " << str <<"\n Skipping...\n";
 		return false;
 	}
 	
-	//initalize _scan
-	std::string line = getScanLine(offset);
-	_scan = scanData::Scan(line);
-	//_scan.setSequence(_seq);
+	if(_matchDirection == MatchDirection::REVERSE)
+		_parentID = "reverse_" + _parentID;
+	return true;
+}
+
+bool Dtafilter::readFilterFile(std::string fname,
+							   std::string sampleName,
+							   std::vector<Dtafilter::Scan>& scans,
+							   bool skipReverse)
+{
+	std::ifstream inF(fname);
+	if(!inF) return false;
+	
+	//flow control flags
+	bool foundHeader = false;
+	bool getNewLine = true;
+	
+	std::string line;
+	std::vector<std::string> elems;
+	
+	while(!inF.eof())
+	{
+		if(getNewLine)
+			utils::safeGetline(inF, line);
+		getNewLine = true;
+		line = utils::trimTraling(line);
+		
+		if(utils::strContains('%', line)) //find protein header lines by percent symbol for percent coverage
+		{
+			if(!foundHeader)
+			{
+				if(utils::strContains("Conf%", line)) //skip if header line
+				{
+					foundHeader = true;
+					continue;
+				}
+			}
+			else{
+				utils::split(line, IN_DELIM, elems);
+				
+				Scan baseScan;
+				baseScan.parse_matchDir_ID_Protein(elems[0]);
+				baseScan._sampleName = sampleName;
+				
+				//extract shortened protein name and description
+				size_t endOfDescription = elems[8].find(" [");
+				baseScan._parentDescription = elems[8].substr(0, endOfDescription);
+				
+				while(!inF.eof())
+				{
+					if(getNewLine)
+						utils::safeGetline(inF, line);
+					getNewLine = true;
+					line = utils::trimTraling(line);
+					
+					//break if starting new protein or end of file
+					if(utils::strContains('%', line) || line == "\tProteins\tPeptide IDs\tSpectra")
+						break;
+					
+					Scan newScan = baseScan;
+					newScan.initilizeFromLine(line);
+					newScan._unique = line[0] == '*';
+					if(skipReverse && newScan._matchDirection == Dtafilter::Scan::MatchDirection::REVERSE)
+						continue;
+					else scans.push_back(newScan);
+					
+				}//end of while
+				getNewLine = false;
+			}
+		}//end if
+	}//end while
 	
 	return true;
 }
 
-std::string dtafilter::DtaFilterFile::getScanLine(size_t offset) const
+bool Dtafilter::readFilterFiles(const CitFinder::Params& params,
+								std::vector<Dtafilter::Scan>& scans)
 {
-	//std::cout << "getScanLine" << std::endl;
-	size_t lineBegin = getBeginLine(offset);
-	size_t lineEnd = getEndLine(offset);
-	std::string line(buffer + lineBegin, (lineEnd - lineBegin));
-	line = utils::trim(line);
-	return line;
-}
-
-size_t dtafilter::DtaFilterFile::getBeginLine(size_t offset) const
-{
-	//std::cout << "begin" << std::endl;
-	char _delim = delim[0];
-	while(*(buffer + offset) != _delim)
+	auto endIt = params.getFilterFiles().end();
+	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
 	{
-		if(offset <= 0)
+		if(!Dtafilter::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
 			return false;
-		offset--;
 	}
-	return offset;
+	
+	return true;
 }
-
-size_t dtafilter::DtaFilterFile::getEndLine(size_t offset) const
-{
-	//std::cout << "end" << std::endl;
-	char _delim = delim[0];
-	while(*(buffer + offset) != _delim)
-	{
-		if(offset > size)
-			return false;
-		offset++;
-	}
-	return offset;
-}
-

@@ -38,6 +38,9 @@
 #ifndef OUT_DELIM
 	#define OUT_DELIM '\t'
 #endif
+#ifndef NEW_LINE
+#define NEW_LINE '\n'
+#endif
 
 namespace utils{
 	
@@ -118,17 +121,23 @@ namespace utils{
 	bool dirExists(std::string);
 	bool fileExists(const char*);
 	bool fileExists(std::string);
+	bool isDir(const char*);
+	bool isDir(std::string);
 	std::string pwd();
 	std::string absPath(std::string);
 	std::string absPath(const char*);
 	bool ls(const char*, std::vector<std::string>&);
-	bool ls(const char*, std::vector<std::string>&,std::string);
+	bool ls(const char*, std::vector<std::string>&, std::string);
 	bool mkdir(std::string);
 	bool mkdir(const char*);
 	void systemCommand(std::string command);
-	std::string baseName(const std::string& path, const std::string& delims = "/\\");
+	std::string baseName(std::string path, const std::string& delims = "/\\");
+	std::string dirName(std::string path, const std::string& delims = "/\\");
+	std::string parentDir(std::string path, char delim = '/');
 	std::string removeExtension(const std::string&);
 	std::string getExtension(const std::string&);
+	std::istream& safeGetline(std::istream& is, std::string& t);
+	std::istream& safeGetline(std::istream& is, std::string& t, std::streampos& oldPos);
 		
 	//std::string utils
 	bool strContains(std::string, std::string);
@@ -151,7 +160,7 @@ namespace utils{
 						char delim = DEFAULT_LINE_DELIM, size_t beginLine = DEFAULT_BEGIN_LINE);
 	void getLine(const char* buffer,std::string& line, char delim = DEFAULT_LINE_DELIM);
 	size_t offset(const char* buf, size_t len, const char* str);
-	
+	void removeEmptyStrings(std::vector<std::string>&);
 	
 	//other
 	bool isInteger(const std::string & s);
@@ -175,8 +184,28 @@ namespace utils{
 	template <typename _Tp, size_t N> _Tp* end(_Tp(&arr)[N]) {
 		return &arr[0]+N;
 	}
-	//template<typename _Tp> bool inRange(_Tp, _Tp, _Tp);
-	bool inRange(double, double, double);
+	/**
+	 Determine whether compare is between compare - range and compare + range.
+	 @param value reference value
+	 @param compare value to search for in range
+	 @param range the range
+	 @return True if compare is in range
+	 */
+	template<typename _Tp> bool inRange(_Tp value, _Tp compare, _Tp range){
+		return abs(value - compare) <= range;
+	}
+	
+	/**
+	 Determine whether comp is beg <= comp and comp <= end
+	 @param beg beginning of range
+	 @param end end of range
+	 @param comp the value to search for in range
+	 @return True if comp is in range
+	 */
+	template<typename _Tp> bool inSpan(_Tp beg, _Tp end, _Tp comp){
+		return beg <= comp && comp <= end;
+	}
+	//bool inRange(double, double, double);
 	int getInt(int min, int max);
 }
 

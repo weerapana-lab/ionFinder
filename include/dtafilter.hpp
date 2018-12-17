@@ -1,9 +1,9 @@
 //
 //  dtafilter.hpp
-//  ms2_anotator
+//  citFinder
 //
-//  Created by Aaron Maurais on 11/21/17.
-//  Copyright © 2017 Aaron Maurais. All rights reserved.
+//  Created by Aaron Maurais on 12/9/18.
+//  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
 #ifndef dtafilter_hpp
@@ -11,48 +11,71 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <cstring>
-#include <utils.hpp>
+
+#include <citFinder/params.hpp>
 #include <scanData.hpp>
+#include <utils.hpp>
 
-namespace dtafilter{
-
-	class DtaFilterFile;
+namespace Dtafilter{
+	class Scan;
 	
-	class DtaFilterFile{
-	private:
-		char* buffer;
-		unsigned long size;
-		std::string delim;
-		utils::newline_type delimType;
-		int beginLine;
-		std::string fname;
+	std::string const REVERSE_MATCH = "reverse_";
+	
+	bool readFilterFile(std::string fname, std::string sampleName,
+						std::vector<Dtafilter::Scan>& scans,
+						bool skipReverse = true);
+	bool readFilterFiles(const CitFinder::Params&,
+						 std::vector<Dtafilter::Scan>&);
+	
+	
+	class Scan : public scanData::Scan{
+		friend bool readFilterFile(std::string, std::string,
+								   std::vector<Dtafilter::Scan>&, bool);
+	public:
+		enum class MatchDirection{FORWARD, REVERSE};
 		
-		size_t getBeginLine(size_t) const;
-		size_t getEndLine(size_t) const;
-		std::string getScanLine(size_t) const;
+	private:
+		std::string _parentProtein;
+		std::string _parentID;
+		std::string _parentDescription;
+		MatchDirection _matchDirection;
+		std::string _sampleName;
+		bool _unique;
+		
+		MatchDirection strToMatchDirection(std::string) const;
+		bool parse_matchDir_ID_Protein(std::string);
 		
 	public:
-		DtaFilterFile(){
-			size = 0;
-			fname = "";
-		}
-		DtaFilterFile(std::string _fname){
-			size = 0;
-			fname = _fname;
-		}
-		~DtaFilterFile(){
-			delete [] buffer;
+		Scan() : scanData::Scan(){
+			_parentProtein = "";
+			_parentID = "";
+			_parentDescription = "";
+			_unique = false;
+			_matchDirection = MatchDirection::REVERSE;
 		}
 		
 		//modifers
-		bool read(std::string);
-		bool read();
+		void operator = (const Scan&);
 		
-		bool getFirstScan(const std::string&, scanData::Scan&) const;
-		void getScans(const std::string&, scanData::scansType&) const;
-		bool getScan(const std::string& _seq, scanData::scansType& _scans, bool force = true) const;
+		//properties
+		std::string getParentProtein() const{
+			return _parentProtein;
+		}
+		std::string getParentID() const{
+			return _parentID;
+		}
+		MatchDirection getMatchDirection() const{
+			return _matchDirection;
+		}
+		std::string getSampleName() const{
+			return _sampleName;
+		}
+		std::string getParentDescription() const{
+			return _parentDescription;
+		}
+		bool getUnique() const{
+			return _unique;
+		}
 	};
 }
 

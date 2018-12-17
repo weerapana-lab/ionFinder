@@ -54,7 +54,7 @@ bool ms2::Ms2File::getMetaData()
 	std::vector<std::string> elems;
 	int mdCount = 0;
 	char _delim = utils::getDelim(delimType);
-	//iterate throuth ss to find metadata
+	//iterate through ss to find metadata
 	while(ss.tellg() < sLen){
 		utils::getLine(ss, line, _delim, beginLine);
 		if(line[0] == 'H')
@@ -110,7 +110,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 {
 	if(!((queryScan >= firstScan) && (queryScan <= lastScan)))
 	{
-		std::cout << "queryScan not in file scan range!" << std::endl;
+		std::cout << "queryScan not in file scan range!" << NEW_LINE;
 		return false;
 	}
 	
@@ -119,7 +119,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 	size_t scanOffset = utils::offset(buffer, size, query);
 	if(scanOffset == size)
 	{
-		std::cout << "queryScan could not be found!" << std::endl;
+		std::cout << "queryScan could not be found!" << NEW_LINE;
 		return false;
 	}
 	
@@ -159,7 +159,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		else if(utils::isInteger(std::string(1, _scan[0]))){
 			
 			utils::split(line, ' ', elems);
-			assert(elems.size() == 2);
+			assert(elems.size() >= 2);
 			ms2::DataPoint tempIon (std::stod(elems[0]), std::stod(elems[1]));
 			
 			if(numIons == 0)

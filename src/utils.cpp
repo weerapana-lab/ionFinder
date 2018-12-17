@@ -153,7 +153,10 @@ std::string utils::getDelimStr(utils::newline_type type)
 	}
 }
 
-//returns true if folder at end of path exists and false if it does not
+/**
+ returns true if folder at end of path exists and false if it does not
+ @param path path of file to test
+ */
 bool utils::dirExists (const char* path)
 {
 	struct stat buffer;
@@ -175,6 +178,20 @@ bool utils::fileExists(std::string path)
 bool utils::dirExists(std::string path)
 {
 	return dirExists(path.c_str());
+}
+
+bool utils::isDir(std::string path)
+{
+	return utils::isDir(path.c_str());
+}
+
+///checks whether file is directory
+bool utils::isDir(const char* path)
+{
+	struct stat buffer;
+	if(stat(path, &buffer) != 0)
+		std::cerr << path << " does not exist!";
+	return S_ISDIR(buffer.st_mode);
 }
 
 //returns dirrectory from which program is run
@@ -229,11 +246,11 @@ bool utils::ls(const char* path, std::vector<std::string>& files, std::string ex
 	files.clear();
 	std::vector<std::string> allFiles;
 	if(!ls(path, allFiles))
-	return false;
+		return false;
 	
 	for(std::vector<std::string>::iterator it = allFiles.begin(); it != allFiles.end(); ++it)
-	if(endsWith(*it, extension))
-	files.push_back(*it);
+		if(endsWith(*it, extension))
+			files.push_back(*it);
 	return true;
 }
 
@@ -244,10 +261,10 @@ void utils::systemCommand(std::string command)
 }
 
 //make dir.
-//returns true if sucessful
+//returns true if successful
 bool utils::mkdir(const char* path)
 {
-	//get abs path and make sure that it dosen't already exist
+	//get abs path and make sure that it doesn't already exist
 	//return false if it does
 	std::string rpath = absPath(path);
 	if(dirExists(rpath))
@@ -268,9 +285,38 @@ bool utils::mkdir(const char* path)
 	return dirExists(rpath);
 }
 
-std::string utils::baseName(const std::string& path, const std::string& delims)
+std::string utils::baseName(std::string path, const std::string& delims)
 {
+	if(path[path.length() - 1] == '/')
+		path = path.substr(0, path.length() - 1);
 	return path.substr(path.find_last_of(delims) + 1);
+}
+
+std::string utils::dirName(std::string path, const std::string& delims)
+{
+	return path.substr(0, path.find_last_of(delims));
+}
+
+std::string utils::parentDir(std::string path, char delim)
+{
+	//split by delim
+	std::vector<std::string> elems;
+	utils::split(path, delim, elems);
+	utils::removeEmptyStrings(elems);
+	size_t len = elems.size();
+	
+	if(len == 0){
+		throw std::runtime_error("Delim not found!");
+	}
+	else if(len == 1){
+		return "/";
+	}
+	else{
+		std::string ret = "";
+		for(size_t i = 0; i < len - 1; i++)
+			ret += "/" + elems[i];
+		return ret;
+	}
 }
 
 std::string utils::removeExtension(const std::string& filename)
@@ -283,6 +329,45 @@ std::string utils::getExtension(const std::string& filename)
 {
 	typename std::string::size_type const p(filename.find_last_of('.'));
 	return p > 0 && p != std::string::npos ? filename.substr(p) : filename;
+}
+
+std::istream& utils::safeGetline(std::istream& is, std::string& s, std::streampos& oldPos){
+	oldPos = is.tellg();
+	return utils::safeGetline(is, s);
+}
+
+std::istream& utils::safeGetline(std::istream& is, std::string& t)
+{
+	t.clear();
+	
+	// The characters in the stream are read one-by-one using a std::streambuf.
+	// That is faster than reading them one-by-one using the std::istream.
+	// Code that uses streambuf this way must be guarded by a sentry object.
+	// The sentry object performs various tasks,
+	// such as thread synchronization and updating the stream state.
+	
+	std::istream::sentry se(is, true);
+	std::streambuf* sb = is.rdbuf();
+	
+	while(true){
+		int c = sb->sbumpc();
+		switch (c) {
+			case '\n':
+				return is;
+			case '\r':
+				if(sb->sgetc() == '\n')
+					sb->sbumpc();
+				return is;
+				//case std::streambuf::traits_type::eof():
+			case -1:
+				// Also handle the case when the last line has no line ending
+				if(t.empty())
+					is.setstate(std::ios::eofbit);
+				return is;
+			default:
+				t += (char)c;
+		}
+	}
 }
 
 /*****************/
@@ -417,6 +502,16 @@ size_t utils::offset(const char* buf, size_t len, const char* str)
 	return std::search(buf, buf + len, str, str + strlen(str)) - buf;
 }
 
+void utils::removeEmptyStrings(std::vector<std::string>& elems)
+{
+	for(auto it = elems.begin(); it != elems.end();)
+	{
+		if(*it == "")
+			elems.erase(it);
+		else ++it;
+	}
+}
+
 /*********/
 /* other */
 /*********/
@@ -448,10 +543,16 @@ std::string utils::ascTime()
 }
 
 //template<typename _Tp>
-bool utils::inRange(double value, double compare, double range)
+/*bool utils::inRange(double value, double compare, double range)
 {
 	return abs(value - compare) <= range;
-}
+}*/
+
+/*template<typename _Tp>
+bool utils::inRange(_Tp value, _Tp compare, _Tp range)
+{
+	return abs(value - compare) <= range;
+}*/
 
 bool utils::isInteger(const std::string & s)
 {
@@ -464,7 +565,7 @@ bool utils::isInteger(const std::string & s)
 }
 
 //get int from std::cin between min and max
-//continue asking for input untill user suplies valid value
+//continue asking for input until user suplies valid value
 int utils::getInt(int min, int max)
 {
 	std::string choice;
@@ -483,12 +584,12 @@ int utils::getInt(int min, int max)
 			}
 			else{
 				good = false;
-				std::cout << "Invalid choice!" << std::endl << "Enter choice: ";
+				std::cout << "Invalid choice!" << NEW_LINE << "Enter choice: ";
 			}
 		}
 		else{
 			good = false;
-			std::cout << "Invalid choice!" << std::endl << "Enter choice: ";
+			std::cout << "Invalid choice!" << NEW_LINE << "Enter choice: ";
 		}
 	} while(!good);
 	return ret;

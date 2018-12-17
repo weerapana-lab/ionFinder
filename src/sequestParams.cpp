@@ -71,7 +71,7 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 				
 				if(elems.size() > 2)
 				{
-					std::cerr << "Multiple diffmods detected. Use smod file with multiple diffmods." << std::endl;
+					std::cerr << "Multiple diffmods detected. Use smod file with multiple diffmods." << NEW_LINE;
 					return false;
 				}
 				aaMap["*"] = aaDB::AminoAcid("*", 0, std::stod(elems[0]));
