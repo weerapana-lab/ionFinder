@@ -11,3 +11,4 @@ rplots/*
 rscripts/lib/*
 helpFile.pdf
 obj/*
+doc/doxygen/html/*
