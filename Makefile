@@ -33,11 +33,13 @@ HEADERDIR := include
 #
 #   Sources
 SRCDIR = src
-MS2_ANNOTATOR_SRCDIR = src/ms2_annotator
+MS2_ANNOTATOR_SRCDIR = $(SRCDIR)/ms2_annotator
+CIT_FINDER_SRCDIR = $(SRCDIR)/citFinder
 #
 #   Objects
 OBJDIR := obj
-MS2_ANNOTATOR_OBJDIR := obj/ms2_annotator
+MS2_ANNOTATOR_OBJDIR := $(OBJDIR)/ms2_annotator
+CIT_FINDER_OBJDIR := $(OBJDIR)/citFinder
 #
 #   Binary
 BINDIR := bin
@@ -57,11 +59,13 @@ INSTALL_DIR := /usr/local/bin/
 #HEADERS := $(wildcard $(HEADERDIR)/*.h)
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
 MS2_ANNOTATOR_SRCS := $(wildcard $(MS2_ANNOTATOR_SRCDIR)/*.cpp)
-ALL_SRCS = $(SRCS) $(MS2_ANNOTATOR_SRCS)
+CIT_FINDER_SRCS := $(wildcard $(CIT_FINDER_SRCDIR)/*.cpp)
+#ALL_SRCS = $(SRCS) $(MS2_ANNOTATOR_SRCS)
 
 OBJS := $(subst $(SRCDIR)/,$(OBJDIR)/,$(SRCS:.cpp=.o))
 MS2_ANNOTATOR_OBJS += $(OBJS) $(subst src/,obj/,$(MS2_ANNOTATOR_SRCS:.cpp=.o))
-ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS)
+CIT_FINDER_OBJS += $(OBJS) $(subst src/,obj/,$(CIT_FINDER_SRCS:.cpp=.o))
+ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(CIT_FINDER_OBJS)
 
 CXXFLAGS += $(INCLUDEFLAGS) -I$(HEADERDIR)
 LDFLAGS += $(LIBFLAGS)
@@ -69,7 +73,7 @@ LDFLAGS += $(LIBFLAGS)
 .PHONY: all clean distclean install uninstall
 
 #TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
-TARGETS = $(BINDIR)/$(MS2_ANNOTATOR_EXE) helpFile.pdf
+TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) helpFile.pdf
 
 all: $(TARGETS)
 
@@ -85,15 +89,19 @@ $(BINDIR)/$(MS2_ANNOTATOR_EXE): $(MS2_ANNOTATOR_OBJS)
 	mkdir -p $(BINDIR)
 	$(CXX) $(LDFLAGS) $? -o $@
 
+$(BINDIR)/$(CIT_FINDER_EXE): $(CIT_FINDER_OBJS)
+	mkdir -p $(BINDIR)
+	$(CXX) $(LDFLAGS) $? -o $@
+
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR)
+	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR) $(CIT_FINDER_OBJDIR)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 helpFile.pdf : db/helpFile.man
 	bash $(SCRIPTS)/updateMan.sh
 
 clean:
-	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE)
+	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) 
 	rm -f helpFile.pdf
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
 
