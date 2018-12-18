@@ -103,6 +103,94 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
+		if(!strcmp(argv[i], "-mt") || !strcmp(argv[i], "--matchTolerance"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			matchTolerance = std::stod(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "-minC"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			minFragCharge = std::stoi(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "-maxC"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			maxFragCharge = std::stoi(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "-minMZ"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			minMZ = std::stod(argv[i]);
+			minMzSpecified = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "-maxMZ"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			maxMZ = std::stod(argv[i]);
+			maxMzSpecified = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "-minLabInt"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			minLabelIntensity = std::stoi(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "-minInt"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			minIntensity = std::stod(argv[i]);
+			minIntensitySpecified = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "-incAllIons"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+			{
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "incAllIons" << NEW_LINE;
+				return false;
+			}
+			includeAllIons = std::stoi(argv[i]);
+			continue;
+		}		
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
 		{
 			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;

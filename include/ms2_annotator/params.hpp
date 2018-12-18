@@ -19,8 +19,8 @@
 namespace Ms2_annotator{
 	
 	//program file locations
-	std::string const PROG_HELP_FILE = base::PROG_DB + "/helpFile.man";
-	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/usage.txt";
+	std::string const PROG_HELP_FILE = base::PROG_DB + "/ms2_annotator/helpFile.man";
+	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/ms2_annotator/usage.txt";
 	
 	class InFile;
 	class Params;

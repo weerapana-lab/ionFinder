@@ -155,6 +155,11 @@ bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues
 	return false;
 }
 
+/**
+ Add fragment sequence to PeptideStats.
+ @param seq fragment ion to add
+ @param ambResidues ambigious residues to search for.
+ */
 void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 									 const std::string& ambResidues)
 {

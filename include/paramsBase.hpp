@@ -185,7 +185,6 @@ namespace base{
 			return sequestParamsFname;
 		}
 	};
-	
 }
 
 #endif /* paramsBase_hpp */

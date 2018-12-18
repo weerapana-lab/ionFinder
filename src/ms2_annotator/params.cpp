@@ -225,7 +225,7 @@ bool Ms2_annotator::Params::checkParams() const
 		if(!(scanSpecified && ms2Specified))
 		{
 			std::cerr << NEW_LINE << "Scan number and .ms2 file must be specified" << NEW_LINE;
-			usage();
+			usage();//Ms2_annotator::PROG_USAGE_FNAME);
 			return false;
 		}
 	}
