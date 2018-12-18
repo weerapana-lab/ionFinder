@@ -28,7 +28,7 @@ namespace CitFinder{
 	class PeptideFragmentsMap;
 	
 	const std::string FRAG_DELIM = "|";
-	int const N_ION_TYPES = 5;
+	int const N_ION_TYPES = 6;
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
 		"detNLFrag", "ambFrag", "artNLFrag"};
 	

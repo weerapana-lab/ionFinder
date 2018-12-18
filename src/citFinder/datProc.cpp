@@ -383,10 +383,12 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 	
 	typedef CitFinder::PeptideStats::IonType itcType;
 	//build stat names vector
-	std::string statNames = "containsCit nFrag nDetFrag nDetNLFrag nAmbFrag nAmbNLFrag nArtNLFrag";
-	std::string listNames = " frag detFrag detNLFrag ambFrag ambNLFrag artNLFrag";
-	std::vector<std::string> allNames;
-	utils::split(statNames + listNames, ' ', allNames);
+	std::vector<std::string> statNames;
+	statNames.push_back("containsCit");
+	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + N_ION_TYPES);
+	for(int i = 0; i < N_ION_TYPES; i++)
+		statNames.push_back("n" + std::string(1, (char)std::toupper(ION_TYPES_STR[i][0])) +
+							ION_TYPES_STR[i].substr(1));
 	
 	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence charge unique xCorr scan parent_file sample_name";
 	std::vector<std::string> oHeaders;
@@ -394,7 +396,7 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 	std::vector<std::string> headers;
 	headers.reserve(statNames.size() + oHeaders.size());
 	headers.insert(headers.end(), oHeaders.begin(), oHeaders.end());
-	headers.insert(headers.end(), allNames.begin(), allNames.end());
+	headers.insert(headers.end(), statNames.begin(), statNames.end());
 	
 	//print headers
 	size_t len = headers.size();
