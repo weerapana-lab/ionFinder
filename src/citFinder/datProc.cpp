@@ -72,21 +72,9 @@ bool CitFinder::allignSeq(const std::string& ref, const std::string& query, size
 
 void CitFinder::PeptideStats::initStats()
 {
-	//fragment counts
-	nFrag = 0;
-	nAmbFrag = 0;
-	nDetFrag = 0;
-	nAmbNLFrag = 0;
-	nDetNLFrag = 0;
-	nArtNLFrag = 0;
-	
-	//fragment lists
-	frag = "";
-	ambFrag = "";
-	detFrag = "";
-	ambNLFrag = "";
-	detNLFrag = "";
-	artNLFrag = "";
+	for(IonType i = IonType::First; i != IonType::Last; ++i){
+		ionTypesCount[i] = IonTypeDatType("", 0);
+	}
 	
 	containsCit = "false";
 }
@@ -139,6 +127,19 @@ void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s)
 }
 
 /**
+ Add ionStr and increment ion count for ion
+ @param ionStr ion string to add
+ @param ion PeptideStats::IonTypeDatType to increment
+ @param inc amt to add to ion count
+ */
+void CitFinder::PeptideStats::incrementIonCount(std::string ionStr,
+												PeptideStats::IonTypeDatType& ion,
+												int inc){
+	addChar(ionStr, ion.first);
+	ion.second += inc;
+}
+
+/**
  Tests whether sequence contains ambiguous residues.
  @param ambResidues ambiguous residues to search for
  @param fragSeq sequence of fragment to search for ambiguous residues.
@@ -169,9 +170,8 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 		return;
 	
 	//increment total fragment ions found
-	nFrag++;
 	std::string ionStr = seq.getIonStr(true);
-	addChar(ionStr, frag);
+	incrementIonCount(ionStr, ionTypesCount[IonType::FRAG]);
 	
 	//check if seq spans any modified residues
 	for(auto it = modLocs.begin(); it != modLocs.end(); ++it)
@@ -180,35 +180,25 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 		if(utils::inSpan(beg, end, *it))
 		{
 			//check if NL
-			if(seq.isNL())
-			{
-				if(containsAmbResidues(ambResidues, seq.getSequence())) //is amb NL frag
-				{
-					nAmbNLFrag++;
-					addChar(ionStr, ambNLFrag);
-				}
-				else //is det NL frag
-				{
-					nDetNLFrag++;
-					addChar(ionStr, detNLFrag);
-				}
+			if(seq.isNL()){
+				incrementIonCount(ionStr, ionTypesCount[IonType::DET_NL_FRAG]);
 			}
-			else //is determining fragment
+			else
 			{
-				nDetFrag++;
-				addChar(ionStr, detFrag);
+				if(containsAmbResidues(ambResidues, seq.getSequence())){ //is ambModFrag
+					incrementIonCount(ionStr, ionTypesCount[IonType::AMB_MOD_FRAG]);
+				}
+				else{ //is detFrag
+					incrementIonCount(ionStr, ionTypesCount[IonType::DET_FRAG]);
+				}
 			}
 		}
 		else{
-			if(seq.isNL()) //is artifact NL frag
-			{
-				nArtNLFrag++;
-				addChar(ionStr, artNLFrag);
+			if(seq.isNL()){ //is artifact NL frag
+				incrementIonCount(ionStr, ionTypesCount[IonType::ART_NL_FRAG]);
 			}
-			else //is amg frag
-			{
-				nAmbFrag++;
-				addChar(ionStr, ambFrag);
+			else{ //is amg frag
+				incrementIonCount(ionStr, ionTypesCount[IonType::AMB_FRAG]);
 			}//end of else
 		}//end of else
 	}//end of for
@@ -354,7 +344,7 @@ void CitFinder::PeptideStats::calcContainsCit()
 {
 	containsCit = "false";
 	
-	//is the peptide modified?
+	/*//is the peptide modified?
 	if(modLocs.size() == 0) return;
 	
 	//is c terminal most cit modification on the c terminus?
@@ -375,7 +365,7 @@ void CitFinder::PeptideStats::calcContainsCit()
 	}
 	
 	if(nAmbNLFrag >= 1)
-		containsCit = "ambiguous";
+		containsCit = "ambiguous";*/
 }
 
 /**
@@ -387,6 +377,7 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 {
 	assert(out);
 	
+	typedef CitFinder::PeptideStats::IonType itcType;
 	//build stat names vector
 	std::string statNames = "containsCit nFrag nDetFrag nDetNLFrag nAmbFrag nAmbNLFrag nArtNLFrag";
 	std::string listNames = " frag detFrag detNLFrag ambFrag ambNLFrag artNLFrag";
@@ -414,32 +405,26 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 	for(auto it = stats.begin(); it != stats.end(); ++it)
 	{
 		//scan data
-		out << it->_scan->getParentID() << OUT_DELIM <<
-		it->_scan->getParentProtein() << OUT_DELIM <<
-		it->_scan->getParentDescription() << OUT_DELIM <<
-		it->_scan->getFullSequence() << OUT_DELIM <<
-		it->_scan->getSequence() << OUT_DELIM <<
-		it->_scan->getCharge() << OUT_DELIM <<
-		it->_scan->getUnique() << OUT_DELIM <<
-		it->_scan->getXcorr() << OUT_DELIM <<
-		it->_scan->getScanNum() << OUT_DELIM <<
-		it->_scan->getParentFile() << OUT_DELIM <<
-		it->_scan->getSampleName() << OUT_DELIM;
+		out << it->_scan->getParentID() <<
+		OUT_DELIM << it->_scan->getParentProtein() <<
+		OUT_DELIM << it->_scan->getParentDescription() <<
+		OUT_DELIM << it->_scan->getFullSequence() <<
+		OUT_DELIM << it->_scan->getSequence() <<
+		OUT_DELIM << it->_scan->getCharge() <<
+		OUT_DELIM << it->_scan->getUnique() <<
+		OUT_DELIM << it->_scan->getXcorr() <<
+		OUT_DELIM << it->_scan->getScanNum() <<
+		OUT_DELIM << it->_scan->getParentFile() <<
+		OUT_DELIM << it->_scan->getSampleName();
 		
 		//peptid analysis data
-		out << it->containsCit << OUT_DELIM <<
-		it->nFrag << OUT_DELIM <<
-		it->nDetFrag << OUT_DELIM <<
-		it->nDetNLFrag << OUT_DELIM <<
-		it->nAmbFrag << OUT_DELIM <<
-		it->nAmbNLFrag << OUT_DELIM <<
-		it->nArtNLFrag << OUT_DELIM <<
-		it->frag << OUT_DELIM <<
-		it->detFrag << OUT_DELIM <<
-		it->detNLFrag << OUT_DELIM <<
-		it->ambFrag << OUT_DELIM <<
-		it->ambNLFrag << OUT_DELIM <<
-		it->artNLFrag << OUT_DELIM <<
-		NEW_LINE;
+		out << OUT_DELIM << it->containsCit;
+		for(itcType i = itcType::First; i != itcType::Last; ++i)
+			out << OUT_DELIM << it->ionTypesCount.at(i).second;
+		
+		for(itcType i = itcType::First; i != itcType::Last; ++i)
+			out << OUT_DELIM << it->ionTypesCount.at(i).first;
+		
+		out << NEW_LINE;
 	}
 }

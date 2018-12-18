@@ -28,6 +28,9 @@ namespace CitFinder{
 	class PeptideFragmentsMap;
 	
 	const std::string FRAG_DELIM = "|";
+	int const N_ION_TYPES = 5;
+	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
+		"detNLFrag", "ambFrag", "artNLFrag"};
 	
 	bool findFragments(const std::vector<Dtafilter::Scan>&,
 					   std::vector<PeptideNamespace::Peptide>&,
@@ -95,6 +98,7 @@ namespace CitFinder{
 	};
 	
 	class PeptideStats{
+	public:
 		friend void analyzeSequences(std::vector<Dtafilter::Scan>&,
 									 const std::vector<PeptideNamespace::Peptide>&,
 									 std::vector<PeptideStats>&,
@@ -102,32 +106,27 @@ namespace CitFinder{
 		
 		friend void printPeptideStats(const std::vector<PeptideStats>&,
 									  std::ostream&);
+		enum class IonType{
+			//!All fragments identified
+			FRAG,
+			//!B or Y fragments with modification not containing N or Q
+			DET_FRAG,
+			//!B or Y fragments with modification containing N or Q
+			AMB_MOD_FRAG,
+			//!Cit determining NL fragments
+			DET_NL_FRAG,
+			//!B or Y ions not containing modification
+			AMB_FRAG,
+			 //!NL fragments not contatining modification
+			ART_NL_FRAG,
+			Last,
+			First = FRAG,
+		};
 	private:
-		//!Total fragment ions
-		int nFrag;
-		//!Number fragments without modification
-		int nAmbFrag;
-		//!Number fragments with modification
-		int nDetFrag;
-		//!Number ambiguous NL fragments
-		int nAmbNLFrag;
-		//!Number determining NL fragments
-		int nDetNLFrag;
-		//!Number of artifact NL fragments
-		int nArtNLFrag;
 		
-		//!Fragment ions
-		std::string frag;
-		//!Fragments without modification
-		std::string ambFrag;
-		//!Fragments with modification
-		std::string detFrag;
-		//!Ambiguous NL fragments
-		std::string ambNLFrag;
-		//!Determining NL fragments
-		std::string detNLFrag;
-		//!Artifact NL fragments
-		std::string artNLFrag;
+		typedef std::pair<std::string, int> IonTypeDatType;
+		typedef std::map<IonType, IonTypeDatType> IonTypesCountType;
+		IonTypesCountType ionTypesCount;
 		
 		//!Does peptide contain cit
 		std::string containsCit;
@@ -153,6 +152,7 @@ namespace CitFinder{
 		void addChar(std::string, std::string&);
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
+		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
 	public:
 		PeptideStats(){
 			_scan = new Dtafilter::Scan;
@@ -186,6 +186,10 @@ namespace CitFinder{
 		//void setScan(Dtafilter::Scan)
 		void addSeq(const CitFinder::RichFragmentIon&, const std::string&);
 	};
+	
+	inline PeptideStats::IonType operator++(PeptideStats::IonType& x ){
+		return x = (PeptideStats::IonType)(((int)(x) + 1));
+	}
 }
 
 #endif /* datProc_hpp */
