@@ -34,11 +34,11 @@
  [Peptide\\modified?, tikz={\draw[{Latex}-, thick] (.north) --++ (0,1);}
     [Modification\\on C term?
         [false]
-        [nDetNLFrag $> 1$\\and nDetFrag $\geq 1$
+        [nDetNLFrag $> 1$ %\\and nDetFrag $\geq 1$
             [true]
-            [nDetNLFrag $\geq1$\\and nDetFrag $\geq 1$
+            [nDetNLFrag $\geq1$\\or nDetFrag $\geq 1$
                 [likely]
-                [nAmbNlFrag $\geq 1$
+                [nAmbFrag $\geq 1$
                     [ambiguous]
                     [false]
                 ]
