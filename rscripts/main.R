@@ -1,6 +1,6 @@
 
 PROG_WD_HOME = paste(Sys.getenv("HOME"), 
-                  "/local/ms2_anotator/rscripts", sep = "")
+                  "/local/ms2_annotator/rscripts", sep = "")
 source(paste(PROG_WD_HOME, "/makeSpectrum.R", sep = ""), echo=FALSE)
 source(paste(PROG_WD_HOME, "/functions.R", sep = ""), echo=FALSE)
 require(tools, quietly = TRUE, warn.conflicts = FALSE)
