@@ -344,7 +344,7 @@ void CitFinder::PeptideStats::calcContainsCit()
 {
 	containsCit = "false";
 	
-	/*//is the peptide modified?
+	//is the peptide modified?
 	if(modLocs.size() == 0) return;
 	
 	//is c terminal most cit modification on the c terminus?
@@ -352,20 +352,24 @@ void CitFinder::PeptideStats::calcContainsCit()
 	//they appear in the sequence
 	if(modLocs.back() == sequence.length() - 1) return;
 	
-	//is there a determining NL
-	if(nDetNLFrag > 1 && nDetFrag >= 1){
+	//is there more than 1 determining NLs?
+	if(ionTypesCount[IonType::DET_NL_FRAG].second > 1){
 		containsCit = "true";
 		return;
 	}
 	
-	//is there at least one detNLFrag and more than 1 detFrag
-	if(nDetNLFrag == 1 && nDetFrag >= 1){
+	//are there 1 or more determining NLs or determining frags?
+	if(ionTypesCount[IonType::DET_NL_FRAG].second >= 1 ||
+	   ionTypesCount[IonType::DET_FRAG].second >= 1){
 		containsCit = "likely";
 		return;
 	}
 	
-	if(nAmbNLFrag >= 1)
-		containsCit = "ambiguous";*/
+	//are there 1 more ambigious fragments?
+	if(ionTypesCount[IonType::AMB_FRAG].second >= 1){
+		containsCit = "ambiguous";
+		return;
+	}
 }
 
 /**
