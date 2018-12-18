@@ -19,7 +19,6 @@ namespace aaDB{
 	
 	std::string const SMOD_END_TAG = "</staticModifications>";
 	std::string const SMOD_BEGIN_TAG = "<staticModifications>";
-	int const MAX_PARAM_ITERATIONS = 1000;
 	
 	class AminoAcid;
 	class AADB;

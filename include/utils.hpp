@@ -55,59 +55,6 @@ namespace utils{
 	size_t const DEFAULT_BEGIN_LINE = 0;
 	bool const IGNORE_HIDDEN_FILES = true; //ignore hidden files in utils::ls
 	
-	/******************************/
-	/*     class definitions     */
-	/*****************************/
-	
-	class File;
-	
-	//file class for reading in text files line by line
-	//automatically detects and handles line return characters from different operating systems
-	class File{
-	private:
-		char* buffer;
-		char delim;
-		newline_type delimType;
-		std::string fname;
-		size_t beginLine;
-		std::stringstream ss;
-		unsigned long slen;
-	public:
-		File(){
-			buffer = nullptr;
-			slen = 0;
-		}
-		File(std::string str){
-			buffer = nullptr;
-			fname = str;
-			slen = 0;
-		}
-		~File(){}
-		
-		//modifers
-		bool read(std::string);
-		bool read();
-		std::string getLine();
-		std::string getLine_skip();
-		std::string getLine_trim();
-		std::string getLine_skip_trim();
-		std::string getLine_trim_skip();
-		
-		//properties
-		bool end(){
-			return (ss.tellg() >= slen);
-		}
-		std::string getFname() const{
-			return fname;
-		}
-		char getDelim() const{
-			return delim;
-		}
-		newline_type getNewLineType() const{
-			return delimType;
-		}
-	};
-	
 	/*************/
 	/* functions */
 	/*************/

@@ -102,6 +102,16 @@ bool Ms2_annotator::Params::getArgs(int argc, const char* const argv [])
 				std::cerr << "Could not write new smod file!" << NEW_LINE;
 			return false;
 		}
+		if(!strcmp(argv[i], "-smod"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			_aaMassFile = utils::absPath(argv[i]);
+			continue;
+		}
 		if(!strcmp(argv[i], "-mt") || !strcmp(argv[i], "--matchTolerance"))
 		{
 			if(!utils::isArg(argv[++i]))
