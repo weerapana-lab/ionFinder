@@ -16,7 +16,7 @@
 
 namespace base{
 	
-	std::string const PROG_WD =std::string(getenv("HOME")) + "/local/ms2_anotator";
+	std::string const PROG_WD =std::string(getenv("HOME")) + "/local/ms2_annotator";
 	std::string const PROG_DB = PROG_WD + "/db";
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
