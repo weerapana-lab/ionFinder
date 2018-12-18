@@ -25,8 +25,10 @@ aaDB::AminoAcid::AminoAcid(std::string line)
 bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
 {
 	utils::File file (_aaDBLoc);
-	if(!file.read())
+	if(!file.read()){
+		std::cerr << "Could not open file: " << _aaDBLoc << NEW_LINE;
 		return false;
+	}
 	
 	std::string line;
 	do{
