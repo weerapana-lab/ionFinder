@@ -59,8 +59,9 @@ namespace base{
 			if(_wd[_wd.length() - 1] != '/')
 				wd = _wd + "/";
 			std::ofstream outF((wd + base::DEFAULT_SMOD_NAME).c_str());
-			utils::File staticMods(base::PROG_DEFAULT_SMOD_FILE);
-			if(!outF || !staticMods.read())
+			//utils::File staticMods(base::PROG_DEFAULT_SMOD_FILE);
+			std::ifstream staticMods(base::PROG_DEFAULT_SMOD_FILE);
+			if(!outF || !staticMods)
 				return false;
 			
 			if(wdSpecified)
@@ -68,23 +69,29 @@ namespace base{
 			else std::cerr << NEW_LINE <<"Generating ./" << base::DEFAULT_SMOD_NAME << NEW_LINE;
 			
 			outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << NEW_LINE
-			<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << NEW_LINE
-			<< "<staticModifications>" << NEW_LINE;
+			<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << NEW_LINE;
+			// << "<staticModifications>" << NEW_LINE;
 			
-			while(!staticMods.end())
-				outF << staticMods.getLine() << NEW_LINE;
+			std::string line;
+			while(utils::safeGetline(staticMods, line))
+				outF << line << NEW_LINE;
 			
-			outF << NEW_LINE << "</staticModifications>" << NEW_LINE;
+			//outF << NEW_LINE << "</staticModifications>" << NEW_LINE;
 			
 			return true;
 		}
 		
 		void usage() const{
-			utils::File file(_usageFile);
+			/*utils::File file(_usageFile);
 			assert(file.read());
 			
 			while(!file.end())
-				std::cerr << file.getLine() << NEW_LINE;
+				std::cerr << file.getLine() << NEW_LINE;*/
+			
+			std::ifstream inF(_usageFile);
+			std::string line;
+			while(utils::safeGetline(inF, line))
+				std::cerr << line << NEW_LINE;
 		}
 		
 		void displayHelp() const{

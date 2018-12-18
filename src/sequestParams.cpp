@@ -40,15 +40,20 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 	if(fname.empty())
 		throw std::runtime_error("fname must be specified!");
 	
-	utils::File file(fname);
-	if(!file.read())
-		return false;
+	//utils::File file(fname);
+	//if(!file.read())
+	
+	std::ifstream inF(fname);
+	if(!inF) return false;
 	
 	std::string line;
 	std::vector<std::string> elems;
-	while(!file.end())
+	while(utils::safeGetline(inF, line))
 	{
-		line = file.getLine_skip_trim();
+		//line = file.getLine_skip_trim();
+		line = utils::trim(line);
+		if(utils::isCommentLine(line) || line.empty())
+			continue;
 		if(utils::strContains('=', line))
 		{
 			utils::split(line, '=', elems);

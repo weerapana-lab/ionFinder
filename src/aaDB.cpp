@@ -24,19 +24,20 @@ aaDB::AminoAcid::AminoAcid(std::string line)
 
 bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
 {
-	utils::File file (_aaDBLoc);
-	if(!file.read()){
+	std::ifstream inF(_aaDBLoc);
+	if(!inF){
 		std::cerr << "Could not open file: " << _aaDBLoc << NEW_LINE;
 		return false;
 	}
 	
 	std::string line;
-	do{
-		line = file.getLine_skip_trim();
+	while(utils::safeGetline(inF, line)){
+		line = utils::trim(line);
+		if(utils::isCommentLine(line) || line.empty())
+			continue;
 		aaDB::AminoAcid temp(line);
 		aminoAcidsDB[temp.getSymbol()] = temp;
-		
-	} while(!file.end());
+	}
 	
 	
 	return true;
@@ -44,29 +45,31 @@ bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
 
 bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
 {
-	utils::File file(_modDBLoc);
-	if(!file.read())
-		return false;
+	//utils::File file(_modDBLoc);
+	//if(!file.read())
+	std::ifstream inF(_modDBLoc);
+	if(!inF) return false;
+	
+	std::cerr << _modDBLoc << std::endl;
 	
 	std::string line;
-	int i = 0;
 	
-	do{
-		line = file.getLine_skip_trim();
-		if(line == aaDB::SMOD_BEGIN_TAG)
+	while(inF && line != aaDB::SMOD_END_TAG)
+	{
+		utils::safeGetline(inF, line);
+		line = utils::trim(line);
+		if(utils::isCommentLine(line) || line.empty())
+			continue;
+		
+		while(utils::safeGetline(inF, line))
 		{
-			do{
-				line = file.getLine_skip_trim();
-				if(line != aaDB::SMOD_END_TAG)
-				{
-					aaDB::AminoAcid temp (line);
-					modsTemp[temp.getSymbol()] = temp;
-					if(++i > aaDB::MAX_PARAM_ITERATIONS)
-						return false;
-				}
-			} while(line != aaDB::SMOD_END_TAG);
-		}
-	} while(!file.end() && line != aaDB::SMOD_END_TAG);
+			line = utils::trim(line);
+			if(utils::isCommentLine(line) || line.empty())
+				continue;
+			aaDB::AminoAcid temp (line);
+			modsTemp[temp.getSymbol()] = temp;
+		}//end of while
+	}
 	return true;
 }//end of function
 
