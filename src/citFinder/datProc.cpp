@@ -461,15 +461,15 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		//peptid analysis data
 		out << OUT_DELIM << it->containsCit;
 		
-		std::cout << "Writing " << it->_scan->getSequence() << NEW_LINE;
+		//std::cout << "Writing " << it->_scan->getSequence() << NEW_LINE;
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
 		{
-			std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
+			//std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
 			out << OUT_DELIM << it->ionTypesCount.at(i).second;
 		}
 		
 		for(itcType i = itcType::First; i != itcType::Last; ++i){
-			std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
+			//std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
 			out << OUT_DELIM << it->ionTypesCount.at(i).first;
 		}
 		
