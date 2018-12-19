@@ -273,7 +273,9 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			ms2Map.clear();
 			//first get current wd name
 			curSample = it->getSampleName();
-			curWD = pars.getInputModeIndependentParentDir() + "/" + curSample;
+			//curWD = pars.getInputModeIndependentParentDir() + "/" + curSample;
+			//curWD = pars.getWD() + "/" + curSample;
+			curWD = utils::dirName(it->getParentFile());
 			
 			//next get names of all ms2 files in dir
 			std::vector<std::string> ms2FileNames;
@@ -296,10 +298,7 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			
 			//re-init Peptide::AminoAcidMasses for each sample
 			std::string spFname = pars.getWD() + "/";
-			if(pars.getInputMode() == CitFinder::Params::InputModes::SINGLE)
-				spFname += "/sequest.params";
-			else
-				spFname += it->getSampleName() + "/sequest.params";
+			spFname += it->getSampleName() + "/sequest.params";
 				
 			pars.setSeqParFname(spFname);
 			PeptideNamespace::Peptide::initAminoAcidsMasses(pars);
@@ -321,7 +320,7 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		
 		//load spectrum
 		ms2::Spectrum spectrum;
-		if(!ms2Map[it->getParentFile()].getScan(it->getScanNum(), spectrum))
+		if(!ms2Map[utils::baseName(it->getParentFile())].getScan(it->getScanNum(), spectrum))
 		{
 			std::cout << "Error reading scan!" << NEW_LINE;
 			return false;
@@ -447,7 +446,7 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		OUT_DELIM << it->_scan->getUnique() <<
 		OUT_DELIM << it->_scan->getXcorr() <<
 		OUT_DELIM << it->_scan->getScanNum() <<
-		OUT_DELIM << it->_scan->getParentFile() <<
+		OUT_DELIM << utils::baseName(it->_scan->getParentFile()) <<
 		OUT_DELIM << it->_scan->getSampleName();
 		
 		//peptid analysis data

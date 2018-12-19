@@ -56,22 +56,24 @@ bool Dtafilter::readFilterFile(std::string fname,
 							   std::vector<Dtafilter::Scan>& scans,
 							   bool skipReverse)
 {
+	//TODO: add full parent .ms2 path
+	
 	std::ifstream inF(fname);
 	if(!inF) return false;
 	
 	//flow control flags
 	bool foundHeader = false;
-	bool getNewLine = true;
+	//bool getNewLine = true;
+	std::streampos sp;
 	
 	std::string line;
 	std::vector<std::string> elems;
 	
 	while(!inF.eof())
 	{
-		if(getNewLine)
-			utils::safeGetline(inF, line);
-		getNewLine = true;
+		utils::safeGetline(inF, line, sp);
 		line = utils::trimTraling(line);
+		if(line.empty()) continue;
 		
 		if(utils::strContains('%', line)) //find protein header lines by percent symbol for percent coverage
 		{
@@ -96,10 +98,11 @@ bool Dtafilter::readFilterFile(std::string fname,
 				
 				while(!inF.eof())
 				{
-					if(getNewLine)
-						utils::safeGetline(inF, line);
-					getNewLine = true;
+					//if(getNewLine)
+					utils::safeGetline(inF, line, sp);
+					//getNewLine = true;
 					line = utils::trimTraling(line);
+					if(line.empty()) continue;
 					
 					//break if starting new protein or end of file
 					if(utils::strContains('%', line) || line == "\tProteins\tPeptide IDs\tSpectra")
@@ -108,12 +111,13 @@ bool Dtafilter::readFilterFile(std::string fname,
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
 					newScan._unique = line[0] == '*';
+					newScan.setParentFile(utils::dirName(fname) + "/" + newScan.getParentFile());
 					if(skipReverse && newScan._matchDirection == Dtafilter::Scan::MatchDirection::REVERSE)
 						continue;
 					else scans.push_back(newScan);
 					
 				}//end of while
-				getNewLine = false;
+				inF.seekg(sp); //reset streampos so line is not skipped in next itteration
 			}
 		}//end if
 	}//end while

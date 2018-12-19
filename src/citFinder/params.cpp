@@ -8,17 +8,6 @@
 
 #include <citFinder/params.hpp>
 
-CitFinder::Params::InputModes CitFinder::Params::intToInputModes(int val) const
-{
-	switch(val){
-		case 0 : return InputModes::SINGLE;
-			break;
-		case 1 : return InputModes::RECURSIVE;
-			break;
-		default : throw std::runtime_error("Invalid type!");
-	}
-}
-
 bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 {
 	_wd = utils::pwd();
@@ -46,21 +35,6 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 				std::cerr << "Specified direectory does not exist." << NEW_LINE;
 				return false;
 			}
-			continue;
-		}
-		if(!strcmp(argv[i], "-i") || !strcmp(argv[i], "--inputMode"))
-		{
-			if(!utils::isArg(argv[++i]))
-			{
-				usage();
-				return false;
-			}
-			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
-			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "inputMode" << NEW_LINE;
-				return false;
-			}
-			_inputMode = intToInputModes(atoi(argv[i]));
 			continue;
 		}
 		if(!strcmp(argv[i], "-dta"))
@@ -196,11 +170,17 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;
 			return false;
 		}
-		else{
+		else if(utils::isFlag(argv[i])){
 			std::cerr << argv[i] << " is an invalid argument." << NEW_LINE;
 			usage();
 			return false;
-		}//end of else
+		}
+		else{ //we are in input dirs
+			while(i < argc){
+				_inDirs.push_back(std::string(argv[i++]));
+			}
+		}
+		//end of else
 	}//end of for i
 	
 	//fix options
@@ -216,7 +196,7 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 
 bool CitFinder::Params::getFlist()
 {
-	if(_inputMode == InputModes::SINGLE)
+	/*if(_inputMode == InputModes::SINGLE)
 	{
 		std::string baseName = utils::baseName(_wd);
 		_filterFiles[baseName] = _wd + _dtaFilterBase;
@@ -238,13 +218,20 @@ bool CitFinder::Params::getFlist()
 		}
 		if(_filterFiles.size() == 0)
 			return false;
+	}*/
+	
+	for(auto it = _inDirs.begin(); it != _inDirs.end(); ++it)
+	{
+		std::string fname = _wd + *it + "/" + _dtaFilterBase;
+		if(utils::fileExists(fname)){
+			_filterFiles[utils::baseName(*it)] = fname;
+		}
+		else{
+			std::cerr << "Warning: No filter file found in: " << *it << NEW_LINE;
+		}
 	}
+	if(_filterFiles.size() == 0)
+		return false;
+	
 	return true;
-}
-
-std::string CitFinder::Params::getInputModeIndependentParentDir() const
-{
-	if(_inputMode == InputModes::SINGLE)
-		return utils::parentDir(_wd);
-	return _wd;
 }
