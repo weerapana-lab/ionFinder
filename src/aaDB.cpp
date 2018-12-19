@@ -45,12 +45,10 @@ bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
 
 bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
 {
-	//utils::File file(_modDBLoc);
-	//if(!file.read())
 	std::ifstream inF(_modDBLoc);
 	if(!inF) return false;
 	
-	std::cerr << _modDBLoc << std::endl;
+	//std::cerr << _modDBLoc << std::endl;
 	
 	std::string line;
 	
