@@ -42,6 +42,8 @@ namespace PeptideNamespace{
 	double calcMass(const std::vector<PeptideIon>& sequence);
 	std::string concatMods(const PepIonVecType& vec,
 						   PepIonIt begin, PepIonIt end);
+	void initAminoAcidsMasses(const base::ParamsBase& pars, std::string seqParFname, aaDB::AADB&);
+	void initAminoAcidsMasses(const base::ParamsBase&, aaDB::AADB&);
 	
 	//class declarations
 	
@@ -246,12 +248,13 @@ namespace PeptideNamespace{
 		std::string fullSequence;
 		std::vector<PeptideIon> aminoAcids;
 		bool initialized;
-		static aaDB::AADB* aminoAcidMasses;
-		static bool aminoAcidMassesInitilized;
+		//aaDB::AADB* _aminoAcidMasses;
+		//bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
 		int nMod; //number of modified residues
 		
-		void fixDiffMod(const char* diffmods = "*");
+		void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
+						const char* diffmods = "*");
 	
 	public:
 		//constructors
@@ -259,21 +262,24 @@ namespace PeptideNamespace{
 			sequence = "";
 			fullSequence = sequence;
 			initialized = false;
+			//aminoAcidMassesInitilized = false;
 			nMod = 0;
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
 			fullSequence = sequence;
 			initialized = false;
+			//aminoAcidMassesInitilized = false;
 			nMod = 0;
 		}
 		~Peptide() {}
 		
-		static void initAminoAcidsMasses(const base::ParamsBase&);
-		void initialize(const base::ParamsBase&, bool _calcFragments = true);
-		void calcFragments(int, int);
+		void initialize(const base::ParamsBase&, const aaDB::AADB& aadb,
+						bool _calcFragments = true);
+		void calcFragments(int minCharge, int maxCharge,
+						   const aaDB::AADB& aminoAcidsMasses);
 		void addNeutralLoss(const std::vector<double>&);
-		double calcMass();
+		double calcMass(const aaDB::AADB& aminoAcidsMasses);
 		void printFragments(std::ostream&) const;
 		
 		void setFound(size_t i, bool boo){

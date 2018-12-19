@@ -8,8 +8,8 @@
 
 #include <peptide.hpp>
 
-aaDB::AADB* PeptideNamespace::Peptide::aminoAcidMasses = nullptr;
-bool PeptideNamespace::Peptide::aminoAcidMassesInitilized = false;
+//aaDB::AADB* PeptideNamespace::Peptide::aminoAcidMasses = nullptr;
+//bool PeptideNamespace::Peptide::aminoAcidMassesInitilized = false;
 
 PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonType(std::string s)
 {
@@ -86,13 +86,14 @@ std::string PeptideNamespace::FragmentIon::getFormatedLabel() const
 	return str;
 }
 
-void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge)
+void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
+											  const aaDB::AADB& aminoAcidsMasses)
 {
 	fragments.clear();
 	
-	double nTerm = aminoAcidMasses->getMW("N_term");
-	double cTerm = aminoAcidMasses->getMW("C_term");
-	double hMass = aminoAcidMasses->getMW("H_mass");
+	double nTerm = aminoAcidsMasses.getMW("N_term");
+	double cTerm = aminoAcidsMasses.getMW("C_term");
+	double hMass = aminoAcidsMasses.getMW("H_mass");
 	
 	size_t len = aminoAcids.size();
 	for(int i = 0; i < len; i++)
@@ -154,7 +155,8 @@ void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses
 	}
 }
 
-void PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)
+void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
+										   const char* diffmods)
 {
 	char mod = '\0';
 	bool modFound = false;
@@ -181,9 +183,9 @@ void PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)
 				}//end of if
 			}//end of for
 		}//end of if
-		PeptideIon temp(aminoAcidMasses->getMW(sequence[i]));
+		PeptideIon temp(aminoAcidsMasses.getMW(sequence[i]));
 		if(modFound){
-			temp.setMod(mod, aminoAcidMasses->getMW(mod));
+			temp.setMod(mod, aminoAcidsMasses.getMW(mod));
 			nMod++;
 		}
 		aminoAcids.push_back(temp);
@@ -191,54 +193,59 @@ void PeptideNamespace::Peptide::fixDiffMod(const char* diffmods)
 	}//end of for
 }//end of function
 
-double PeptideNamespace::Peptide::calcMass()
+double PeptideNamespace::Peptide::calcMass(const aaDB::AADB& aadb)
 {
 	if(!initialized)
 		throw std::runtime_error("Peptide must be initialized to calc mass!");
 	
-	initalizeFromMass(aminoAcidMasses->calcMW(sequence));
+	initalizeFromMass(aadb.calcMW(sequence));
 	return getMass();
 }
 
-void PeptideNamespace::Peptide::initAminoAcidsMasses(const base::ParamsBase& pars)
+void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars,
+										    std::string seqParFname, aaDB::AADB& aadb)
+{
+	seqpar::SequestParamsFile spFile(seqParFname);
+	
+	if(!spFile.read())
+		throw std::runtime_error("Could not read sequest params file!");
+	
+	if(!aadb.initialize(pars.getAAMassFileLoc(), spFile.getAAMap()))
+		throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
+}
+
+void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars, aaDB::AADB& aadb)
 {
 	if(pars.getSeqParSpecified())
 	{
 		seqpar::SequestParamsFile spFile(pars.getSeqParFname());
 		
-		if(!aminoAcidMassesInitilized)
-		{
-			if(!spFile.read())
-				throw std::runtime_error("Could not read sequest params file!");
-			
-			aminoAcidMasses = new aaDB::AADB;
-			if(!aminoAcidMasses->initialize(pars.getAAMassFileLoc(), spFile.getAAMap()))
-				throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
-		}
+		if(!spFile.read())
+			throw std::runtime_error("Could not read sequest params file!");
+		
+		if(!aadb.initialize(pars.getAAMassFileLoc(), spFile.getAAMap()))
+			throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
 	}
 	else {
-		if(!aminoAcidMassesInitilized)
-		{
-			aminoAcidMasses = new aaDB::AADB;
-			if(!aminoAcidMasses->initialize(pars.getAAMassFileLoc(), pars.getSmodFileLoc()))
-				throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
-		}
+		if(!aadb.initialize(pars.getAAMassFileLoc(), pars.getSmodFileLoc()))
+			throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
 	}
-	aminoAcidMassesInitilized = true;
 }
 
-void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars, bool _calcFragments)
+void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
+										   const aaDB::AADB& aadb,
+										   bool _calcFragments)
 {
 	initialized = true;
 	
 	//initialize aminoAcidMasses if necissary
-	if(!aminoAcidMassesInitilized)
-		initAminoAcidsMasses(pars);
+	//if(!aminoAcidMassesInitilized)
+	//	initAminoAcidsMasses(pars);
 	
-	calcMass();
-	fixDiffMod();
+	calcMass(aadb);
+	fixDiffMod(aadb);
 	if(_calcFragments)
-		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge());
+		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge(), aadb);
 }
 
 void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
