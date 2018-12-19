@@ -1,2 +1,1 @@
-usage:	annotate_ms2   [options] -p <sequence> -s <scan> -m <ms2_file>
-	annotate_ms2   [options] -p <sequence> -dta <dta_filter_file>
+usage:	citFinder [options] input_dir [...]
