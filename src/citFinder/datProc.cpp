@@ -44,7 +44,7 @@ std::string CitFinder::PeptideFragmentsMap::getIonSeq(std::string searchStr) con
 		ret = fragmentMap.at(searchStr);
 	}
 	catch(std::out_of_range& e){
-		std::cerr << "Error finding sequence:" << searchStr << std::endl;
+		std::cerr << "Error finding sequence: " << searchStr << std::endl;
 	}
 	
 	return fragmentMap.at(searchStr);
@@ -244,7 +244,13 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			if(it->getFragment(i).getFound())
 			{
 				CitFinder::RichFragmentIon fragTemp(it->getFragment(i));
-				fragTemp.calcSequence(fragmentMap);
+				try{
+					fragTemp.calcSequence(fragmentMap);
+				}
+				catch(std::out_of_range& e){
+					std::cout << "Error finding fragment for sequence: " << it->getFullSequence() << NEW_LINE;
+					continue;
+				}
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
