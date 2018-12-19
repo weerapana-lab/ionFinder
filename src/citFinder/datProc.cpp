@@ -248,7 +248,8 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 					fragTemp.calcSequence(fragmentMap);
 				}
 				catch(std::out_of_range& e){
-					std::cout << "Error finding fragment for sequence: " << it->getFullSequence() << NEW_LINE;
+					std::cout << "Error finding fragment: " << it->getFragment(i).getIonStr()
+					<< "for sequence: " << it->getFullSequence() << NEW_LINE;
 					continue;
 				}
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
