@@ -42,11 +42,14 @@ int main(int argc, char* argv[])
 					   pars.inFile.getScan(), pars.inFile.getInfile()));
 	}
 	
+	aaDB::AADB aadb;
 	for(scanData::scansType::iterator it = scans.begin(); it != scans.end(); ++it)
 	{
 		//initialize peptide with user supplied sequence
 		PeptideNamespace::Peptide pep(it->getSequence());
-		pep.initialize(pars);
+		PeptideNamespace::initAminoAcidsMasses(pars, aadb);
+		
+		pep.initialize(pars, aadb);
 		
 		ms2::Ms2File file(it->getParentFile());
 		if(!file.read())
