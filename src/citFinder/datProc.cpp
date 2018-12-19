@@ -234,9 +234,6 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			
 			if(it->getFragment(i).getFound())
 			{
-				if(it->getFullSequence() == "LAILGYR*R*") //&& i == 18)
-					std::cout << "Found" << NEW_LINE;
-				
 				CitFinder::RichFragmentIon fragTemp(it->getFragment(i));
 				try{
 					fragTemp.calcSequence(fragmentMap);
