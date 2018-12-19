@@ -372,6 +372,26 @@ void CitFinder::PeptideStats::calcContainsCit()
 	}
 }
 
+std::string CitFinder::PeptideStats::ionTypeToStr(const IonType& it)
+{
+	switch(it){
+		case IonType::FRAG: return ION_TYPES_STR[0];
+			break;
+		case IonType::DET_FRAG: return ION_TYPES_STR[1];
+			break;
+		case IonType::AMB_MOD_FRAG: return ION_TYPES_STR[2];
+			break;
+		case IonType::DET_NL_FRAG: return ION_TYPES_STR[3];
+			break;
+		case IonType::AMB_FRAG: return ION_TYPES_STR[4];
+			break;
+		case IonType::ART_NL_FRAG: return ION_TYPES_STR[5];
+			break;
+		case IonType::Last: return "Last";
+			break;
+	}
+}
+
 /**
  Prints peptide stats to out.
  @param stats Peptide stats to print.
@@ -425,11 +445,18 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		
 		//peptid analysis data
 		out << OUT_DELIM << it->containsCit;
-		for(itcType i = itcType::First; i != itcType::Last; ++i)
-			out << OUT_DELIM << it->ionTypesCount.at(i).second;
 		
+		std::cout << it->_scan->getSequence() << NEW_LINE;
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
+		{
+			std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
+			out << OUT_DELIM << it->ionTypesCount.at(i).second;
+		}
+		
+		for(itcType i = itcType::First; i != itcType::Last; ++i){
+			std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
 			out << OUT_DELIM << it->ionTypesCount.at(i).first;
+		}
 		
 		out << NEW_LINE;
 	}

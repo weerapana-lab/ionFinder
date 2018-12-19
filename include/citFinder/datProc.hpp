@@ -185,6 +185,7 @@ namespace CitFinder{
 		//modifers
 		//void setScan(Dtafilter::Scan)
 		void addSeq(const CitFinder::RichFragmentIon&, const std::string&);
+		static std::string ionTypeToStr(const IonType&);
 	};
 	
 	inline PeptideStats::IonType operator++(PeptideStats::IonType& x ){
