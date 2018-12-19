@@ -13,6 +13,8 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <thread>
+#include <atomic>
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
@@ -32,9 +34,24 @@ namespace CitFinder{
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
 		"detNLFrag", "ambFrag", "artNLFrag"};
 	
-	bool findFragments(const std::vector<Dtafilter::Scan>&,
-					   std::vector<PeptideNamespace::Peptide>&,
-					   CitFinder::Params&);
+	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
+							   std::vector<PeptideNamespace::Peptide>&,
+							   CitFinder::Params&);
+	
+	/*bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
+								  std::vector<PeptideNamespace::Peptide>& peptides,
+								  CitFinder::Params& pars)*/
+	
+	void findFragments(const std::vector<Dtafilter::Scan>& scans,
+					   size_t beg, size_t end,
+					   std::vector<PeptideNamespace::Peptide>& peptides,
+					   CitFinder::Params& pars);
+					   //bool& sucess);
+	
+	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
+								  const std::vector<PeptideNamespace::Peptide>& peptides,
+								  std::vector<PeptideStats>& peptideStats,
+								  const CitFinder::Params& pars);*/
 	
 	void analyzeSequences(std::vector<Dtafilter::Scan>&,
 						  const std::vector<PeptideNamespace::Peptide>&,
