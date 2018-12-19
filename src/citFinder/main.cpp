@@ -26,7 +26,10 @@ int main(int argc, const char** argv)
 	
 	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
-	CitFinder::findFragments(scans, peptides, pars);
+	if(!CitFinder::findFragments(scans, peptides, pars)){
+		std::cout << "Failed to annotate spectra!" << NEW_LINE;
+		return -1;
+	}
 	
 	//analyze sequences
 	std::vector<CitFinder::PeptideStats> peptideStats;

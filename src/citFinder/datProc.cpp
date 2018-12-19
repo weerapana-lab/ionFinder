@@ -337,8 +337,8 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
 			//spectrm.makeOf
-			std::string temp = it->getOfname();
-			std::ofstream outF((dirNameTemp + "/" + temp).c_str());
+			std::string temp = dirNameTemp + "/" + utils::baseName(it->getOfname());
+			std::ofstream outF((temp).c_str());
 			if(!outF) return false;
 			spectrum.printLabeledSpectrum(outF, true);
 		}
