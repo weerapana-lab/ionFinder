@@ -231,6 +231,7 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 const CitFinder::Params& pars)
 {
 	CitFinder::PeptideFragmentsMap fragmentMap;
+	std::mutex mtx;
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
@@ -269,12 +270,13 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 }//end of fxn
 
 bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
-						   std::vector<PeptideNamespace::Peptide>& peptides,
-						   CitFinder::Params& pars)
+									  std::vector<PeptideNamespace::Peptide>& peptides,
+									  const CitFinder::Params& pars)
 {
 	unsigned int nThreads = pars.getNumThreads();
+	std::mutex mtx;
 	//unsigned int const nThreads = 2;
-	//unsigned int nThreads = 6;
+	//nThreads = 1;
 	size_t nScans = scans.size();
 	size_t peptidePerThread = nScans / nThreads;
 	if(nScans % nThreads != 0)
@@ -302,7 +304,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		assert(threadIndex < nThreads);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.push_back(std::thread(CitFinder::findFragments, std::ref(scans), begNum, endNum,
-										   std::ref(splitPeptides[threadIndex]), std::ref(pars)));
+									  std::ref(splitPeptides[threadIndex]), std::ref(pars), std::ref(mtx)));
 										   //std::ref(sucsses[i])));
 		threadIndex++;
 	}
@@ -344,13 +346,16 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  size_t beg, size_t end,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
-							  CitFinder::Params& pars)
+							  const CitFinder::Params& pars, std::mutex& mtx)
 							 // bool& sucess)
 {
 	//sucess = true;
+	std::vector<PeptideNamespace::Peptide> peptidesTemp;
+	peptidesTemp.reserve(scans.size());
 	std::map<std::string, ms2::Ms2File> ms2Map;
 	std::string curSample;
 	std::string curWD;
+	aaDB::AADB aminoAcidMasses;
 	
 	//TODO : This may be a off by 1 problem
 	for(size_t i = beg; i < end; i++)
@@ -370,7 +375,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			std::vector<std::string> ms2FileNames;
 			if(!utils::ls(curWD.c_str(), ms2FileNames, ".ms2"))
 			{
-				std::cerr << "Error reading ms2 files!" << NEW_LINE;
+				throw std::runtime_error("Error reading ms2 files!");
+				//std::cerr << "Error reading ms2 files!" << NEW_LINE;
 				//sucess = false;
 				return;
 			}
@@ -381,7 +387,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 				ms2Map[*it2] = ms2::Ms2File();
 				if(!ms2Map[*it2].read(curWD + "/" + *it2))
 				{
-					std::cerr << "Error reading ms2 files!" << NEW_LINE;
+					throw std::runtime_error("Error reading ms2 files!");
+					//std::cerr << "Error reading ms2 files!" << NEW_LINE;
 					//sucess = false;
 					return;
 				}
@@ -391,33 +398,38 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			std::string spFname = pars.getWD() + "/";
 			spFname += scans[i].getSampleName() + "/sequest.params";
 				
-			pars.setSeqParFname(spFname);
-			PeptideNamespace::Peptide::initAminoAcidsMasses(pars);
+			//pars.setSeqParFname(spFname);
+			//PeptideNamespace::Peptide::initAminoAcidsMasses(pars, spFname);
+			
+			//read sequest params file and init aadb
+			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
+			
 		}//end if
 		
 		//initialize peptide object for current scan
-		peptides.push_back(PeptideNamespace::Peptide (scans[i].getSequence()));
-		peptides.back().initialize(pars);
+		peptidesTemp.push_back(PeptideNamespace::Peptide(scans[i].getSequence()));
+		peptidesTemp.back().initialize(pars, aminoAcidMasses);
 		
 		//calculate neutral loss combinations
-		int nMods = peptides.back().getNumMod();
+		int nMods = peptidesTemp.back().getNumMod();
 		double nlMass = pars.getNeutralLossMass();
 		std::vector<double> neutralLossIons;
 		for(int i = 1; i <= nMods; i++)
 			neutralLossIons.push_back(i * nlMass);
 		
 		//add neutral loss fragments to current peptide
-		peptides.back().addNeutralLoss(neutralLossIons);
+		peptidesTemp.back().addNeutralLoss(neutralLossIons);
 		
 		//load spectrum
 		ms2::Spectrum spectrum;
 		if(!ms2Map[utils::baseName(scans[i].getParentFile())].getScan(scans[i].getScanNum(), spectrum))
 		{
-			std::cout << "Error reading scan!" << NEW_LINE;
+			throw std::runtime_error("Error reading scan!");
+			//std::cout << "Error reading scan!" << NEW_LINE;
 			//sucess = false;
 			return;
 		}
-		spectrum.labelSpectrum(peptides.back(), pars);
+		spectrum.labelSpectrum(peptidesTemp.back(), pars);
 		
 		//print spectra file
 		if(pars.getPrintSpectraFiles())
@@ -426,24 +438,31 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			if(!utils::dirExists(dirNameTemp))
 				if(!utils::mkdir(dirNameTemp.c_str()))
 				{
-					std::cout << "Failed to make dir: " << dirNameTemp << NEW_LINE;
+					throw std::runtime_error("Failed to make dir: " + dirNameTemp);
+					//std::cout << "Failed to make dir: " << dirNameTemp << NEW_LINE;
 					//sucess = false;
 					return;
 				}
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
-			//spectrm.makeOf
-			std::string temp = scans[i].getOfname();
-			std::ofstream outF((dirNameTemp + "/" + temp).c_str());
+			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
+			std::ofstream outF((temp).c_str());
 			if(!outF){
-				std::cout << "Failed to write spectrum!" << std::endl;
+				//std::cout << "Failed to write spectrum!" << std::endl;
+				throw std::runtime_error("Failed to write spectrum!");
 				//sucess = false;
 				return;
 			}
 			spectrum.printLabeledSpectrum(outF, true);
 		}
 	}
-	//sucess = true;
+	
+	mtx.lock();
+	for(auto it = peptidesTemp.begin(); it != peptidesTemp.end(); ++it){
+		peptides.push_back(*it);
+	}
+	mtx.unlock();
+	
 	return;
 }
 

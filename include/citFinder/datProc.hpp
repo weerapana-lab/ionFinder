@@ -14,7 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
-#include <atomic>
+#include <mutex>
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
@@ -36,7 +36,7 @@ namespace CitFinder{
 	
 	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
-							   CitFinder::Params&);
+							   const CitFinder::Params&);
 	
 	/*bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 								  std::vector<PeptideNamespace::Peptide>& peptides,
@@ -45,7 +45,7 @@ namespace CitFinder{
 	void findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   size_t beg, size_t end,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
-					   CitFinder::Params& pars);
+					   const CitFinder::Params& pars, std::mutex& mtx);
 					   //bool& sucess);
 	
 	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
