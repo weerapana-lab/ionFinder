@@ -37,7 +37,16 @@ void CitFinder::PeptideFragmentsMap::populateMap(std::string sequence)
 	}
 }
 
-std::string CitFinder::PeptideFragmentsMap::getIonSeq(std::string searchStr) const{
+std::string CitFinder::PeptideFragmentsMap::getIonSeq(std::string searchStr) const
+{
+	std::string ret;
+	try{
+		ret = fragmentMap.at(searchStr);
+	}
+	catch(std::out_of_range& e){
+		std::cerr << "Error finding sequence:" << searchStr << std::endl;
+	}
+	
 	return fragmentMap.at(searchStr);
 }
 
@@ -446,7 +455,7 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		//peptid analysis data
 		out << OUT_DELIM << it->containsCit;
 		
-		std::cout << it->_scan->getSequence() << NEW_LINE;
+		std::cout << "Writing " << it->_scan->getSequence() << NEW_LINE;
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
 		{
 			std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
