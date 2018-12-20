@@ -8,7 +8,7 @@
 
 #include <ms2.hpp>
 
-int ms2::Ms2File::mdNum = 4;
+//int ms2::Ms2File::mdNum = 4;
 
 bool ms2::Ms2File::read(std::string _fname)
 {
@@ -77,7 +77,7 @@ bool ms2::Ms2File::getMetaData()
 	if(scanType == "MS2" &&
 	   dataType == "Centroid" &&
 	   firstScan <= lastScan &&
-	   mdCount == mdNum)
+	   mdCount == MD_NUM)
 		return true;
 	return false;
 }
