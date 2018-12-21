@@ -136,7 +136,7 @@ void ms2::Spectrum::setLabelTop(size_t labelTop)
 	
 	if(pointList.size() > labelTop)
 	{
-		pointList.sort(ms2::DataPointIntComparison());
+		pointList.sort(ms2::DataPoint::IntComparison());
 		pointList.resize(labelTop);
 	}
 	
@@ -148,7 +148,7 @@ void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
 {
 	//sort ions by mz
 	if(_sort)
-		sort(ions.begin(), ions.end(), DataPointMZComparison());
+		sort(ions.begin(), ions.end(), DataPoint::MZComparison());
 	
 	ionsTypeIt begin = ions.begin();
 	ionsTypeIt end = ions.end();
@@ -217,7 +217,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	listType::iterator label;
 	
 	setLabelTop(labelTop); //determine which ions are abundant enough to considered in labeling
-	std::sort(ions.begin(), ions.end(), DataPointMZComparison()); //sort ions by mz
+	std::sort(ions.begin(), ions.end(), DataPoint::MZComparison()); //sort ions by mz
 	if(pars.getMZSpecified()) //set user specified mz range if specified
 	{
 		setMZRange(pars.getMinMZSpecified() ? pars.getMinMZ() : minMZ,
@@ -236,9 +236,17 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		
 		rangeList.clear();
 		
-		//get ions within _labelTolerance
-		for(ionsTypeIt it = ions.begin(); it != ions.end(); ++it)
+		//first get lowest value in range
+		ionsTypeIt lowerBound = std::lower_bound(ions.begin(), ions.end(),
+												 (tempMZ - (_labelTolerance)),
+												 DataPoint::MZComparison());
+		
+		//ittreate throught all ions above in range
+		for(ionsTypeIt it = lowerBound; it != ions.end(); ++it)
 		{
+			if(it->getMZ() > (tempMZ + _labelTolerance))
+				break;
+			
 			if(it->getTopAbundant())
 			{
 				bool inRange = utils::inRange(it->getMZ(), tempMZ, _labelTolerance);
@@ -248,7 +256,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 				   intenseEnough) //check that it->int is sufficiently high
 					rangeList.push_back(&(*it));
 			}//end of if
-		}//end of for
+		}
+		//else continue;
 		
 		if(rangeList.size() == 0)
 			continue;

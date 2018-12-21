@@ -55,6 +55,9 @@ namespace CitFinder{
 		//!Should annotaed spectra be printed?
 		bool _printSpectraFiles;
 		
+		//! was a input directory specified
+		bool _inDirSpecified;
+		
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
 		
@@ -75,6 +78,7 @@ namespace CitFinder{
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
 			ofname = "peptide_cit_stats.tsv";
 			_numThreads = computeThreads();
+			_inDirSpecified = false;
 		}
 		
 		//modifers

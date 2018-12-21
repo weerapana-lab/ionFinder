@@ -445,6 +445,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 				}
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
+			
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
 			std::ofstream outF((temp).c_str());
 			if(!outF){
