@@ -234,31 +234,14 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		
 		double tempMZ = peptide.getFragmentMZ(i);
 		
-		if(tempMZ == 470.22415000000001)
-			std::cout << "Found!" << NEW_LINE;
-		
 		rangeList.clear();
-		
-		//get ions within _labelTolerance
-		for(ionsTypeIt it = ions.begin(); it != ions.end(); ++it)
-		{
-			if(it->getTopAbundant())
-			{
-				bool inRange = utils::inRange(it->getMZ(), tempMZ, _labelTolerance);
-				bool intenseEnough = (it->getIntensity() > pars.getMinLabelIntensity());
-				
-				if(inRange && //check that it->mz is in range
-				   intenseEnough) //check that it->int is sufficiently high
-					rangeList.push_back(&(*it));
-			}//end of if
-		}//end of for
 		
 		//first get lowest value in range
 		ionsTypeIt lowerBound = std::lower_bound(ions.begin(), ions.end(),
 												 (tempMZ - (_labelTolerance)),
 												 DataPoint::MZComparison());
 		
-		listType tempRangeList;
+		//ittreate throught all ions above in range
 		for(ionsTypeIt it = lowerBound; it != ions.end(); ++it)
 		{
 			if(it->getMZ() > (tempMZ + _labelTolerance))
@@ -271,26 +254,13 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 				
 				if(inRange && //check that it->mz is in range
 				   intenseEnough) //check that it->int is sufficiently high
-					tempRangeList.push_back(&(*it));
+					rangeList.push_back(&(*it));
 			}//end of if
 		}
 		//else continue;
 		
 		if(rangeList.size() == 0)
 			continue;
-		
-		auto rangeListIt = rangeList.begin();
-		auto tempRangeListIt = tempRangeList.begin();
-		while(rangeListIt != rangeList.end())
-		{
-			std::string good = ((*rangeListIt)->getMZ() == (*tempRangeListIt)->getMZ() ? "true" : "false");
-			if(good == "false")
-				std::cout << "\t";
-			std::cout << (*rangeListIt)->getMZ() << " == " <<
-			(*tempRangeListIt)->getMZ() << ": " << good << NEW_LINE;
-			
-			++rangeListIt; ++tempRangeListIt;
-		}
 		
 		label = rangeList.begin();
 		if(rangeList.size() > 1)
