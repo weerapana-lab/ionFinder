@@ -1,1 +1,1 @@
-usage:	citFinder [options] input_dir [...]
+usage:	citFinder [options] [input_dir ...]

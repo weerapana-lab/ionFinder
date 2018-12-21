@@ -178,6 +178,7 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 		else{ //we are in input dirs
 			while(i < argc){
 				_inDirs.push_back(std::string(argv[i++]));
+				_inDirSpecified = true;
 			}
 		}
 		//end of else
@@ -194,35 +195,18 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 	return true;
 }//end of getArgs
 
+/**
+ Searches all directories in _inDirs for DTAFilter files.
+ If _inDirs is empty, current working directory is used.
+ @return true if > 1 filter file was found, else false
+ */
 bool CitFinder::Params::getFlist()
 {
-	/*if(_inputMode == InputModes::SINGLE)
-	{
-		std::string baseName = utils::baseName(_wd);
-		_filterFiles[baseName] = _wd + _dtaFilterBase;
-	}
-	else if(_inputMode == InputModes::RECURSIVE)
-	{
-		std::vector<std::string> files;
-		if(!utils::ls(_wd.c_str(), files))
-			return false;
-		
-		for(auto it = files.begin(); it != files.end(); ++it)
-		{
-			if(utils::isDir(_wd + *it))
-			{
-				std::string fname = _wd + *it + "/" + _dtaFilterBase;
-				if(utils::fileExists(fname))
-					_filterFiles[utils::baseName(*it)] = fname;
-			}
-		}
-		if(_filterFiles.size() == 0)
-			return false;
-	}*/
-	
+	if(_inDirs.size() == 0)
+		_inDirs.push_back(_wd);
 	for(auto it = _inDirs.begin(); it != _inDirs.end(); ++it)
 	{
-		std::string fname = _wd + *it + "/" + _dtaFilterBase;
+		std::string fname = (_inDirSpecified ? (_wd + *it) : *it) + ("/" + _dtaFilterBase);
 		if(utils::fileExists(fname)){
 			_filterFiles[utils::baseName(*it)] = fname;
 		}
