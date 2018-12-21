@@ -168,18 +168,22 @@ namespace ms2{
 		inline bool insertCompare(const DataPoint& comp) const{
 			return intensity > comp.intensity;
 		}
-	};
-	
-	struct DataPointIntComparison {
-		bool const operator()(DataPoint *lhs, DataPoint *rhs) const{
-			return lhs->insertCompare(*rhs);
-		}
-	};
-	
-	struct DataPointMZComparison {
-		bool const operator()(const DataPoint& lhs, const DataPoint& rhs) const{
-			return lhs.getMZ() < rhs.getMZ();
-		}
+		
+		struct MZComparison {
+			bool const operator()(const DataPoint& lhs, const DataPoint& rhs) const{
+				return lhs.getMZ() < rhs.getMZ();
+			}
+			
+			bool const operator()(const DataPoint& lhs, double rhs) const{
+				return lhs.getMZ() < rhs;
+			}
+		};
+		
+		struct IntComparison {
+			bool const operator()(DataPoint *lhs, DataPoint *rhs) const{
+				return lhs->insertCompare(*rhs);
+			}
+		};
 	};
 	
 	class Spectrum{
