@@ -79,6 +79,7 @@ namespace Ms2_annotator{
 			smodSpecified = false;
 			scanSpecified = false;
 			ms2Specified = false;
+			verbose = true; //set verbose to true by default
 		}
 		
 		bool getArgs(int, const char* const[]);
