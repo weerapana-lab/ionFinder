@@ -45,7 +45,7 @@ namespace CitFinder{
 	void findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   size_t beg, size_t end,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
-					   const CitFinder::Params& pars, std::mutex& mtx);
+					   const CitFinder::Params  pars, std::mutex& mtx, unsigned int tid);
 					   //bool& sucess);
 	
 	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
@@ -114,6 +114,7 @@ namespace CitFinder{
 		}
 	};
 	
+	
 	class PeptideStats{
 	public:
 		friend void analyzeSequences(std::vector<Dtafilter::Scan>&,
@@ -171,6 +172,9 @@ namespace CitFinder{
 		void calcContainsCit();
 		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
 	public:
+		//!temporary var
+		unsigned int tid;
+		
 		PeptideStats(){
 			_scan = new Dtafilter::Scan;
 			initStats();

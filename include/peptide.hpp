@@ -257,6 +257,9 @@ namespace PeptideNamespace{
 						const char* diffmods = "*");
 	
 	public:
+		//!temporary var
+		unsigned int tid;
+		
 		//constructors
 		Peptide() : Ion(){
 			sequence = "";

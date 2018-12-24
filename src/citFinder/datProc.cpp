@@ -243,6 +243,7 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		//it->printFragments(std::cout);
 		
 		CitFinder::PeptideStats pepStat(*it); //init pepStat
+		pepStat.tid = it->tid;
 		pepStat._scan = &scans[it - peptides.begin()]; //add pointer to scan
 		size_t nFragments = it->getNumFragments();
 		for(size_t i = 0; i < nFragments; i++)
@@ -304,15 +305,17 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		assert(threadIndex < nThreads);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.push_back(std::thread(CitFinder::findFragments, std::ref(scans), begNum, endNum,
-									  std::ref(splitPeptides[threadIndex]), std::ref(pars), std::ref(mtx)));
+									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
+									  std::ref(mtx), threadIndex));
 										   //std::ref(sucsses[i])));
 		threadIndex++;
 	}
 	
 	//join threads
 	for(unsigned int i = 0; i < nThreads; i++){
+		std::cout << "Joining thread: " << i << NEW_LINE;
 		threads[i].join();
-	}
+	 }
 	
 	//concat split peptieds into one vector
 	peptides.clear();
@@ -346,7 +349,8 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  size_t beg, size_t end,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
-							  const CitFinder::Params& pars, std::mutex& mtx)
+							  const CitFinder::Params pars, std::mutex& mtx,
+							  unsigned int tid)
 							 // bool& sucess)
 {
 	//sucess = true;
@@ -357,14 +361,22 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	std::string curWD;
 	aaDB::AADB aminoAcidMasses;
 	
-	//TODO : This may be a off by 1 problem
+	/*mtx.lock();
+	std::cout << tid << ") Begining is: " << beg << "\tEnd is: " << end << NEW_LINE;
+	mtx.unlock();*/
+	
+	//TODO: This may be an off by 1 problem
 	for(size_t i = beg; i < end; i++)
 	{
+		/*if(i == 2){
+			std::cout << "i = 2" << NEW_LINE;
+		}*/
 		//read ms2 files if it hasn't been done yet
 		if(curSample != scans[i].getSampleName())
 		{
 			//read ms2 files
 			ms2Map.clear();
+			//ms2Map.
 			//first get current wd name
 			curSample = scans[i].getSampleName();
 			//curWD = pars.getInputModeIndependentParentDir() + "/" + curSample;
@@ -461,9 +473,11 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	mtx.lock();
 	for(auto it = peptidesTemp.begin(); it != peptidesTemp.end(); ++it){
 		peptides.push_back(*it);
+		peptides.back().tid = tid;
 	}
 	mtx.unlock();
 	
+	std::cout << "Finished with thread: " << tid << NEW_LINE;
 	return;
 }
 
@@ -537,7 +551,7 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		statNames.push_back("n" + std::string(1, (char)std::toupper(ION_TYPES_STR[i][0])) +
 							ION_TYPES_STR[i].substr(1));
 	
-	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence charge unique xCorr scan parent_file sample_name";
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence charge unique xCorr scan parent_file sample_name tid";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
@@ -568,7 +582,8 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		OUT_DELIM << it->_scan->getXcorr() <<
 		OUT_DELIM << it->_scan->getScanNum() <<
 		OUT_DELIM << utils::baseName(it->_scan->getParentFile()) <<
-		OUT_DELIM << it->_scan->getSampleName();
+		OUT_DELIM << it->_scan->getSampleName() <<
+		OUT_DELIM << it->tid;
 		
 		//peptid analysis data
 		out << OUT_DELIM << it->containsCit;
