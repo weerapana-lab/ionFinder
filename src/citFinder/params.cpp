@@ -222,8 +222,10 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
  */
 bool CitFinder::Params::getFlist()
 {
-	if(_inDirs.size() == 0)
+	if(_inDirs.size() == 0){
 		_inDirs.push_back(_wd);
+		_wd = utils::parentDir(_wd);
+	}
 	for(auto it = _inDirs.begin(); it != _inDirs.end(); ++it)
 	{
 		std::string fname = (_inDirSpecified ? (_wd + *it) : *it) + ("/" + _dtaFilterBase);
