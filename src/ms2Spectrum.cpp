@@ -291,7 +291,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 			}
 		}
 		
-		if((*label)->getLabeledIon()){
+		if((*label)->getLabeledIon() && pars.getVerbose()){
 			if(!seqPrinted){
 				std::cout << "In sequence: " << peptide.getSequence() << NEW_LINE;
 				seqPrinted = true;

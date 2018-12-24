@@ -185,7 +185,12 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			_numThreads = std::stoi(argv[i]);
 			continue;
 		}
-		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version"))
+		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose"))
+		{
+			verbose = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "--version"))
 		{
 			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;
 			return false;

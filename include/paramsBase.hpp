@@ -55,6 +55,8 @@ namespace base{
 		bool maxMzSpecified;
 		bool minIntensitySpecified;
 		
+		bool verbose;
+		
 		bool writeSmod(std::string wd) const{
 			if(_wd[_wd.length() - 1] != '/')
 				wd = _wd + "/";
@@ -122,6 +124,7 @@ namespace base{
 			minIntensity = 0;
 			minIntensitySpecified = false;
 			includeAllIons = true;
+			verbose = false;
 		}
 		
 		//modifers
@@ -190,6 +193,9 @@ namespace base{
 		}
 		std::string getSeqParFname() const{
 			return sequestParamsFname;
+		}
+		bool getVerbose() const{
+			return verbose;
 		}
 	};
 }
