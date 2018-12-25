@@ -411,10 +411,10 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 	//build stat names vector
 	std::vector<std::string> statNames;
 	statNames.push_back("containsCit");
-	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + N_ION_TYPES);
 	for(int i = 0; i < N_ION_TYPES; i++)
 		statNames.push_back("n" + std::string(1, (char)std::toupper(ION_TYPES_STR[i][0])) +
 							ION_TYPES_STR[i].substr(1));
+	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + N_ION_TYPES);
 	
 	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence charge unique xCorr scan parent_file sample_name";
 	std::vector<std::string> oHeaders;
