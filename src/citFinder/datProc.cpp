@@ -264,6 +264,8 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	std::map<std::string, ms2::Ms2File> ms2Map;
 	std::string curSample;
 	std::string curWD;
+	aaDB::AADB aminoAcidMasses;
+	
 	for(auto it = scans.begin(); it != scans.end(); ++it)
 	{
 		//read ms2 files if it hasn't been done yet
@@ -301,12 +303,12 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			spFname += it->getSampleName() + "/sequest.params";
 				
 			pars.setSeqParFname(spFname);
-			PeptideNamespace::Peptide::initAminoAcidsMasses(pars);
+			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 		}//end if
 		
 		//initialize peptide object for current scan
 		peptides.push_back(PeptideNamespace::Peptide (it->getSequence()));
-		peptides.back().initialize(pars);
+		peptides.back().initialize(pars, aminoAcidMasses);
 		
 		//calculate neutral loss combinations
 		int nMods = peptides.back().getNumMod();
