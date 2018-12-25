@@ -3,6 +3,9 @@
 # C++ Compiler
 CXX := g++
 #
+# Make command
+MAKE := make
+#
 # latexmk
 TEX := $(shell command -v latexmk 2> /dev/null)
 #
@@ -70,12 +73,16 @@ ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(CIT_FINDER_OBJS)
 CXXFLAGS += $(INCLUDEFLAGS) -I$(HEADERDIR)
 LDFLAGS += $(LIBFLAGS)
 
-.PHONY: all clean distclean install uninstall
+.PHONY: all clean distclean install uninstall multi
 
 #TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
 TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) helpFile.pdf
 
 all: $(TARGETS)
+
+multi:
+	$(MAKE) -j8 all
+	makew
 
 #DTarray_pro-Userguide.pdf : $(TEX_DIR)/DTarray_pro-Userguide.tex
 #ifndef TEX
