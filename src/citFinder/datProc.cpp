@@ -397,10 +397,11 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			}
 			
 			//finally read each ms2 file into map
+			mtx.lock();
+			
 			for(auto it2 = ms2FileNames.begin(); it2 != ms2FileNames.end(); ++it2)
 			{
 				ms2Map[*it2] = ms2::Ms2File();
-				mtx.lock();
 				if(!ms2Map[*it2].read(curWD + "/" + *it2))
 				{
 					throw std::runtime_error("Error reading ms2 files!");
@@ -408,7 +409,6 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 					//sucess = false;
 					return;
 				}
-				mtx.unlock();
 			}
 			
 			//re-init Peptide::AminoAcidMasses for each sample
@@ -421,6 +421,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			//read sequest params file and init aadb
 			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 			
+			mtx.unlock();
 		}//end if
 		
 		//initialize peptide object for current scan
