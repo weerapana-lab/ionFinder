@@ -9,10 +9,10 @@ TEX := $(shell command -v latexmk 2> /dev/null)
 # Flags
 #
 #   Compiler
-CXXFLAGS += -c -g -Wall -std=c++11
+CXXFLAGS += -c -g -Wall -pthread -std=c++11
 #
 #   Linker
-LDFLAGS += -g
+LDFLAGS += -g -lpthread
 #
 #   Library
 LIBFLAGS :=
