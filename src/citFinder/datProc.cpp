@@ -365,6 +365,9 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	std::cout << tid << ") Begining is: " << beg << "\tEnd is: " << end << NEW_LINE;
 	mtx.unlock();*/
 	
+	//if(tid == 2)
+	//	std::cout << "Found!" << std::endl;
+	
 	//TODO: This may be an off by 1 problem
 	for(size_t i = beg; i < end; i++)
 	{
@@ -397,6 +400,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			for(auto it2 = ms2FileNames.begin(); it2 != ms2FileNames.end(); ++it2)
 			{
 				ms2Map[*it2] = ms2::Ms2File();
+				mtx.lock();
 				if(!ms2Map[*it2].read(curWD + "/" + *it2))
 				{
 					throw std::runtime_error("Error reading ms2 files!");
@@ -404,6 +408,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 					//sucess = false;
 					return;
 				}
+				mtx.unlock();
 			}
 			
 			//re-init Peptide::AminoAcidMasses for each sample
