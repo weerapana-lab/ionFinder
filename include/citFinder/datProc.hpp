@@ -58,8 +58,8 @@ namespace CitFinder{
 						  std::vector<PeptideStats>&,
 						  const CitFinder::Params&);
 	
-	void printPeptideStats(const std::vector<PeptideStats>&,
-						   std::ostream&);
+	bool printPeptideStats(const std::vector<PeptideStats>&,
+						   std::string);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
 	
@@ -122,8 +122,8 @@ namespace CitFinder{
 									 std::vector<PeptideStats>&,
 									 const CitFinder::Params&);
 		
-		friend void printPeptideStats(const std::vector<PeptideStats>&,
-									  std::ostream&);
+		friend bool printPeptideStats(const std::vector<PeptideStats>&,
+									  std::string);
 		enum class IonType{
 			//!All fragments identified
 			FRAG,

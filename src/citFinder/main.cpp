@@ -38,13 +38,11 @@ int main(int argc, const char** argv)
 	
 	//write data
 	std::string ofname = pars.makeOfname();
-	std::ofstream outF(ofname);
-	if(!outF)
+	if(!CitFinder::printPeptideStats(peptideStats, ofname))
 	{
 		std::cerr << "Failed to write peptide stats!" << NEW_LINE;
 		return -1;
 	}
-	CitFinder::printPeptideStats(peptideStats, outF);
 	std::cout << "Results written to: " << ofname << NEW_LINE;
 	
 	return 0;

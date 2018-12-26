@@ -542,11 +542,13 @@ std::string CitFinder::PeptideStats::ionTypeToStr(const IonType& it)
 /**
  Prints peptide stats to out.
  @param stats Peptide stats to print.
- @param out stream to print to.
+ @param ofname name of file to write to.
  */
-void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::ostream& out)
+bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::string ofname)
 {
-	assert(out);
+	//assert(out);
+	std::ofstream outF (ofname);
+	if(!outF) return false;
 	
 	typedef CitFinder::PeptideStats::IonType itcType;
 	//build stat names vector
@@ -569,16 +571,16 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 	size_t len = headers.size();
 	for(size_t i = 0; i < len; i++){
 		if(i == 0)
-			out << headers[i];
-		else out << OUT_DELIM << headers[i];
+			outF << headers[i];
+		else outF << OUT_DELIM << headers[i];
 	}
-	out << NEW_LINE;
+	outF << NEW_LINE;
 	
 	//print data
 	for(auto it = stats.begin(); it != stats.end(); ++it)
 	{
 		//scan data
-		out << it->_scan->getParentID() <<
+		outF << it->_scan->getParentID() <<
 		OUT_DELIM << it->_scan->getParentProtein() <<
 		OUT_DELIM << it->_scan->getParentDescription() <<
 		OUT_DELIM << it->_scan->getFullSequence() <<
@@ -592,20 +594,21 @@ void CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::o
 		OUT_DELIM << it->tid;
 		
 		//peptid analysis data
-		out << OUT_DELIM << it->containsCit;
+		outF << OUT_DELIM << it->containsCit;
 		
 		//std::cout << "Writing " << it->_scan->getSequence() << NEW_LINE;
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
 		{
 			//std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
-			out << OUT_DELIM << it->ionTypesCount.at(i).second;
+			outF << OUT_DELIM << it->ionTypesCount.at(i).second;
 		}
 		
 		for(itcType i = itcType::First; i != itcType::Last; ++i){
 			//std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
-			out << OUT_DELIM << it->ionTypesCount.at(i).first;
+			outF << OUT_DELIM << it->ionTypesCount.at(i).first;
 		}
 		
-		out << NEW_LINE;
+		outF << NEW_LINE;
 	}
+	return true;
 }
