@@ -47,6 +47,16 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			continue;
 		}
+		if(!strcmp(argv[i], "-o") || !strcmp(argv[i], "--ofname"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			ofname = argv[i];
+			continue;
+		}
 		if(!strcmp(argv[i], "-dta"))
 		{
 			if(!utils::isArg(argv[++i]))
