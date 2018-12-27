@@ -99,7 +99,12 @@ namespace CitFinder{
 			return _ambigiousResidues;
 		}
 		std::string makeOfname() const{
-			return _wd + "/" + ofname;
+			if(_inDirSpecified)
+				return _wd + "/" + ofname;
+			else{
+				assert(_inDirs.size() == 1);
+				return _inDirs.back() + "/" + ofname;
+			}
 		}
 		bool getPrintSpectraFiles() const{
 			return _printSpectraFiles;
