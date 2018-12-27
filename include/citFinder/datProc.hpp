@@ -34,13 +34,11 @@ namespace CitFinder{
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
 		"detNLFrag", "ambFrag", "artNLFrag"};
 	
+	
+	
 	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
 							   const CitFinder::Params&);
-	
-	/*bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
-								  std::vector<PeptideNamespace::Peptide>& peptides,
-								  CitFinder::Params& pars)*/
 	
 	void findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   size_t beg, size_t end,

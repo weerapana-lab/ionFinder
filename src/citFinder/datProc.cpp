@@ -231,7 +231,6 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 const CitFinder::Params& pars)
 {
 	CitFinder::PeptideFragmentsMap fragmentMap;
-	std::mutex mtx;
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
@@ -388,11 +387,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			
 			//next get names of all ms2 files in dir
 			std::vector<std::string> ms2FileNames;
-			if(!utils::ls(curWD.c_str(), ms2FileNames, ".ms2"))
-			{
+			if(!utils::ls(curWD.c_str(), ms2FileNames, ".ms2")){
 				throw std::runtime_error("Error reading ms2 files!");
-				//std::cerr << "Error reading ms2 files!" << NEW_LINE;
-				//sucess = false;
 				return;
 			}
 			
@@ -402,11 +398,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			for(auto it2 = ms2FileNames.begin(); it2 != ms2FileNames.end(); ++it2)
 			{
 				ms2Map[*it2] = ms2::Ms2File();
-				if(!ms2Map[*it2].read(curWD + "/" + *it2))
-				{
+				if(!ms2Map[*it2].read(curWD + "/" + *it2)){
 					throw std::runtime_error("Error reading ms2 files!");
-					//std::cerr << "Error reading ms2 files!" << NEW_LINE;
-					//sucess = false;
 					return;
 				}
 			}
@@ -414,9 +407,6 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			//re-init Peptide::AminoAcidMasses for each sample
 			std::string spFname = pars.getWD() + "/";
 			spFname += scans[i].getSampleName() + "/sequest.params";
-				
-			//pars.setSeqParFname(spFname);
-			//PeptideNamespace::Peptide::initAminoAcidsMasses(pars, spFname);
 			
 			//read sequest params file and init aadb
 			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
@@ -440,11 +430,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		
 		//load spectrum
 		ms2::Spectrum spectrum;
-		if(!ms2Map[utils::baseName(scans[i].getParentFile())].getScan(scans[i].getScanNum(), spectrum))
-		{
+		if(!ms2Map[utils::baseName(scans[i].getParentFile())].getScan(scans[i].getScanNum(), spectrum)){
 			throw std::runtime_error("Error reading scan!");
-			//std::cout << "Error reading scan!" << NEW_LINE;
-			//sucess = false;
 			return;
 		}
 		spectrum.labelSpectrum(peptidesTemp.back(), pars);
@@ -454,11 +441,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		{
 			std::string dirNameTemp = pars.getWD() + "/spectraFiles";
 			if(!utils::dirExists(dirNameTemp))
-				if(!utils::mkdir(dirNameTemp.c_str()))
-				{
+				if(!utils::mkdir(dirNameTemp.c_str())){
 					throw std::runtime_error("Failed to make dir: " + dirNameTemp);
-					//std::cout << "Failed to make dir: " << dirNameTemp << NEW_LINE;
-					//sucess = false;
 					return;
 				}
 			spectrum.normalizeIonInts(100);
@@ -467,9 +451,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
 			std::ofstream outF((temp).c_str());
 			if(!outF){
-				//std::cout << "Failed to write spectrum!" << std::endl;
 				throw std::runtime_error("Failed to write spectrum!");
-				//sucess = false;
 				return;
 			}
 			spectrum.printLabeledSpectrum(outF, true);
