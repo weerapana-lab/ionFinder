@@ -14,7 +14,6 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
-#include <mutex>
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
@@ -43,8 +42,7 @@ namespace CitFinder{
 	void findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   size_t beg, size_t end,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
-					   const CitFinder::Params& pars, std::mutex& mtx,
-					   std::string tid, bool* sucess);
+					   const CitFinder::Params& pars, bool* sucess);
 	
 	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
 								  const std::vector<PeptideNamespace::Peptide>& peptides,
@@ -169,11 +167,8 @@ namespace CitFinder{
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
 		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
-	public:
-		//!temporary var
-		//unsigned int tid;
-		std::string tid;
-		
+	
+	public:		
 		PeptideStats(){
 			_scan = new Dtafilter::Scan;
 			initStats();
