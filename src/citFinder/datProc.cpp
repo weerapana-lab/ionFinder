@@ -272,11 +272,12 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
 									  const CitFinder::Params& pars)
 {
-	unsigned int nThreads = pars.getNumThreads();
-	size_t nScans = scans.size();
+	unsigned int const nThreads = pars.getNumThreads();
+	size_t const nScans = scans.size();
 	size_t peptidePerThread = nScans / nThreads;
 	if(nScans % nThreads != 0)
 		peptidePerThread += 1;
+	std::atomic<size_t> scansIndex(0);
 	
 	//init threads
 	std::vector<std::thread> threads;
@@ -297,14 +298,19 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.push_back(std::thread(CitFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
 									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
-									  sucsses + threadIndex));
+									  sucsses + threadIndex, std::ref(scansIndex)));
 		threadIndex++;
 	}
+	
+	//spawn progress function
+	threads.push_back(std::thread(CitFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
+								  PROGRESS_SLEEP_TIME));
 	
 	//join threads
 	for(unsigned int i = 0; i < nThreads; i++){
 		threads[i].join();
 	 }
+	threads.back().join();
 	
 	//concat split peptieds into one vector
 	peptides.clear();
@@ -320,6 +326,40 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 }
 
 /**
+ Prints progress bar durring findFragmentsParallel
+ @param scansIndex current scan index
+ @param count total number of scans to seach for
+ @param sleepTime time before next update is printed in seconds
+ */
+void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
+									  int sleepTime)
+{
+	size_t lastIndex = scansIndex.load();
+	size_t curIndex = lastIndex;
+	int noChangeIterations = 0;
+	
+	std::cout << "\nSearching ms2s for neutral loss ions...\n";
+	do{
+		curIndex = scansIndex.load();
+		
+		if(lastIndex == curIndex)
+			noChangeIterations++;
+		else noChangeIterations = 0;
+		
+		if(noChangeIterations > CitFinder::MAX_PROGRESS_ITTERATIONS)
+			return;
+		
+		utils::printProgress(float(curIndex) / float(count));
+		std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
+		
+		lastIndex = curIndex;
+	} while(scansIndex < count);
+	utils::printProgress(float(scansIndex.load()) / float(count));
+	std::cout << NEW_LINE;
+	std::cout << "Done!" << NEW_LINE;
+}
+
+/**
  Find peptide fragment ions in ms2 files.
  @param scans Populated vector of scan objects to search for
  @param peptides empty vector of peptides to be filled from data in scans.
@@ -331,7 +371,9 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  CitFinder::Params& pars)
 {
 	bool* sucess = new bool(false);
-	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), peptides, pars, sucess);
+	std::atomic<size_t> scansIndex;
+	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), peptides, pars,
+										sucess, scansIndex);
 	return *sucess;
 }
 
@@ -348,7 +390,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 							  const size_t beg, const size_t end,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
 							  const CitFinder::Params& pars,
-							  bool* sucess)
+							  bool* sucess, std::atomic<size_t>& scansIndex)
 {
 	*sucess = false;
 	//std::vector<PeptideNamespace::Peptide> peptidesTemp;
@@ -437,7 +479,9 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 			}
 			spectrum.printLabeledSpectrum(outF, true);
 		}
-	}
+		
+		scansIndex++;
+	} //end of for
 	
 	*sucess = true;
 	return;

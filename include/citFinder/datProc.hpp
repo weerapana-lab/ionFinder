@@ -14,6 +14,8 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <chrono>
+#include <atomic>
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
@@ -33,7 +35,10 @@ namespace CitFinder{
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
 		"detNLFrag", "ambFrag", "artNLFrag"};
 	
-	
+	int const PROGRESS_SLEEP_TIME = 1;
+	int const MAX_PROGRESS_ITTERATIONS = 10;
+	int const PROGRESS_BAR_WIDTH = 60;
+	//std::atomic<size_t> THREADS_INDEX;
 	
 	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
@@ -42,7 +47,11 @@ namespace CitFinder{
 	void findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
 								  size_t beg, size_t end,
 								  std::vector<PeptideNamespace::Peptide>& peptides,
-								  const CitFinder::Params& pars, bool* sucess);
+								  const CitFinder::Params& pars,
+								  bool* sucess, std::atomic<size_t>& scansIndex);
+	
+	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
+							   int sleepTime = PROGRESS_SLEEP_TIME);
 	
 	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
