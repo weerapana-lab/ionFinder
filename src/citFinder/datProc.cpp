@@ -263,11 +263,7 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
-		pepStat.calcContainsCit();
-		
-		if(pepStat.ionTypesCount[CitFinder::PeptideStats::IonType::FRAG].second < 6)
-			std::cout << "What in the fuck!" << std::endl;
-		
+		pepStat.calcContainsCit();		
 		peptideStats.push_back(pepStat);
 	}//end if for it
 }//end of fxn
@@ -345,8 +341,8 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  bool* sucess)
 {
 	*sucess = false;
-	std::vector<PeptideNamespace::Peptide> peptidesTemp;
-	peptidesTemp.reserve(scans.size());
+	//std::vector<PeptideNamespace::Peptide> peptidesTemp;
+	//peptidesTemp.reserve(scans.size());
 	std::map<std::string, ms2::Ms2File> ms2Map;
 	std::string curSample;
 	std::string curWD;
@@ -389,18 +385,18 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 		}//end if
 		
 		//initialize peptide object for current scan
-		peptidesTemp.push_back(PeptideNamespace::Peptide(scans[i].getSequence()));
-		peptidesTemp.back().initialize(pars, aminoAcidMasses);
+		peptides.push_back(PeptideNamespace::Peptide(scans[i].getSequence()));
+		peptides.back().initialize(pars, aminoAcidMasses);
 		
 		//calculate neutral loss combinations
-		int nMods = peptidesTemp.back().getNumMod();
+		int nMods = peptides.back().getNumMod();
 		double nlMass = pars.getNeutralLossMass();
 		std::vector<double> neutralLossIons;
 		for(int i = 1; i <= nMods; i++)
 			neutralLossIons.push_back(i * nlMass);
 		
 		//add neutral loss fragments to current peptide
-		peptidesTemp.back().addNeutralLoss(neutralLossIons);
+		peptides.back().addNeutralLoss(neutralLossIons);
 		
 		//load spectrum
 		ms2::Spectrum spectrum;
@@ -409,7 +405,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			return;
 		}
 		
-		spectrum.labelSpectrum(peptidesTemp.back(), pars);
+		spectrum.labelSpectrum(peptides.back(), pars);
 		
 		//print spectra file
 		if(pars.getPrintSpectraFiles())
@@ -431,10 +427,6 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 			}
 			spectrum.printLabeledSpectrum(outF, true);
 		}
-	}
-	
-	for(auto it = peptidesTemp.begin(); it != peptidesTemp.end(); ++it){
-		peptides.push_back(*it);
 	}
 	
 	*sucess = true;
