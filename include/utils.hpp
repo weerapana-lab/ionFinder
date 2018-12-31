@@ -54,6 +54,7 @@ namespace utils{
 	char const DEFAULT_LINE_DELIM = '\n';
 	size_t const DEFAULT_BEGIN_LINE = 0;
 	bool const IGNORE_HIDDEN_FILES = true; //ignore hidden files in utils::ls
+	int const PROGRESS_BAR_WIDTH = 70;
 	
 	/*************/
 	/* functions */
@@ -113,6 +114,8 @@ namespace utils{
 	bool isInteger(const std::string & s);
 	bool isFlag(const char*);
 	bool isArg(const char*);
+	void printProgress(float progress, std::ostream& out, int barWidth = PROGRESS_BAR_WIDTH);
+	void printProgress(float progress, int barWidth = PROGRESS_BAR_WIDTH);
 	std::string ascTime();
 	template <typename _Tp> int round(_Tp num){
 		return floor(num + 0.5);

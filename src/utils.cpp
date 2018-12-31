@@ -512,5 +512,29 @@ int utils::getInt(int min, int max)
 	return ret;
 }//end of fxn
 
+/**
+ Prints progress bar to std::out
+ @param progress as a fraction of 1
+ */
+void utils::printProgress(float progress, int barWidth){
+	utils::printProgress(progress, std::cout, barWidth);
+}
 
+/**
+ Prints progress bar to out
+ @param progress as a fraction of 1
+ @param out stream to print to
+ */
+void utils::printProgress(float progress, std::ostream& out, int barWidth)
+{
+	std::cout << "[";
+	int pos = barWidth * progress;
+	for(int i = 0; i < barWidth; ++i) {
+		if (i < pos) out << "=";
+		else if (i == pos) out << ">";
+		else out << " ";
+	}
+	std::cout << "] " << int(progress * 100.0) << " %\r";
+	out.flush();
+}
 
