@@ -432,8 +432,8 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 			}
 			
 			//re-init Peptide::AminoAcidMasses for each sample
-			curWD = pars.getWD() + "/";
-			std::string spFname = curWD + scans[i].getSampleName() + "/sequest.params";
+			curWD = pars.getWD() + "/" + scans[i].getSampleName();
+			std::string spFname = curWD + "/sequest.params";
 			
 			//read sequest params file and init aadb
 			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
@@ -465,7 +465,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		//print spectra file
 		if(pars.getPrintSpectraFiles())
 		{
-			std::string dirNameTemp = curWD + "/spectraFiles";
+			std::string dirNameTemp = (pars.getInDirSpecified() ? pars.getWD() : curWD) + "/spectraFiles";
 			if(!utils::dirExists(dirNameTemp))
 				if(!utils::mkdir(dirNameTemp.c_str())){
 					throw std::runtime_error("Failed to make dir: " + dirNameTemp);

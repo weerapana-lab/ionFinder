@@ -196,7 +196,7 @@ bool utils::mkdir(const char* path)
 	return false;
 	
 	//make dir
-	systemCommand("mkdir -p" + rpath);
+	systemCommand("mkdir " + rpath);
 	
 	//test that new dir exists
 	return dirExists(rpath);

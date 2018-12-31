@@ -112,6 +112,9 @@ namespace CitFinder{
 		unsigned int getNumThreads() const{
 			return _numThreads;
 		}
+		bool getInDirSpecified() const{
+			return _inDirSpecified;
+		}
 	};
 }
 
