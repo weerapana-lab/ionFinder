@@ -24,6 +24,7 @@
 namespace ms2 {
 	
 	size_t const NUM_DIGITS_IN_SCAN = 6;
+	int const MD_NUM = 4;
 	
 	class Ms2File;
 	
@@ -41,7 +42,7 @@ namespace ms2 {
 		size_t firstScan, lastScan;
 		std::string dataType;
 		std::string scanType;
-		static int mdNum;
+		//static int mdNum;
 		
 		bool getMetaData();
 		const char* makeOffsetQuery(std::string) const;

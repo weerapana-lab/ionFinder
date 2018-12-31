@@ -8,7 +8,7 @@
 
 #include <ms2.hpp>
 
-int ms2::Ms2File::mdNum = 4;
+//int ms2::Ms2File::mdNum = 4;
 
 bool ms2::Ms2File::read(std::string _fname)
 {
@@ -77,7 +77,7 @@ bool ms2::Ms2File::getMetaData()
 	if(scanType == "MS2" &&
 	   dataType == "Centroid" &&
 	   firstScan <= lastScan &&
-	   mdCount == mdNum)
+	   mdCount == MD_NUM)
 		return true;
 	return false;
 }
@@ -124,7 +124,10 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 	}
 	
 	const char* _delim = delim.c_str();
-	char* _scan = strtok(strdup(buffer + scanOffset), _delim);
+	
+	//using strtok_r to be thread safe
+	char* saveptr;
+	char* _scan = strtok_r(strdup(buffer + scanOffset), _delim, &saveptr);
 	std::vector<std::string> elems;
 	size_t numIons = 0;
 	
@@ -181,7 +184,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 			if(tempIon.getMZ() < scan.minMZ)
 				scan.minMZ = tempIon.getMZ();
 		}
-		_scan = strtok(nullptr, _delim);
+		_scan = strtok_r(nullptr, _delim, &saveptr);
 	} while(_scan != nullptr && _scan[0] != 'S');
 	
 	scan.mzRange = scan.maxMZ - scan.minMZ;

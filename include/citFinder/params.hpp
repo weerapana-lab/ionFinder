@@ -13,6 +13,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <thread>
 
 #include <citFinder/citFinder.hpp>
 #include <paramsBase.hpp>
@@ -60,7 +61,11 @@ namespace CitFinder{
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
 		
+		//! number of thread to use default is std::thread::hardware_concurrency() / 2
+		unsigned int _numThreads;
+		
 		bool getFlist();
+		unsigned int computeThreads() const;
 		
 	public:
 		
@@ -72,6 +77,7 @@ namespace CitFinder{
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
 			ofname = "peptide_cit_stats.tsv";
+			_numThreads = computeThreads();
 			_inDirSpecified = false;
 		}
 		
@@ -93,10 +99,21 @@ namespace CitFinder{
 			return _ambigiousResidues;
 		}
 		std::string makeOfname() const{
-			return _wd + "/" + ofname;
+			if(_inDirSpecified)
+				return _wd + "/" + ofname;
+			else{
+				assert(_inDirs.size() == 1);
+				return _inDirs.back() + "/" + ofname;
+			}
 		}
 		bool getPrintSpectraFiles() const{
 			return _printSpectraFiles;
+		}
+		unsigned int getNumThreads() const{
+			return _numThreads;
+		}
+		bool getInDirSpecified() const{
+			return _inDirSpecified;
 		}
 	};
 }

@@ -8,6 +8,16 @@
 
 #include <citFinder/params.hpp>
 
+unsigned int CitFinder::Params::computeThreads() const
+{
+	unsigned int ret = std::thread::hardware_concurrency() / 2;
+	if(ret == 0){
+		std::cerr << "\nError detecting hardware_concurrency. Only 1 thread being used." << NEW_LINE;
+		return 1;
+	}
+	return ret;
+}
+
 bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 {
 	_wd = utils::pwd();
@@ -35,6 +45,16 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 				std::cerr << "Specified direectory does not exist." << NEW_LINE;
 				return false;
 			}
+			continue;
+		}
+		if(!strcmp(argv[i], "-o") || !strcmp(argv[i], "--ofname"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			ofname = argv[i];
 			continue;
 		}
 		if(!strcmp(argv[i], "-dta"))
@@ -163,6 +183,16 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 				return false;
 			}
 			includeAllIons = std::stoi(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "--nThreads"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			_numThreads = std::stoi(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose"))

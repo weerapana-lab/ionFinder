@@ -17,34 +17,36 @@ int main(int argc, const char** argv)
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
 	//read filter files
+	std::cout << "\nReading DTAFilter-files...";
 	std::vector<Dtafilter::Scan> scans;
 	if(!Dtafilter::readFilterFiles(pars, scans))
 	{
 		std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
 		return -1;
 	}
+	std::cout << "Done!\n";
 	
 	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
-	if(!CitFinder::findFragments(scans, peptides, pars)){
-		std::cout << "Failed to annotate spectra!" << NEW_LINE;
-		return -1;
+	if(!CitFinder::findFragmentsParallel(scans, peptides, pars)){
+		std::cout << "Failed to annotate spectra!" << std::endl;
 	}
 	
 	//analyze sequences
+	std::cout << "\nAnalyzing peptide sequences...";
 	std::vector<CitFinder::PeptideStats> peptideStats;
-	CitFinder::analyzeSequences(scans, peptides, peptideStats, pars);
+	if(!CitFinder::analyzeSequences(scans, peptides, peptideStats, pars))
+		std::cout << NEW_LINE;
+	std::cout << "Done!\n";
 	
 	//write data
 	std::string ofname = pars.makeOfname();
-	std::ofstream outF(ofname);
-	if(!outF)
+	if(!CitFinder::printPeptideStats(peptideStats, ofname))
 	{
 		std::cerr << "Failed to write peptide stats!" << NEW_LINE;
 		return -1;
 	}
-	CitFinder::printPeptideStats(peptideStats, outF);
-	std::cout << "Results written to: " << ofname << NEW_LINE;
+	std::cout << "\nResults written to: " << ofname << NEW_LINE;
 	
 	return 0;
 }

@@ -13,6 +13,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <thread>
+#include <chrono>
+#include <atomic>
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
@@ -32,17 +35,41 @@ namespace CitFinder{
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
 		"detNLFrag", "ambFrag", "artNLFrag"};
 	
-	bool findFragments(const std::vector<Dtafilter::Scan>&,
-					   std::vector<PeptideNamespace::Peptide>&,
-					   CitFinder::Params&);
+	int const PROGRESS_SLEEP_TIME = 1;
+	int const MAX_PROGRESS_ITTERATIONS = 10;
+	int const PROGRESS_BAR_WIDTH = 60;
+	//std::atomic<size_t> THREADS_INDEX;
 	
-	void analyzeSequences(std::vector<Dtafilter::Scan>&,
+	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
+							   std::vector<PeptideNamespace::Peptide>&,
+							   const CitFinder::Params&);
+	
+	void findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
+								  size_t beg, size_t end,
+								  std::vector<PeptideNamespace::Peptide>& peptides,
+								  const CitFinder::Params& pars,
+								  bool* sucess, std::atomic<size_t>& scansIndex);
+	
+	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
+							   unsigned int nThread,
+							   int sleepTime = PROGRESS_SLEEP_TIME);
+	
+	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
+					   std::vector<PeptideNamespace::Peptide>& peptides,
+					   CitFinder::Params& pars);
+	
+	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
+								  const std::vector<PeptideNamespace::Peptide>& peptides,
+								  std::vector<PeptideStats>& peptideStats,
+								  const CitFinder::Params& pars);*/
+	
+	bool analyzeSequences(std::vector<Dtafilter::Scan>&,
 						  const std::vector<PeptideNamespace::Peptide>&,
 						  std::vector<PeptideStats>&,
 						  const CitFinder::Params&);
 	
-	void printPeptideStats(const std::vector<PeptideStats>&,
-						   std::ostream&);
+	bool printPeptideStats(const std::vector<PeptideStats>&,
+						   std::string);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
 	
@@ -97,15 +124,16 @@ namespace CitFinder{
 		}
 	};
 	
+	
 	class PeptideStats{
 	public:
-		friend void analyzeSequences(std::vector<Dtafilter::Scan>&,
+		friend bool analyzeSequences(std::vector<Dtafilter::Scan>&,
 									 const std::vector<PeptideNamespace::Peptide>&,
 									 std::vector<PeptideStats>&,
 									 const CitFinder::Params&);
 		
-		friend void printPeptideStats(const std::vector<PeptideStats>&,
-									  std::ostream&);
+		friend bool printPeptideStats(const std::vector<PeptideStats>&,
+									  std::string);
 		enum class IonType{
 			//!All fragments identified
 			FRAG,
@@ -153,7 +181,8 @@ namespace CitFinder{
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
 		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
-	public:
+	
+	public:		
 		PeptideStats(){
 			_scan = new Dtafilter::Scan;
 			initStats();
