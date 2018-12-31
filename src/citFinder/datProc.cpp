@@ -295,7 +295,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		//spawn thread
 		assert(threadIndex < nThreads);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
-		threads.push_back(std::thread(CitFinder::findFragments, std::ref(scans), begNum, endNum,
+		threads.push_back(std::thread(CitFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
 									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
 									  sucsses + threadIndex));
 		threadIndex++;
@@ -319,22 +319,32 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	return true;
 }
 
-/*bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
+/**
+ Find peptide fragment ions in ms2 files.
+ @param scans Populated vector of scan objects to search for
+ @param peptides empty vector of peptides to be filled from data in scans.
+ @param pars CitFinder params object.
+ @return true if sucessful
+ */
+bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
 							  CitFinder::Params& pars)
 {
-	
-}*/
+	bool* sucess = new bool(false);
+	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), peptides, pars, sucess);
+	return *sucess;
+}
 
 /**
  Find peptide fragment ions in ms2 files.
+ Function is thread safe.
  @param peptides empty vector of peptides to be filled from data in scans.
  @param beg index of begining of scan vector
  @param end index of end of scan vector
  @param pars CitFinder params object.
  @param sucess set to true if function was sucessful
  */
-void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
+void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
 							  const size_t beg, const size_t end,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
 							  const CitFinder::Params& pars,
