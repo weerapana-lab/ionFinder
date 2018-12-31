@@ -308,13 +308,12 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//spawn progress function
 	threads.push_back(std::thread(CitFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
-								  PROGRESS_SLEEP_TIME));
+								  nThreads, PROGRESS_SLEEP_TIME));
 	
 	//join threads
-	for(unsigned int i = 0; i < nThreads; i++){
-		threads[i].join();
+	for(auto it = threads.begin(); it != threads.end(); ++it){
+		it->join();
 	 }
-	threads.back().join();
 	
 	//concat split peptieds into one vector
 	peptides.clear();
@@ -336,13 +335,13 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
  @param sleepTime time before next update is printed in seconds
  */
 void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
-									  int sleepTime)
+									  unsigned int nThread, int sleepTime)
 {
 	size_t lastIndex = scansIndex.load();
 	size_t curIndex = lastIndex;
 	int noChangeIterations = 0;
 	
-	std::cout << "\nSearching ms2s for neutral loss ions...\n";
+	std::cout << "\nSearching ms2s for neutral loss ions using " << nThread << " thread(s)...\n";
 	do{
 		curIndex = scansIndex.load();
 		

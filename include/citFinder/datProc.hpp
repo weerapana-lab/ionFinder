@@ -51,6 +51,7 @@ namespace CitFinder{
 								  bool* sucess, std::atomic<size_t>& scansIndex);
 	
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
+							   unsigned int nThread,
 							   int sleepTime = PROGRESS_SLEEP_TIME);
 	
 	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
