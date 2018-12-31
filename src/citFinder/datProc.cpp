@@ -225,12 +225,13 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
  
  @param peptides vector of peptides to analyze
  */
-void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
+bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 const std::vector<PeptideNamespace::Peptide>& peptides,
 								 std::vector<PeptideStats>& peptideStats,
 								 const CitFinder::Params& pars)
 {
 	CitFinder::PeptideFragmentsMap fragmentMap;
+	bool allSucess = true;
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
@@ -256,8 +257,9 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 					fragTemp.calcSequence(fragmentMap);
 				}
 				catch(std::out_of_range& e){
-					std::cout << "Warning Error finding fragment: " << it->getFragment(i).getIonStr()
-					<< "for sequence: " << it->getFullSequence() << NEW_LINE;
+					std::cout << "\nWarning Error finding fragment: " << it->getFragment(i).getIonStr()
+					<< "for sequence: " << it->getFullSequence();
+					allSucess = false;
 					continue;
 				}
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
@@ -266,6 +268,8 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		pepStat.calcContainsCit();		
 		peptideStats.push_back(pepStat);
 	}//end if for it
+	
+	return allSucess;
 }//end of fxn
 
 bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
@@ -595,17 +599,11 @@ bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::s
 		//peptid analysis data
 		outF << OUT_DELIM << it->containsCit;
 		
-		//std::cout << "Writing " << it->_scan->getSequence() << NEW_LINE;
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
-		{
-			//std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
 			outF << OUT_DELIM << it->ionTypesCount.at(i).second;
-		}
 		
-		for(itcType i = itcType::First; i != itcType::Last; ++i){
-			//std::cout << OUT_DELIM << CitFinder::PeptideStats::ionTypeToStr(i) << std::endl;
+		for(itcType i = itcType::First; i != itcType::Last; ++i)
 			outF << OUT_DELIM << it->ionTypesCount.at(i).first;
-		}
 		
 		outF << NEW_LINE;
 	}

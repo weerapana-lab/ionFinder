@@ -62,7 +62,7 @@ namespace CitFinder{
 								  std::vector<PeptideStats>& peptideStats,
 								  const CitFinder::Params& pars);*/
 	
-	void analyzeSequences(std::vector<Dtafilter::Scan>&,
+	bool analyzeSequences(std::vector<Dtafilter::Scan>&,
 						  const std::vector<PeptideNamespace::Peptide>&,
 						  std::vector<PeptideStats>&,
 						  const CitFinder::Params&);
@@ -126,7 +126,7 @@ namespace CitFinder{
 	
 	class PeptideStats{
 	public:
-		friend void analyzeSequences(std::vector<Dtafilter::Scan>&,
+		friend bool analyzeSequences(std::vector<Dtafilter::Scan>&,
 									 const std::vector<PeptideNamespace::Peptide>&,
 									 std::vector<PeptideStats>&,
 									 const CitFinder::Params&);
