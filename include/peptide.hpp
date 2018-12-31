@@ -258,7 +258,8 @@ namespace PeptideNamespace{
 	
 	public:
 		//!temporary var
-		unsigned int tid;
+		//unsigned int tid;
+		std::string tid;
 		
 		//constructors
 		Peptide() : Ion(){
@@ -267,6 +268,7 @@ namespace PeptideNamespace{
 			initialized = false;
 			//aminoAcidMassesInitilized = false;
 			nMod = 0;
+			tid = "";
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
@@ -274,6 +276,7 @@ namespace PeptideNamespace{
 			initialized = false;
 			//aminoAcidMassesInitilized = false;
 			nMod = 0;
+			tid = "";
 		}
 		~Peptide() {}
 		

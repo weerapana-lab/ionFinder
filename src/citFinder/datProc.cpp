@@ -77,6 +77,7 @@ void CitFinder::PeptideStats::initStats()
 	}
 	
 	containsCit = "false";
+	tid = "";
 }
 
 void CitFinder::PeptideStats::initModLocs(const char* diffmods)
@@ -305,8 +306,8 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.push_back(std::thread(CitFinder::findFragments, std::ref(scans), begNum, endNum,
 									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
-									  std::ref(mtx), threadIndex));
-										   //std::ref(sucsses[i])));
+									  std::ref(mtx), std::to_string(threadIndex),
+									  sucsses + threadIndex));
 		threadIndex++;
 	}
 	
@@ -346,11 +347,12 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
  @param sucess set to true if function was sucessful
  */
 void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
-							  size_t beg, size_t end,
+							  const size_t beg, const size_t end,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
-							  const CitFinder::Params pars, std::mutex& mtx,
-							  unsigned int tid)
 							 // bool& sucess)
+							  const CitFinder::Params& pars,
+							  std::mutex& mtx,
+							  std::string tid,
 {
 	//sucess = true;
 	std::vector<PeptideNamespace::Peptide> peptidesTemp;
@@ -461,7 +463,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	mtx.lock();
 	for(auto it = peptidesTemp.begin(); it != peptidesTemp.end(); ++it){
 		peptides.push_back(*it);
-		peptides.back().tid = tid;
+		peptides.back().tid += tid + "|";
 	}
 	mtx.unlock();
 	

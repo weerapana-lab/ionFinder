@@ -43,8 +43,8 @@ namespace CitFinder{
 	void findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   size_t beg, size_t end,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
-					   const CitFinder::Params  pars, std::mutex& mtx, unsigned int tid);
 					   //bool& sucess);
+					   const CitFinder::Params& pars, std::mutex& mtx,
 	
 	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
 								  const std::vector<PeptideNamespace::Peptide>& peptides,
@@ -171,7 +171,8 @@ namespace CitFinder{
 		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
 	public:
 		//!temporary var
-		unsigned int tid;
+		//unsigned int tid;
+		std::string tid;
 		
 		PeptideStats(){
 			_scan = new Dtafilter::Scan;
