@@ -12,7 +12,7 @@ unsigned int CitFinder::Params::computeThreads() const
 {
 	unsigned int ret = std::thread::hardware_concurrency() / 2;
 	if(ret == 0){
-		std::cerr << "Error detecting hardware_concurrency. Only thread being used." << NEW_LINE;
+		std::cerr << "\nError detecting hardware_concurrency. Only 1 thread being used." << NEW_LINE;
 		return 1;
 	}
 	return ret;
