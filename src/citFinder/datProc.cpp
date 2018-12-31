@@ -266,6 +266,10 @@ void CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			} //end of if
 		}//end of for i
 		pepStat.calcContainsCit();
+		
+		if(pepStat.ionTypesCount[CitFinder::PeptideStats::IonType::FRAG].second < 7)
+			std::cout << "What in the fuck!" << std::endl;
+		
 		peptideStats.push_back(pepStat);
 	}//end if for it
 }//end of fxn
@@ -274,9 +278,9 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
 									  const CitFinder::Params& pars)
 {
-	unsigned int nThreads = pars.getNumThreads();
+	//unsigned int nThreads = pars.getNumThreads();
 	std::mutex mtx;
-	//unsigned int const nThreads = 2;
+	unsigned int const nThreads = 6;
 	//nThreads = 1;
 	size_t nScans = scans.size();
 	size_t peptidePerThread = nScans / nThreads;
@@ -286,7 +290,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	//init threads array
 	//std::thread* threads = new std::thread[nThreads];
 	std::vector<std::thread> threads;
-	//bool* sucsses = new bool[nThreads];
+	bool* sucsses = new bool[nThreads];
 	//bool sucsses [nThreads];
 	
 	//split up input data for each thread
@@ -320,14 +324,14 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	//concat split peptieds into one vector
 	peptides.clear();
 	for(unsigned int i = 0; i < nThreads; i++){
-		//if(!sucsses[i])
-		//	return false;
+		if(!sucsses[i])
+			return false;
 		peptides.insert(peptides.end(), splitPeptides[i].begin(), splitPeptides[i].end());
 	}
 	
 	delete [] splitPeptides;
 	//delete [] threads;
-	//delete [] sucsses;
+	delete [] sucsses;
 	return true;
 }
 
@@ -349,12 +353,12 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  const size_t beg, const size_t end,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
-							 // bool& sucess)
 							  const CitFinder::Params& pars,
 							  std::mutex& mtx,
 							  std::string tid,
+							  bool* sucess)
 {
-	//sucess = true;
+	*sucess = false;
 	std::vector<PeptideNamespace::Peptide> peptidesTemp;
 	peptidesTemp.reserve(scans.size());
 	std::map<std::string, ms2::Ms2File> ms2Map;
@@ -468,6 +472,7 @@ void CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	mtx.unlock();
 	
 	std::cout << "Finished with thread: " << tid << NEW_LINE;
+	*sucess = true;
 	return;
 }
 

@@ -43,8 +43,8 @@ namespace CitFinder{
 	void findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   size_t beg, size_t end,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
-					   //bool& sucess);
 					   const CitFinder::Params& pars, std::mutex& mtx,
+					   std::string tid, bool* sucess);
 	
 	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
 								  const std::vector<PeptideNamespace::Peptide>& peptides,
