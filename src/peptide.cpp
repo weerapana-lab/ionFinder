@@ -251,8 +251,9 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 {
 	assert(out);
-	for(FragmentIonItType it = fragments.begin(); it != fragments.end(); ++it)
-		out << it->getIonStr() << ": " << it->getMZ() << NEW_LINE;
+	size_t len = fragments.size();
+	for(size_t i = 0; i < len; i++)
+		out << i << ") " << fragments[i].getIonStr() << ": " << fragments[i].getMZ() << NEW_LINE;
 }
 
 /**
