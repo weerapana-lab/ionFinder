@@ -106,45 +106,37 @@ bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const
 
 bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 {
+	scan.clear();
 	if(!((queryScan >= firstScan) && (queryScan <= lastScan)))
 	{
 		std::cout << "queryScan not in file scan range!" << NEW_LINE;
 		return false;
 	}
 	
-	scan.clear();
 	const char* query = makeOffsetQuery(queryScan);
-	//const char* query = makeOffsetQuery(2);
+	size_t queryLen = strlen(query);
 	size_t scanOffset = utils::offset(buffer, size, query);
-	
-	
-	size_t endOfScan = utils::offset(buffer + scanOffset + 1,
-									 size - (scanOffset + 1), "S\t") + 1;
+	size_t endOfScan = utils::offset(buffer + scanOffset + queryLen,
+									 size - (scanOffset + queryLen), "S\t") + queryLen;
 	if(scanOffset == size)
 	{
 		std::cout << "queryScan could not be found!" << NEW_LINE;
 		return false;
 	}
 	
-	/*const char* _delim = delim.c_str();
-	
-	//using strtok_r to be thread safe
-	char* saveptr;
-	char* _scan = strtok_r(strdup(buffer + scanOffset), _delim, &saveptr);*/
 	std::vector<std::string> elems;
 	std::string line;
+	size_t numIons = 0;
 	
 	std::string temp (buffer + scanOffset, buffer + scanOffset + endOfScan);
 	std::stringstream ss(temp);
 	std::streampos oldPos = ss.tellg();
-	//std::cout << temp << NEW_LINE << NEW_LINE;
 	
-	size_t numIons = 0;
-	
-	while(utils::safeGetline(ss, line, oldPos)){
-		//std::string line = std::string(_scan);
+	while(utils::safeGetline(ss, line, oldPos))
+	{
 		if(line.empty()) continue;
 		utils::split(line, IN_DELIM, elems);
+		
 		if(elems[0] == "S")
 		{
 			assert(elems.size() == 4);
@@ -173,7 +165,8 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		else if(utils::isInteger(std::string(1, elems[0][0])))
 		{
 			ss.seekg(oldPos);
-			while(utils::safeGetline(ss, line)){
+			while(utils::safeGetline(ss, line))
+			{
 				if(line.empty()) continue;
 				
 				utils::split(line, ' ', elems);
@@ -198,11 +191,9 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 					scan.maxMZ = tempIon.getMZ();
 				if(tempIon.getMZ() < scan.minMZ)
 					scan.minMZ = tempIon.getMZ();
-			}
-		}
-		//_scan = strtok_r(nullptr, _delim, &saveptr);
-	//} while(_scan != nullptr && _scan[0] != 'S');
-	}
+			}//end of while
+		}//end of else
+	}//end of while
 	
 	scan.mzRange = scan.maxMZ - scan.minMZ;
 	
