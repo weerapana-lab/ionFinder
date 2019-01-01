@@ -321,6 +321,7 @@ bool utils::endsWith(std::string whithinStr, std::string findStr)
 void utils::split (const std::string& str, const char delim, std::vector<std::string>& elems)
 {
 	elems.clear();
+	elems.shrink_to_fit();
 	std::stringstream ss (str);
 	std::string item;
 	

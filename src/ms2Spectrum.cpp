@@ -92,6 +92,7 @@ void ms2::Spectrum::clear()
 	precursorCharge = 0;
 	precursorMZ = 0;
 	maxInt = 0;
+	ions.shrink_to_fit();
 	ions.clear();
 }
 
