@@ -233,6 +233,9 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 										   const aaDB::AADB& aadb,
 										   bool _calcFragments)
 {
+	if(aadb.empty())
+		throw std::runtime_error("Atempting to initalize Peptide with an empty AADB!");
+	
 	initialized = true;
 	calcMass(aadb);
 	fixDiffMod(aadb);
