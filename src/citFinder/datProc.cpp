@@ -30,10 +30,10 @@ void CitFinder::PeptideFragmentsMap::populateMap(std::string sequence)
 	for(int i = 0; i < len; i++)
 	{
 		std::string beg = _sequence.substr(0, i + 1);
-		std::string end = _sequence.substr(i + 1);
+		std::string end = _sequence.substr(i);
 		
 		fragmentMap["b" + std::to_string(i+1)] = beg;
-		fragmentMap["y" + std::to_string(len-i-1)] = end;
+		fragmentMap["y" + std::to_string(len-i)] = end;
 	}
 }
 
@@ -235,10 +235,10 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
-		if(it->getSequence() == "RVMGPDFG"){
+		/*if(it->getSequence() == "RVMGPDFG"){
 			std::cout << "Found!" << NEW_LINE;
 			it->printFragments(std::cout);
-		}
+		}*/
 		
 		fragmentMap.clear();
 		fragmentMap.populateMap(it->getSequence());
