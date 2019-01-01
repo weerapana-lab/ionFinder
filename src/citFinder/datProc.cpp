@@ -430,26 +430,30 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 										 bool* sucess, std::atomic<size_t>& scansIndex)
 {
 	*sucess = false;
-	std::string curSample;
+	std::string curSample = scans[beg].getSampleName();
 	std::string curWD;
+	std::string spFname;
 	aaDB::AADB aminoAcidMasses;
 	ms2::Spectrum spectrum;
 	
 	for(size_t i = beg; i < end; i++)
 	{
 		//first get current wd name
-		curSample = scans[i].getSampleName();
 		curWD = utils::dirName(scans[i].getParentFile());
+		spFname = curWD + "/sequest.params";
+		PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 		
 		if(curSample != scans[i].getSampleName())
 		{
 			//re-init Peptide::AminoAcidMasses for each sample
-			curWD = pars.getWD() + "/" + scans[i].getSampleName();
-			std::string spFname = curWD + "/sequest.params";
+			//curWD = pars.getWD() + "/" + scans[i].getSampleName();
+			curWD = utils::dirName(scans[i].getParentFile());
+			spFname = curWD + "/sequest.params";
 			
 			//read sequest params file and init aadb
 			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 		}//end if
+		curSample = scans[i].getSampleName();
 		
 		//initialize peptide object for current scan
 		peptides.push_back(PeptideNamespace::Peptide(scans[i].getSequence()));
@@ -477,6 +481,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 			return;
 		}
 		
+		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
 		spectrum.labelSpectrum(peptides.back(), pars);
 		
 		//print spectra file
