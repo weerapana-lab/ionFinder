@@ -8,8 +8,6 @@
 
 #include <ms2.hpp>
 
-//int ms2::Ms2File::mdNum = 4;
-
 bool ms2::Ms2File::read(std::string _fname)
 {
 	fname = _fname;

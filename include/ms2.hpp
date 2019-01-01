@@ -59,7 +59,7 @@ namespace ms2 {
 			size = 0;
 		}
 		~Ms2File(){
-			delete [] buffer;
+			//delete [] buffer;
 		}
 		
 		//modifers

@@ -287,6 +287,10 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	std::vector<std::thread> threads;
 	bool* sucsses = new bool[nThreads];
 	
+	//read ms2s
+	Ms2Map ms2Map;
+	if(!CitFinder::readMs2s(ms2Map, scans, pars)) return false;
+	
 	//split up input data for each thread
 	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThreads];
 	size_t begNum, endNum, numInThread;
@@ -301,6 +305,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		assert(threadIndex < nThreads);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.push_back(std::thread(CitFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
+									  ms2Map,
 									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
 									  sucsses + threadIndex, std::ref(scansIndex)));
 		threadIndex++;
@@ -375,9 +380,37 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 {
 	bool* sucess = new bool(false);
 	std::atomic<size_t> scansIndex;
-	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), peptides, pars,
+	CitFinder::Ms2Map ms2Map;
+	if(!readMs2s(ms2Map, scans, pars)) return false;
+	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
 										sucess, scansIndex);
 	return *sucess;
+}
+
+bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
+						 const std::vector<Dtafilter::Scan>& scans,
+						 const CitFinder::Params& pars)
+{
+	std::string curWD;
+	
+	//first get unique names of ms2 files to read
+	size_t len = scans.size();
+	std::vector<std::string> fileNamesList(len);
+	for(size_t i = 0; i < len; i++)
+		fileNamesList[i] = scans[i].getParentFile();
+	std::set<std::string> fileNames(fileNamesList.begin(), fileNamesList.end());
+	
+	//read ms2 files
+	ms2Map.clear();
+	for(auto it = fileNames.begin(); it != fileNames.end(); ++it)
+	{
+		ms2Map[*it] = ms2::Ms2File();
+		if(!ms2Map[*it].read(*it)){
+			std::cerr << "Error reading ms2 files!" << NEW_LINE;
+			return false;
+		}
+	}
+	return true;
 }
 
 /**
@@ -390,47 +423,26 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
  @param sucess set to true if function was sucessful
  */
 void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
-							  const size_t beg, const size_t end,
-							  std::vector<PeptideNamespace::Peptide>& peptides,
-							  const CitFinder::Params& pars,
-							  bool* sucess, std::atomic<size_t>& scansIndex)
+										 const size_t beg, const size_t end,
+										 const CitFinder::Ms2Map& ms2Map,
+										 std::vector<PeptideNamespace::Peptide>& peptides,
+										 const CitFinder::Params& pars,
+										 bool* sucess, std::atomic<size_t>& scansIndex)
 {
 	*sucess = false;
-	//std::vector<PeptideNamespace::Peptide> peptidesTemp;
-	//peptidesTemp.reserve(scans.size());
-	std::map<std::string, ms2::Ms2File> ms2Map;
 	std::string curSample;
 	std::string curWD;
 	aaDB::AADB aminoAcidMasses;
+	ms2::Spectrum spectrum;
 	
 	for(size_t i = beg; i < end; i++)
 	{
-		//read ms2 files if it hasn't been done yet
+		//first get current wd name
+		curSample = scans[i].getSampleName();
+		curWD = utils::dirName(scans[i].getParentFile());
+		
 		if(curSample != scans[i].getSampleName())
 		{
-			//read ms2 files
-			ms2Map.clear();
-			//first get current wd name
-			curSample = scans[i].getSampleName();
-			curWD = utils::dirName(scans[i].getParentFile());
-			
-			//next get names of all ms2 files in dir
-			std::vector<std::string> ms2FileNames;
-			if(!utils::ls(curWD.c_str(), ms2FileNames, ".ms2")){
-				throw std::runtime_error("Error reading ms2 files!");
-				return;
-			}
-			
-			//finally read each ms2 file into map
-			for(auto it2 = ms2FileNames.begin(); it2 != ms2FileNames.end(); ++it2)
-			{
-				ms2Map[*it2] = ms2::Ms2File();
-				if(!ms2Map[*it2].read(curWD + "/" + *it2)){
-					throw std::runtime_error("Error reading ms2 files!");
-					return;
-				}
-			}
-			
 			//re-init Peptide::AminoAcidMasses for each sample
 			curWD = pars.getWD() + "/" + scans[i].getSampleName();
 			std::string spFname = curWD + "/sequest.params";
@@ -454,8 +466,13 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		peptides.back().addNeutralLoss(neutralLossIons);
 		
 		//load spectrum
-		ms2::Spectrum spectrum;
-		if(!ms2Map[utils::baseName(scans[i].getParentFile())].getScan(scans[i].getScanNum(), spectrum)){
+		//spectrum.clear();
+		auto ms2FileIt = ms2Map.find(scans[i].getParentFile());
+		if((ms2FileIt == ms2Map.end())){
+			throw std::runtime_error("Key error in Ms2Map!");
+			return;
+		}
+		if(!ms2FileIt->second.getScan(scans[i].getScanNum(), spectrum)){
 			throw std::runtime_error("Error reading scan!");
 			return;
 		}

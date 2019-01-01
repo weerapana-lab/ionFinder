@@ -16,6 +16,7 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
+#include <set>
 
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
@@ -38,7 +39,7 @@ namespace CitFinder{
 	int const PROGRESS_SLEEP_TIME = 1;
 	int const MAX_PROGRESS_ITTERATIONS = 10;
 	int const PROGRESS_BAR_WIDTH = 60;
-	//std::atomic<size_t> THREADS_INDEX;
+	typedef std::map<std::string, ms2::Ms2File> Ms2Map;
 	
 	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
@@ -46,6 +47,7 @@ namespace CitFinder{
 	
 	void findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
 								  size_t beg, size_t end,
+								  const Ms2Map& ms2Map,
 								  std::vector<PeptideNamespace::Peptide>& peptides,
 								  const CitFinder::Params& pars,
 								  bool* sucess, std::atomic<size_t>& scansIndex);
@@ -53,6 +55,8 @@ namespace CitFinder{
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
 							   unsigned int nThread,
 							   int sleepTime = PROGRESS_SLEEP_TIME);
+	
+	bool readMs2s(Ms2Map&, const std::vector<Dtafilter::Scan>&, const CitFinder::Params&);
 	
 	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
