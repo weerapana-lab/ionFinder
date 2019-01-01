@@ -235,8 +235,10 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
-		/*if(it->getSequence() == "RHLETVDGAKVVVLVNR")
-			std::cout << "Found!" << NEW_LINE;*/
+		if(it->getSequence() == "RVMGPDFG"){
+			std::cout << "Found!" << NEW_LINE;
+			it->printFragments(std::cout);
+		}
 		
 		fragmentMap.clear();
 		fragmentMap.populateMap(it->getSequence());
@@ -258,7 +260,7 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 				}
 				catch(std::out_of_range& e){
 					std::cout << "\nWarning Error finding fragment: " << it->getFragment(i).getIonStr()
-					<< "for sequence: " << it->getFullSequence();
+					<< " for sequence: " << it->getFullSequence();
 					allSucess = false;
 					continue;
 				}
