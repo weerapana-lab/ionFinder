@@ -266,6 +266,7 @@ namespace ms2{
 		}
 		void labelSpectrum(PeptideNamespace::Peptide& peptide,
 						   const base::ParamsBase& pars,
+						   bool removeUnlabeledFrags = false,
 						   size_t labelTop = LABEL_TOP);
 		void calcLabelPos(double maxPerc,
 						  double offset_x, double offset_y,

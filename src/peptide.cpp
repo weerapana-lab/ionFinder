@@ -8,9 +8,6 @@
 
 #include <peptide.hpp>
 
-//aaDB::AADB* PeptideNamespace::Peptide::aminoAcidMasses = nullptr;
-//bool PeptideNamespace::Peptide::aminoAcidMassesInitilized = false;
-
 PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonType(std::string s)
 {
 	if(s == "b")
@@ -237,22 +234,36 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 										   bool _calcFragments)
 {
 	initialized = true;
-	
-	//initialize aminoAcidMasses if necissary
-	//if(!aminoAcidMassesInitilized)
-	//	initAminoAcidsMasses(pars);
-	
 	calcMass(aadb);
 	fixDiffMod(aadb);
 	if(_calcFragments)
 		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge(), aadb);
 }
 
+/**
+ Prints peptide fragmetns and calculated MZs to out.
+ For debugging
+ @param out stream to print to.
+ */
 void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 {
 	assert(out);
 	for(FragmentIonItType it = fragments.begin(); it != fragments.end(); ++it)
 		out << it->getIonStr() << ": " << it->getMZ() << NEW_LINE;
+}
+
+/**
+ Removes all unlabeled fragment ions from fragments.
+ For debugging.
+ */
+void PeptideNamespace::Peptide::removeUnlabeledFrags()
+{
+	for(FragmentIonItType it = fragments.begin(); it != fragments.end();)
+	{
+		if(!it->getFound())
+			fragments.erase(it);
+		else ++it;
+	}
 }
 
 double PeptideNamespace::calcMass(double mz, int charge){

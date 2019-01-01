@@ -204,7 +204,8 @@ void ms2::Spectrum::removeIntensityBelow(double minInt)
 }
 
 void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
-								  const base::ParamsBase& pars, size_t labelTop)
+								  const base::ParamsBase& pars,
+								  bool removeUnlabeledFrags, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
@@ -321,6 +322,11 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	//remove unlabeled ions if necisary
 	if(!pars.getIncludeAllIons())
 		removeUnlabeledIons();
+	
+	//remove unlabeled peptide fragmetns
+	//only used for debuging
+	if(removeUnlabeledFrags)
+		peptide.removeUnlabeledFrags();
 	
 	//remove ions below specified intensity
 	if(pars.getMinIntensitySpecified())

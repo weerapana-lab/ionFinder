@@ -135,7 +135,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	///Used to reporesent b and y peptide ions
+	///Used to represent b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
 		enum class IonType{B, Y, B_NL, Y_NL};
@@ -203,7 +203,6 @@ namespace PeptideNamespace{
 		
 		//properties
 		double getMZ() const{
-			//return getMZ(charge);
 			if(b_y == 'b')
 				return calcMZ(mass - 1, charge);
 			return Ion::getMZ(charge);
@@ -239,6 +238,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
+	///Used to store fragment data for each peptide.
 	class Peptide : public Ion{
 	private:
 		typedef std::vector<FragmentIon> FragmentIonType;
@@ -248,32 +248,28 @@ namespace PeptideNamespace{
 		std::string fullSequence;
 		std::vector<PeptideIon> aminoAcids;
 		bool initialized;
-		//aaDB::AADB* _aminoAcidMasses;
-		//bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
 		int nMod; //number of modified residues
 		
 		void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 						const char* diffmods = "*");
-	
 	public:
 		//constructors
 		Peptide() : Ion(){
 			sequence = "";
 			fullSequence = sequence;
 			initialized = false;
-			//aminoAcidMassesInitilized = false;
 			nMod = 0;
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
 			fullSequence = sequence;
 			initialized = false;
-			//aminoAcidMassesInitilized = false;
 			nMod = 0;
 		}
 		~Peptide() {}
 		
+		//modifers
 		void initialize(const base::ParamsBase&, const aaDB::AADB& aadb,
 						bool _calcFragments = true);
 		void calcFragments(int minCharge, int maxCharge,
@@ -285,6 +281,7 @@ namespace PeptideNamespace{
 		void setFound(size_t i, bool boo){
 			fragments[i].setFound(boo);
 		}
+		void removeUnlabeledFrags();
 		
 		//properties
 		std::string getSequence() const{
