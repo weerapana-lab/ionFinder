@@ -135,10 +135,10 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	///Used to reporesent b and y peptide ions
+	///Used to represent b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
-		enum class IonType{B, Y, B_NL, Y_NL};
+		enum class IonType{B, Y, M, B_NL, Y_NL, M_NL};
 		
 	protected:
 		char b_y;
@@ -203,12 +203,11 @@ namespace PeptideNamespace{
 		
 		//properties
 		double getMZ() const{
-			//return getMZ(charge);
 			if(b_y == 'b')
 				return calcMZ(mass - 1, charge);
 			return Ion::getMZ(charge);
 		}
-		std::string getIonStr(bool includeMod = true) const;
+		std::string getLabel(bool includeMod = true) const;
 		std::string getFormatedLabel() const;
 		char getBY() const{
 			return b_y;
@@ -234,11 +233,19 @@ namespace PeptideNamespace{
 		bool isModified() const{
 			return mod == "";
 		}
+		///returns true if fragment is neutral loss ion
 		bool isNL() const{
-			return _ionType == IonType::B_NL || _ionType == IonType::Y_NL;
+			return _ionType == IonType::B_NL ||
+			_ionType == IonType::Y_NL ||
+			_ionType == IonType::M_NL;
+		}
+		///returns true if fragment is parent ion or parent neutral loss
+		bool isM() const{
+			return _ionType == IonType::M || _ionType == IonType::M_NL;
 		}
 	};
 	
+	///Used to store fragment data for each peptide.
 	class Peptide : public Ion{
 	private:
 		typedef std::vector<FragmentIon> FragmentIonType;
@@ -248,32 +255,28 @@ namespace PeptideNamespace{
 		std::string fullSequence;
 		std::vector<PeptideIon> aminoAcids;
 		bool initialized;
-		//aaDB::AADB* _aminoAcidMasses;
-		//bool aminoAcidMassesInitilized;
 		FragmentIonType fragments;
 		int nMod; //number of modified residues
 		
 		void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 						const char* diffmods = "*");
-	
 	public:
 		//constructors
 		Peptide() : Ion(){
 			sequence = "";
 			fullSequence = sequence;
 			initialized = false;
-			//aminoAcidMassesInitilized = false;
 			nMod = 0;
 		}
 		Peptide(std::string _sequence) : Ion(){
 			sequence = _sequence;
 			fullSequence = sequence;
 			initialized = false;
-			//aminoAcidMassesInitilized = false;
 			nMod = 0;
 		}
 		~Peptide() {}
 		
+		//modifers
 		void initialize(const base::ParamsBase&, const aaDB::AADB& aadb,
 						bool _calcFragments = true);
 		void calcFragments(int minCharge, int maxCharge,
@@ -285,6 +288,7 @@ namespace PeptideNamespace{
 		void setFound(size_t i, bool boo){
 			fragments[i].setFound(boo);
 		}
+		void removeUnlabeledFrags();
 		
 		//properties
 		std::string getSequence() const{
@@ -300,7 +304,7 @@ namespace PeptideNamespace{
 			return fragments[i].getMZ();
 		}
 		std::string getFragmentLabel(size_t i) const{
-			return fragments[i].getIonStr();
+			return fragments[i].getLabel();
 		}
 		std::string getFormatedLabel(size_t i) const{
 			return fragments[i].getFormatedLabel();

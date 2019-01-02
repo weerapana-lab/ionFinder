@@ -56,8 +56,6 @@ bool Dtafilter::readFilterFile(std::string fname,
 							   std::vector<Dtafilter::Scan>& scans,
 							   bool skipReverse)
 {
-	//TODO: add full parent .ms2 path
-	
 	std::ifstream inF(fname);
 	if(!inF) return false;
 	

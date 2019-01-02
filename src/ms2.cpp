@@ -8,8 +8,6 @@
 
 #include <ms2.hpp>
 
-//int ms2::Ms2File::mdNum = 4;
-
 bool ms2::Ms2File::read(std::string _fname)
 {
 	fname = _fname;
@@ -23,14 +21,6 @@ bool ms2::Ms2File::read()
 	std::ifstream inF(fname.c_str());
 	if(!inF)
 		return false;
-	
-	delimType = utils::detectLineEnding(inF);
-	if(delimType == utils::unknown)
-		throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
-	delim = utils::getDelimStr(delimType);
-	if(delimType == utils::crlf)
-		beginLine = 1;
-	else beginLine = 0;
 	
 	inF.seekg(0, inF.end);
 	size = inF.tellg();
@@ -53,10 +43,10 @@ bool ms2::Ms2File::getMetaData()
 	
 	std::vector<std::string> elems;
 	int mdCount = 0;
-	char _delim = utils::getDelim(delimType);
+	
 	//iterate through ss to find metadata
 	while(ss.tellg() < sLen){
-		utils::getLine(ss, line, _delim, beginLine);
+		utils::safeGetline(ss, line);
 		if(line[0] == 'H')
 		{
 			utils::split(line, IN_DELIM, elems);
@@ -108,40 +98,45 @@ bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const
 
 bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 {
+	scan.clear();
 	if(!((queryScan >= firstScan) && (queryScan <= lastScan)))
 	{
 		std::cout << "queryScan not in file scan range!" << NEW_LINE;
 		return false;
 	}
 	
-	scan.clear();
 	const char* query = makeOffsetQuery(queryScan);
+	size_t queryLen = strlen(query);
 	size_t scanOffset = utils::offset(buffer, size, query);
+	size_t endOfScan = utils::offset(buffer + scanOffset + queryLen,
+									 size - (scanOffset + queryLen), "S\t") + queryLen;
 	if(scanOffset == size)
 	{
 		std::cout << "queryScan could not be found!" << NEW_LINE;
 		return false;
 	}
 	
-	const char* _delim = delim.c_str();
-	
-	//using strtok_r to be thread safe
-	char* saveptr;
-	char* _scan = strtok_r(strdup(buffer + scanOffset), _delim, &saveptr);
 	std::vector<std::string> elems;
+	std::string line;
 	size_t numIons = 0;
 	
-	do{
-		std::string line = std::string(_scan);
+	std::string temp (buffer + scanOffset, buffer + scanOffset + endOfScan);
+	std::stringstream ss(temp);
+	std::streampos oldPos = ss.tellg();
+	
+	while(utils::safeGetline(ss, line, oldPos))
+	{
+		if(line.empty()) continue;
 		utils::split(line, IN_DELIM, elems);
-		if(_scan[0] == 'S')
+		
+		if(elems[0] == "S")
 		{
 			assert(elems.size() == 4);
 			utils::split(line, IN_DELIM, elems);
 			scan.scanNumber = std::stoi(elems[2]);
 			scan.precursorMZ = std::stod(elems[3]);
 		}
-		else if(_scan[0] == 'I')
+		else if(elems[0] == "I")
 		{
 			assert(elems.size() == 3);
 			utils::split(line, IN_DELIM, elems);
@@ -154,44 +149,46 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 			else if(elems[1] == "PrecursorScan")
 				scan.precursorScan = std::stoi(elems[2]);
 		}
-		else if(_scan[0] == 'Z'){
+		else if(elems[0] == "Z"){
 			assert(elems.size() == 3);
 			utils::split(line, IN_DELIM, elems);
 			scan.precursorCharge = std::stoi(elems[1]);
 		}
-		else if(utils::isInteger(std::string(1, _scan[0]))){
-			
-			utils::split(line, ' ', elems);
-			assert(elems.size() >= 2);
-			ms2::DataPoint tempIon (std::stod(elems[0]), std::stod(elems[1]));
-			
-			if(numIons == 0)
+		else if(utils::isInteger(std::string(1, elems[0][0])))
+		{
+			ss.seekg(oldPos);
+			while(utils::safeGetline(ss, line))
 			{
-				scan.minMZ = tempIon.getMZ();
-				scan.minInt = tempIon.getIntensity();
-			}
-			
-			scan.ions.push_back(tempIon);
-			numIons++;
-			
-			//get min and max vals
-			if(tempIon.getIntensity() > scan.maxInt)
-				scan.maxInt = tempIon.getIntensity();
-			if(tempIon.getIntensity() < scan.minInt)
-				scan.minInt = tempIon.getIntensity();
-			if(tempIon.getMZ() > scan.maxMZ)
-				scan.maxMZ = tempIon.getMZ();
-			if(tempIon.getMZ() < scan.minMZ)
-				scan.minMZ = tempIon.getMZ();
-		}
-		_scan = strtok_r(nullptr, _delim, &saveptr);
-	} while(_scan != nullptr && _scan[0] != 'S');
+				if(line.empty()) continue;
+				
+				utils::split(line, ' ', elems);
+				assert(elems.size() >= 2);
+				ms2::DataPoint tempIon (std::stod(elems[0]), std::stod(elems[1]));
+				
+				if(numIons == 0)
+				{
+					scan.minMZ = tempIon.getMZ();
+					scan.minInt = tempIon.getIntensity();
+				}
+				
+				scan.ions.push_back(tempIon);
+				numIons++;
+				
+				//get min and max vals
+				if(tempIon.getIntensity() > scan.maxInt)
+					scan.maxInt = tempIon.getIntensity();
+				if(tempIon.getIntensity() < scan.minInt)
+					scan.minInt = tempIon.getIntensity();
+				if(tempIon.getMZ() > scan.maxMZ)
+					scan.maxMZ = tempIon.getMZ();
+				if(tempIon.getMZ() < scan.minMZ)
+					scan.minMZ = tempIon.getMZ();
+			}//end of while
+		}//end of else
+	}//end of while
 	
 	scan.mzRange = scan.maxMZ - scan.minMZ;
 	
 	return true;
 }
-
-
-
 

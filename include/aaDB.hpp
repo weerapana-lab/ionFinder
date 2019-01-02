@@ -89,6 +89,9 @@ namespace aaDB{
 		double calcMW(std::string sequence, bool addNTerm = true, bool addCTerm = true) const;
 		double getMW(std::string) const;
 		double getMW(char) const;
+		bool empty() const{
+			return aminoAcidsDB.empty();
+		}
 	};//end of class
 	
 }//end of namespace

@@ -92,8 +92,8 @@ void ms2::Spectrum::clear()
 	precursorCharge = 0;
 	precursorMZ = 0;
 	maxInt = 0;
-	ions.shrink_to_fit();
 	ions.clear();
+	ions.shrink_to_fit();
 }
 
 //itterates through all ions and returns max intensity
@@ -204,7 +204,8 @@ void ms2::Spectrum::removeIntensityBelow(double minInt)
 }
 
 void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
-								  const base::ParamsBase& pars, size_t labelTop)
+								  const base::ParamsBase& pars,
+								  bool removeUnlabeledFrags, size_t labelTop)
 {
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
@@ -322,6 +323,11 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	if(!pars.getIncludeAllIons())
 		removeUnlabeledIons();
 	
+	//remove unlabeled peptide fragmetns
+	//only used for debuging
+	if(removeUnlabeledFrags)
+		peptide.removeUnlabeledFrags();
+	
 	//remove ions below specified intensity
 	if(pars.getMinIntensitySpecified())
 		removeIntensityBelow(pars.getMinIntensity());
@@ -354,6 +360,7 @@ void ms2::Spectrum::makePoints(labels::Labels& labs, double maxPerc,
 		}
 	}
 }
+
 void ms2::Spectrum::calcLabelPos()
 {
 	double const xPadding = mzRange / 22.31972;
@@ -377,5 +384,4 @@ void ms2::Spectrum::calcLabelPos(double maxPerc,
 	//copy corrected points to spectrum
 	//copyPointsToSpectrum(points);
 }
-
 
