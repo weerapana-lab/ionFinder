@@ -11,6 +11,7 @@
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
 #include <dtafilter.hpp>
+#include <citFinder/dtafilterFiles.hpp>
 #include <citFinder/datProc.hpp>
 
 #include <peptide.hpp>

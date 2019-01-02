@@ -51,6 +51,14 @@ bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
 	return true;
 }
 
+/**
+ Read DTAFilter-file and populate peptides into \p scans.
+ \p scans does not have to be empty. New scans are added with the std::vector::push_back method.
+ \param fname file name
+ \param sampleName sample name to add to _sampleName member of each scan in \p scans
+ \param scans vector of scans to add to
+ \param skipReverse specify whether reverse peptide matches should be skipped
+ */
 bool Dtafilter::readFilterFile(std::string fname,
 							   std::string sampleName,
 							   std::vector<Dtafilter::Scan>& scans,
@@ -61,7 +69,6 @@ bool Dtafilter::readFilterFile(std::string fname,
 	
 	//flow control flags
 	bool foundHeader = false;
-	//bool getNewLine = true;
 	std::streampos sp;
 	
 	std::string line;
@@ -119,19 +126,6 @@ bool Dtafilter::readFilterFile(std::string fname,
 			}
 		}//end if
 	}//end while
-	
-	return true;
-}
-
-bool Dtafilter::readFilterFiles(const CitFinder::Params& params,
-								std::vector<Dtafilter::Scan>& scans)
-{
-	auto endIt = params.getFilterFiles().end();
-	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
-	{
-		if(!Dtafilter::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
-			return false;
-	}
 	
 	return true;
 }
