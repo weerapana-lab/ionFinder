@@ -360,6 +360,7 @@ void ms2::Spectrum::makePoints(labels::Labels& labs, double maxPerc,
 		}
 	}
 }
+
 void ms2::Spectrum::calcLabelPos()
 {
 	double const xPadding = mzRange / 22.31972;
@@ -383,5 +384,4 @@ void ms2::Spectrum::calcLabelPos(double maxPerc,
 	//copy corrected points to spectrum
 	//copyPointsToSpectrum(points);
 }
-
 

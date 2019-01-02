@@ -33,7 +33,9 @@ void CitFinder::PeptideFragmentsMap::populateMap(std::string sequence)
 		std::string end = _sequence.substr(i);
 		
 		fragmentMap["b" + std::to_string(i+1)] = beg;
-		fragmentMap["y" + std::to_string(len-i)] = end;
+		
+		if(i == 0)fragmentMap["M"] = end; //if first y ion, y ion is actually M
+		else fragmentMap["y" + std::to_string(len-i)] = end; //regular y ion
 	}
 }
 
@@ -42,7 +44,8 @@ std::string CitFinder::PeptideFragmentsMap::getIonSeq(std::string searchStr) con
 }
 
 std::string CitFinder::PeptideFragmentsMap::getIonSeq(char b_y, int num) const{
-	std::string searchStr = std::string(1, b_y) + std::to_string(num);
+	std::string searchStr = std::string(1, b_y) +
+		(b_y == 'M' || b_y == 'm' ? "" : std::to_string(num)); //only add num if not M ion
 	return getIonSeq(searchStr);
 }
 
@@ -108,13 +111,7 @@ void CitFinder::PeptideStats::initModLocs(const char* diffmods)
 				}//end of if
 			}//end of for
 		}//end of if
-		//PeptideIon temp(aminoAcidMasses->getMW(sequence[i]));
-		if(modFound){
-			//temp.setMod(mod, aminoAcidMasses->getMW(mod));
-			modLocs.push_back(modLoc);
-			//nMod++;
-		}
-		//aminoAcids.push_back(temp);
+		if(modFound) modLocs.push_back(modLoc);
 		modFound = false;
 	}//end of for
 }
@@ -170,7 +167,7 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 		return;
 	
 	//increment total fragment ions found
-	std::string ionStr = seq.getIonStr(true);
+	std::string ionStr = seq.getLabel(true);
 	incrementIonCount(ionStr, ionTypesCount[IonType::FRAG]);
 	
 	//check if seq spans any modified residues
@@ -259,7 +256,7 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 					fragTemp.calcSequence(fragmentMap);
 				}
 				catch(std::out_of_range& e){
-					std::cout << "\nWarning Error finding fragment: " << it->getFragment(i).getIonStr()
+					std::cout << "\nWarning Error finding fragment: " << it->getFragment(i).getLabel()
 					<< " for sequence: " << it->getFullSequence();
 					allSucess = false;
 					continue;
@@ -349,7 +346,8 @@ void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 	int noChangeIterations = 0;
 	
 	std::cout << "\nSearching ms2s for neutral loss ions using " << nThread << " thread(s)...\n";
-	do{
+	while(scansIndex < count)
+	{
 		curIndex = scansIndex.load();
 		
 		if(lastIndex == curIndex)
@@ -363,7 +361,7 @@ void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 		std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 		
 		lastIndex = curIndex;
-	} while(scansIndex < count);
+	}
 	utils::printProgress(float(scansIndex.load()) / float(count));
 	std::cout << NEW_LINE;
 	std::cout << "Done!" << NEW_LINE;
@@ -448,7 +446,6 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		if(curSample != scans[i].getSampleName())
 		{
 			//re-init Peptide::AminoAcidMasses for each sample
-			//curWD = pars.getWD() + "/" + scans[i].getSampleName();
 			curWD = utils::dirName(scans[i].getParentFile());
 			spFname = curWD + "/sequest.params";
 			
@@ -472,9 +469,8 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		peptides.back().addNeutralLoss(neutralLossIons);
 		
 		//load spectrum
-		//spectrum.clear();
 		auto ms2FileIt = ms2Map.find(scans[i].getParentFile());
-		if((ms2FileIt == ms2Map.end())){
+		if(ms2FileIt == ms2Map.end()){
 			throw std::runtime_error("Key error in Ms2Map!");
 			return;
 		}
