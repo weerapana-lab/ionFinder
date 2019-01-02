@@ -1,83 +1,46 @@
 //
-//  dtafilter.cpp
+//  dtafilterFile.cpp
 //  ms2_anotator
 //
 //  Created by Aaron Maurais on 11/21/17.
 //  Copyright © 2017 Aaron Maurais. All rights reserved.
 //
 
-#include <ms2_annotator/dtafilter.hpp>
+#include <ms2_annotator/dtafilterFile.hpp>
 
-bool Ms2_annotator::DtaFilterFile::read(std::string _fname)
+bool Ms2_annotator::DtaFilterFile::read(std::string fname)
 {
-	fname = _fname;
+	_fname = fname;
 	return read();
 }
 
 bool Ms2_annotator::DtaFilterFile::read()
 {
-	if(fname.empty())
-		throw std::runtime_error("File must be specified!");
-	std::ifstream inF(fname.c_str());
-	if(!inF)
-		return false;
-	
-	delimType = utils::detectLineEnding(inF);
-	if(delimType == utils::unknown)
-		throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
-	delim = utils::getDelimStr(delimType);
-	if(delimType == utils::crlf)
-		beginLine = 1;
-	else beginLine = 0;
-	
-	inF.seekg(0, inF.end);
-	size = inF.tellg();
-	inF.seekg(0, inF.beg);
-	buffer = new char [size];
-	if(!inF.read(buffer, size))
+	if(!Dtafilter::readFilterFile(_fname, utils::dirName(_fname), _scans))
 		return false;
 	return true;
 }
 
 void Ms2_annotator::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& _scans) const
 {
-	//std::cout << "getScans" << NEW_LINE;
-	//int iterations = 0;
-	
-	_scans.clear();
+	/*_scans.clear();
 	const char* query = _seq.c_str();
 	size_t queryLen = strlen(query);
 	char* instance = buffer;
 	
 	while(instance)
 	{
-		//std::cout << "it num " << iterations << NEW_LINE;
-		//iterations++;
-		//std::cout << "pre inc" << NEW_LINE;
-		//printf("%.*s\n", 100, instance);
-		if(strstr(instance, query) == NULL)
-		{
-			//std::cout << "breaking" << NEW_LINE;
+		if(strstr(instance, query) == NULL){
 			break;
 		}
 		instance = strstr(instance, query);
-		//std::cout << "post inc" << NEW_LINE;
-		//printf("%.*s\n", 100, instance);
 		if(instance){
-			//std::cout << "push_back" << NEW_LINE;
-			//std::cout << "offset is " << instance - buffer + 1 << NEW_LINE;
 			_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
 			instance += queryLen;
 		}
-	}
-	
-	/*while(instance != nullptr)
-	{
-		_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
-		//_scans.back().setSequence(_seq);
-		std::cout << "getScans" << NEW_LINE;
-		instance = strstr(instance + 1, query);
 	}*/
+	
+	
 }
 
 bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq, scanData::scansType& _scans, bool force) const
@@ -126,7 +89,7 @@ bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq, scanData::sc
 	return true;
 }
 
-bool Ms2_annotator::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::Scan& _scan) const
+/*bool Ms2_annotator::DtaFilterFile::getFirstScan(const std::string& _seq, scanData::Scan& _scan) const
 {
 	_scan.clear();
 	
@@ -181,5 +144,5 @@ size_t Ms2_annotator::DtaFilterFile::getEndLine(size_t offset) const
 		offset++;
 	}
 	return offset;
-}
+}*/
 

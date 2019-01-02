@@ -18,7 +18,7 @@
 #include <ms2Spectrum.hpp>
 #include <geometry.hpp>
 #include <calcLableLocs.hpp>
-#include <ms2_annotator/dtafilter.hpp>
+#include <ms2_annotator/dtafilterFile.hpp>
 #include <sequestParams.hpp>
 
 #endif /* main_hpp */
