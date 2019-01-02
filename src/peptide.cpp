@@ -8,19 +8,33 @@
 
 #include <peptide.hpp>
 
+/**
+ Convert string to IonType
+ Accepted options are "b", "y", "m", "M", "^y-", "^b-", and "^M-".
+ All others will cause an error.
+ @return IonType
+ */
 PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonType(std::string s)
 {
 	if(s == "b")
 		return IonType::B;
 	else if(s == "y")
 		return IonType::Y;
+	else if(s == "m" || s == "M")
+		return IonType::M;
 	else if(utils::startsWith(s, "b-"))
 		return IonType::B_NL;
 	else if(utils::startsWith(s, "y-"))
 		return IonType::Y_NL;
+	else if(utils::startsWith(s, "m-") || utils::startsWith(s, "M-"))
+		return IonType::M_NL;
 	else throw std::runtime_error("Unknown IonType!");
 }
 
+/**
+ Get neutral loss as string rounded to nearest integer.
+ @return neutral loss
+ */
 std::string PeptideNamespace::FragmentIon::getNLStr() const{
 	return std::string((nlMass < 1 ? "" : "+")) + std::to_string((int)round(nlMass));
 }
@@ -32,9 +46,13 @@ std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
 			break;
 		case IonType::Y : return "y";
 			break;
+		case IonType::M : return "M";
+			break;
 		case IonType::B_NL : return "b_nl"; // + getNLStr();
 			break;
 		case IonType::Y_NL : return "y_nl"; // + getNLStr();
+			break;
+		case IonType::M_NL : return "M_nl";
 			break;
 	}
 }
@@ -57,9 +75,16 @@ std::string PeptideNamespace::PeptideIon::makeModLable() const
 	else return "";
 }
 
-std::string PeptideNamespace::FragmentIon::getIonStr(bool includeMod) const
+/**
+ Get ion label.
+ @return unformated ion label
+ */
+std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod) const
 {
-	std::string str = std::string(1, b_y) + std::to_string(num) + (includeMod ? mod : "");
+	std::string str = std::string(1, b_y);
+	str += isM() ? "" : std::to_string(num); //add ion number if not M ion
+	str += includeMod ? mod : ""; //add modification
+	
 	if(charge > 1)
 		str += " " + makeChargeLable();
 	if(isNL())
@@ -67,9 +92,13 @@ std::string PeptideNamespace::FragmentIon::getIonStr(bool includeMod) const
 	return str;
 }
 
+/**
+ Format label with markup for ggplot ms2 spectrum.
+ @return formated ion label
+ */
 std::string PeptideNamespace::FragmentIon::getFormatedLabel() const
 {
-	std::string str =std::string(1, b_y) + "[" + std::to_string(num) + "]";
+	std::string str = std::string(1, b_y) + (isM() ? "" : "[" + std::to_string(num) + "]");
 	
 	if(!mod.empty())
 		str += " *\"" + mod + "\"";
@@ -108,22 +137,35 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 		
 		for(int j = minCharge; j <= maxCharge; j++)
 		{
-			//TODO: add if statement here to include un-mod fragments
-			//maybe some other time
-			
+			//add b ion
 			fragments.push_back(FragmentIon('b', i + 1, j,
 				PeptideNamespace::calcMass(aminoAcids, beg_beg, beg_end) + nTerm, 0.0,
 				modsB));
-			fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
-				PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass + cTerm, 0.0,
-				modsY));
+			
+			//add y ion
+			if(i == 0){
+				fragments.push_back(FragmentIon('M', 0, j,
+					PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass + cTerm, 0.0,
+					modsY));
+			}
+			else{
+				fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
+					PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass + cTerm, 0.0,
+					modsY));
+			}//end of else
+		}//end of for j
+	}//enf of for i
+	
+	/*if(sequence == "RVMGPDFG"){
+		std::cout << NEW_LINE << NEW_LINE;
+		for(auto it = fragments.begin(); it != fragments.end(); ++it)
+		{
+			std::cout << it->getLabel() << //'\t' << it->getFormatedLabel() <<
+			'\t' << it->getMZ() << '\t';
+			++it;
+			std::cout << it->getLabel() << //'\t' << it->getFormatedLabel() <<
+			'\t' << it->getMZ() << '\n';
 		}
-	}
-	/*for(auto it = fragments.begin(); it != fragments.end(); ++it)
-	{
-		std::cout << it->getIonStr() << '\t' << it->getMZ() << '\t';
-		++it;
-		std::cout << it->getIonStr() << '\t' << it->getMZ() << '\n';
 	}*/
 }
 
@@ -142,12 +184,14 @@ void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses
 				ionType = PeptideNamespace::FragmentIon::IonType::B_NL;
 			else if(fragments[i].getBY() == 'y')
 				ionType = PeptideNamespace::FragmentIon::IonType::Y_NL;
+			else if(fragments[i].getBY() == 'M' || fragments[i].getBY() == 'm')
+				ionType = PeptideNamespace::FragmentIon::IonType::M_NL;
 			else throw std::runtime_error("Unknown ion type!");
 			
 			fragments.push_back(FragmentIon(ionType, fragments[i].getNum(), tempCharge,
-											fragments[i].getMass() - (*it2 / tempCharge),
-											*it2 * -1, //losses are given positive. Convert to negative num here.
-											fragments[i].getMod()));
+									fragments[i].getMass() - (*it2 / tempCharge),
+									*it2 * -1, //losses are given positive. Convert to negative num here.
+									fragments[i].getMod()));
 		}
 	}
 }
@@ -253,7 +297,7 @@ void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 	assert(out);
 	size_t len = fragments.size();
 	for(size_t i = 0; i < len; i++)
-		out << i << ") " << fragments[i].getIonStr() << ": " << fragments[i].getMZ() << NEW_LINE;
+		out << i << ") " << fragments[i].getLabel() << ": " << fragments[i].getMZ() << NEW_LINE;
 }
 
 /**

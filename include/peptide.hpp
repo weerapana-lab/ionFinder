@@ -138,7 +138,7 @@ namespace PeptideNamespace{
 	///Used to represent b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
-		enum class IonType{B, Y, B_NL, Y_NL};
+		enum class IonType{B, Y, M, B_NL, Y_NL, M_NL};
 		
 	protected:
 		char b_y;
@@ -207,7 +207,7 @@ namespace PeptideNamespace{
 				return calcMZ(mass - 1, charge);
 			return Ion::getMZ(charge);
 		}
-		std::string getIonStr(bool includeMod = true) const;
+		std::string getLabel(bool includeMod = true) const;
 		std::string getFormatedLabel() const;
 		char getBY() const{
 			return b_y;
@@ -233,8 +233,15 @@ namespace PeptideNamespace{
 		bool isModified() const{
 			return mod == "";
 		}
+		///returns true if fragment is neutral loss ion
 		bool isNL() const{
-			return _ionType == IonType::B_NL || _ionType == IonType::Y_NL;
+			return _ionType == IonType::B_NL ||
+			_ionType == IonType::Y_NL ||
+			_ionType == IonType::M_NL;
+		}
+		///returns true if fragment is parent ion or parent neutral loss
+		bool isM() const{
+			return _ionType == IonType::M || _ionType == IonType::M_NL;
 		}
 	};
 	
@@ -297,7 +304,7 @@ namespace PeptideNamespace{
 			return fragments[i].getMZ();
 		}
 		std::string getFragmentLabel(size_t i) const{
-			return fragments[i].getIonStr();
+			return fragments[i].getLabel();
 		}
 		std::string getFormatedLabel(size_t i) const{
 			return fragments[i].getFormatedLabel();
