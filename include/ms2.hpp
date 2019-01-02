@@ -33,16 +33,12 @@ namespace ms2 {
 		//file buffer vars
 		char* buffer;
 		unsigned long size;
-		std::string delim;
-		utils::newline_type delimType;
-		int beginLine;
 		
 		//metadata
 		std::string fname;
 		size_t firstScan, lastScan;
 		std::string dataType;
 		std::string scanType;
-		//static int mdNum;
 		
 		bool getMetaData();
 		const char* makeOffsetQuery(std::string) const;

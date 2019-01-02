@@ -22,14 +22,6 @@ bool ms2::Ms2File::read()
 	if(!inF)
 		return false;
 	
-	delimType = utils::detectLineEnding(inF);
-	if(delimType == utils::unknown)
-		throw std::runtime_error("Invalid delimiter in file: " + fname + "!");
-	delim = utils::getDelimStr(delimType);
-	if(delimType == utils::crlf)
-		beginLine = 1;
-	else beginLine = 0;
-	
 	inF.seekg(0, inF.end);
 	size = inF.tellg();
 	inF.seekg(0, inF.beg);
@@ -51,10 +43,10 @@ bool ms2::Ms2File::getMetaData()
 	
 	std::vector<std::string> elems;
 	int mdCount = 0;
-	char _delim = utils::getDelim(delimType);
+	
 	//iterate through ss to find metadata
 	while(ss.tellg() < sLen){
-		utils::getLine(ss, line, _delim, beginLine);
+		utils::safeGetline(ss, line);
 		if(line[0] == 'H')
 		{
 			utils::split(line, IN_DELIM, elems);
