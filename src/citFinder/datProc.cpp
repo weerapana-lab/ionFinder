@@ -292,13 +292,12 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//split up input data for each thread
 	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThreads];
-	size_t begNum, endNum, numInThread;
+	size_t begNum, endNum ;
 	unsigned int threadIndex = 0;
 	for(size_t i = 0; i < nScans; i += peptidePerThread)
 	{
 		begNum = i;
 		endNum = (begNum + peptidePerThread > nScans ? nScans : begNum + peptidePerThread);
-		numInThread = endNum - begNum;
 
 		//spawn thread
 		assert(threadIndex < nThreads);
