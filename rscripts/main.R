@@ -1,9 +1,6 @@
 
 argv <- commandArgs(trailingOnly = FALSE)
 
-#argv <- c("/Library/Frameworks/R.framework/Resources/bin/exec/R", '--slave', '--no-restore', '--file=/Users/Aaron/local/ms2_annotator/rscripts/main.R',
-#          '--args', "spectraFiles/ror_pad_SRSNSRSrSYSPRRSR_9595_3.spectrum")
-
 fileArgName <- "--file="
 scriptName <- sub(fileArgName, "", argv[grep(fileArgName, argv)])
 progWD <- sub("rscripts/main.R", "", scriptName)
