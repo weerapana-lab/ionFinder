@@ -27,6 +27,7 @@
 #include <cmath>
 #include <string>
 #include <cctype>
+#include <type_traits>
 
 #ifndef PATH_MAX
 	#define PATH_MAX 1024
@@ -50,21 +51,14 @@ namespace utils{
 	
 	std::string const WHITESPACE = " \f\n\r\t\v";
 	std::string const COMMENT_SYMBOL = "#";
-	enum newline_type {lf, crlf, cr, unknown};
-	char const DEFAULT_LINE_DELIM = '\n';
-	size_t const DEFAULT_BEGIN_LINE = 0;
 	bool const IGNORE_HIDDEN_FILES = true; //ignore hidden files in utils::ls
-	int const PROGRESS_BAR_WIDTH = 70;
+	int const PROGRESS_BAR_WIDTH = 60;
 	
 	/*************/
 	/* functions */
 	/*************/
 	
 	//file utils
-	char getDelim(newline_type);
-	std::string getDelimStr(newline_type);
-	newline_type detectLineEnding_killStream(std::ifstream&);
-	newline_type detectLineEnding(std::ifstream&);
 	bool dirExists(const char*);
 	bool dirExists(std::string);
 	bool fileExists(const char*);
@@ -102,11 +96,6 @@ namespace utils{
 	std::string removeChars(char,std::string);
 	std::string toLower(std::string);
 	std::string repeat(std::string, size_t);
-	void getLineTrim(std::istream& is,std::string& line,
-							char delim = DEFAULT_LINE_DELIM, size_t beginLine = DEFAULT_BEGIN_LINE);
-	void getLine(std::istream& is,std::string& line,
-						char delim = DEFAULT_LINE_DELIM, size_t beginLine = DEFAULT_BEGIN_LINE);
-	void getLine(const char* buffer,std::string& line, char delim = DEFAULT_LINE_DELIM);
 	size_t offset(const char* buf, size_t len, const char* str);
 	void removeEmptyStrings(std::vector<std::string>&);
 	
@@ -120,7 +109,15 @@ namespace utils{
 	template <typename _Tp> int round(_Tp num){
 		return floor(num + 0.5);
 	}
-	template <typename _Tp> _Tp numDigits(_Tp num){
+	
+	/**
+	 Get number of digits in an integer.
+	 \param num number to cound digits of
+	 \pre \p num must be an integer type
+	 \return number of digits in \p num
+	 */
+	template <typename _Tp> int numDigits(_Tp num){
+		static_assert(std::is_integral<_Tp>::value, "num must be integer");
 		int count = 0;
 		while (num != 0) {
 			count++;
@@ -128,12 +125,7 @@ namespace utils{
 		}
 		return count;
 	}
-	template <typename _Tp, size_t N> _Tp* begin(_Tp(&arr)[N]) {
-		return &arr[0];
-	}
-	template <typename _Tp, size_t N> _Tp* end(_Tp(&arr)[N]) {
-		return &arr[0]+N;
-	}
+	
 	/**
 	 Determine whether compare is between compare - range and compare + range.
 	 @param value reference value
@@ -155,7 +147,6 @@ namespace utils{
 	template<typename _Tp> bool inSpan(_Tp beg, _Tp end, _Tp comp){
 		return beg <= comp && comp <= end;
 	}
-	//bool inRange(double, double, double);
 	int getInt(int min, int max);
 }
 

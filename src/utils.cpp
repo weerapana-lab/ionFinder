@@ -12,64 +12,6 @@
 /*  file utilities */
 /*******************/
 
-utils::newline_type utils::detectLineEnding_killStream(std::ifstream& inF) {
-	char tmp;
-	while(inF){
-		inF.get(tmp);
-		if(tmp == inF.widen('\r')) {	// old Mac or Windows
-				inF.get(tmp);
-			if(tmp == inF.widen('\n'))	// Windows
-				return utils::crlf;
-			return utils::cr;	// old Macs
-		}
-		if(tmp == inF.widen('\n'))	// Unix and modern Macs
-			return lf;
-	}
-	return unknown;
-}
-
-utils::newline_type utils::detectLineEnding(std::ifstream& inF)
-{
-	if(!inF)
-		throw std::runtime_error("Bad file stream!");
-	const std::streampos p = inF.tellg();
-	const utils::newline_type ret = detectLineEnding_killStream(inF);
-	inF.seekg(p);
-	return ret;
-}
-
-char utils::getDelim(utils::newline_type type)
-{
-	switch(type){
-		case lf : return '\n';
-			break;
-		case crlf : return '\r';
-			break;
-		case cr : return '\r';
-			break;
-		case unknown : return '\n';
-			break;
-		default : throw std::runtime_error("Invalid type!");
-			break;
-	}
-}
-
-std::string utils::getDelimStr(utils::newline_type type)
-{
-	switch(type){
-			case lf : return "\n";
-				break;
-			case crlf : return "\r\n";
-				break;
-			case cr : return "\r";
-				break;
-			case unknown : return "\n";
-				break;
-		default : throw std::runtime_error("Invalid type!");
-			break;
-	}
-}
-
 /**
  returns true if folder at end of path exists and false if it does not
  @param path path of file to test
@@ -330,7 +272,11 @@ void utils::split (const std::string& str, const char delim, std::vector<std::st
 	}
 }
 
-//remove trailing WHITESPACE
+/**
+ remove trailing WHITESPACE
+ @param str string to trim
+ @return trimmed string
+*/
 std::string utils::trimTraling(const std::string& str)
 {
 	if(str.empty())
@@ -338,7 +284,11 @@ std::string utils::trimTraling(const std::string& str)
 	return str.substr(0, str.find_last_not_of(WHITESPACE) + 1);
 }
 
-//remove leading WHITESPACE
+/**
+ remove leading WHITESPACE
+ @param str string to trim
+ @return trimmed string
+ */
 std::string utils::trimLeading(const std::string& str)
 {
 	if(str.empty())
@@ -346,7 +296,11 @@ std::string utils::trimLeading(const std::string& str)
 	return str.substr(str.find_first_not_of(WHITESPACE));
 }
 
-//remove trailing and leading WHITESPACE
+/**
+ Remove trailing and leading WHITESPACE
+ @param str string to trim
+ @return trimmed string
+ */
 std::string utils::trim(const std::string& str)
 {
 	if(str.empty())
@@ -360,26 +314,11 @@ void utils::trimAll(std::vector<std::string>& elems)
 		(*it) = trim((*it));
 }
 
-//returns true if line begins with COMMENT_SYMBOL, ignoring leading whitespace
+///returns true if line begins with COMMENT_SYMBOL, ignoring leading whitespace
 bool utils::isCommentLine(std::string line)
 {
 	line = trimLeading(line);
 	return line.substr(0, COMMENT_SYMBOL.length()) == COMMENT_SYMBOL;
-}
-
-//gets new line from is and removes trailing and leading whitespace
-void utils::getLineTrim(std::istream& is, std::string& line, char delim, size_t beginLine)
-{
-	utils::getLine(is, line, delim, beginLine);
-	line = trim(line);
-}
-
-//gets new line from is and handels non zero start to line
-void utils::getLine(std::istream& is, std::string& line, char delim, size_t beginLine)
-{
-	getline(is, line, delim);
-	if(beginLine > 0)
-	line = line.substr(beginLine);
 }
 
 //removes findStr from whithinStr and returns whithinStr
