@@ -78,8 +78,7 @@ LDFLAGS += $(LIBFLAGS)
 #TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
 TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) helpFile.pdf
 
-all: $(TARGETS)
-	install_r_packages
+all: $(TARGETS) install_r_packages
 
 multi:
 	$(MAKE) -j8 all
@@ -115,6 +114,7 @@ install_r_packages:
 clean:
 	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) 
 	rm -f helpFile.pdf
+	rm -r lib/*
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
 
 #install: $(BINDIR)/$(EXE)
