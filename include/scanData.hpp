@@ -48,7 +48,7 @@ namespace scanData{
 			parentFile = _parentFile;
 		}
 		
-		Scan (std::string line){
+		Scan(std::string line){
 			initilizeFromLine(line);
 		}
 		~Scan() {}
@@ -56,6 +56,14 @@ namespace scanData{
 		//modifers
 		void clear();
 		void initilizeFromLine(std::string);
+		void operator = (const Scan& rhs){
+			parentFile = rhs.parentFile;
+			scanNum = rhs.scanNum;
+			sequence = rhs.sequence;
+			fullSequence = rhs.fullSequence;
+			charge = rhs.charge;
+			xcorr = rhs.xcorr;
+		}
 		
 		void setSequence(std::string _seq){
 			sequence = _seq;
