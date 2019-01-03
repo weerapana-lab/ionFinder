@@ -318,7 +318,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		it->join();
 	 }
 	
-	//concat split peptieds into one vector
+	//concat split peptides into one vector
 	peptides.clear();
 	for(unsigned int i = 0; i < nThreads; i++){
 		if(!sucsses[i])
@@ -429,7 +429,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 										 bool* success, std::atomic<size_t>& scansIndex)
 {
 	*success = false;
-	std::string curSample = scans[beg].getSampleName();
+	std::string curSample; // = scans[beg].getSampleName();
 	std::string curWD;
 	std::string spFname;
 	aaDB::AADB aminoAcidMasses;
@@ -440,7 +440,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		//first get current wd name
 		curWD = utils::dirName(scans[i].getParentFile());
 		spFname = curWD + "/sequest.params";
-		PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
+		//PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 		
 		if(curSample != scans[i].getSampleName())
 		{
