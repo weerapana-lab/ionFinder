@@ -16,6 +16,7 @@ lib/*
 *.so
 *.Rbuildignore
 *.Rprofile
+.idea/*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
