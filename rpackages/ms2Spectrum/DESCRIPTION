@@ -1,0 +1,14 @@
+Package: ms2Spectrum
+Type: Package
+Title: Make pretty ms2 spectra with ggolot2
+Version: 0.1.0
+Author: Aaron Maurais
+Maintainer: The package maintainer <aaron.maurais@bc.edu>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: Rcpp (>= 0.12.17),
+	ggplot2 (>= 3.0.0)
+LinkingTo: Rcpp

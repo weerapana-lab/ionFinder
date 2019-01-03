@@ -4,7 +4,7 @@ OF_EXT = ".pdf"
 makeOfName <- function(specDat)
 {
   ret = specDat$metaData$parentFile
-  ret = paste(ret, "_", specDat$metaData$sequence, 
+  ret = paste(ret, "_", specDat$metaData$sequence,
               "_", specDat$metaData$scanNum, sep = "")
   if(specDat$metaData$precursorCharge != 0)
   {
@@ -14,13 +14,7 @@ makeOfName <- function(specDat)
   return(ret)
 }
 
-printUsage <- function()
-{
-  
-  
-}
-
-getAllSpectra <- function(fileVec)
+getAllSpectra <- function(fileVec, nThread)
 {
   ret <- list()
   for(i in 1:length(fileVec))

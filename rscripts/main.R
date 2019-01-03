@@ -1,22 +1,27 @@
 
-PROG_WD_HOME = paste(Sys.getenv("HOME"), 
-                  "/local/ms2_annotator/rscripts", sep = "")
-source(paste(PROG_WD_HOME, "/makeSpectrum.R", sep = ""), echo=FALSE)
-source(paste(PROG_WD_HOME, "/functions.R", sep = ""), echo=FALSE)
-require(tools, quietly = TRUE, warn.conflicts = FALSE)
+argv <- commandArgs(trailingOnly = FALSE)
 
-WD <- file_path_as_absolute("./")
-OD <- WD
-argv <- commandArgs(trailingOnly = TRUE)
-#argv <- commandArgs(trailingOnly = FALSE)
-iBeg <- 1
+#argv <- c("/Library/Frameworks/R.framework/Resources/bin/exec/R", '--slave', '--no-restore', '--file=/Users/Aaron/local/ms2_annotator/rscripts/main.R',
+#          '--args', "spectraFiles/ror_pad_SRSNSRSrSYSPRRSR_9595_3.spectrum")
+
+fileArgName <- "--file="
+scriptName <- sub(fileArgName, "", argv[grep(fileArgName, argv)])
+progWD <- sub("rscripts/main.R", "", scriptName)
+
+library(ggplot2)
+library(ms2Spectrum, lib.loc = paste0(progWD, 'lib'))
+library(tools)
 
 if(argv[1] == "RStudio")
 {
   argv <- c("Rstudio", "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_hr/spectraFiles/ror_pad_hr_CLALGMSrDAVK_6914_2.spectrum")
   iBeg <-  2
+} else {
+  iBeg = min(grep('--args', argv))
 }
 
+WD <- file_path_as_absolute("./")
+OD <- WD
 argc <- length(argv)
 i = iBeg
 endArgs = FALSE

@@ -1,0 +1,4 @@
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
+import(ggplot2)
+useDynLib(ms2Spectrum, .registration = TRUE)

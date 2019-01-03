@@ -73,16 +73,17 @@ ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(CIT_FINDER_OBJS)
 CXXFLAGS += $(INCLUDEFLAGS) -I$(HEADERDIR)
 LDFLAGS += $(LIBFLAGS)
 
-.PHONY: all clean distclean install uninstall multi
+.PHONY: all clean distclean install uninstall multi install_r_packages
 
 #TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
 TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) helpFile.pdf
 
 all: $(TARGETS)
+	install_r_packages
 
 multi:
 	$(MAKE) -j8 all
-	makew
+	$(MAKE)
 
 #DTarray_pro-Userguide.pdf : $(TEX_DIR)/DTarray_pro-Userguide.tex
 #ifndef TEX
@@ -106,6 +107,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 helpFile.pdf : db/helpFile.man
 	bash $(SCRIPTS)/updateMan.sh
+
+install_r_packages:
+	Rscript rpackages/install_packages.R
 
 clean:
 	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) 
