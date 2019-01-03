@@ -109,6 +109,7 @@ helpFile.pdf : db/helpFile.man
 	bash $(SCRIPTS)/updateMan.sh
 
 install_r_packages:
+	mkdir -p lib
 	Rscript rpackages/install_packages.R
 
 clean:
