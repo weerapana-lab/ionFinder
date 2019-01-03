@@ -12,6 +12,7 @@ rscripts/lib/*
 helpFile.pdf
 obj/*
 doc/doxygen/html/*
+include/config.hpp
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
