@@ -271,6 +271,16 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	return allSucess;
 }//end of fxn
 
+/**
+ Search parent ms2 files in \p scans for predicted fragment ions. <br><br>
+ Analysis is performed in parallel in number of threads in Params::_numThreads. <br>
+ \p scans is split up evenly across each thread.
+ 
+ \param scans populated list of identified ms2 scans to search for
+ \param peptides empty list of peptides to annotate
+ \param pars Params object for information on how to perform analysis
+ \return true is all file I/O was sucessful.
+ */
 bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
 									  const CitFinder::Params& pars)
@@ -280,7 +290,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	size_t peptidePerThread = nScans / nThreads;
 	if(nScans % nThreads != 0)
 		peptidePerThread += 1;
-	std::atomic<size_t> scansIndex(0);
+	std::atomic<size_t> scansIndex(0); //used to update progress for findFragmentsProgress
 	
 	//init threads
 	std::vector<std::thread> threads;
@@ -332,10 +342,11 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 }
 
 /**
- Prints progress bar during findFragmentsParallel
- @param scansIndex current scan index
- @param count total number of scans to search for
- @param sleepTime time before next update is printed in seconds
+ Prints progress bar during findFragmentsParallel. <br>
+ \p scansIndex is updated concurently by each thread.
+ \param scansIndex number of scans completed
+ \param count total number of scans to search for
+ \param sleepTime time before next update is printed (in seconds)
  */
 void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
 									  unsigned int nThread, int sleepTime)

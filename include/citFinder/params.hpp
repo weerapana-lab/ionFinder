@@ -61,7 +61,7 @@ namespace CitFinder{
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
 		
-		//! number of thread to use default is std::thread::hardware_concurrency() / 2
+		//! number of thread to use. Default is std::thread::hardware_concurrency() / 2
 		unsigned int _numThreads;
 		
 		bool getFlist();

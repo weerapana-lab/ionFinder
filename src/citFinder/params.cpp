@@ -8,6 +8,12 @@
 
 #include <citFinder/params.hpp>
 
+/**
+ Calculates number of supported threads using std::thread::hardware_concurrency(). <br><br>
+ By default returns result of thread::hardware_concurrency() / 2.<br>
+ If thread::hardware_concurrency returns 0, indicating an error, 1 thread is used.
+ \return number of supported threads
+ */
 unsigned int CitFinder::Params::computeThreads() const
 {
 	unsigned int ret = std::thread::hardware_concurrency() / 2;
@@ -18,6 +24,13 @@ unsigned int CitFinder::Params::computeThreads() const
 	return ret;
 }
 
+/**
+ Parses command line arguments and stores in Params object
+ \pre current working directory exists
+ \param argc argc from main
+ \param argv argv from main
+ \return true if args were sucessfully read.
+ */
 bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 {
 	_wd = utils::pwd();

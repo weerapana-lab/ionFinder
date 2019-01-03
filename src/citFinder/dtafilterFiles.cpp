@@ -8,6 +8,12 @@
 
 #include <citFinder/dtafilterFiles.hpp>
 
+/**
+ Read list of filter files suplied by \p params
+ \param params initalized Params object
+ \param scans empty list of scans to fill
+ \returns true if all files were sucessfully read.
+ */
 bool Dtafilter::readFilterFiles(const CitFinder::Params& params,
 								std::vector<Dtafilter::Scan>& scans)
 {
