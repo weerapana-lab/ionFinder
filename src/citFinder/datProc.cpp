@@ -273,7 +273,7 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 
 /**
  Search parent ms2 files in \p scans for predicted fragment ions. <br><br>
- Analysis is performed in parallel in number of threads in Params::_numThreads. <br>
+ Analysis is performed in parallel in number of threads in Params::_numThread. <br>
  \p scans is split up evenly across each thread.
  
  \param scans populated list of identified ms2 scans to search for
@@ -285,23 +285,23 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
 									  const CitFinder::Params& pars)
 {
-	unsigned int const nThreads = pars.getNumThreads();
+	unsigned int const nThread = pars.getNumThreads();
 	size_t const nScans = scans.size();
-	size_t peptidePerThread = nScans / nThreads;
-	if(nScans % nThreads != 0)
+	size_t peptidePerThread = nScans / nThread;
+	if(nScans % nThread != 0)
 		peptidePerThread += 1;
 	std::atomic<size_t> scansIndex(0); //used to update progress for findFragmentsProgress
 	
 	//init threads
 	std::vector<std::thread> threads;
-	bool* sucsses = new bool[nThreads];
+	bool* sucsses = new bool[nThread];
 	
 	//read ms2s
 	Ms2Map ms2Map;
 	if(!CitFinder::readMs2s(ms2Map, scans, pars)) return false;
 	
 	//split up input data for each thread
-	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThreads];
+	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThread];
 	size_t begNum, endNum ;
 	unsigned int threadIndex = 0;
 	for(size_t i = 0; i < nScans; i += peptidePerThread)
@@ -310,7 +310,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		endNum = (begNum + peptidePerThread > nScans ? nScans : begNum + peptidePerThread);
 
 		//spawn thread
-		assert(threadIndex < nThreads);
+		assert(threadIndex < nThread);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.push_back(std::thread(CitFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
 									  ms2Map,
@@ -321,7 +321,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//spawn progress function
 	threads.push_back(std::thread(CitFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
-								  nThreads, PROGRESS_SLEEP_TIME));
+								  nThread, PROGRESS_SLEEP_TIME));
 	
 	//join threads
 	for(auto it = threads.begin(); it != threads.end(); ++it){
@@ -330,7 +330,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//concat split peptides into one vector
 	peptides.clear();
-	for(unsigned int i = 0; i < nThreads; i++){
+	for(unsigned int i = 0; i < nThread; i++){
 		if(!sucsses[i])
 			return false;
 		peptides.insert(peptides.end(), splitPeptides[i].begin(), splitPeptides[i].end());

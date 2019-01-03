@@ -62,7 +62,7 @@ namespace CitFinder{
 		std::vector<std::string> _inDirs;
 		
 		//! number of thread to use. Default is std::thread::hardware_concurrency() / 2
-		unsigned int _numThreads;
+		unsigned int _numThread;
 		
 		bool getFlist();
 		unsigned int computeThreads() const;
@@ -77,7 +77,7 @@ namespace CitFinder{
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
 			ofname = "peptide_cit_stats.tsv";
-			_numThreads = computeThreads();
+			_numThread = computeThreads();
 			_inDirSpecified = false;
 		}
 		
@@ -110,7 +110,7 @@ namespace CitFinder{
 			return _printSpectraFiles;
 		}
 		unsigned int getNumThreads() const{
-			return _numThreads;
+			return _numThread;
 		}
 		bool getInDirSpecified() const{
 			return _inDirSpecified;

@@ -198,14 +198,14 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			includeAllIons = std::stoi(argv[i]);
 			continue;
 		}
-		if(!strcmp(argv[i], "--nThreads"))
+		if(!strcmp(argv[i], "--nThread"))
 		{
 			if(!utils::isArg(argv[++i]))
 			{
 				usage();
 				return false;
 			}
-			_numThreads = std::stoi(argv[i]);
+			_numThread = std::stoi(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose"))
