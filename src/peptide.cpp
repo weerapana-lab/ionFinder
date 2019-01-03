@@ -77,7 +77,7 @@ std::string PeptideNamespace::PeptideIon::makeModLable() const
 
 /**
  Get ion label.
- @return unformated ion label
+ @return unformatted ion label
  */
 std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod) const
 {
@@ -94,7 +94,7 @@ std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod) const
 
 /**
  Format label with markup for ggplot ms2 spectrum.
- @return formated ion label
+ @return formatted ion label
  */
 std::string PeptideNamespace::FragmentIon::getFormatedLabel() const
 {
@@ -278,7 +278,7 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 										   bool _calcFragments)
 {
 	if(aadb.empty())
-		throw std::runtime_error("Atempting to initalize Peptide with an empty AADB!");
+		throw std::runtime_error("Attempting to initialize Peptide with an empty AADB!");
 	
 	initialized = true;
 	calcMass(aadb);

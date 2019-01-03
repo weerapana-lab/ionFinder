@@ -243,7 +243,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 												 (tempMZ - (_labelTolerance)),
 												 DataPoint::MZComparison());
 		
-		//ittreate throught all ions above in range
+		//ittreate throughout all ions above in range
 		for(ionsTypeIt it = lowerBound; it != ions.end(); ++it)
 		{
 			if(it->getMZ() > (tempMZ + _labelTolerance))
@@ -324,7 +324,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		removeUnlabeledIons();
 	
 	//remove unlabeled peptide fragmetns
-	//only used for debuging
+	//only used for debugging
 	if(removeUnlabeledFrags)
 		peptide.removeUnlabeledFrags();
 	

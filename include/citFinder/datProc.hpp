@@ -50,7 +50,7 @@ namespace CitFinder{
 								  const Ms2Map& ms2Map,
 								  std::vector<PeptideNamespace::Peptide>& peptides,
 								  const CitFinder::Params& pars,
-								  bool* sucess, std::atomic<size_t>& scansIndex);
+								  bool* success, std::atomic<size_t>& scansIndex);
 	
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
 							   unsigned int nThread,

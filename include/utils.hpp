@@ -112,7 +112,7 @@ namespace utils{
 	
 	/**
 	 Get number of digits in an integer.
-	 \param num number to cound digits of
+	 \param num number to count digits of
 	 \pre \p num must be an integer type
 	 \return number of digits in \p num
 	 */

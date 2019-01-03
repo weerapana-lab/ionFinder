@@ -156,7 +156,7 @@ bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues
 /**
  Add fragment sequence to PeptideStats.
  @param seq fragment ion to add
- @param ambResidues ambigious residues to search for.
+ @param ambResidues ambiguous residues to search for.
  */
 void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 									 const std::string& ambResidues)
@@ -332,9 +332,9 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 }
 
 /**
- Prints progress bar durring findFragmentsParallel
+ Prints progress bar during findFragmentsParallel
  @param scansIndex current scan index
- @param count total number of scans to seach for
+ @param count total number of scans to search for
  @param sleepTime time before next update is printed in seconds
  */
 void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
@@ -371,19 +371,19 @@ void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
  @param scans Populated vector of scan objects to search for
  @param peptides empty vector of peptides to be filled from data in scans.
  @param pars CitFinder params object.
- @return true if sucessful
+ @return true if successful
  */
 bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
 							  CitFinder::Params& pars)
 {
-	bool* sucess = new bool(false);
+	bool* success = new bool(false);
 	std::atomic<size_t> scansIndex;
 	CitFinder::Ms2Map ms2Map;
 	if(!readMs2s(ms2Map, scans, pars)) return false;
 	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
-										sucess, scansIndex);
-	return *sucess;
+										success, scansIndex);
+	return *success;
 }
 
 bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
@@ -416,19 +416,19 @@ bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
  Find peptide fragment ions in ms2 files.
  Function is thread safe.
  @param peptides empty vector of peptides to be filled from data in scans.
- @param beg index of begining of scan vector
+ @param beg index of beginning of scan vector
  @param end index of end of scan vector
  @param pars CitFinder params object.
- @param sucess set to true if function was sucessful
+ @param success set to true if function was successful
  */
 void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
 										 const size_t beg, const size_t end,
 										 const CitFinder::Ms2Map& ms2Map,
 										 std::vector<PeptideNamespace::Peptide>& peptides,
 										 const CitFinder::Params& pars,
-										 bool* sucess, std::atomic<size_t>& scansIndex)
+										 bool* success, std::atomic<size_t>& scansIndex)
 {
-	*sucess = false;
+	*success = false;
 	std::string curSample = scans[beg].getSampleName();
 	std::string curWD;
 	std::string spFname;
@@ -505,7 +505,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		scansIndex++;
 	} //end of for
 	
-	*sucess = true;
+	*success = true;
 	return;
 }
 
@@ -534,7 +534,7 @@ void CitFinder::PeptideStats::calcContainsCit()
 		return;
 	}
 	
-	//are there 1 more ambigious fragments?
+	//are there 1 more ambiguous fragments?
 	if(ionTypesCount[IonType::AMB_FRAG].second >= 1){
 		containsCit = "ambiguous";
 		return;
@@ -614,7 +614,7 @@ bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::s
 		OUT_DELIM << utils::baseName(it->_scan->getParentFile()) <<
 		OUT_DELIM << it->_scan->getSampleName();
 		
-		//peptid analysis data
+		//peptide analysis data
 		outF << OUT_DELIM << it->containsCit;
 		
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
