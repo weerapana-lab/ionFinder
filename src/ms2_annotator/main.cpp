@@ -32,14 +32,11 @@ int main(int argc, char* argv[])
 			std::cout << "Scan not found" << NEW_LINE;
 			return -1;
 		}
-		
-		for(scanData::scansType::iterator it = scans.begin(); it != scans.end(); ++it)
-			it->setParentFile(pars.getWD() + it->getParentFile());
 	}
 	else if(pars.getInputMode() == 0)
 	{
 		scans.push_back(scanData::Scan(pars.inFile.getSeq(),
-					   pars.inFile.getScan(), pars.inFile.getInfile()));
+									   pars.inFile.getScan(), pars.inFile.getInfile()));
 	}
 	
 	aaDB::AADB aadb;

@@ -21,70 +21,57 @@ bool Ms2_annotator::DtaFilterFile::read()
 	return true;
 }
 
-void Ms2_annotator::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& _scans) const
-{
-	/*_scans.clear();
-	const char* query = _seq.c_str();
-	size_t queryLen = strlen(query);
-	char* instance = buffer;
-	
-	while(instance)
-	{
-		if(strstr(instance, query) == NULL){
-			break;
-		}
-		instance = strstr(instance, query);
-		if(instance){
-			_scans.push_back(scanData::Scan(getScanLine(instance - buffer + 1)));
-			instance += queryLen;
-		}
-	}*/
-	
-	
+void Ms2_annotator::DtaFilterFile::getScans(const std::string& _seq, scanData::scansType& scans) const
+{	
+	for(auto it = _scans.begin(); it != _scans.end(); ++it)
+		if(it->getFullSequence().find(_seq) != std::string::npos)
+			scans.push_back(*it);
 }
 
-bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq, scanData::scansType& _scans, bool force) const
+bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq,
+										   scanData::scansType& scans,
+										   bool force) const
 {
 	std::string outDelim = "\t";
 	bool annotateAll = false;
 	int annotate = -1;
-	scanData::scansType scans;
+	scanData::scansType scansTemp;
 	
-	getScans(_seq, scans);
-	if(scans.size() == 0)
+	getScans(_seq, scansTemp);
+	if(scansTemp.size() == 0)
 	{
 		std::cout << "Sequence: " << _seq << " not found in dtafilter file." <<NEW_LINE;
 		return false;
 	}
-	if(scans.size() == 1){
+	if(scansTemp.size() == 1){
 		annotate = 0;
 	}
-	if(scans.size() > 1 && !force)
+	if(scansTemp.size() > 1 && !force)
 	{
 		std::cout << "Multiple matches found. Choose which scan you would like to annotate." << NEW_LINE;
 		std::cout << NEW_LINE << "Match_number" << outDelim << "Parent_file" << utils::repeat(outDelim, 2) << "Scan"
 		<< outDelim << "Xcorr" << outDelim << "Sequence" << utils::repeat(outDelim, 2) << "Charge" << NEW_LINE;
 		
 		size_t i = 0;
-		size_t len = scans.size();
+		size_t len = scansTemp.size();
 		for(; i < len; i++)
 		{
-			std::cout << i << ")" << outDelim << scans[i].getParentFile()
-			<< outDelim << scans[i].getScanNum()
-			<< outDelim << scans[i].getXcorr()
-			<< outDelim << scans[i].getFullSequence()
-			<< utils::repeat(outDelim, 2) << scans[i].getCharge() << outDelim <<NEW_LINE;
+			std::cout << i << ")" << outDelim << scansTemp[i].getParentFile()
+			<< outDelim << scansTemp[i].getScanNum()
+			<< outDelim << scansTemp[i].getXcorr()
+			<< outDelim << scansTemp[i].getFullSequence()
+			<< utils::repeat(outDelim, 2) << scansTemp[i].getCharge() << outDelim <<NEW_LINE;
 		}
 		std::cout << i << ")" << outDelim << "Annotate all." << NEW_LINE << "Enter choice: ";
 		
-		annotate = utils::getInt(0, int(scans.size()));
-		if(annotate == scans.size())
+		annotate = utils::getInt(0, int(scansTemp.size()));
+		if(annotate == scansTemp.size())
 			annotateAll = true;
 	}
 	
 	if(!annotateAll)
-		_scans.push_back(scans[annotate]);
-	else _scans = scans;
+		scans.push_back(scansTemp[annotate]);
+	else scans = scansTemp;
 	
 	return true;
 }
