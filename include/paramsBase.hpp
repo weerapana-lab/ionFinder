@@ -12,11 +12,12 @@
 #include <iostream>
 #include <string>
 
+#include <config.hpp>
 #include <utils.hpp>
 
 namespace base{
 	
-	std::string const PROG_WD =std::string(getenv("HOME")) + "/local/ms2_annotator";
+	std::string const PROG_WD = CONFIG_PROG_WD_DIR;
 	std::string const PROG_DB = PROG_WD + "/db";
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
