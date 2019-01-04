@@ -3,7 +3,7 @@ argv <- commandArgs(trailingOnly = FALSE)
 
 fileArgName <- "--file="
 scriptName <- sub(fileArgName, "", argv[grep(fileArgName, argv)])
-progWD <- sub("rscripts/main.R", "", scriptName)
+progWD <- sub("rscripts/makeMs2.R", "", scriptName)
 
 library(ggplot2)
 library(ms2Spectrum, lib.loc = paste0(progWD, 'lib'))
