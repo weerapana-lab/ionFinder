@@ -504,6 +504,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 				}
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
+			spectrum.setCharge(scans[i].getCharge());
 			
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
 			std::ofstream outF((temp).c_str());
