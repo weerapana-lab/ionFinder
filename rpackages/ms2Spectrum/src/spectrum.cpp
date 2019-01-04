@@ -26,7 +26,7 @@ Rcpp::List getSpectrum(std::string fname)
   if(!inF)
     throw std::runtime_error("Could not read " + fname);
 
-  std::string scanNum, parentFile, sequence, fullSequence, precursorCharge;
+  std::string scanNum, parentFile, parentMs2, sequence, fullSequence, precursorCharge;
   Rcpp::NumericVector mz;
   Rcpp::NumericVector intensity;
   Rcpp::CharacterVector label;
@@ -71,6 +71,10 @@ Rcpp::List getSpectrum(std::string fname)
         else if(elems[0] == "precursorFile")
         {
           parentFile = elems[1];
+        }
+        else if(elems[0] == "parentMs2")
+        {
+          parentMs2 = elems[1];
         }
         else if(elems[0] == "sequence")
         {
@@ -131,6 +135,7 @@ Rcpp::List getSpectrum(std::string fname)
     Rcpp::Named("fullSequence") = fullSequence,
     Rcpp::Named("scanNum") = scanNum,
     Rcpp::Named("parentFile") = parentFile,
+    Rcpp::Named("parentMs2") = parentMs2,
     Rcpp::Named("precursorCharge") = precursorCharge)),
     Rcpp::Named("spectrum") = Rcpp::DataFrame::create(Rcpp::Named("mz") = mz,
                            Rcpp::Named("intensity") = intensity,

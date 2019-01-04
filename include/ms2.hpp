@@ -35,7 +35,10 @@ namespace ms2 {
 		unsigned long size;
 		
 		//metadata
+		///full file name used for reading
 		std::string fname;
+		///base file name without extension
+		std::string _parentMs2;
 		size_t firstScan, lastScan;
 		std::string dataType;
 		std::string scanType;
@@ -43,6 +46,9 @@ namespace ms2 {
 		bool getMetaData();
 		const char* makeOffsetQuery(std::string) const;
 		const char* makeOffsetQuery(size_t) const;
+		void calcParentMs2(std::string path){
+			_parentMs2 = utils::baseName(utils::removeExtension(path));
+		}
 		
 	public:
 		Ms2File() {

@@ -13,6 +13,7 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 	assert(out);
 	out << ms2::BEGIN_METADATA << NEW_LINE
 		<< "precursorFile" << OUT_DELIM << precursorFile << NEW_LINE
+		<< "parentMs2" << OUT_DELIM << _parentMs2 << NEW_LINE
 		<< "scanNumber" << OUT_DELIM << scanNumber << NEW_LINE
 		<< "sequence" << OUT_DELIM << sequence << NEW_LINE
 		<< "fullSequence" << OUT_DELIM << fullSequence << NEW_LINE

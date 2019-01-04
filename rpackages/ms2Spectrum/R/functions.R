@@ -3,7 +3,7 @@ OF_EXT = ".pdf"
 
 makeOfName <- function(specDat)
 {
-  ret = specDat$metaData$parentFile
+  ret = specDat$metaData$parentMs2
   ret = paste(ret, "_", specDat$metaData$sequence,
               "_", specDat$metaData$scanNum, sep = "")
   if(specDat$metaData$precursorCharge != 0)

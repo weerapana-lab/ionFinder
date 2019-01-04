@@ -198,7 +198,10 @@ namespace ms2{
 		int scanNumInt;
 		double retTime;
 		double precursorInt;
+		///precursor file metadata value from ms2
 		std::string precursorFile;
+		///pretty parent file name with out extension for nameing
+		std::string _parentMs2;
 		int precursorScan;
 		int precursorCharge;
 		double precursorMZ;

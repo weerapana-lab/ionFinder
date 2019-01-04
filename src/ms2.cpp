@@ -16,6 +16,7 @@ bool ms2::Ms2File::read(std::string _fname)
 
 bool ms2::Ms2File::read()
 {
+	calcParentMs2(fname);
 	if(fname.empty())
 		throw std::runtime_error("File must be specified!");
 	std::ifstream inF(fname.c_str());
@@ -99,6 +100,7 @@ bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const
 bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 {
 	scan.clear();
+	scan._parentMs2 = _parentMs2;
 	if(!((queryScan >= firstScan) && (queryScan <= lastScan)))
 	{
 		std::cout << "queryScan not in file scan range!" << NEW_LINE;

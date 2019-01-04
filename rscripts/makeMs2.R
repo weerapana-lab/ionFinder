@@ -11,7 +11,7 @@ library(tools)
 
 if(argv[1] == "RStudio")
 {
-  argv <- c("Rstudio", "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_hr/spectraFiles/ror_pad_hr_CLALGMSrDAVK_6914_2.spectrum")
+  argv <- c("Rstudio", "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_rVEHLQYNLELAFHHHLCK_10974_4.spectrum")
   iBeg <-  2
 } else {
   iBeg = min(grep('--args', argv))
