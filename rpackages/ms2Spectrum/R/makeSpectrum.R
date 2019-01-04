@@ -157,7 +157,7 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
     }
   }
 
-  return(list(ofname = makeOfName(specDat), spectrum = mspect))
+  return(list(ofname = paste0(specDat$metaData$ofname, '.pdf'), spectrum = mspect))
 }
 
 makeAllSpectrum <- function(spectraFiles, ...)

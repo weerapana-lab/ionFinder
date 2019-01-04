@@ -94,7 +94,7 @@ namespace scanData{
 		std::string getXcorr() const{
 			return xcorr;
 		}
-		std::string getOfNameBase() const;
+		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;
 	};
 }

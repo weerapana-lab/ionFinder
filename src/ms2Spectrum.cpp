@@ -13,7 +13,7 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 	assert(out);
 	out << ms2::BEGIN_METADATA << NEW_LINE
 		<< "precursorFile" << OUT_DELIM << precursorFile << NEW_LINE
-		<< "parentMs2" << OUT_DELIM << _parentMs2 << NEW_LINE
+		<< "ofname" << OUT_DELIM << getOfNameBase(_parentMs2, fullSequence) << NEW_LINE
 		<< "scanNumber" << OUT_DELIM << scanNum << NEW_LINE
 		<< "sequence" << OUT_DELIM << sequence << NEW_LINE
 		<< "fullSequence" << OUT_DELIM << fullSequence << NEW_LINE
@@ -85,7 +85,6 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 void ms2::Spectrum::clear()
 {
 	scanNum = 0;
-	//scanNumInt = 0;
 	retTime = 0;
 	precursorInt = 0;
 	precursorFile.clear();
