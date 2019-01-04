@@ -125,6 +125,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 	std::string temp (buffer + scanOffset, buffer + scanOffset + endOfScan);
 	std::stringstream ss(temp);
 	std::streampos oldPos = ss.tellg();
+	bool z_found = false;
 	
 	while(utils::safeGetline(ss, line, oldPos))
 	{
@@ -152,9 +153,12 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 				scan.precursorScan = std::stoi(elems[2]);
 		}
 		else if(elems[0] == "Z"){
-			assert(elems.size() == 3);
-			utils::split(line, IN_DELIM, elems);
-			scan.charge = std::stoi(elems[1]);
+			if(!z_found){
+				assert(elems.size() == 3);
+				utils::split(line, IN_DELIM, elems);
+				scan.charge = std::stoi(elems[1]);
+				z_found = true;
+			}
 		}
 		else if(utils::isInteger(std::string(1, elems[0][0])))
 		{
