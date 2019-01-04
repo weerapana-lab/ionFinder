@@ -57,14 +57,23 @@ void scanData::Scan::initilizeFromLine(std::string line)
 	charge = std::stoi(elems[3]);
 }
 
-std::string scanData::Scan::getOfname() const
+/**
+ \brief Get unique output file name without extension.
+ */
+std::string scanData::Scan::getOfNameBase() const
 {
 	std::string ret;
 	ret = utils::removeExtension(parentFile);
 	ret += ("_" + makeOfSequenceFromSequence(sequence) + "_" + std::to_string(scanNum));
 	if(charge != 0)
 		ret += ("_" + std::to_string(charge));
-	ret += OF_EXT;
-	
 	return ret;
+}
+
+/**
+ \brief Calls getOfNameBase and adds OF_EXT to end.
+ Only added for backwords compatability.
+ */
+std::string scanData::Scan::getOfname() const{
+	return getOfNameBase() + OF_EXT;
 }

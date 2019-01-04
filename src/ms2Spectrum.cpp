@@ -85,7 +85,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 void ms2::Spectrum::clear()
 {
 	scanNumber = 0;
-	scanNumInt = 0;
+	//scanNumInt = 0;
 	retTime = 0;
 	precursorInt = 0;
 	precursorFile.clear();

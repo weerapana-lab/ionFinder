@@ -195,7 +195,7 @@ namespace ms2{
 		
 		//static metadata
 		int scanNumber;
-		int scanNumInt;
+		//int scanNumInt;
 		double retTime;
 		double precursorInt;
 		///precursor file metadata value from ms2
@@ -234,7 +234,7 @@ namespace ms2{
 		Spectrum()
 		{
 			scanNumber = 0;
-			scanNumInt = 0;
+			//scanNumInt = 0;
 			retTime = 0;
 			precursorInt = 0;
 			precursorFile = "";
