@@ -18,10 +18,10 @@ void CitFinder::PeptideFragmentsMap::clear()
 }
 
 /**
- Generate fragment map from sequence.
+ \brief Generate fragment map from sequence.
  From a full sequence given, the sequence of all b and y ions are calculated
  and stored in the object.
- @param sequence the peptide sequence to calculate fragments from
+ \param sequence the peptide sequence to calculate fragments from
  */
 void CitFinder::PeptideFragmentsMap::populateMap(std::string sequence)
 {
@@ -54,12 +54,13 @@ void CitFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap)
 }
 
 /**
- Align ref sequence to query sequence. To peptide sequences as strings are aligned.
- @param ref The reference sequence to search.
- @param query The sequence to search for.
- @param beg Beginning of match. If no match, left unchanged.
- @param end End of match. If no match, left unchanged.
- @return bool representing if match was found.
+ \brief Align ref sequence to query sequence.
+ Two peptide sequences as strings are aligned.
+ \param ref The reference sequence to search.
+ \param query The sequence to search for.
+ \param beg Beginning of match. If no match, left unchanged.
+ \param end End of match. If no match, left unchanged.
+ \return bool representing if match was found.
  */
 bool CitFinder::allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end)
 {
@@ -512,7 +513,6 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 			}
 			spectrum.printLabeledSpectrum(outF, true);
 		}
-		
 		scansIndex++;
 	} //end of for
 	
