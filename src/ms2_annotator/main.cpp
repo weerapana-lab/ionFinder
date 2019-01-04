@@ -48,10 +48,10 @@ int main(int argc, char* argv[])
 		
 		pep.initialize(pars, aadb);
 		
-		ms2::Ms2File file(it->getParentFile());
+		ms2::Ms2File file(it->getPrecursorFile());
 		if(!file.read())
 		{
-			std::cout << "Failed to read: " << it->getParentFile() << NEW_LINE;
+			std::cout << "Failed to read: " << it->getPrecursorFile() << NEW_LINE;
 			return -1;
 		}
 		
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 		}
 		else {
 			if(pars.getInputMode() == 0)
-				it->setCharge(spectrum.getPrecursorCharge());
+				it->setCharge(spectrum.getCharge());
 			spectrum.labelSpectrum(pep, pars);
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();

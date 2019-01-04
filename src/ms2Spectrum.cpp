@@ -14,11 +14,11 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 	out << ms2::BEGIN_METADATA << NEW_LINE
 		<< "precursorFile" << OUT_DELIM << precursorFile << NEW_LINE
 		<< "parentMs2" << OUT_DELIM << _parentMs2 << NEW_LINE
-		<< "scanNumber" << OUT_DELIM << scanNumber << NEW_LINE
+		<< "scanNumber" << OUT_DELIM << scanNum << NEW_LINE
 		<< "sequence" << OUT_DELIM << sequence << NEW_LINE
 		<< "fullSequence" << OUT_DELIM << fullSequence << NEW_LINE
 		<< "retTime" << OUT_DELIM << retTime << NEW_LINE
-		<< "precursorCharge" << OUT_DELIM << precursorCharge << NEW_LINE
+		<< "precursorCharge" << OUT_DELIM << charge << NEW_LINE
 		<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << NEW_LINE;
 	out.unsetf(std::ios::scientific);
 	out << "precursorScan" << OUT_DELIM << precursorScan << NEW_LINE
@@ -84,13 +84,13 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 
 void ms2::Spectrum::clear()
 {
-	scanNumber = 0;
+	scanNum = 0;
 	//scanNumInt = 0;
 	retTime = 0;
 	precursorInt = 0;
 	precursorFile.clear();
 	precursorScan = 0;
-	precursorCharge = 0;
+	charge = 0;
 	precursorMZ = 0;
 	maxInt = 0;
 	ions.clear();

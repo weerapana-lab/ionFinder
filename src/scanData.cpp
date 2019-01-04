@@ -10,7 +10,7 @@
 
 void scanData::Scan::clear()
 {
-	parentFile.clear();
+	precursorFile.clear();
 	scanNum = 0;
 	sequence.clear();
 	charge = 0;
@@ -52,7 +52,7 @@ void scanData::Scan::initilizeFromLine(std::string line)
 	std::string scanLine = elems[1];
 	utils::split(scanLine, '.', elems);
 	
-	parentFile = elems[0] + ".ms2";
+	precursorFile = elems[0] + ".ms2";
 	scanNum = std::stoi(elems[1]);
 	charge = std::stoi(elems[3]);
 }
@@ -63,7 +63,7 @@ void scanData::Scan::initilizeFromLine(std::string line)
 std::string scanData::Scan::getOfNameBase() const
 {
 	std::string ret;
-	ret = utils::removeExtension(parentFile);
+	ret = utils::removeExtension(precursorFile);
 	ret += ("_" + makeOfSequenceFromSequence(sequence) + "_" + std::to_string(scanNum));
 	if(charge != 0)
 		ret += ("_" + std::to_string(charge));

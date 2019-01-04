@@ -135,7 +135,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		{
 			assert(elems.size() == 4);
 			utils::split(line, IN_DELIM, elems);
-			scan.scanNumber = std::stoi(elems[2]);
+			scan.scanNum = std::stoi(elems[2]);
 			scan.precursorMZ = std::stod(elems[3]);
 		}
 		else if(elems[0] == "I")
@@ -154,7 +154,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		else if(elems[0] == "Z"){
 			assert(elems.size() == 3);
 			utils::split(line, IN_DELIM, elems);
-			scan.precursorCharge = std::stoi(elems[1]);
+			scan.charge = std::stoi(elems[1]);
 		}
 		else if(utils::isInteger(std::string(1, elems[0][0])))
 		{

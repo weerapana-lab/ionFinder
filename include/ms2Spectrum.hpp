@@ -22,6 +22,7 @@
 #include <peptide.hpp>
 #include <geometry.hpp>
 #include <calcLableLocs.hpp>
+#include <scanData.hpp>
 
 namespace ms2{
 	
@@ -186,7 +187,7 @@ namespace ms2{
 		};
 	};
 	
-	class Spectrum{
+	class Spectrum : public scanData::Scan{
 		friend class Ms2File;
 	private:
 		typedef std::vector<ms2::DataPoint> ionVecType;
@@ -194,19 +195,12 @@ namespace ms2{
 		typedef ionVecType::iterator ionsTypeIt;
 		
 		//static metadata
-		int scanNumber;
-		//int scanNumInt;
 		double retTime;
 		double precursorInt;
-		///precursor file metadata value from ms2
-		std::string precursorFile;
 		///pretty parent file name with out extension for nameing
 		std::string _parentMs2;
 		int precursorScan;
-		int precursorCharge;
 		double precursorMZ;
-		std::string sequence;
-		std::string fullSequence;
 		
 		//dynamic metadata
 		double maxInt;
@@ -231,15 +225,11 @@ namespace ms2{
 		void updateDynamicMetadata();
 		
 	public:
-		Spectrum()
+		Spectrum() : scanData::Scan()
 		{
-			scanNumber = 0;
-			//scanNumInt = 0;
 			retTime = 0;
 			precursorInt = 0;
-			precursorFile = "";
 			precursorScan = 0;
-			precursorCharge = 0;
 			precursorMZ = 0;
 			maxInt = 0;
 			minInt = 0;
@@ -248,7 +238,6 @@ namespace ms2{
 			minMZ = 0;
 			maxMZ = 0;
 			mzRange = 0;
-			sequence = "";
 		}
 		~Spectrum() {}
 		
@@ -263,9 +252,6 @@ namespace ms2{
 		}
 		double getMaxIntensity() const{
 			return maxInt;
-		}
-		double getPrecursorCharge() const{
-			return precursorCharge;
 		}
 		void labelSpectrum(PeptideNamespace::Peptide& peptide,
 						   const base::ParamsBase& pars,

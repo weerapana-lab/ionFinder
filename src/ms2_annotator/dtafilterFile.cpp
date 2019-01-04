@@ -56,7 +56,7 @@ bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq,
 		size_t len = scansTemp.size();
 		for(; i < len; i++)
 		{
-			std::cout << i << ")" << outDelim << scansTemp[i].getParentFile()
+			std::cout << i << ")" << outDelim << scansTemp[i].getPrecursorFile()
 			<< outDelim << scansTemp[i].getScanNum()
 			<< outDelim << scansTemp[i].getXcorr()
 			<< outDelim << scansTemp[i].getFullSequence()

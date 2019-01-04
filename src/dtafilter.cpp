@@ -14,7 +14,7 @@ void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 	_parentID = rhs._parentID;
 	_matchDirection = rhs._matchDirection;
 	_sampleName = rhs._sampleName;
-	parentFile = rhs.parentFile;
+	precursorFile = rhs.precursorFile;
 	scanNum = rhs.scanNum;
 	sequence = rhs.sequence;
 	fullSequence = rhs.fullSequence;
@@ -116,7 +116,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
 					newScan._unique = line[0] == '*';
-					newScan.setParentFile(utils::dirName(fname) + "/" + newScan.getParentFile());
+					newScan.setPrecursorFile(utils::dirName(fname) + "/" + newScan.getPrecursorFile());
 					if(skipReverse && newScan._matchDirection == Dtafilter::Scan::MatchDirection::REVERSE)
 						continue;
 					else scans.push_back(newScan);

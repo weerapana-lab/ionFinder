@@ -408,7 +408,7 @@ bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
 	size_t len = scans.size();
 	std::vector<std::string> fileNamesList(len);
 	for(size_t i = 0; i < len; i++)
-		fileNamesList[i] = scans[i].getParentFile();
+		fileNamesList[i] = scans[i].getPrecursorFile();
 	std::set<std::string> fileNames(fileNamesList.begin(), fileNamesList.end());
 	
 	//read ms2 files
@@ -450,14 +450,14 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 	for(size_t i = beg; i < end; i++)
 	{
 		//first get current wd name
-		curWD = utils::dirName(scans[i].getParentFile());
+		curWD = utils::dirName(scans[i].getPrecursorFile());
 		spFname = curWD + "/sequest.params";
 		//PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 		
 		if(curSample != scans[i].getSampleName())
 		{
 			//re-init Peptide::AminoAcidMasses for each sample
-			curWD = utils::dirName(scans[i].getParentFile());
+			curWD = utils::dirName(scans[i].getPrecursorFile());
 			spFname = curWD + "/sequest.params";
 			
 			//read sequest params file and init aadb
@@ -480,7 +480,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		peptides.back().addNeutralLoss(neutralLossIons);
 		
 		//load spectrum
-		auto ms2FileIt = ms2Map.find(scans[i].getParentFile());
+		auto ms2FileIt = ms2Map.find(scans[i].getPrecursorFile());
 		if(ms2FileIt == ms2Map.end()){
 			throw std::runtime_error("Key error in Ms2Map!");
 			return;
@@ -622,7 +622,7 @@ bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::s
 		OUT_DELIM << it->_scan->getUnique() <<
 		OUT_DELIM << it->_scan->getXcorr() <<
 		OUT_DELIM << it->_scan->getScanNum() <<
-		OUT_DELIM << utils::baseName(it->_scan->getParentFile()) <<
+		OUT_DELIM << utils::baseName(it->_scan->getPrecursorFile()) <<
 		OUT_DELIM << it->_scan->getSampleName();
 		
 		//peptide analysis data

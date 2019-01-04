@@ -25,18 +25,19 @@ namespace scanData{
 	
 	class Scan{
 	protected:
-		std::string parentFile;
+		std::string precursorFile;
 		size_t scanNum;
 		std::string sequence;
 		std::string fullSequence;
 		int charge;
 		std::string xcorr;
 		
+		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
 		std::string makeOfSequenceFromSequence(std::string) const;
 	public:
 		Scan(){
-			parentFile = "";
+			precursorFile = "";
 			scanNum = 0;
 			sequence = "";
 			charge = 0;
@@ -45,7 +46,7 @@ namespace scanData{
 			sequence = makeSequenceFromFullSequence(_sequence);
 			fullSequence = _sequence;
 			scanNum = _scanNum;
-			parentFile = _parentFile;
+			precursorFile = _parentFile;
 		}
 		
 		Scan(std::string line){
@@ -55,9 +56,9 @@ namespace scanData{
 		
 		//modifers
 		void clear();
-		void initilizeFromLine(std::string);
+	
 		void operator = (const Scan& rhs){
-			parentFile = rhs.parentFile;
+			precursorFile = rhs.precursorFile;
 			scanNum = rhs.scanNum;
 			sequence = rhs.sequence;
 			fullSequence = rhs.fullSequence;
@@ -68,15 +69,15 @@ namespace scanData{
 		void setSequence(std::string _seq){
 			sequence = _seq;
 		}
-		void setParentFile(std::string str){
-			parentFile = str;
+		void setPrecursorFile(std::string str){
+			precursorFile = str;
 		}
 		void setCharge(double _charge){
 			charge = _charge;
 		}
 		
-		std::string getParentFile() const{
-			return parentFile;
+		std::string getPrecursorFile() const{
+			return precursorFile;
 		}
 		size_t getScanNum() const{
 			return scanNum;
