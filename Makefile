@@ -1,7 +1,11 @@
 
 #
 # C++ Compiler
-CXX := g++
+ifeq ($(UNAME_S),Linux)
+	CXX = /usr/public/gnu/gcc/8.2.0/bin/gcc
+else
+	CXX = g++
+endif
 #
 # Make command
 MAKE := make
