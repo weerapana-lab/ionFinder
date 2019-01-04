@@ -58,7 +58,12 @@ def main(argv):
     if nThread is None:
         nThread = cpu_count() / 2
 
-    make_ms2.make_ms2_parallel(nThread, wd, mzLab=args.mzLab, pSize=args.pSize, simpleSeq=args.simpleSeq)
+    make_ms2.make_ms2_parallel(nThread, wd, args.verbose,
+                               mzLab=args.mzLab, pSize=args.pSize, simpleSeq=args.simpleSeq)
+
+    mods = make_ms2.FileModifications()
+    mods.initilize(wd, '.spectrum', '.pdf')
+
 
 if __name__ == '__main__':
     main(sys.argv)

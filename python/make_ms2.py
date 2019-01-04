@@ -5,6 +5,7 @@ import sys
 import os
 import re
 import time
+import threading
 
 RSCRIPT_PATH = 'rscripts/makeMs2.R'
 THIS_PATH = 'python/make_ms2.py'
@@ -24,13 +25,19 @@ def getFileLists(nThread, spectraDir):
 
     #get list of files
     spectraDirTemp = os.path.realpath(spectraDir)
-    files = ['{}/{}'.format(spectraDirTemp, x) for x in os.listdir(spectraDir) if re.search('.spectrum$', x)]
+    files = ['{}/{}'.format(spectraDirTemp, x)
+             for x in os.listdir(spectraDirTemp) if
+             re.search('.spectrum$', x)]
 
     #calculate number of files per thread
     nFiles = len(files)
     filesPerProcess = nFiles / nThread
     if nFiles % nThread != 0:
         filesPerProcess += 1
+
+    #for file in files:
+    #    if file.find('ror_pad_TNLFSREEVTSYQr_9314_2.pdf'):
+    #        print('Found!')
 
     #split up files
     ret = list()
@@ -44,6 +51,26 @@ def getFileLists(nThread, spectraDir):
 
         ret.append(files[begNum:endNum])
         i += filesPerProcess
+
+    fileSet = set()
+    for i in ret:
+        for j in i:
+            fileSet.add(j)
+    assert(len(fileSet) == len(files))
+
+    print("\nfiles:")
+    for file in files:
+        print(file)
+
+    print("\nFile set:")
+    for file in fileSet:
+        print(file)
+
+    print("\nret")
+    for l in ret:
+        for file in l:
+            print(file)
+    print('\n')
 
     return ret
 
@@ -63,12 +90,40 @@ def progressBar(progress, barWidth = 50):
     sys.stdout.write('] {}%\r'.format(int(progress * 100)))
     sys.stdout.flush()
 
+
 def testProgBar():
     for i in [0,5,10,20,50,75,100]:
         time.sleep(0.5)
         progressBar(float(i) / float(100))
 
     sys.stdout.write('\n')
+
+
+class FileModifications():
+    def __init__(self):
+        self.inputDir = ''
+        self.modTimes = dict()
+
+    def initilize(self, inputDir, sourceExt, outExt):
+        inputDirTemp = os.path.realpath(inputDir)
+        sourceFiles = ['{}/{}'.format(inputDirTemp, x.replace(sourceExt, outExt))
+        #sourceFiles = ['{}/{}'.format(inputDirTemp, x)
+                       for x in os.listdir(inputDirTemp)
+                       if re.search('{}$'.format(sourceExt), x)]
+
+        for file in sourceFiles:
+            try:
+                time = os.path.getmtime(file)
+            except OSError:
+                self.modTimes[file] = 0
+                print(file)
+                continue
+            self.modTimes[file] = time
+        print('poop')
+
+
+def make_ms2_progress(spectraDir, sleepTime = 1, barWidth = 50):
+    print('poop')
 
 
 def make_ms2_parallel(nThread, spectraDir, verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0):
@@ -80,7 +135,9 @@ def make_ms2_parallel(nThread, spectraDir, verbose = False, mzLab = 1, pSize = '
     #spawn subprocecies
     procecies = list()
     for item in files:
-        command = '{} {}'.format(rscriptCommand, ' '.join(item))
+        command = '{} -mzLab {} -pSize {} -simpleSeq {} {}'.format(rscriptCommand,
+                                          mzLab, pSize, simpleSeq,
+                                          ' '.join(item))
         print(command)
         procecies.append(sp.Popen(command, stdout = sp.PIPE, stderr = sp.PIPE,
                                   cwd = spectraDir,
