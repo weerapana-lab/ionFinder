@@ -8,6 +8,32 @@
 
 #include <ms2.hpp>
 
+/**
+ \brief Copy metadata values from rhs to *this
+ */
+void ms2::Ms2File::copyMetadata(const Ms2File& rhs)
+{
+	fname = rhs.fname;
+	_parentMs2 = rhs._parentMs2;
+	firstScan = rhs.firstScan;
+	lastScan = rhs.lastScan;
+	dataType = rhs.dataType;
+	scanType = rhs.scanType;
+}
+
+/**
+ Initalize metadata values to empty variables
+ */
+void ms2::Ms2File::initMetadata()
+{
+	fname = "";
+	_parentMs2 = "";
+	firstScan = 0;
+	lastScan = 0;
+	dataType = "";
+	scanType = "";
+}
+
 bool ms2::Ms2File::read(std::string _fname)
 {
 	fname = _fname;

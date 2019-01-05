@@ -50,18 +50,39 @@ namespace ms2 {
 			_parentMs2 = utils::baseName(utils::removeExtension(path));
 		}
 		
+		void copyMetadata(const Ms2File& rhs);
+		void initMetadata();
+		
 	public:
-		Ms2File() {
-			size = 0;
-			fname = "";
-			buffer = new char [size];
-		}
-		Ms2File(std::string _fname){
+
+		Ms2File(std::string _fname = ""){
 			fname = _fname;
 			size = 0;
+			buffer = new char [size];
 		}
 		~Ms2File(){
-			//delete [] buffer;
+			delete [] buffer;
+		}
+		
+		///copy constructor
+		Ms2File(const Ms2File& rhs)
+		{
+			//copy buffer
+			buffer = new char[rhs.size];
+			std::copy(rhs.buffer, rhs.buffer + rhs.size, buffer);
+			
+			//other vars
+			size = rhs.size;
+			copyMetadata(rhs);
+		}
+		///copy assignment
+		Ms2File& operator = (Ms2File rhs)
+		{
+			std::swap(buffer, rhs.buffer);
+			
+			size = rhs.size;
+			copyMetadata(rhs);
+			return *this;
 		}
 		
 		//modifers
