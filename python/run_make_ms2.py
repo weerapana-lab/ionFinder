@@ -13,17 +13,17 @@ PBS_MODULE_LOAD_COMMAND = 'module load'
 PBS_PYTHON_COMMAND = 'python'
 MAKE_MS2_PY_PATH = 'python/make_ms2.py'
 
-def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd):
+def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
     pbsName = '{}/make_ms2.pbs'.format(wd)
-    #outF = open(pbsName, 'w')
-    outF = sys.stdout
+    outF = open(pbsName, 'w')
+    #outF = sys.stdout
 
     outF.write("#!/bin/tcsh\n")
     outF.write('#PBS -l mem={}gb,nodes=1:ppn={},walltime={}\n\n'.format(mem, ppn, walltime))
     outF.write('{} {}\n'.format(PBS_MODULE_LOAD_COMMAND, R_PBS_VERSION))
     outF.write('{} {}\n\n'.format(PBS_MODULE_LOAD_COMMAND, PYTHON_PBS_VERSION))
     outF.write('cd {}\n'.format(wd))
-    outF.write('{} {}/{} -t {} {}\n'.format(PBS_PYTHON_COMMAND, make_ms2.PROG_DIR, MAKE_MS2_PY_PATH,
+    outF.write('{} {}/{} -t {} {}\n'.format(PBS_PYTHON_COMMAND, progDir, MAKE_MS2_PY_PATH,
                                        nThread, makeMs2_args))
 
     return pbsName
@@ -53,7 +53,7 @@ def main():
 
     args = parser.parse_args()
 
-    progDir = os.path.dirname(sys.argv[0])
+    progDir = os.path.dirname(sys.argv[0]).replace('python', '')
 
     #get wd
     wd = args.dir
@@ -76,12 +76,12 @@ def main():
                                                                      args.pSize,
                                                                      args.simpleSeq,
                                                                      ' '.join(item))
-        pbsName = makePBS(args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd)
+        pbsName = makePBS(args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir)
         command = 'qsub {}'.format(pbsName)
         print(command)
-        #proc = subprocess.Popen(['tail -n 1 {}'.format(pbsName)], cwd = wd, shell = True)
+        proc = subprocess.Popen(['tail -n 1 {}'.format(pbsName)], cwd = wd, shell = True)
         #proc = subprocess.Popen([command], cwd=wd, shell=True)
-        #proc.wait()
+        proc.wait()
 
 
 if __name__ == '__main__':

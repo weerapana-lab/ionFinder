@@ -11,7 +11,6 @@ import parent_parser
 RSCRIPT_PATH = 'rscripts/makeMs2.R'
 THIS_PATH = ''
 RSCRIPT = 'Rscript'
-#PROG_DIR = os.path.realpath(__file__).replace('pyc', 'py').replace(THIS_PATH, '')
 
 def getNThread():
     return cpu_count() / 2
@@ -61,10 +60,6 @@ def getFileLists(nThread, spectraDir):
     return ret
 
 
-def make_ms2_progress(spectraDir, sleepTime = 1, barWidth = 50):
-    print('poop')
-
-
 def make_ms2_parallel(nThread, spectraDir, progDir,
                       verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0,
                       files = None):
@@ -73,18 +68,20 @@ def make_ms2_parallel(nThread, spectraDir, progDir,
 
     rscriptCommand = '{} {}/{}'.format(RSCRIPT, progDir, RSCRIPT_PATH)
 
-    #spawn subprocecies
+    #spawn subprocesses
     procecies = list()
     for item in files:
         command = '{} -mzLab {} -pSize {} -simpleSeq {} {}'.format(rscriptCommand,
                                           mzLab, pSize, simpleSeq,
                                           ' '.join(item))
-        print(command)
+        if verbose:
+            sys.stdout.write('{}\n'.format(command))
+
         procecies.append(sp.Popen([command], stdout = sp.PIPE, stderr = sp.PIPE,
                                   cwd = spectraDir,
                                   shell=True))
 
-    #join threads and get output
+    #join processes and get output
     output = list()
     for i, proc in enumerate(procecies):
         pStatus = proc.wait()
