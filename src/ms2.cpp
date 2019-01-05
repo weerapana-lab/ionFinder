@@ -19,17 +19,10 @@ bool ms2::Ms2File::read()
 	calcParentMs2(fname);
 	if(fname.empty())
 		throw std::runtime_error("File must be specified!");
-	std::ifstream inF(fname.c_str());
-	if(!inF)
-		return false;
 	
-	inF.seekg(0, inF.end);
-	size = inF.tellg();
-	inF.seekg(0, inF.beg);
-	buffer = new char [size];
-	if(inF.read(buffer, size))
-		return getMetaData();
-	return false;
+	utils::readBuffer(fname, &buffer, size);
+	
+	return getMetaData();
 }
 
 bool ms2::Ms2File::getMetaData()

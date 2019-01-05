@@ -59,6 +59,7 @@ namespace utils{
 	/*************/
 	
 	//file utils
+	void readBuffer(std::string fname, char** buffer, size_t& size);
 	bool dirExists(const char*);
 	bool dirExists(std::string);
 	bool fileExists(const char*);

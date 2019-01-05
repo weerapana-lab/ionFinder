@@ -32,7 +32,7 @@ namespace ms2 {
 	private:
 		//file buffer vars
 		char* buffer;
-		unsigned long size;
+		size_t size;
 		
 		//metadata
 		///full file name used for reading

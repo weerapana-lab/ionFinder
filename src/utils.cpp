@@ -13,8 +13,30 @@
 /*******************/
 
 /**
+ \brief Read contents of \p fname into \p buffer
+ \param fname path of file to read
+ \param buffer location to store file contents
+ \param size length of \p buffer after reading
+ */
+void utils::readBuffer(std::string fname, char** buffer, size_t& size)
+{
+	std::ifstream inF(fname.c_str());
+	
+	if(!inF)
+		throw std::runtime_error("Could not open " + fname);
+	
+	inF.seekg(0, inF.end);
+	size = inF.tellg();
+	inF.seekg(0, inF.beg);
+	*buffer = new char [size];
+	
+	if(!inF.read(*buffer, size))
+		throw std::runtime_error("Could not read " + fname);
+}
+
+/**
  returns true if folder at end of path exists and false if it does not
- @param path path of file to test
+ \param path path of file to test
  */
 bool utils::dirExists (const char* path)
 {
@@ -22,7 +44,7 @@ bool utils::dirExists (const char* path)
 	return stat(path, &buffer) == 0 && S_ISDIR(buffer.st_mode);
 }
 
-//returns true if file at end of path exists and false if it does not
+///returns true if file at end of \p path exists and false if it does not
 bool utils::fileExists(const char* path)
 {
 	struct stat buffer;
@@ -53,14 +75,14 @@ bool utils::isDir(const char* path)
 	return S_ISDIR(buffer.st_mode);
 }
 
-//returns dirrectory from which program is run
+///returns dirrectory from which program is run
 std::string utils::pwd()
 {
 	char temp[PATH_MAX + 1];
 	return (getcwd(temp, PATH_MAX) ? std::string(temp) : std::string(""));
 }
 
-//resolves relative and symbolic file references
+///resolves relative and symbolic file references
 std::string utils::absPath(const char* _fname)
 {
 	char fbuff [PATH_MAX + 1];
@@ -68,7 +90,7 @@ std::string utils::absPath(const char* _fname)
 	return std::string(fbuff);
 }
 
-//resolves relative and symbolic file references
+///resolves relative and symbolic file references
 std::string utils::absPath(std::string _fname)
 {
 	return(absPath(_fname.c_str()));
@@ -113,14 +135,17 @@ bool utils::ls(const char* path, std::vector<std::string>& files, std::string ex
 	return true;
 }
 
-//exicutes std::string arg as bash command
+///executes \p command as system command
 void utils::systemCommand(std::string command)
 {
 	system(command.c_str());
 }
 
-//make dir.
-//returns true if successful
+/**
+ \brief make new dir.
+ \param path path of new dir to create
+ \return true if successful.
+ */
 bool utils::mkdir(const char* path)
 {
 	//get abs path and make sure that it doesn't already exist
@@ -190,14 +215,31 @@ std::string utils::getExtension(const std::string& filename)
 	return p > 0 && p != std::string::npos ? filename.substr(p) : filename;
 }
 
+/**
+ \brief Get next line from \p is and store it in \p t.
+ 
+ std::getline only handels \\n. safeGetline handels \\n \\r \\r\\n.
+ \param is stream to read from
+ \param s string to store next line in \p t is cleared prior to adding new string.
+ \param oldPos stores state of stream before reading new line
+ \return ref to \p is after reaing next line.
+ */
 std::istream& utils::safeGetline(std::istream& is, std::string& s, std::streampos& oldPos){
 	oldPos = is.tellg();
 	return utils::safeGetline(is, s);
 }
 
-std::istream& utils::safeGetline(std::istream& is, std::string& t)
+/**
+ \brief Get next line from \p is and store it in \p t.
+ 
+ std::getline only handels \\n. safeGetline handels \\n \\r \\r\\n.
+ \param is stream to read from
+ \param s string to store next line in \p t is cleared prior to adding new string.
+ \return ref to \p is after reaing next line.
+ */
+std::istream& utils::safeGetline(std::istream& is, std::string& s)
 {
-	t.clear();
+	s.clear();
 	
 	// The characters in the stream are read one-by-one using a std::streambuf.
 	// That is faster than reading them one-by-one using the std::istream.
@@ -220,11 +262,11 @@ std::istream& utils::safeGetline(std::istream& is, std::string& t)
 				//case std::streambuf::traits_type::eof():
 			case -1:
 				// Also handle the case when the last line has no line ending
-				if(t.empty())
+				if(s.empty())
 					is.setstate(std::ios::eofbit);
 				return is;
 			default:
-				t += (char)c;
+				s += (char)c;
 		}
 	}
 }
@@ -233,13 +275,13 @@ std::istream& utils::safeGetline(std::istream& is, std::string& t)
 /* std::string utils */
 /*****************/
 
-//returns true if findTxt is found in whithinTxt and false if it it not
+///returns true if \p findTxt is found in \p whithinTxt and false if it it not
 bool utils::strContains(std::string findTxt, std::string whithinTxt)
 {
 	return whithinTxt.find(findTxt) != std::string::npos;
 }
 
-//overloaded version of strContains, handels findTxt as char
+///overloaded version of strContains, handels \p findTxt as char
 bool utils::strContains(char findTxt, std::string whithinTxt)
 {
 	return strContains(std::string(1, findTxt), whithinTxt);
@@ -259,7 +301,7 @@ bool utils::endsWith(std::string whithinStr, std::string findStr)
 	return (whithinStr.substr(pos) == findStr);
 }
 
-//split str by delim and populate each split into elems
+///split \p str by \p delim and populate each split into \p elems
 void utils::split (const std::string& str, const char delim, std::vector<std::string>& elems)
 {
 	elems.clear();
@@ -285,7 +327,7 @@ std::string utils::trimTraling(const std::string& str)
 }
 
 /**
- remove leading WHITESPACE
+ remove leading utils::WHITESPACE
  @param str string to trim
  @return trimmed string
  */
@@ -297,7 +339,7 @@ std::string utils::trimLeading(const std::string& str)
 }
 
 /**
- Remove trailing and leading WHITESPACE
+ Remove trailing and leading utils::WHITESPACE
  @param str string to trim
  @return trimmed string
  */
@@ -314,14 +356,14 @@ void utils::trimAll(std::vector<std::string>& elems)
 		(*it) = trim((*it));
 }
 
-///returns true if line begins with COMMENT_SYMBOL, ignoring leading whitespace
+///returns true if line begins with utils::COMMENT_SYMBOL, ignoring leading whitespace
 bool utils::isCommentLine(std::string line)
 {
 	line = trimLeading(line);
 	return line.substr(0, COMMENT_SYMBOL.length()) == COMMENT_SYMBOL;
 }
 
-//removes findStr from whithinStr and returns whithinStr
+///removes \p findStr from \p whithinStr and returns \p whithinStr
 std::string utils::removeSubstr(std::string findStr, std::string whithinStr)
 {
 	std::string::size_type i = whithinStr.find(findStr);
@@ -353,7 +395,7 @@ std::string utils::repeat(std::string str, size_t numTimes)
 	return ret;
 }
 
-//Find std::string 'str' in data buffer 'buf' of length 'len'.
+///Find \p str in buffer \p buf of length \p len
 size_t utils::offset(const char* buf, size_t len, const char* str)
 {
 	return std::search(buf, buf + len, str, str + strlen(str)) - buf;
@@ -399,18 +441,6 @@ std::string utils::ascTime()
 	return(std::string(curTime));
 }
 
-//template<typename _Tp>
-/*bool utils::inRange(double value, double compare, double range)
-{
-	return abs(value - compare) <= range;
-}*/
-
-/*template<typename _Tp>
-bool utils::inRange(_Tp value, _Tp compare, _Tp range)
-{
-	return abs(value - compare) <= range;
-}*/
-
 bool utils::isInteger(const std::string & s)
 {
 	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
@@ -421,8 +451,14 @@ bool utils::isInteger(const std::string & s)
 	return (*p == 0) ;
 }
 
-//get int from std::cin between min and max
-//continue asking for input until user suplies valid value
+/**
+ \brief Read in from std::cin between min and max.
+ 
+ Continue asking for input until user suplies valid value.
+ \param min mininum valid value
+ \param max maxium valid value
+ \return int between min and max
+ */
 int utils::getInt(int min, int max)
 {
 	std::string choice;

@@ -19,6 +19,7 @@ void CitFinder::PeptideFragmentsMap::clear()
 
 /**
  \brief Generate fragment map from sequence.
+ 
  From a full sequence given, the sequence of all b and y ions are calculated
  and stored in the object.
  \param sequence the peptide sequence to calculate fragments from
@@ -55,6 +56,7 @@ void CitFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap)
 
 /**
  \brief Align ref sequence to query sequence.
+ 
  Two peptide sequences as strings are aligned.
  \param ref The reference sequence to search.
  \param query The sequence to search for.
