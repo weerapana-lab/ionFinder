@@ -72,7 +72,7 @@ def main():
     #mods.initilize(wd, '.spectrum', '.pdf')
     spectraFiles = make_ms2.getFileLists(args.nJob, wd)
     for i, item in enumerate(spectraFiles):
-        makeMs2_args = '-mzLab {} -pSize {} -simpleSeq {} {}'.format(args.mzLab,
+        makeMs2_args = '-v -mzLab {} -pSize {} -simpleSeq {} {}'.format(args.mzLab,
                                                                      args.pSize,
                                                                      args.simpleSeq,
                                                                      ' '.join(item))

@@ -66,7 +66,7 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
 def _make_ms2_parallel(nThread, spectraDir, progDir, inputFiles,
                       verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0):
 
-    files = getFileLists(nThread, spectraDir)
+    files = getFileLists(nThread, spectraDir, inputFiles)
 
     if len(files) == 0:
         raise RuntimeError('No .spectra files found in {}'.format(spectraDir))
