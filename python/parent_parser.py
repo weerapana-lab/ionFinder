@@ -15,10 +15,10 @@ parent_parser.add_argument('-simpleSeq', choices=[0, 1], default=0, type = int,
 
 parent_parser.add_argument('-t', '--nThread', type=int,
                     help='Specify number of subprocesses to spawn per job. '
-                         'By default, nThread will be the number of cores on your system. ')
+                         'By default, nThread will be 2 x the number of cores on your system.')
 
 parent_parser.add_argument('--dir', help = 'Directory to run program from.'
-                                        'If not specified, current working directory is used')
+                                        ' If not specified, current working directory is used.')
 
 parent_parser.add_argument('-v', '--verbose', action = 'store_true', default = False,
-                        help = 'Should output be verbose? Will print all R output to terminal.')
+                        help = 'Should output be verbose?')

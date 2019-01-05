@@ -12,10 +12,6 @@ RSCRIPT_PATH = 'rscripts/makeMs2.R'
 THIS_PATH = ''
 RSCRIPT = 'Rscript'
 
-def getNThread():
-    return cpu_count() / 2
-
-
 def getFileLists(nThread, spectraDir, inputFiles = None):
     """
     Get input file names and split into a list for each subprocess.
@@ -60,15 +56,15 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
             fileSet.add(j)
     assert(len(fileSet) == len(files))
 
-    return ret
+    return ret, nFiles
 
 
 def _make_ms2_parallel(nThread, spectraDir, progDir, inputFiles,
                       verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0):
 
-    files = getFileLists(nThread, spectraDir, inputFiles)
+    files, nFiles = getFileLists(nThread, spectraDir, inputFiles)
 
-    if len(files) == 0:
+    if nFiles == 0:
         raise RuntimeError('No .spectra files found in {}'.format(spectraDir))
 
     rscriptCommand = '{} {}/{}'.format(RSCRIPT, progDir, RSCRIPT_PATH)
@@ -120,7 +116,7 @@ def main():
     # get number of threads if not specified
     nThread = args.nThread
     if nThread is None:
-        nThread = getNThread()
+        nThread = cpu_count() * 2
 
     _make_ms2_parallel(nThread, wd, progDir, args.input_files, verbose = args.verbose,
                       mzLab=args.mzLab, pSize=args.pSize, simpleSeq=args.simpleSeq)
