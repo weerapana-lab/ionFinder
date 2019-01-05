@@ -16,7 +16,7 @@ def getNThread():
     return cpu_count() / 2
 
 
-def getFileLists(nThread, spectraDir):
+def getFileLists(nThread, spectraDir, inputFiles = None):
     """
     Get input file names and split into a list for each subprocess.
 
@@ -29,8 +29,11 @@ def getFileLists(nThread, spectraDir):
     """
 
     #get list of files
-    spectraDirTemp = os.path.realpath(spectraDir)
-    files = [x for x in os.listdir(spectraDirTemp) if re.search('.spectrum$', x)]
+    if inputFiles is None or len(inputFiles) == 0:
+        spectraDirTemp = os.path.realpath(spectraDir)
+        files = [x for x in os.listdir(spectraDirTemp) if re.search('.spectrum$', x)]
+    else:
+        files = [x for x in inputFiles if re.search('.spectrum$', x)]
 
     #calculate number of files per thread
     nFiles = len(files)
@@ -60,11 +63,13 @@ def getFileLists(nThread, spectraDir):
     return ret
 
 
-def make_ms2_parallel(nThread, spectraDir, progDir,
-                      verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0,
-                      files = None):
-    if files is None:
-        files = getFileLists(nThread, spectraDir)
+def _make_ms2_parallel(nThread, spectraDir, progDir, inputFiles,
+                      verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0):
+
+    files = getFileLists(nThread, spectraDir)
+
+    if len(files) == 0:
+        raise RuntimeError('No .spectra files found in {}'.format(spectraDir))
 
     rscriptCommand = '{} {}/{}'.format(RSCRIPT, progDir, RSCRIPT_PATH)
 
@@ -100,7 +105,7 @@ def main():
                                      parents=[parent_parser.parent_parser],
                                      description='Run rscripts/makeMS2.R and manage parallelism.')
 
-    parser.add_argument('input_files', nargs = '+',
+    parser.add_argument('input_files', nargs = '*',
                         help = '')
 
     args = parser.parse_args()
@@ -117,7 +122,7 @@ def main():
     if nThread is None:
         nThread = getNThread()
 
-    make_ms2_parallel(nThread, wd, progDir, verbose = args.verbose,
+    _make_ms2_parallel(nThread, wd, progDir, args.input_files, verbose = args.verbose,
                       mzLab=args.mzLab, pSize=args.pSize, simpleSeq=args.simpleSeq)
 
 

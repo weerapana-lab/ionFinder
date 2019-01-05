@@ -38,7 +38,7 @@ def main():
                         help = 'Choose how to run jobs. pbs will create and submit <NJOB> PBS jobs. '
                                'inplace will run in the current terminal.')
 
-    parser.add_argument('-n', '--nJob', type=int,
+    parser.add_argument('-n', '--nJob', type=int, default = 1,
                         help='Specify number of jobs to split into.'
                              ' --jobMode pbs must specified for this argument to be used.')
 
@@ -70,7 +70,7 @@ def main():
 
     #mods = make_ms2.FileModifications()
     #mods.initilize(wd, '.spectrum', '.pdf')
-    spectraFiles = make_ms2.getFileLists(nThread, wd)
+    spectraFiles = make_ms2.getFileLists(args.nJob, wd)
     for i, item in enumerate(spectraFiles):
         makeMs2_args = '-mzLab {} -pSize {} -simpleSeq {} {}'.format(args.mzLab,
                                                                      args.pSize,
@@ -79,8 +79,8 @@ def main():
         pbsName = makePBS(args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir)
         command = 'qsub {}'.format(pbsName)
         print(command)
-        proc = subprocess.Popen(['tail -n 1 {}'.format(pbsName)], cwd = wd, shell = True)
-        #proc = subprocess.Popen([command], cwd=wd, shell=True)
+        #proc = subprocess.Popen(['tail -n 1 {}'.format(pbsName)], cwd = wd, shell = True)
+        proc = subprocess.Popen([command], cwd=wd, shell=True)
         proc.wait()
 
 
