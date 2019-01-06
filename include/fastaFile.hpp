@@ -10,28 +10,47 @@
 #define fastaFile_hpp
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
+#include <map>
+#include <sstream>
 
 #include <utils.hpp>
 
+//TODO: maybe make this into a base class
 namespace fastaFile {
 	class FastaFile;
 	
+	const std::string PROT_SEQ_NOT_FOUND = "PROT_SEQ_NOT_FOUND";
+	
 	class FastaFile{
 	private:
+		///fasta file path
 		std::string _fname;
-		char* buffer;
-		size_t size;
+		
+		///unparsed fasta file data
+		char* _buffer;
+		
+		///_buffer length in chars
+		size_t _size;
+		
+		///all peptide sequences which were already found are stored internally
+		std::map<std::string, std::string> _foundSequences;
+		
+		const char* makeOffsetQuery(std::string proteinID, std::string database) const{
+			std::string ret = ">" + database + "|" + proteinID + "|";
+			return ret.c_str();
+		}
 		
 	public:
 		
 		FastaFile(std::string fname = ""){
 			_fname = fname;
-			size = 0;
-			buffer = new char [size];
+			_size = 0;
+			_buffer = new char [_size];
 		}
 		~FastaFile(){
-			delete [] buffer;
+			delete [] _buffer;
 		}
 		
 		FastaFile(const FastaFile& rhs);
@@ -40,6 +59,13 @@ namespace fastaFile {
 		FastaFile& operator = (FastaFile rhs);
 		bool read();
 		bool read(std::string fname);
+		
+		//properties
+		std::string getSequence(std::string proteinID);
+		//void getMatchRange()
+		//std::string getModifiedResidue(std::string peptideSeq) const;
+		std::string getModifiedResidue(std::string proteinID, std::string peptideSeq, int modLoc);
+		int getMoodifiedResidueNumber(std::string peptideSeq, int modLoc) const;
 	};
 	
 }

@@ -177,15 +177,19 @@ namespace CitFinder{
 		//!Positions of modifications
 		std::vector<size_t> modLocs;
 		
+		//!Positions of modified residues on protein
+		std::string modResidues;
+		
 		//!pointer to corresponding scan object
 		Dtafilter::Scan* _scan;
 		
 		void initStats();
 		void initModLocs(const char* diffmods = "*");
-		void addChar(std::string, std::string&);
+		static void addChar(std::string, std::string&, std::string fragDelim = FRAG_DELIM);
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
 		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
+		void addMod(std::string mod);
 	
 	public:		
 		PeptideStats(){

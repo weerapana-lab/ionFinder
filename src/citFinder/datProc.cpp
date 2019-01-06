@@ -114,16 +114,16 @@ void CitFinder::PeptideStats::initModLocs(const char* diffmods)
 				}//end of if
 			}//end of for
 		}//end of if
-		if(modFound) modLocs.push_back(modLoc);
+		if(modFound) modLocs.push_back(int(modLoc));
 		modFound = false;
 	}//end of for
 }
 
-void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s)
+void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::string fragDelim)
 {
 	if(s.empty())
 		s = toAdd;
-	else s += _fragDelim + toAdd;
+	else s += fragDelim + toAdd;
 }
 
 /**
@@ -135,8 +135,16 @@ void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s)
 void CitFinder::PeptideStats::incrementIonCount(std::string ionStr,
 												PeptideStats::IonTypeDatType& ion,
 												int inc){
-	addChar(ionStr, ion.first);
+	addChar(ionStr, ion.first, _fragDelim);
 	ion.second += inc;
+}
+
+/**
+ Add modified residue to PeptideStats::modResidues
+ \param mod Modified residue in the form <residue><number> as in C57
+ */
+void CitFinder::PeptideStats::addMod(std::string mod){
+	addChar(mod, modResidues, _fragDelim);
 }
 
 /**
@@ -204,23 +212,6 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
 	}//end of for
 }//end of fxn
 
-/*void CitFinder::analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
-										 const std::vector<PeptideNamespace::Peptide>& peptides,
-										 std::vector<PeptideStats>& peptideStats,
-										 const CitFinder::Params& pars)
-{
-	unsigned int nThreads = pars.getNumThreads();
-	
-	//init threads array
-	std::thread* threads = new std::thread[nThreads];
-	
-	//split up input data for each thread
-	
-	
-	
-	delete [] threads;
-}*/
-
 /**
  
  @param peptides vector of peptides to analyze
@@ -232,6 +223,11 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 {
 	CitFinder::PeptideFragmentsMap fragmentMap;
 	bool allSucess = true;
+	bool addModResidues = pars.getFastaFile() != "";
+	fastaFile::FastaFile seqFile;
+	if(addModResidues){
+		if(!seqFile.read(pars.getFastaFile())) return false;
+	}
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
@@ -244,14 +240,18 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		fragmentMap.populateMap(it->getSequence());
 		//it->printFragments(std::cout);
 		
+		//initilize new pepStat object
 		CitFinder::PeptideStats pepStat(*it); //init pepStat
 		pepStat._scan = &scans[it - peptides.begin()]; //add pointer to scan
 		size_t nFragments = it->getNumFragments();
+		
+		//iterate throught ion fragmetns
 		for(size_t i = 0; i < nFragments; i++)
 		{
 			/*if(it->getFragment(i).getIonStr(false) == "b14-43")
 				std::cout << "Found!" << NEW_LINE;*/
 			
+			//skip if not found
 			if(it->getFragment(i).getFound())
 			{
 				CitFinder::RichFragmentIon fragTemp(it->getFragment(i));
@@ -267,7 +267,17 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
-		pepStat.calcContainsCit();		
+		pepStat.calcContainsCit();
+		
+		//add modified residues if fasta file was specified
+		if(addModResidues)
+		{
+			for(auto it = pepStat.modLocs.begin(); it != pepStat.modLocs.end(); ++it)
+			{
+				pepStat.addMod(seqFile.getModifiedResidue(pepStat._scan->getParentID(), pepStat.sequence, int(*it)));
+			}
+		}
+		
 		peptideStats.push_back(pepStat);
 	}//end if for it
 	
