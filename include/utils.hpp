@@ -79,7 +79,7 @@ namespace utils{
 	std::string parentDir(std::string path, char delim = '/');
 	std::string removeExtension(const std::string&);
 	std::string getExtension(const std::string&);
-	std::istream& safeGetline(std::istream& is, std::string& t);
+	std::istream& safeGetLine(std::istream& is, std::string& t);
 	std::istream& safeGetline(std::istream& is, std::string& t, std::streampos& oldPos);
 		
 	//std::string utils

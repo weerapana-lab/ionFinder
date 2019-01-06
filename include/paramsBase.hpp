@@ -76,7 +76,7 @@ namespace base{
 			// << "<staticModifications>" << NEW_LINE;
 			
 			std::string line;
-			while(utils::safeGetline(staticMods, line))
+			while(utils::safeGetLine(staticMods, line))
 				outF << line << NEW_LINE;
 			
 			//outF << NEW_LINE << "</staticModifications>" << NEW_LINE;
@@ -93,7 +93,7 @@ namespace base{
 			
 			std::ifstream inF(_usageFile);
 			std::string line;
-			while(utils::safeGetline(inF, line))
+			while(utils::safeGetLine(inF, line))
 				std::cerr << line << NEW_LINE;
 		}
 		

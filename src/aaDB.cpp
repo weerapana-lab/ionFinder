@@ -31,7 +31,7 @@ bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
 	}
 	
 	std::string line;
-	while(utils::safeGetline(inF, line)){
+	while(utils::safeGetLine(inF, line)){
 		line = utils::trim(line);
 		if(utils::isCommentLine(line) || line.empty())
 			continue;
@@ -54,12 +54,12 @@ bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& mods
 	
 	while(inF && line != aaDB::SMOD_END_TAG)
 	{
-		utils::safeGetline(inF, line);
+		utils::safeGetLine(inF, line);
 		line = utils::trim(line);
 		if(utils::isCommentLine(line) || line.empty())
 			continue;
 		
-		while(utils::safeGetline(inF, line))
+		while(utils::safeGetLine(inF, line))
 		{
 			line = utils::trim(line);
 			if(utils::isCommentLine(line) || line.empty())

@@ -66,7 +66,7 @@ bool ms2::Ms2File::getMetaData()
 	
 	//iterate through ss to find metadata
 	while(ss.tellg() < sLen){
-		utils::safeGetline(ss, line);
+		utils::safeGetLine(ss, line);
 		if(line[0] == 'H')
 		{
 			utils::split(line, IN_DELIM, elems);
@@ -182,7 +182,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
 		else if(utils::isInteger(std::string(1, elems[0][0])))
 		{
 			ss.seekg(oldPos);
-			while(utils::safeGetline(ss, line))
+			while(utils::safeGetLine(ss, line))
 			{
 				if(line.empty()) continue;
 				

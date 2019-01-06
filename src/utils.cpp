@@ -218,7 +218,7 @@ std::string utils::getExtension(const std::string& filename)
 /**
  \brief Get next line from \p is and store it in \p t.
  
- std::getline only handels \\n. safeGetline handels \\n \\r \\r\\n.
+ std::getline only handels \\n. safeGetLine handels \\n \\r \\r\\n.
  \param is stream to read from
  \param s string to store next line in \p t is cleared prior to adding new string.
  \param oldPos stores state of stream before reading new line
@@ -226,18 +226,18 @@ std::string utils::getExtension(const std::string& filename)
  */
 std::istream& utils::safeGetline(std::istream& is, std::string& s, std::streampos& oldPos){
 	oldPos = is.tellg();
-	return utils::safeGetline(is, s);
+	return utils::safeGetLine(is, s);
 }
 
 /**
  \brief Get next line from \p is and store it in \p t.
  
- std::getline only handels \\n. safeGetline handels \\n \\r \\r\\n.
+ std::getline only handels \\n. safeGetLine handels \\n \\r \\r\\n.
  \param is stream to read from
  \param s string to store next line in \p t is cleared prior to adding new string.
  \return ref to \p is after reaing next line.
  */
-std::istream& utils::safeGetline(std::istream& is, std::string& s)
+std::istream& utils::safeGetLine(std::istream& is, std::string& s)
 {
 	s.clear();
 	
