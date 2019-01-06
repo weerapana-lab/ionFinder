@@ -31,7 +31,9 @@ namespace ms2 {
 	class Ms2File{
 	private:
 		//file buffer vars
+		///stores unparsed ms2 file
 		char* buffer;
+		///number of chars in buffer
 		size_t size;
 		
 		//metadata
@@ -59,6 +61,7 @@ namespace ms2 {
 			fname = _fname;
 			size = 0;
 			buffer = new char [size];
+			initMetadata();
 		}
 		~Ms2File(){
 			delete [] buffer;

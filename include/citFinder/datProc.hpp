@@ -21,6 +21,7 @@
 #include <citFinder/citFinder.hpp>
 #include <citFinder/params.hpp>
 #include <dtafilter.hpp>
+#include <fastaFile.hpp>
 
 #include <peptide.hpp>
 #include <ms2.hpp>

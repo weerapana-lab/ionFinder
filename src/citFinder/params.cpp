@@ -95,6 +95,16 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			_includeReverse = std::stoi(argv[i]);
 			continue;
 		}
+		if(!strcmp(argv[i], "--fastaFile"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			_fastaFile = utils::absPath(argv[i]);
+			continue;
+		}
 		if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--printSpectra"))
 		{
 			_printSpectraFiles = true;

@@ -22,7 +22,7 @@ void ms2::Ms2File::copyMetadata(const Ms2File& rhs)
 }
 
 /**
- Initalize metadata values to empty variables
+ \brief Initalize metadata values to empty variables
  */
 void ms2::Ms2File::initMetadata()
 {

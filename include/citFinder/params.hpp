@@ -64,6 +64,9 @@ namespace CitFinder{
 		//! number of thread to use. Default is std::thread::hardware_concurrency() / 2
 		unsigned int _numThread;
 		
+		//! path of fasta file to get modified residue numbers
+		std::string _fastaFile;
+		
 		bool getFlist();
 		unsigned int computeThreads() const;
 		
@@ -71,6 +74,7 @@ namespace CitFinder{
 		
 		Params() : ParamsBase(PROG_USAGE_FNAME, PROG_HELP_FILE){
 			_parentDir = "";
+			_fastaFile = "";
 			_includeReverse = false;
 			_printSpectraFiles = false;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
@@ -114,6 +118,9 @@ namespace CitFinder{
 		}
 		bool getInDirSpecified() const{
 			return _inDirSpecified;
+		}
+		std::string getFastaFile() const{
+			return _fastaFile;
 		}
 	};
 }
