@@ -53,6 +53,12 @@ bool fastaFile::FastaFile::read()
 	return true;
 }
 
+/**
+ \brief Search for \p proteinID in FastaFile::_buffer and extract protein sequence.
+ \param proteinID uniprot ID of protein to search for.
+ \return If found, parent protein sequence. If protein sequence is not found returns
+ fastaFile::PROT_SEQ_NOT_FOUND.
+ */
 std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 {
 	std::string ret = "";
@@ -92,6 +98,14 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 	return ret;
 }
 
+/**
+ \brief Get position residue and position of \p modLoc in parent protein
+ of \p peptideSeq.
+ \param protinID parent protein uniprot ID of \p peptideSeq
+ \param peptideSeq unmodified peptide sequence.
+ \param modLoc location of modified residue in peptide
+ (where 0 is the begining of the peptide.)
+ */
 std::string fastaFile::FastaFile::getModifiedResidue(std::string protinID,
 													 std::string peptideSeq,
 													 int modLoc)
@@ -101,5 +115,9 @@ std::string fastaFile::FastaFile::getModifiedResidue(std::string protinID,
 		seq = getSequence(protinID);
 	else seq = _foundSequences[protinID];
 	
-	return "FUCK!";
+	size_t begin = seq.find(peptideSeq);
+	size_t modNum = begin + modLoc;
+	std::string ret = std::string(1, peptideSeq[modLoc]) + std::to_string(modNum + 1);
+	
+	return ret;
 }

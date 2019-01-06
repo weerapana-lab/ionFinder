@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <map>
 #include <sstream>
+#include <string>
 
 #include <utils.hpp>
 
@@ -22,6 +23,7 @@ namespace fastaFile {
 	class FastaFile;
 	
 	const std::string PROT_SEQ_NOT_FOUND = "PROT_SEQ_NOT_FOUND";
+	const std::string PEP_SEQ_NOT_FOUND = "PEP_SEQ_NOT_FOUND";
 	
 	class FastaFile{
 	private:
