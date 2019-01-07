@@ -94,13 +94,13 @@ multi:
 
 $(BINDIR)/$(MS2_ANNOTATOR_EXE): $(MS2_ANNOTATOR_OBJS)
 	mkdir -p $(BINDIR)
-	$(CXX) $(LDFLAGS) $? -o $@
+	$(CXX) $(LDFLAGS) $(MS2_ANNOTATOR_OBJS) -o $@
 
 $(BINDIR)/$(CIT_FINDER_EXE): $(CIT_FINDER_OBJS)
 	mkdir -p $(BINDIR)
-	$(CXX) $(LDFLAGS) $? -o $@
+	$(CXX) $(LDFLAGS) $(CIT_FINDER_OBJS) -o $@
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERDIR)/%.hpp
 	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR) $(CIT_FINDER_OBJDIR)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
