@@ -153,7 +153,7 @@ namespace CitFinder{
 			 //!NL fragments not contatining modification
 			ART_NL_FRAG,
 			Last,
-			First = FRAG,
+			First = FRAG
 		};
 	private:
 		

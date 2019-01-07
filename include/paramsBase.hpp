@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <string>
+#include <cassert>
 
 #include <config.hpp>
 #include <utils.hpp>
@@ -41,8 +42,21 @@ namespace base{
 		
 		int minFragCharge;
 		int maxFragCharge;
-		double matchTolerance;
 		double minLabelIntensity;
+		
+		//match tolerance stuff
+		//!match tolerance for fragment ions in either ppm or Th
+		double matchTolerance;
+		enum class MatchType{
+			//! match in ppm
+			PPM,
+			//! match in Th
+			TH,
+			//!unknown type
+			UNKNOWN
+		};
+		//!How shoud fragment ion tolerances be calulated?
+		MatchType _matchType;
 		
 		double minMZ;
 		double maxMZ;
@@ -58,48 +72,10 @@ namespace base{
 		
 		bool verbose;
 		
-		bool writeSmod(std::string wd) const{
-			if(_wd[_wd.length() - 1] != '/')
-				wd = _wd + "/";
-			std::ofstream outF((wd + base::DEFAULT_SMOD_NAME).c_str());
-			//utils::File staticMods(base::PROG_DEFAULT_SMOD_FILE);
-			std::ifstream staticMods(base::PROG_DEFAULT_SMOD_FILE);
-			if(!outF || !staticMods)
-				return false;
-			
-			if(wdSpecified)
-				std::cerr << NEW_LINE << "Generating " << wd << base::DEFAULT_SMOD_NAME << NEW_LINE;
-			else std::cerr << NEW_LINE <<"Generating ./" << base::DEFAULT_SMOD_NAME << NEW_LINE;
-			
-			outF << utils::COMMENT_SYMBOL << " Static modifications for ms2_annotator" << NEW_LINE
-			<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << NEW_LINE;
-			// << "<staticModifications>" << NEW_LINE;
-			
-			std::string line;
-			while(utils::safeGetLine(staticMods, line))
-				outF << line << NEW_LINE;
-			
-			//outF << NEW_LINE << "</staticModifications>" << NEW_LINE;
-			
-			return true;
-		}
-		
-		void usage() const{
-			/*utils::File file(_usageFile);
-			assert(file.read());
-			
-			while(!file.end())
-				std::cerr << file.getLine() << NEW_LINE;*/
-			
-			std::ifstream inF(_usageFile);
-			std::string line;
-			while(utils::safeGetLine(inF, line))
-				std::cerr << line << NEW_LINE;
-		}
-		
-		void displayHelp() const{
-			utils::systemCommand("man " + _helpFile);
-		}
+		bool writeSmod(std::string wd) const;
+		void usage(std::ostream& out = std::cerr) const;
+		void displayHelp() const;
+		static MatchType strToMatchType(std::string);
 		
 	public:
 		ParamsBase(std::string usageFile, std::string helpFile){
@@ -156,9 +132,8 @@ namespace base{
 		int getMaxFragCharge() const{
 			return maxFragCharge;
 		}
-		double getMatchTolerance() const{
-			return matchTolerance;
-		}
+		double getMatchTolerance() const;
+		double getMatchTolerance(double mz) const;
 		double getMinLabelIntensity() const{
 			return minLabelIntensity;
 		}
