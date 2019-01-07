@@ -27,16 +27,16 @@ namespace fastaFile {
 	
 	class FastaFile{
 	private:
-		///fasta file path
+		//!fasta file path
 		std::string _fname;
 		
-		///unparsed fasta file data
+		//!unparsed fasta file data
 		char* _buffer;
 		
-		///_buffer length in chars
+		//!_buffer length in chars
 		size_t _size;
 		
-		///All peptide sequences which were already found are stored internally
+		//!All peptide sequences which were already found are stored internally
 		std::map<std::string, std::string> _foundSequences;
 		
 		std::string makeOffsetQuery(std::string proteinID, std::string database) const{

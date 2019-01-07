@@ -31,15 +31,15 @@ namespace ms2 {
 	class Ms2File{
 	private:
 		//file buffer vars
-		///stores unparsed ms2 file
+		//!stores unparsed ms2 file
 		char* buffer;
-		///number of chars in buffer
+		//!number of chars in buffer
 		size_t size;
 		
 		//metadata
-		///full file name used for reading
+		//!full file name used for reading
 		std::string fname;
-		///base file name without extension
+		//!base file name without extension
 		std::string _parentMs2;
 		size_t firstScan, lastScan;
 		std::string dataType;
@@ -67,7 +67,7 @@ namespace ms2 {
 			delete [] buffer;
 		}
 		
-		///copy constructor
+		//!copy constructor
 		Ms2File(const Ms2File& rhs)
 		{
 			//copy buffer
@@ -78,7 +78,7 @@ namespace ms2 {
 			size = rhs.size;
 			copyMetadata(rhs);
 		}
-		///copy assignment
+		//!copy assignment
 		Ms2File& operator = (Ms2File rhs)
 		{
 			std::swap(buffer, rhs.buffer);

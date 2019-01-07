@@ -78,18 +78,18 @@ namespace CitFinder{
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
 	
-	///Used to map fragment ions to a peptide sequence
+	//!Used to map fragment ions to a peptide sequence
 	class PeptideFragmentsMap{
 	private:
 		std::string _sequence;
 		std::map<std::string, std::string> fragmentMap;
 		
 	public:
-		///blank constructor
+		//!blank constructor
 		PeptideFragmentsMap() {
 			_sequence = "";
 		}
-		///Constructor from string
+		//!Constructor from string
 		PeptideFragmentsMap(std::string sequence){
 			_sequence = sequence;
 			populateMap(_sequence);
@@ -105,16 +105,16 @@ namespace CitFinder{
 		std::string getIonSeq(char, int) const;
 	};
 	
-	///Used to keep track of fragment ions which were found in sequence analysis.
+	//!Used to keep track of fragment ions which were found in sequence analysis.
 	class RichFragmentIon : public PeptideNamespace::FragmentIon{
 	private:
 		std::string sequence;
 	public:
-		///Blank constructor
+		//!Blank constructor
 		RichFragmentIon() : FragmentIon(){
 			sequence = "";
 		}
-		///constructor from FragmentIon
+		//!constructor from FragmentIon
 		RichFragmentIon(const PeptideNamespace::FragmentIon& f) :
 			PeptideNamespace::FragmentIon(f){
 			sequence = "";

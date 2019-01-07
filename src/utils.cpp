@@ -44,7 +44,7 @@ bool utils::dirExists (const char* path)
 	return stat(path, &buffer) == 0 && S_ISDIR(buffer.st_mode);
 }
 
-///returns true if file at end of \p path exists and false if it does not
+//!returns true if file at end of \p path exists and false if it does not
 bool utils::fileExists(const char* path)
 {
 	struct stat buffer;
@@ -66,7 +66,7 @@ bool utils::isDir(std::string path)
 	return utils::isDir(path.c_str());
 }
 
-///checks whether file is directory
+//!checks whether file is directory
 bool utils::isDir(const char* path)
 {
 	struct stat buffer;
@@ -75,14 +75,14 @@ bool utils::isDir(const char* path)
 	return S_ISDIR(buffer.st_mode);
 }
 
-///returns dirrectory from which program is run
+//!returns dirrectory from which program is run
 std::string utils::pwd()
 {
 	char temp[PATH_MAX + 1];
 	return (getcwd(temp, PATH_MAX) ? std::string(temp) : std::string(""));
 }
 
-///resolves relative and symbolic file references
+//!resolves relative and symbolic file references
 std::string utils::absPath(const char* _fname)
 {
 	char fbuff [PATH_MAX + 1];
@@ -90,7 +90,7 @@ std::string utils::absPath(const char* _fname)
 	return std::string(fbuff);
 }
 
-///resolves relative and symbolic file references
+//!resolves relative and symbolic file references
 std::string utils::absPath(std::string _fname)
 {
 	return(absPath(_fname.c_str()));
@@ -135,7 +135,7 @@ bool utils::ls(const char* path, std::vector<std::string>& files, std::string ex
 	return true;
 }
 
-///executes \p command as system command
+//!executes \p command as system command
 void utils::systemCommand(std::string command)
 {
 	system(command.c_str());
@@ -275,13 +275,13 @@ std::istream& utils::safeGetLine(std::istream& is, std::string& s)
 /* std::string utils */
 /*****************/
 
-///returns true if \p findTxt is found in \p whithinTxt and false if it it not
+//!returns true if \p findTxt is found in \p whithinTxt and false if it it not
 bool utils::strContains(std::string findTxt, std::string whithinTxt)
 {
 	return whithinTxt.find(findTxt) != std::string::npos;
 }
 
-///overloaded version of strContains, handels \p findTxt as char
+//!overloaded version of strContains, handels \p findTxt as char
 bool utils::strContains(char findTxt, std::string whithinTxt)
 {
 	return strContains(std::string(1, findTxt), whithinTxt);
@@ -301,7 +301,7 @@ bool utils::endsWith(std::string whithinStr, std::string findStr)
 	return (whithinStr.substr(pos) == findStr);
 }
 
-///split \p str by \p delim and populate each split into \p elems
+//!split \p str by \p delim and populate each split into \p elems
 void utils::split (const std::string& str, const char delim, std::vector<std::string>& elems)
 {
 	elems.clear();
@@ -356,14 +356,14 @@ void utils::trimAll(std::vector<std::string>& elems)
 		(*it) = trim((*it));
 }
 
-///returns true if line begins with utils::COMMENT_SYMBOL, ignoring leading whitespace
+//!returns true if line begins with utils::COMMENT_SYMBOL, ignoring leading whitespace
 bool utils::isCommentLine(std::string line)
 {
 	line = trimLeading(line);
 	return line.substr(0, COMMENT_SYMBOL.length()) == COMMENT_SYMBOL;
 }
 
-///removes \p findStr from \p whithinStr and returns \p whithinStr
+//!removes \p findStr from \p whithinStr and returns \p whithinStr
 std::string utils::removeSubstr(std::string findStr, std::string whithinStr)
 {
 	std::string::size_type i = whithinStr.find(findStr);
@@ -395,14 +395,14 @@ std::string utils::repeat(std::string str, size_t numTimes)
 	return ret;
 }
 
-///Find \p str in buffer \p buf of length \p len
+//!Find \p str in buffer \p buf of length \p len
 size_t utils::offset(const char* buf, size_t len, std::string s)
 {
 	const char* str = s.c_str();
 	return std::search(buf, buf + len, str, str + strlen(str)) - buf;
 }
 
-///Find \p str in buffer \p buf of length \p len
+//!Find \p str in buffer \p buf of length \p len
 size_t utils::offset(const char* buf, size_t len, const char* str)
 {
 	return std::search(buf, buf + len, str, str + strlen(str)) - buf;

@@ -25,7 +25,7 @@ namespace Ms2_annotator{
 	private:
 		std::string _fname;
 		
-		///list of scans in filter file
+		//!list of scans in filter file
 		std::vector<Dtafilter::Scan> _scans;
 		
 	public:

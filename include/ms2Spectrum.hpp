@@ -197,7 +197,7 @@ namespace ms2{
 		//static metadata
 		double retTime;
 		double precursorInt;
-		///pretty parent file name with out extension for nameing
+		//!pretty parent file name with out extension for nameing
 		std::string _parentMs2;
 		int precursorScan;
 		double precursorMZ;

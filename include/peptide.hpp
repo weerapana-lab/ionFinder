@@ -47,7 +47,7 @@ namespace PeptideNamespace{
 	
 	//class declarations
 	
-	///base class for peptide species
+	//!base class for peptide species
 	class Species{
 	protected:
 		double mass;
@@ -63,7 +63,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	///base class for all ions
+	//!base class for all ions
 	class Ion : public Species{
 	protected:
 		int charge;
@@ -135,7 +135,7 @@ namespace PeptideNamespace{
 		}
 	};
 	
-	///Used to represent b and y peptide ions
+	//!Used to represent b and y peptide ions
 	class FragmentIon : public Ion{
 	public:
 		enum class IonType{B, Y, M, B_NL, Y_NL, M_NL};
@@ -152,7 +152,7 @@ namespace PeptideNamespace{
 		double nlMass;
 		
 	public:
-		///blank constructor
+		//!blank constructor
 		FragmentIon() : Ion(){
 			b_y = '\0';
 			num = 0;
@@ -181,7 +181,7 @@ namespace PeptideNamespace{
 			_ionType = ionType;
 			b_y = ionTypeToStr()[0];
 		}
-		///copy constructor
+		//!copy constructor
 		FragmentIon(const FragmentIon& rhs){
 			b_y = rhs.b_y;
 			num = rhs.num;
@@ -233,19 +233,19 @@ namespace PeptideNamespace{
 		bool isModified() const{
 			return mod == "";
 		}
-		///returns true if fragment is neutral loss ion
+		//!returns true if fragment is neutral loss ion
 		bool isNL() const{
 			return _ionType == IonType::B_NL ||
 			_ionType == IonType::Y_NL ||
 			_ionType == IonType::M_NL;
 		}
-		///returns true if fragment is parent ion or parent neutral loss
+		//!returns true if fragment is parent ion or parent neutral loss
 		bool isM() const{
 			return _ionType == IonType::M || _ionType == IonType::M_NL;
 		}
 	};
 	
-	///Used to store fragment data for each peptide.
+	//!Used to store fragment data for each peptide.
 	class Peptide : public Ion{
 	private:
 		typedef std::vector<FragmentIon> FragmentIonType;

@@ -8,7 +8,7 @@
 
 #include <fastaFile.hpp>
 
-///copy constructor
+//!copy constructor
 fastaFile::FastaFile::FastaFile(const FastaFile& rhs)
 {
 	//copy buffer
@@ -19,7 +19,7 @@ fastaFile::FastaFile::FastaFile(const FastaFile& rhs)
 	_size = rhs._size;
 }
 
-///copy assignment
+//!copy assignment
 fastaFile::FastaFile& fastaFile::FastaFile::operator = (FastaFile rhs)
 {
 	std::swap(_buffer, rhs._buffer);
