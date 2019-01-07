@@ -39,9 +39,9 @@ namespace fastaFile {
 		///All peptide sequences which were already found are stored internally
 		std::map<std::string, std::string> _foundSequences;
 		
-		const char* makeOffsetQuery(std::string proteinID, std::string database) const{
+		std::string makeOffsetQuery(std::string proteinID, std::string database) const{
 			std::string ret = ">" + database + "|" + proteinID + "|";
-			return ret.c_str();
+			return ret;
 		}
 		
 	public:

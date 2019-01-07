@@ -64,9 +64,9 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 	std::string ret = "";
 	
 	//first search for UniProtKB/Swiss-Prot IDs (sp in db position)
-	const char* query = makeOffsetQuery(proteinID, "sp");
+	std::string query = makeOffsetQuery(proteinID, "sp");
 	size_t offset = utils::offset(_buffer, _size, query);
-	size_t queryLen = strlen(query);
+	size_t queryLen = query.size();
 	
 	//if not found, try UniProtKB/TrEMBL (tr in db position)
 	if(offset == _size){
@@ -77,6 +77,7 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 	//if still not found warn user and exit
 	if(offset == _size){
 		std::cerr << "Warning! ID: " << proteinID << " not found in fastaFile.\r";
+		//std::cerr << query << std::endl;
 		std::cerr.flush();
 		_foundSequences[proteinID] = fastaFile::PROT_SEQ_NOT_FOUND;
 		return fastaFile::PROT_SEQ_NOT_FOUND;
