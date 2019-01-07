@@ -111,12 +111,21 @@ const char* ms2::Ms2File::makeOffsetQuery(size_t queryScan) const
 	return ret.c_str();
 }
 
-bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const
-{
+/**
+ \brief Overloaded function with \p queryScan as string
+ */
+bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const{
 	return getScan(std::stoi(queryScan), scan);
 }
 
-bool ms2::Ms2File::getScan(size_t queryScan, Spectrum& scan) const
+/**
+ \brief Get parsed ms2::Spectrum from ms2 file.
+ 
+ \param queryScan scan number to search for
+ \param scan empty ms2::Spectrum to load scan into
+ \return false if \p queryScan not found, true if sucessful
+ */
+bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 {
 	scan.clear();
 	scan._parentMs2 = _parentMs2;
