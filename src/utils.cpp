@@ -396,6 +396,13 @@ std::string utils::repeat(std::string str, size_t numTimes)
 }
 
 ///Find \p str in buffer \p buf of length \p len
+size_t utils::offset(const char* buf, size_t len, std::string s)
+{
+	const char* str = s.c_str();
+	return std::search(buf, buf + len, str, str + strlen(str)) - buf;
+}
+
+///Find \p str in buffer \p buf of length \p len
 size_t utils::offset(const char* buf, size_t len, const char* str)
 {
 	return std::search(buf, buf + len, str, str + strlen(str)) - buf;

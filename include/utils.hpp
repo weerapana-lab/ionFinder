@@ -98,6 +98,7 @@ namespace utils{
 	std::string toLower(std::string);
 	std::string repeat(std::string, size_t);
 	size_t offset(const char* buf, size_t len, const char* str);
+	size_t offset(const char* buf, size_t len, std::string s);
 	void removeEmptyStrings(std::vector<std::string>&);
 	
 	//other
