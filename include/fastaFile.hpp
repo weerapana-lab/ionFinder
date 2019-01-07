@@ -36,7 +36,7 @@ namespace fastaFile {
 		///_buffer length in chars
 		size_t _size;
 		
-		///all peptide sequences which were already found are stored internally
+		///All peptide sequences which were already found are stored internally
 		std::map<std::string, std::string> _foundSequences;
 		
 		const char* makeOffsetQuery(std::string proteinID, std::string database) const{
@@ -67,6 +67,8 @@ namespace fastaFile {
 		//void getMatchRange()
 		//std::string getModifiedResidue(std::string peptideSeq) const;
 		std::string getModifiedResidue(std::string proteinID, std::string peptideSeq, int modLoc);
+		std::string getModifiedResidue(std::string proteinID, std::string peptideSeq,
+									   int modLoc, bool& found);
 		int getMoodifiedResidueNumber(std::string peptideSeq, int modLoc) const;
 	};
 	

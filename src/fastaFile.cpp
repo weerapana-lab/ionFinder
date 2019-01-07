@@ -76,7 +76,8 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 	
 	//if still not found warn user and exit
 	if(offset == _size){
-		std::cerr << "Warning! ID: " << proteinID << " not found in fastaFile." << NEW_LINE;
+		std::cerr << "Warning! ID: " << proteinID << " not found in fastaFile.\r";
+		std::cerr.flush();
 		_foundSequences[proteinID] = fastaFile::PROT_SEQ_NOT_FOUND;
 		return fastaFile::PROT_SEQ_NOT_FOUND;
 	}
@@ -101,21 +102,47 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 /**
  \brief Get position residue and position of \p modLoc in parent protein
  of \p peptideSeq.
- \param protinID parent protein uniprot ID of \p peptideSeq
+ \param proteinID parent protein uniprot ID of \p peptideSeq
  \param peptideSeq unmodified peptide sequence.
  \param modLoc location of modified residue in peptide
  (where 0 is the begining of the peptide.)
  */
-std::string fastaFile::FastaFile::getModifiedResidue(std::string protinID,
+std::string fastaFile::FastaFile::getModifiedResidue(std::string proteinID,
 													 std::string peptideSeq,
 													 int modLoc)
 {
+	bool temp;
+	return getModifiedResidue(proteinID, peptideSeq, modLoc, temp);
+}
+
+/**
+ \brief Get position residue and position of \p modLoc in parent protein
+ of \p peptideSeq.
+ \param proteinID parent protein uniprot ID of \p peptideSeq
+ \param peptideSeq unmodified peptide sequence.
+ \param modLoc location of modified residue in peptide
+ (where 0 is the begining of the peptide.)
+ \param found set to false if first instance of searching for protein and it not being found
+ */
+std::string fastaFile::FastaFile::getModifiedResidue(std::string proteinID,
+													 std::string peptideSeq,
+													 int modLoc,
+													 bool& found)
+{
+	found = true;
 	std::string seq;
-	if(_foundSequences.find(protinID) == _foundSequences.end())
-		seq = getSequence(protinID);
-	else seq = _foundSequences[protinID];
+	if(_foundSequences.find(proteinID) == _foundSequences.end()){
+		seq = getSequence(proteinID);
+		if(seq == fastaFile::PROT_SEQ_NOT_FOUND)
+			found = false;
+	}
+	else seq = _foundSequences[proteinID];
+	if(seq == fastaFile::PROT_SEQ_NOT_FOUND)
+		return fastaFile::PROT_SEQ_NOT_FOUND;
 	
 	size_t begin = seq.find(peptideSeq);
+	if(begin == std::string::npos)
+		return fastaFile::PEP_SEQ_NOT_FOUND;
 	size_t modNum = begin + modLoc;
 	std::string ret = std::string(1, peptideSeq[modLoc]) + std::to_string(modNum + 1);
 	

@@ -57,7 +57,7 @@ namespace CitFinder{
 							   unsigned int nThread,
 							   int sleepTime = PROGRESS_SLEEP_TIME);
 	
-	bool readMs2s(Ms2Map&, const std::vector<Dtafilter::Scan>&, const CitFinder::Params&);
+	bool readMs2s(Ms2Map&, const std::vector<Dtafilter::Scan>&);
 	
 	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,

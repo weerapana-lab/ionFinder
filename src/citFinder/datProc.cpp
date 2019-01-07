@@ -225,8 +225,11 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	bool allSucess = true;
 	bool addModResidues = pars.getFastaFile() != "";
 	fastaFile::FastaFile seqFile;
+	int nSeqNotFound = 0;
 	if(addModResidues){
+		std::cout << "\nReading FASTA file...";
 		if(!seqFile.read(pars.getFastaFile())) return false;
+		std::cout << "Done!" << NEW_LINE;
 	}
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
@@ -255,15 +258,15 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			if(it->getFragment(i).getFound())
 			{
 				CitFinder::RichFragmentIon fragTemp(it->getFragment(i));
-				try{
-					fragTemp.calcSequence(fragmentMap);
-				}
-				catch(std::out_of_range& e){
+				//try{
+				fragTemp.calcSequence(fragmentMap);
+				//}
+				/*catch(std::out_of_range& e){
 					std::cout << "\nWarning Error finding fragment: " << it->getFragment(i).getLabel()
 					<< " for sequence: " << it->getFullSequence();
 					allSucess = false;
 					continue;
-				}
+				}*/
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
@@ -274,12 +277,25 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		{
 			for(auto it = pepStat.modLocs.begin(); it != pepStat.modLocs.end(); ++it)
 			{
-				pepStat.addMod(seqFile.getModifiedResidue(pepStat._scan->getParentID(), pepStat.sequence, int(*it)));
+				bool found; //set to true if peptide and prot sequences are found in FastaFile
+				std::string modTemp = seqFile.getModifiedResidue(pepStat._scan->getParentID(),
+																 pepStat.sequence, int(*it), found);
+				pepStat.addMod(modTemp);
+				if(!found)
+				{
+					nSeqNotFound++;
+					if(pars.getVerbose())
+						std::cerr << NEW_LINE;
+				}
 			}
 		}
-		
 		peptideStats.push_back(pepStat);
 	}//end if for it
+	if(nSeqNotFound > 0){
+		std::cerr << NEW_LINE << nSeqNotFound << " protein sequences not found in " <<
+		pars.getFastaFile() << NEW_LINE;
+	}
+		
 	
 	return allSucess;
 }//end of fxn
@@ -311,7 +327,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//read ms2s
 	Ms2Map ms2Map;
-	if(!CitFinder::readMs2s(ms2Map, scans, pars)) return false;
+	if(!CitFinder::readMs2s(ms2Map, scans)) return false;
 	
 	//split up input data for each thread
 	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThread];
@@ -333,8 +349,9 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	}
 	
 	//spawn progress function
-	threads.push_back(std::thread(CitFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
-								  nThread, PROGRESS_SLEEP_TIME));
+	if(!pars.getVerbose())
+		threads.push_back(std::thread(CitFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
+									  nThread, PROGRESS_SLEEP_TIME));
 	
 	//join threads
 	for(auto it = threads.begin(); it != threads.end(); ++it){
@@ -368,7 +385,8 @@ void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 	size_t curIndex = lastIndex;
 	int noChangeIterations = 0;
 	
-	std::cout << "\nSearching ms2s for neutral loss ions using " << nThread << " thread(s)...\n";
+	std::cout << "\nSearching ms2s for neutral loss ions using " <<
+	nThread << " thread(s)...\n";
 	while(scansIndex < count)
 	{
 		curIndex = scansIndex.load();
@@ -404,15 +422,14 @@ bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	bool* success = new bool(false);
 	std::atomic<size_t> scansIndex;
 	CitFinder::Ms2Map ms2Map;
-	if(!readMs2s(ms2Map, scans, pars)) return false;
+	if(!readMs2s(ms2Map, scans)) return false;
 	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
 										success, scansIndex);
 	return *success;
 }
 
 bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
-						 const std::vector<Dtafilter::Scan>& scans,
-						 const CitFinder::Params& pars)
+						 const std::vector<Dtafilter::Scan>& scans)
 {
 	std::string curWD;
 	
@@ -453,7 +470,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 										 bool* success, std::atomic<size_t>& scansIndex)
 {
 	*success = false;
-	std::string curSample; // = scans[beg].getSampleName();
+	std::string curSample;
 	std::string curWD;
 	std::string spFname;
 	aaDB::AADB aminoAcidMasses;
@@ -464,7 +481,6 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		//first get current wd name
 		curWD = utils::dirName(scans[i].getPrecursorFile());
 		spFname = curWD + "/sequest.params";
-		//PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
 		
 		if(curSample != scans[i].getSampleName())
 		{
