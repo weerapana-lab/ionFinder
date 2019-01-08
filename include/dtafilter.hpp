@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <citFinder/params.hpp>
+#include <paramsBase.hpp>
 #include <scanData.hpp>
 #include <utils.hpp>
 

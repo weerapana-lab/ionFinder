@@ -18,15 +18,15 @@
 #include <atomic>
 #include <set>
 
-#include <citFinder/citFinder.hpp>
-#include <citFinder/params.hpp>
+#include <ionFinder/ionFinder.hpp>
+#include <ionFinder/params.hpp>
 #include <dtafilter.hpp>
 #include <fastaFile.hpp>
 
 #include <peptide.hpp>
 #include <ms2.hpp>
 
-namespace CitFinder{
+namespace IonFinder{
 
 	class RichFragmentIon;
 	class PeptideStats;
@@ -44,13 +44,13 @@ namespace CitFinder{
 	
 	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
-							   const CitFinder::Params&);
+							   const IonFinder::Params&);
 	
 	void findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
 								  size_t beg, size_t end,
 								  const Ms2Map& ms2Map,
 								  std::vector<PeptideNamespace::Peptide>& peptides,
-								  const CitFinder::Params& pars,
+								  const IonFinder::Params& pars,
 								  bool* success, std::atomic<size_t>& scansIndex);
 	
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
@@ -61,17 +61,17 @@ namespace CitFinder{
 	
 	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
-					   CitFinder::Params& pars);
+					   IonFinder::Params& pars);
 	
 	/*void analyzeSequencesParallel(std::vector<Dtafilter::Scan>& scans,
 								  const std::vector<PeptideNamespace::Peptide>& peptides,
 								  std::vector<PeptideStats>& peptideStats,
-								  const CitFinder::Params& pars);*/
+								  const IonFinder::Params& pars);*/
 	
 	bool analyzeSequences(std::vector<Dtafilter::Scan>&,
 						  const std::vector<PeptideNamespace::Peptide>&,
 						  std::vector<PeptideStats>&,
-						  const CitFinder::Params&);
+						  const IonFinder::Params&);
 	
 	bool printPeptideStats(const std::vector<PeptideStats>&,
 						   std::string);
@@ -135,7 +135,7 @@ namespace CitFinder{
 		friend bool analyzeSequences(std::vector<Dtafilter::Scan>&,
 									 const std::vector<PeptideNamespace::Peptide>&,
 									 std::vector<PeptideStats>&,
-									 const CitFinder::Params&);
+									 const IonFinder::Params&);
 		
 		friend bool printPeptideStats(const std::vector<PeptideStats>&,
 									  std::string);
@@ -222,7 +222,7 @@ namespace CitFinder{
 		
 		//modifers
 		//void setScan(Dtafilter::Scan)
-		void addSeq(const CitFinder::RichFragmentIon&, const std::string&);
+		void addSeq(const IonFinder::RichFragmentIon&, const std::string&);
 		static std::string ionTypeToStr(const IonType&);
 	};
 	

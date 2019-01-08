@@ -8,11 +8,11 @@
 #ifndef main_hpp
 #define main_hpp
 
-#include <citFinder/citFinder.hpp>
-#include <citFinder/params.hpp>
+#include <ionFinder/ionFinder.hpp>
+#include <ionFinder/params.hpp>
 #include <dtafilter.hpp>
-#include <citFinder/dtafilterFiles.hpp>
-#include <citFinder/datProc.hpp>
+#include <ionFinder/dtafilterFiles.hpp>
+#include <ionFinder/datProc.hpp>
 
 #include <peptide.hpp>
 

@@ -6,12 +6,12 @@
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
-#include <citFinder/datProc.hpp>
+#include <ionFinder/datProc.hpp>
 
 /**
  Clear PeptideFragmentsMap.
  */
-void CitFinder::PeptideFragmentsMap::clear()
+void IonFinder::PeptideFragmentsMap::clear()
 {
 	fragmentMap.clear();
 	_sequence.clear();
@@ -24,7 +24,7 @@ void CitFinder::PeptideFragmentsMap::clear()
  and stored in the object.
  \param sequence the peptide sequence to calculate fragments from
  */
-void CitFinder::PeptideFragmentsMap::populateMap(std::string sequence)
+void IonFinder::PeptideFragmentsMap::populateMap(std::string sequence)
 {
 	_sequence = sequence;
 	size_t len = _sequence.length();
@@ -40,17 +40,17 @@ void CitFinder::PeptideFragmentsMap::populateMap(std::string sequence)
 	}
 }
 
-std::string CitFinder::PeptideFragmentsMap::getIonSeq(std::string searchStr) const{
+std::string IonFinder::PeptideFragmentsMap::getIonSeq(std::string searchStr) const{
 	return fragmentMap.at(searchStr);
 }
 
-std::string CitFinder::PeptideFragmentsMap::getIonSeq(char b_y, int num) const{
+std::string IonFinder::PeptideFragmentsMap::getIonSeq(char b_y, int num) const{
 	std::string searchStr = std::string(1, b_y) +
 		(b_y == 'M' || b_y == 'm' ? "" : std::to_string(num)); //only add num if not M ion
 	return getIonSeq(searchStr);
 }
 
-void CitFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap){
+void IonFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap){
 	sequence = pepMap.getIonSeq(b_y, num);
 }
 
@@ -64,7 +64,7 @@ void CitFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap)
  \param end End of match. If no match, left unchanged.
  \return bool representing if match was found.
  */
-bool CitFinder::allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end)
+bool IonFinder::allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end)
 {
 	//find query in match
 	size_t match = ref.find(query);
@@ -76,7 +76,7 @@ bool CitFinder::allignSeq(const std::string& ref, const std::string& query, size
 	return true;
 }
 
-void CitFinder::PeptideStats::initStats()
+void IonFinder::PeptideStats::initStats()
 {
 	for(IonType i = IonType::First; i != IonType::Last; ++i){
 		ionTypesCount[i] = IonTypeDatType("", 0);
@@ -85,7 +85,7 @@ void CitFinder::PeptideStats::initStats()
 	containsCit = "false";
 }
 
-void CitFinder::PeptideStats::initModLocs(const char* diffmods)
+void IonFinder::PeptideStats::initModLocs(const char* diffmods)
 {
 	size_t modLoc = std::string::npos;
 	bool modFound = false;
@@ -119,7 +119,7 @@ void CitFinder::PeptideStats::initModLocs(const char* diffmods)
 	}//end of for
 }
 
-void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::string fragDelim)
+void IonFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::string fragDelim)
 {
 	if(s.empty())
 		s = toAdd;
@@ -132,7 +132,7 @@ void CitFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::st
  @param ion PeptideStats::IonTypeDatType to increment
  @param inc amt to add to ion count
  */
-void CitFinder::PeptideStats::incrementIonCount(std::string ionStr,
+void IonFinder::PeptideStats::incrementIonCount(std::string ionStr,
 												PeptideStats::IonTypeDatType& ion,
 												int inc){
 	addChar(ionStr, ion.first, _fragDelim);
@@ -143,7 +143,7 @@ void CitFinder::PeptideStats::incrementIonCount(std::string ionStr,
  Add modified residue to PeptideStats::modResidues
  \param mod Modified residue in the form <residue><number> as in C57
  */
-void CitFinder::PeptideStats::addMod(std::string mod){
+void IonFinder::PeptideStats::addMod(std::string mod){
 	addChar(mod, modResidues, _fragDelim);
 }
 
@@ -153,7 +153,7 @@ void CitFinder::PeptideStats::addMod(std::string mod){
  @param fragSeq sequence of fragment to search for ambiguous residues.
  @return True if an ambiguous residue is found.
 */
-bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues,
+bool IonFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues,
 												  std::string fragSeq) const
 {
 	size_t len = fragSeq.length();
@@ -169,12 +169,12 @@ bool CitFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues
  @param seq fragment ion to add
  @param ambResidues ambiguous residues to search for.
  */
-void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
+void IonFinder::PeptideStats::addSeq(const IonFinder::RichFragmentIon& seq,
 									 const std::string& ambResidues)
 {
 	//first check if seq is found in *this sequence
 	size_t beg, end;
-	if(!CitFinder::allignSeq(sequence, seq.getSequence(), beg, end))
+	if(!IonFinder::allignSeq(sequence, seq.getSequence(), beg, end))
 		return;
 	
 	//increment total fragment ions found
@@ -216,12 +216,12 @@ void CitFinder::PeptideStats::addSeq(const CitFinder::RichFragmentIon& seq,
  
  @param peptides vector of peptides to analyze
  */
-bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
+bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 const std::vector<PeptideNamespace::Peptide>& peptides,
 								 std::vector<PeptideStats>& peptideStats,
-								 const CitFinder::Params& pars)
+								 const IonFinder::Params& pars)
 {
-	CitFinder::PeptideFragmentsMap fragmentMap;
+	IonFinder::PeptideFragmentsMap fragmentMap;
 	bool allSucess = true;
 	bool addModResidues = pars.getFastaFile() != "";
 	fastaFile::FastaFile seqFile;
@@ -244,7 +244,7 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		//it->printFragments(std::cout);
 		
 		//initilize new pepStat object
-		CitFinder::PeptideStats pepStat(*it); //init pepStat
+		IonFinder::PeptideStats pepStat(*it); //init pepStat
 		pepStat._scan = &scans[it - peptides.begin()]; //add pointer to scan
 		size_t nFragments = it->getNumFragments();
 		
@@ -257,7 +257,7 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			//skip if not found
 			if(it->getFragment(i).getFound())
 			{
-				CitFinder::RichFragmentIon fragTemp(it->getFragment(i));
+				IonFinder::RichFragmentIon fragTemp(it->getFragment(i));
 				//try{
 				fragTemp.calcSequence(fragmentMap);
 				//}
@@ -310,9 +310,9 @@ bool CitFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
  \param pars Params object for information on how to perform analysis
  \return true is all file I/O was sucessful.
  */
-bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
+bool IonFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
-									  const CitFinder::Params& pars)
+									  const IonFinder::Params& pars)
 {
 	unsigned int const nThread = pars.getNumThreads();
 	size_t const nScans = scans.size();
@@ -327,7 +327,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//read ms2s
 	Ms2Map ms2Map;
-	if(!CitFinder::readMs2s(ms2Map, scans)) return false;
+	if(!IonFinder::readMs2s(ms2Map, scans)) return false;
 	
 	//split up input data for each thread
 	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThread];
@@ -341,7 +341,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 		//spawn thread
 		assert(threadIndex < nThread);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
-		threads.push_back(std::thread(CitFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
+		threads.push_back(std::thread(IonFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
 									  ms2Map,
 									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
 									  sucsses + threadIndex, std::ref(scansIndex)));
@@ -350,7 +350,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
 	
 	//spawn progress function
 	if(!pars.getVerbose())
-		threads.push_back(std::thread(CitFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
+		threads.push_back(std::thread(IonFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
 									  nThread, PROGRESS_SLEEP_TIME));
 	
 	//join threads
@@ -378,7 +378,7 @@ bool CitFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
  \param count total number of scans to search for
  \param sleepTime time before next update is printed (in seconds)
  */
-void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
+void IonFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
 									  unsigned int nThread, int sleepTime)
 {
 	size_t lastIndex = scansIndex.load();
@@ -395,7 +395,7 @@ void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 			noChangeIterations++;
 		else noChangeIterations = 0;
 		
-		if(noChangeIterations > CitFinder::MAX_PROGRESS_ITTERATIONS)
+		if(noChangeIterations > IonFinder::MAX_PROGRESS_ITTERATIONS)
 			return;
 		
 		utils::printProgress(float(curIndex) / float(count));
@@ -412,23 +412,23 @@ void CitFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
  Find peptide fragment ions in ms2 files.
  @param scans Populated vector of scan objects to search for
  @param peptides empty vector of peptides to be filled from data in scans.
- @param pars CitFinder params object.
+ @param pars IonFinder params object.
  @return true if successful
  */
-bool CitFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
+bool IonFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
-							  CitFinder::Params& pars)
+							  IonFinder::Params& pars)
 {
 	bool* success = new bool(false);
 	std::atomic<size_t> scansIndex;
-	CitFinder::Ms2Map ms2Map;
+	IonFinder::Ms2Map ms2Map;
 	if(!readMs2s(ms2Map, scans)) return false;
-	CitFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
+	IonFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
 										success, scansIndex);
 	return *success;
 }
 
-bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
+bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 						 const std::vector<Dtafilter::Scan>& scans)
 {
 	std::string curWD;
@@ -459,14 +459,14 @@ bool CitFinder::readMs2s(CitFinder::Ms2Map& ms2Map,
  @param peptides empty vector of peptides to be filled from data in scans.
  @param beg index of beginning of scan vector
  @param end index of end of scan vector
- @param pars CitFinder params object.
+ @param pars IonFinder params object.
  @param success set to true if function was successful
  */
-void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
+void IonFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
 										 const size_t beg, const size_t end,
-										 const CitFinder::Ms2Map& ms2Map,
+										 const IonFinder::Ms2Map& ms2Map,
 										 std::vector<PeptideNamespace::Peptide>& peptides,
-										 const CitFinder::Params& pars,
+										 const IonFinder::Params& pars,
 										 bool* success, std::atomic<size_t>& scansIndex)
 {
 	*success = false;
@@ -549,7 +549,7 @@ void CitFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 	return;
 }
 
-void CitFinder::PeptideStats::calcContainsCit()
+void IonFinder::PeptideStats::calcContainsCit()
 {
 	containsCit = "false";
 	
@@ -581,7 +581,7 @@ void CitFinder::PeptideStats::calcContainsCit()
 	}
 }
 
-std::string CitFinder::PeptideStats::ionTypeToStr(const IonType& it)
+std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 {
 	switch(it){
 		case IonType::FRAG: return ION_TYPES_STR[0];
@@ -606,13 +606,13 @@ std::string CitFinder::PeptideStats::ionTypeToStr(const IonType& it)
  @param stats Peptide stats to print.
  @param ofname name of file to write to.
  */
-bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::string ofname)
+bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::string ofname)
 {
 	//assert(out);
 	std::ofstream outF (ofname);
 	if(!outF) return false;
 	
-	typedef CitFinder::PeptideStats::IonType itcType;
+	typedef IonFinder::PeptideStats::IonType itcType;
 	//build stat names vector
 	std::vector<std::string> statNames;
 	statNames.push_back("containsCit");

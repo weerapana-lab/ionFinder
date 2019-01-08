@@ -10,12 +10,12 @@
 #define dtafilterFiles_hpp
 
 #include <dtafilter.hpp>
-#include <citFinder/params.hpp>
+#include <ionFinder/params.hpp>
 #include <scanData.hpp>
 #include <utils.hpp>
 
 namespace Dtafilter{
-	bool readFilterFiles(const CitFinder::Params&,
+	bool readFilterFiles(const IonFinder::Params&,
 						 std::vector<Dtafilter::Scan>&);
 }
 

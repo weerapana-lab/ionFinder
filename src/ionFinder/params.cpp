@@ -6,7 +6,7 @@
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
-#include <citFinder/params.hpp>
+#include <ionFinder/params.hpp>
 
 /**
  Calculates number of supported threads using std::thread::hardware_concurrency(). <br><br>
@@ -14,7 +14,7 @@
  If thread::hardware_concurrency returns 0, indicating an error, 1 thread is used.
  \return number of supported threads
  */
-unsigned int CitFinder::Params::computeThreads() const
+unsigned int IonFinder::Params::computeThreads() const
 {
 	unsigned int ret = std::thread::hardware_concurrency() / 2;
 	if(ret == 0){
@@ -31,7 +31,7 @@ unsigned int CitFinder::Params::computeThreads() const
  \param argv argv from main
  \return true if args were sucessfully read.
  */
-bool CitFinder::Params::getArgs(int argc, const char* const argv[])
+bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 {
 	_wd = utils::pwd();
 	assert(utils::dirExists(_wd));
@@ -272,7 +272,7 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
  If _inDirs is empty, current working directory is used.
  @return true if > 1 filter file was found, else false
  */
-bool CitFinder::Params::getFlist()
+bool IonFinder::Params::getFlist()
 {
 	if(_inDirs.size() == 0){
 		_inDirs.push_back(_wd);

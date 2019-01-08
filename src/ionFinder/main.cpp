@@ -6,11 +6,11 @@
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
-#include <citFinder/main.hpp>
+#include <ionFinder/main.hpp>
 
 int main(int argc, const char** argv)
 {
-	CitFinder::Params pars;
+	IonFinder::Params pars;
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
@@ -28,20 +28,20 @@ int main(int argc, const char** argv)
 	
 	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
-	if(!CitFinder::findFragmentsParallel(scans, peptides, pars)){
+	if(!IonFinder::findFragmentsParallel(scans, peptides, pars)){
 		std::cout << "Failed to annotate spectra!" << std::endl;
 	}
 	
 	//analyze sequences
 	std::cout << "\nAnalyzing peptide sequences...";
-	std::vector<CitFinder::PeptideStats> peptideStats;
-	if(!CitFinder::analyzeSequences(scans, peptides, peptideStats, pars))
+	std::vector<IonFinder::PeptideStats> peptideStats;
+	if(!IonFinder::analyzeSequences(scans, peptides, peptideStats, pars))
 		std::cout << NEW_LINE;
 	std::cout << "Done!\n";
 	
 	//write data
 	std::string ofname = pars.makeOfname();
-	if(!CitFinder::printPeptideStats(peptideStats, ofname))
+	if(!IonFinder::printPeptideStats(peptideStats, ofname))
 	{
 		std::cerr << "Failed to write peptide stats!" << NEW_LINE;
 		return -1;

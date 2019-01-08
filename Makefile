@@ -26,7 +26,7 @@ INCLUDEFLAGS :=
 #
 # Program name
 MS2_ANNOTATOR_EXE := ms2_annotator
-CIT_FINDER_EXE := citFinder
+ION_FINDER_EXE := ionFinder
 #
 #
 # Directories
@@ -37,12 +37,12 @@ HEADERDIR := include
 #   Sources
 SRCDIR = src
 MS2_ANNOTATOR_SRCDIR = $(SRCDIR)/ms2_annotator
-CIT_FINDER_SRCDIR = $(SRCDIR)/citFinder
+ION_FINDER_SRCDIR = $(SRCDIR)/ionFinder
 #
 #   Objects
 OBJDIR := obj
 MS2_ANNOTATOR_OBJDIR := $(OBJDIR)/ms2_annotator
-CIT_FINDER_OBJDIR := $(OBJDIR)/citFinder
+ION_FINDER_OBJDIR := $(OBJDIR)/ionFinder
 #
 #   Binary
 BINDIR := bin
@@ -62,13 +62,13 @@ INSTALL_DIR := /usr/local/bin/
 #HEADERS := $(wildcard $(HEADERDIR)/*.h)
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
 MS2_ANNOTATOR_SRCS := $(wildcard $(MS2_ANNOTATOR_SRCDIR)/*.cpp)
-CIT_FINDER_SRCS := $(wildcard $(CIT_FINDER_SRCDIR)/*.cpp)
+ION_FINDER_SRCS := $(wildcard $(ION_FINDER_SRCDIR)/*.cpp)
 #ALL_SRCS = $(SRCS) $(MS2_ANNOTATOR_SRCS)
 
 OBJS := $(subst $(SRCDIR)/,$(OBJDIR)/,$(SRCS:.cpp=.o))
 MS2_ANNOTATOR_OBJS += $(OBJS) $(subst src/,obj/,$(MS2_ANNOTATOR_SRCS:.cpp=.o))
-CIT_FINDER_OBJS += $(OBJS) $(subst src/,obj/,$(CIT_FINDER_SRCS:.cpp=.o))
-ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(CIT_FINDER_OBJS)
+ION_FINDER_OBJS += $(OBJS) $(subst src/,obj/,$(ION_FINDER_SRCS:.cpp=.o))
+ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(ION_FINDER_OBJS)
 
 CXXFLAGS += $(INCLUDEFLAGS) -I$(HEADERDIR)
 LDFLAGS += $(LIBFLAGS)
@@ -76,7 +76,7 @@ LDFLAGS += $(LIBFLAGS)
 .PHONY: all clean distclean install uninstall multi install_r_packages
 
 #TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
-TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) helpFile.pdf
+TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) helpFile.pdf
 
 all: $(TARGETS) install_r_packages
 
@@ -96,12 +96,12 @@ $(BINDIR)/$(MS2_ANNOTATOR_EXE): $(MS2_ANNOTATOR_OBJS)
 	mkdir -p $(BINDIR)
 	$(CXX) $(LDFLAGS) $(MS2_ANNOTATOR_OBJS) -o $@
 
-$(BINDIR)/$(CIT_FINDER_EXE): $(CIT_FINDER_OBJS)
+$(BINDIR)/$(ION_FINDER_EXE): $(ION_FINDER_OBJS)
 	mkdir -p $(BINDIR)
-	$(CXX) $(LDFLAGS) $(CIT_FINDER_OBJS) -o $@
+	$(CXX) $(LDFLAGS) $(ION_FINDER_OBJS) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERDIR)/%.hpp
-	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR) $(CIT_FINDER_OBJDIR)
+	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR) $(ION_FINDER_OBJDIR)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 helpFile.pdf : db/helpFile.man
@@ -112,7 +112,7 @@ install_r_packages:
 	Rscript rpackages/install_packages.R
 
 clean:
-	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(CIT_FINDER_EXE) 
+	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) 
 	rm -f helpFile.pdf
 	rm -r lib/*
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 

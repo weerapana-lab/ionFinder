@@ -15,15 +15,15 @@
 #include <vector>
 #include <thread>
 
-#include <citFinder/citFinder.hpp>
+#include <ionFinder/ionFinder.hpp>
 #include <paramsBase.hpp>
 #include <utils.hpp>
 
-namespace CitFinder{
+namespace IonFinder{
 	
 	//program file locations
-	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/citFinder/usage.txt";
-	std::string const PROG_HELP_FILE = base::PROG_DB + "/citFinder/helpFile.txt";
+	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/ionFinder/usage.txt";
+	std::string const PROG_HELP_FILE = base::PROG_DB + "/ionFinder/helpFile.txt";
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
 	
 	//!default conflicting residues

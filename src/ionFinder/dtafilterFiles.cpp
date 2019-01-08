@@ -6,7 +6,7 @@
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
 //
 
-#include <citFinder/dtafilterFiles.hpp>
+#include <ionFinder/dtafilterFiles.hpp>
 
 /**
  Read list of filter files suplied by \p params
@@ -14,7 +14,7 @@
  \param scans empty list of scans to fill
  \returns true if all files were sucessfully read.
  */
-bool Dtafilter::readFilterFiles(const CitFinder::Params& params,
+bool Dtafilter::readFilterFiles(const IonFinder::Params& params,
 								std::vector<Dtafilter::Scan>& scans)
 {
 	auto endIt = params.getFilterFiles().end();
