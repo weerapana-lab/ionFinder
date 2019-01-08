@@ -621,7 +621,7 @@ bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::s
 							ION_TYPES_STR[i].substr(1));
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + N_ION_TYPES);
 	
-	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence modified_residue charge unique xCorr scan parent_file sample_name";
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence is_modified modified_residue charge unique xCorr scan parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
@@ -647,6 +647,7 @@ bool CitFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::s
 		OUT_DELIM << it->_scan->getParentDescription() <<
 		OUT_DELIM << it->_scan->getFullSequence() <<
 		OUT_DELIM << it->_scan->getSequence() <<
+		OUT_DELIM << (it->modLocs.size() > 0) <<
 		OUT_DELIM << it->modResidues <<
 		OUT_DELIM << it->_scan->getCharge() <<
 		OUT_DELIM << it->_scan->getUnique() <<
