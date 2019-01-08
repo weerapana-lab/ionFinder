@@ -22,6 +22,7 @@ namespace base{
 	std::string const PROG_DB = PROG_WD + "/db";
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
+	double const DEFAULT_MATCH_TOLERANCE = 0.5;
 	
 	std::string const DEFAULT_SMOD_NAME = "staticModifications.txt";
 	
@@ -89,7 +90,8 @@ namespace base{
 			
 			minFragCharge = 1;
 			maxFragCharge = 1;
-			matchTolerance = 0.5;
+			matchTolerance = DEFAULT_MATCH_TOLERANCE;
+			_matchType = MatchType::TH;
 			minLabelIntensity = 0;
 			multipleMatchCompare = "intensity";
 			

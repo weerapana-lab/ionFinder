@@ -104,7 +104,7 @@ double base::ParamsBase::getMatchTolerance(double mz) const
 	if(_matchType == MatchType::TH)
 		return matchTolerance;
 	else if(_matchType == MatchType::PPM){
-		return mz / (matchTolerance * 1e6);
+		return mz * (matchTolerance / 1e6);
 	}
 	else{
 		throw std::runtime_error("Unknown match type!");

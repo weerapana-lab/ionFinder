@@ -139,7 +139,7 @@ bool CitFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			_matchType = strToMatchType(std::string(argv[i]));
 			if(_matchType == MatchType::UNKNOWN){
-				std::cerr << argv[i] << " is an unknow match type!" << NEW_LINE;
+				std::cerr << argv[i] << " is an unknow MatchType!" << NEW_LINE;
 				return false;
 			}
 			continue;

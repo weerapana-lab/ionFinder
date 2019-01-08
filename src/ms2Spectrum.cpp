@@ -211,7 +211,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	size_t labledCount = 0;
 	sequence = peptide.getSequence();
 	fullSequence = peptide.getFullSequence();
-	double _labelTolerance = pars.getMatchTolerance();
+	double _labelTolerance; // = pars.getMatchTolerance();
 	bool seqPrinted = false;
 	
 	typedef std::list<ms2::DataPoint*> listType;
@@ -239,6 +239,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		rangeList.clear();
 		
 		//first get lowest value in range
+		_labelTolerance = pars.getMatchTolerance(tempMZ);
 		ionsTypeIt lowerBound = std::lower_bound(ions.begin(), ions.end(),
 												 (tempMZ - (_labelTolerance)),
 												 DataPoint::MZComparison());
@@ -309,10 +310,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 			(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
 			(*label)->setLabeledIon(true);
 			(*label)->label.setIncludeLabel(true);
-			//(*label)->setIonType(std::string(1, peptide.getBY(i)));
 			(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
 			(*label)->setIonNum(peptide.getFragment(i).getNum());
-			//peptide.setFound(i, true);
 			labledCount++;
 		}
 		peptide.setFound(i, true);
