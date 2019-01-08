@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <string>
+#include <iomanip>
 
 #include <utils.hpp>
 #include <aaDB.hpp>

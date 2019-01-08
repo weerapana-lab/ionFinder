@@ -36,6 +36,8 @@ simpleSeq <- FALSE
 plotSize <- 'large'
 plotWidth <- 12
 plotHeight <- 4
+nDigits <- 2
+
 
 while(i <= argc){
   if(!isArg(argv[i]) && !endArgs)
@@ -68,6 +70,16 @@ while(i <= argc){
       {
         printUsage()
         stop("Bad arg for -mzLab")
+      }
+    }
+    else if(argv[i] == "-round")
+    {
+      i = i + 1
+      nDigits <- as.integer(argv[i])
+      if(is.na(includeMzLab))
+      {
+        printUsage()
+        stop("Bad arg for -round")
       }
     }
     else if(argv[i] == "-simpleSeq")
@@ -115,14 +127,15 @@ spectraFiles <- getAllSpectra(inFiles)
 print("Done!", quote = FALSE)
 print("Generating labeled ms2 spectra...", quote = FALSE)
 spectra <- makeAllSpectrum(spectraFiles, includeMZLab = includeMzLab, 
-                           simpleSequence = simpleSeq, plotSize = plotSize)
+                           simpleSequence = simpleSeq, plotSize = plotSize, nDigits = nDigits)
 print("Done!", quote = FALSE)
 print("Writing spectra...", quote = FALSE)
 
 #write files
-for(spec in spectra)
+for(i in 1:length(inFiles))
 {
-  print(paste("Working on ", spec$ofname, "...", sep = ""), quote = FALSE)
-  ggsave(paste(OD, spec$ofname, sep = ""), plot = spec$spectrum, dpi = 600, width = plotWidth, height = plotHeight)
+  print(paste("Working on ", spectra[[i]]$ofname, "...", sep = ""), quote = FALSE)
+  ggsave(paste(base::dirname(inFiles[i]), spectra[[i]]$ofname, sep = '/'),
+         plot = spectra[[i]]$spectrum, dpi = 600, width = plotWidth, height = plotHeight)
   print("Done", quote = FALSE)
 }

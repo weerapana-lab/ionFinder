@@ -156,16 +156,20 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 		}//end of for j
 	}//enf of for i
 	
-	/*if(sequence == "RVMGPDFG"){
+	/*if(sequence == "SSGIHYGVITCEGCK"){
 		std::cout << NEW_LINE << NEW_LINE;
+		std::streamsize ss = std::cout.precision();
+		std::cout.precision(5);
 		for(auto it = fragments.begin(); it != fragments.end(); ++it)
 		{
 			std::cout << it->getLabel() << //'\t' << it->getFormatedLabel() <<
-			'\t' << it->getMZ() << '\t';
+			'\t' << std::fixed << it->getMZ() << '\t';
 			++it;
-			std::cout << it->getLabel() << //'\t' << it->getFormatedLabel() <<
+			std::cout << std::fixed << it->getLabel() << //'\t' << it->getFormatedLabel() <<
 			'\t' << it->getMZ() << '\n';
 		}
+		std::cout.precision(ss);
+		std::cout << "POOP" << NEW_LINE;
 	}*/
 }
 

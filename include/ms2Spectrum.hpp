@@ -17,6 +17,7 @@
 #include <list>
 #include <algorithm>
 #include <string>
+#include <iomanip>
 
 #include <utils.hpp>
 #include <peptide.hpp>
@@ -38,7 +39,6 @@ namespace ms2{
 	std::string const BEGIN_SPECTRUM = "<spectrum>";
 	std::string const END_SPECTRUM = "</spectrum>";
 	
-	double const LABEL_MZ_TOLERANCE = 0.25;
 	double const POINT_PADDING = 1;
 	double const DEFAULT_MAX_PERC = 1;
 	double const DEFAULT_X_OFFSET = 0;

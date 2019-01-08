@@ -2,7 +2,7 @@
 #require(foreach, warn.conflicts = FALSE, quietly = TRUE)
 #require(doParallel, warn.conflicts = FALSE, quietly = TRUE)
 
-makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, plotSize = 'large')
+makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, plotSize = 'large', nDigits = 3)
 {
   dat <- specDat$spectrum
   dat$label <- as.character(dat$label)
@@ -62,7 +62,7 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
     geom_linerange()
   if(includeMZLab) {
     mspect <- mspect + geom_text(data = subset(dat, dat$includeLabel == TRUE),
-                  aes(label = mz, x = labelX, y = labelY),
+                  aes(label = round(mz, nDigits), x = labelX, y = labelY),
                   parse = FALSE,
                   size = 3)
   }

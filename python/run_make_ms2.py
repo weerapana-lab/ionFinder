@@ -108,10 +108,15 @@ def main():
 
     #submit jobs
     for i, item in enumerate(spectraFiles):
-        makeMs2_args = '-v -mzLab {} -pSize {} -simpleSeq {} {}'.format(args.mzLab,
-                                                                     args.pSize,
-                                                                     args.simpleSeq,
-                                                                     ' '.join(item))
+        makeMs2_args = '-v -mzLab {} ' \
+                       '-pSize {} ' \
+                       '-simpleSeq {} ' \
+                       '-round {} {}'.format(args.mzLab,
+                                             args.pSize,
+                                             args.simpleSeq,
+                                             args.round,
+                                             ' '.join(item))
+
         pbsName = makePBS(args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir)
         command = 'qsub {}'.format(pbsName)
         if args.verbose:

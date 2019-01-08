@@ -60,9 +60,11 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 	}
 	out << NEW_LINE;
 	
+	std::streamsize ss = std::cout.precision();
+	std::cout.precision(5); //set out to print 5 floating point decimal places
 	for(ionsTypeConstIt it = ions.begin(); it != ions.end(); ++it)
 	{
-		out << it->getMZ() << OUT_DELIM
+		out << std::fixed << it->getMZ() << OUT_DELIM
 		<< it->getIntensity() << OUT_DELIM
 		<< it->getLabel() << OUT_DELIM
 		<< it->label.getIncludeLabel() << OUT_DELIM
@@ -77,6 +79,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 		<< it->label.arrow.end.getX() << OUT_DELIM
 		<< it->label.arrow.end.getY() << NEW_LINE;
 	}
+	std::cout.precision(ss);
 	
 	if(includeMetaData)
 		out << ms2::END_SPECTRUM <<NEW_LINE;
