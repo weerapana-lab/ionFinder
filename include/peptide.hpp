@@ -31,6 +31,9 @@ namespace PeptideNamespace{
 	class Peptide;
 	class FragmentIon;
 	
+	const double H_MASS = 1.00732;
+	//const double H_MASS = 1.00783
+	
 	typedef std::vector<PeptideIon> PepIonVecType;
 	typedef PepIonVecType::const_iterator PepIonIt;
 	
@@ -205,10 +208,10 @@ namespace PeptideNamespace{
 		//properties
 		double getMZ() const{
 			if(b_y == 'b')
-				return calcMZ(mass - 1, charge);
+				return (mass + ((charge - 1) * PeptideNamespace::H_MASS)) / charge;
 			return Ion::getMZ(charge);
 		}
-		std::string getLabel(bool includeMod = true) const;
+		std::string getLabel(bool includeMod = true, std::string chargeSep = " ") const;
 		std::string getFormatedLabel() const;
 		char getBY() const{
 			return b_y;

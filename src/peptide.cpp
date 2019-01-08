@@ -79,14 +79,14 @@ std::string PeptideNamespace::PeptideIon::makeModLable() const
  Get ion label.
  @return unformatted ion label
  */
-std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod) const
+std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod, std::string chargeSep) const
 {
 	std::string str = std::string(1, b_y);
 	str += isM() ? "" : std::to_string(num); //add ion number if not M ion
 	str += includeMod ? mod : ""; //add modification
 	
 	if(charge > 1)
-		str += " " + makeChargeLable();
+		str += chargeSep + makeChargeLable();
 	if(isNL())
 		str += getNLStr();
 	return str;
@@ -119,7 +119,6 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 	
 	double nTerm = aminoAcidsMasses.getMW("N_term");
 	double cTerm = aminoAcidsMasses.getMW("C_term");
-	double hMass = aminoAcidsMasses.getMW("H_mass");
 	
 	size_t len = aminoAcids.size();
 	for(int i = 0; i < len; i++)
@@ -145,12 +144,12 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 			//add y ion
 			if(i == 0){
 				fragments.push_back(FragmentIon('M', 0, j,
-					PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass + cTerm, 0.0,
+					PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + PeptideNamespace::H_MASS + cTerm, 0.0,
 					modsY));
 			}
 			else{
 				fragments.push_back(FragmentIon('y', int(sequence.length() - i), j,
-					PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + hMass + cTerm, 0.0,
+					PeptideNamespace::calcMass(aminoAcids, end_beg, end_end) + PeptideNamespace::H_MASS + cTerm, 0.0,
 					modsY));
 			}//end of else
 		}//end of for j
@@ -160,13 +159,19 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 		std::cout << NEW_LINE << NEW_LINE;
 		std::streamsize ss = std::cout.precision();
 		std::cout.precision(5);
-		for(auto it = fragments.begin(); it != fragments.end(); ++it)
+		for(int i = minCharge; i <= maxCharge; i++)
 		{
-			std::cout << it->getLabel() << //'\t' << it->getFormatedLabel() <<
-			'\t' << std::fixed << it->getMZ() << '\t';
-			++it;
-			std::cout << std::fixed << it->getLabel() << //'\t' << it->getFormatedLabel() <<
-			'\t' << it->getMZ() << '\n';
+			for(auto it = fragments.begin(); it != fragments.end(); ++it)
+			{
+				if(it->getCharge() == i)
+				{
+					std::cout << it->getLabel(false, "_") <<
+					'\t' << std::fixed << it->getMZ() << '\t';
+					++it;
+					std::cout << std::fixed << it->getLabel(false, "_") <<
+					'\t' << it->getMZ() << '\n';
+				}
+			}
 		}
 		std::cout.precision(ss);
 		std::cout << "POOP" << NEW_LINE;
@@ -319,10 +324,10 @@ void PeptideNamespace::Peptide::removeUnlabeledFrags()
 }
 
 double PeptideNamespace::calcMass(double mz, int charge){
-	return mz * charge - charge;
+	return mz * charge - (charge * PeptideNamespace::H_MASS);
 }
 double PeptideNamespace::calcMZ(double mass, int charge){
-	return mass / charge + charge;
+	return (mass + (charge * PeptideNamespace::H_MASS)) / charge;
 }
 
 double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec)
