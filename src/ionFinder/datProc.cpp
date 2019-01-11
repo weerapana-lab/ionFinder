@@ -258,15 +258,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			if(it->getFragment(i).getFound())
 			{
 				IonFinder::RichFragmentIon fragTemp(it->getFragment(i));
-				//try{
 				fragTemp.calcSequence(fragmentMap);
-				//}
-				/*catch(std::out_of_range& e){
-					std::cout << "\nWarning Error finding fragment: " << it->getFragment(i).getLabel()
-					<< " for sequence: " << it->getFullSequence();
-					allSucess = false;
-					continue;
-				}*/
 				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
@@ -497,15 +489,17 @@ void IonFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 		peptides.push_back(PeptideNamespace::Peptide(scans[i].getSequence()));
 		peptides.back().initialize(pars, aminoAcidMasses);
 		
-		//calculate neutral loss combinations
-		int nMods = peptides.back().getNumMod();
-		double nlMass = pars.getNeutralLossMass();
-		std::vector<double> neutralLossIons;
-		for(int i = 1; i <= nMods; i++)
-			neutralLossIons.push_back(i * nlMass);
-		
-		//add neutral loss fragments to current peptide
-		peptides.back().addNeutralLoss(neutralLossIons);
+		if(pars.getCalcNL()){
+			//calculate neutral loss combinations
+			int nMods = peptides.back().getNumMod();
+			double nlMass = pars.getNeutralLossMass();
+			std::vector<double> neutralLossIons;
+			for(int i = 1; i <= nMods; i++)
+				neutralLossIons.push_back(i * nlMass);
+			
+			//add neutral loss fragments to current peptide
+			peptides.back().addNeutralLoss(neutralLossIons);
+		}
 		
 		//load spectrum
 		auto ms2FileIt = ms2Map.find(scans[i].getPrecursorFile());

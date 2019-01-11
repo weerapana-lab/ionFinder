@@ -23,17 +23,15 @@ namespace IonFinder{
 	
 	//program file locations
 	std::string const PROG_USAGE_FNAME = base::PROG_MAN + "/ionFinder/usage.txt";
-	std::string const PROG_HELP_FILE = base::PROG_MAN + "/ionFinder/helpFile.txt";
+	std::string const PROG_HELP_FILE = base::PROG_MAN + "/ionFinder/helpFile.roff";
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
 	
-	//!default conflicting residues
-	/**
-	 This should probably be changed to blank string in a more general version
-	 of this program.
-	 */
-	std::string const DEFAULT_AMBIGIOUS_RESIDUES = "NQ";
+	//!default residues which are isobaric with a modification
+	std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
+	std::string const CIT_AMB_RESIDUES = "NQ";
 	
-	double const DEFAULT_NEUTRAL_LOSS_MASS = 43.0058;
+	double const CIT_NL_MASS = 43.0058;
+	double const DEFAULT_NEUTRAL_LOSS_MASS = CIT_NL_MASS;
 	
 	class Params;
 	
@@ -54,6 +52,8 @@ namespace IonFinder{
 		bool _includeReverse;
 		//!Should annotaed spectra be printed?
 		bool _printSpectraFiles;
+		//!Should NL ions be search for?
+		bool _calcNL;
 		
 		//! was a input directory specified
 		bool _inDirSpecified;
@@ -77,6 +77,7 @@ namespace IonFinder{
 			_fastaFile = "";
 			_includeReverse = false;
 			_printSpectraFiles = false;
+			_calcNL = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
@@ -94,6 +95,9 @@ namespace IonFinder{
 		}
 		bool getIncludeReverse() const{
 			return _includeReverse;
+		}
+		bool getCalcNL() const{
+			return _calcNL;
 		}
 		std::string getInputModeIndependentParentDir() const;
 		double getNeutralLossMass() const{
