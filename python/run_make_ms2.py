@@ -11,8 +11,8 @@ import parent_parser
 PYTHON_PBS_VERSION = 'python/2.7.10'
 R_PBS_VERSION = 'R/3.3.0'
 PBS_MODULE_LOAD_COMMAND = 'module load'
-PBS_PYTHON_COMMAND = 'python'
-MAKE_MS2_PY_PATH = 'python/make_ms2.py'
+#PBS_PYTHON_COMMAND = 'python'
+MAKE_MS2_PY_PATH = 'make_ms2'
 
 def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
     pbsName = '{}/make_ms2.pbs'.format(wd)
@@ -24,7 +24,7 @@ def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
     outF.write('{} {}\n'.format(PBS_MODULE_LOAD_COMMAND, R_PBS_VERSION))
     outF.write('{} {}\n\n'.format(PBS_MODULE_LOAD_COMMAND, PYTHON_PBS_VERSION))
     outF.write('cd {}\n'.format(wd))
-    outF.write('{} {}/{} -t {} {}\n'.format(PBS_PYTHON_COMMAND, progDir, MAKE_MS2_PY_PATH,
+    outF.write('{}/{} -t {} {}\n'.format(progDir, MAKE_MS2_PY_PATH,
                                        nThread, makeMs2_args))
 
     return pbsName
