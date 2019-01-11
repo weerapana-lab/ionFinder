@@ -40,7 +40,7 @@ def main():
     parser = argparse.ArgumentParser(prog = 'run_make_ms2', parents=[parent_parser.parent_parser],
                                      description = 'Run rscripts/makeMS2.R and manage parallelism. '
                                                    'Program will search current working directory for .spectrum files'
-                                                   'for input.')
+                                                   ' for input.')
 
     parser.add_argument('-g', '--go', action = 'store_true', default = False,
                         help = 'Should jobs be submitted? If this flag is not supplied, program will be a dry run. '
