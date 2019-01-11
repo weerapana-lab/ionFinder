@@ -12,7 +12,7 @@ function absPath {
 	fi
 }
 
-moduleName=$(basename -s ".py" $1)
+moduleName=$(basename $1 .py) 
 ofname=$BIN_DIR/$moduleName
 dirname=$(absPath $(dirname $1))
 echo "Adding "$ofname
