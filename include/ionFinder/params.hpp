@@ -22,8 +22,8 @@
 namespace IonFinder{
 	
 	//program file locations
-	std::string const PROG_USAGE_FNAME = base::PROG_DB + "/ionFinder/usage.txt";
-	std::string const PROG_HELP_FILE = base::PROG_DB + "/ionFinder/helpFile.txt";
+	std::string const PROG_USAGE_FNAME = base::PROG_MAN + "/ionFinder/usage.txt";
+	std::string const PROG_HELP_FILE = base::PROG_MAN + "/ionFinder/helpFile.txt";
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
 	
 	//!default conflicting residues
