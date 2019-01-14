@@ -110,6 +110,21 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_printSpectraFiles = true;
 			continue;
 		}
+		if(!strcmp(argv[i], "--calcNL"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+			{
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "calcNL" << NEW_LINE;
+				return false;
+			}
+			_calcNL = std::stoi(argv[i]);
+			continue;
+		}
 		if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--lossMass"))
 		{
 			if(!utils::isArg(argv[++i]))
@@ -117,6 +132,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 				usage();
 				return false;
 			}
+			//!TODO: Maybe add option to search for multiple loeese
 			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
@@ -142,6 +158,23 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 				std::cerr << argv[i] << " is an unknow MatchType!" << NEW_LINE;
 				return false;
 			}
+			continue;
+		}
+		if(!strcmp(argv[i], "--citStats"))
+		{
+			_neutralLossMass = CIT_NL_MASS;
+			_ambigiousResidues = CIT_AMB_RESIDUES;
+			_calcNL = true;
+			continue;
+		}
+		if(!strcmp(argv[i], "--isoAA"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			_ambigiousResidues = std::string(argv[i]);
 			continue;
 		}
 		if(!strcmp(argv[i], "-minC"))
@@ -207,7 +240,22 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			minIntensitySpecified = true;
 			continue;
 		}
-		if(!strcmp(argv[i], "-incAllIons"))
+		if(!strcmp(argv[i], "-mmComp"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			if(!(!strcmp(argv[i], "intensity") || !strcmp(argv[i], "mz")))
+			{
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "mmComp" << NEW_LINE;
+				return false;
+			}
+			multipleMatchCompare = std::string(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "--incAllIons"))
 		{
 			if(!utils::isArg(argv[++i]))
 			{

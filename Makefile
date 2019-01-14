@@ -39,6 +39,10 @@ SRCDIR = src
 MS2_ANNOTATOR_SRCDIR = $(SRCDIR)/ms2_annotator
 ION_FINDER_SRCDIR = $(SRCDIR)/ionFinder
 #
+#
+#python dir
+#
+PYTHON_DIR = python
 #   Objects
 OBJDIR := obj
 MS2_ANNOTATOR_OBJDIR := $(OBJDIR)/ms2_annotator
@@ -73,12 +77,12 @@ ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(ION_FINDER_OBJS)
 CXXFLAGS += $(INCLUDEFLAGS) -I$(HEADERDIR)
 LDFLAGS += $(LIBFLAGS)
 
-.PHONY: all clean distclean install uninstall multi install_r_packages
+.PHONY: all clean distclean install uninstall multi
 
 #TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
-TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) helpFile.pdf
+TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) ionFinder_help.pdf $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
 
-all: $(TARGETS) install_r_packages
+all: $(TARGETS)
 
 multi:
 	$(MAKE) -j8 all
@@ -104,16 +108,19 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERDIR)/%.hpp
 	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR) $(ION_FINDER_OBJDIR)
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-helpFile.pdf : db/helpFile.man
-	bash $(SCRIPTS)/updateMan.sh
+$(BINDIR)/make_ms2: $(PYTHON_DIR)/make_ms2.py
+	bash $(SCRIPTS)/addPythonFiles.sh $(PYTHON_DIR)/make_ms2.py
 
-install_r_packages:
-	mkdir -p lib
-	Rscript rpackages/install_packages.R
+$(BINDIR)/run_make_ms2: $(PYTHON_DIR)/run_make_ms2.py
+	bash $(SCRIPTS)/addPythonFiles.sh $(PYTHON_DIR)/run_make_ms2.py
+
+ionFinder_help.pdf : man/ionFinder/helpFile.roff
+	bash $(SCRIPTS)/updateMan.sh man/ionFinder/helpFile.roff ionFinder_help.pdf
 
 clean:
-	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) 
-	rm -f helpFile.pdf
+	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE)
+	rm -f $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
+	rm -f ionFinder_help.pdf
 	rm -r lib/*
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
 

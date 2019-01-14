@@ -106,7 +106,7 @@ def main():
 
     args = parser.parse_args()
 
-    progDir = os.path.dirname(sys.argv[0]).replace('python', '')
+    progDir = os.path.dirname(sys.argv[0]).replace('bin', '')
 
     # get wd
     wd = args.dir

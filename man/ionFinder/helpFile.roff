@@ -1,0 +1,179 @@
+.TH "ionFinder v1.0" 1 "11 Jan 2019" "ionFinder"
+.SH NAME
+\fBionFinder\fR - perform high a throughput search for fragment ions in ms2 spectra.
+.SH SYNOPSIS
+.B ionFinder
+[options] [input_dir ...]
+
+.SH DESCRIPTION
+\fBionFinder\fR Reads one or more DTASelect-filter files, calculates theoretical B and Y peptide fragments, and searches parent MS-2 scans for theoretical fragments. If no argument is specified for \fIinput_dir\fR, the current working directory is used. 
+
+The envisioned use case of \fBionFinder\fR is to search for neutral loss ions which are not considered by database searching software.  The program can also be used to automatically generate annotated MS-2 spectra for an entire mass spec run.  Options are available to add neutral loss fragments to the search, and to print annotated MS-2 spectra for each peptide. 
+
+.SH OPTIONS
+.TP
+Command line options are processed from left to right. Options can be specified more than once. If conflicting options are specified, later specifications override earlier ones.
+
+.SS ION SEAECH SETTINGS
+.TP
+\fB-mt, --matchTolerance \fI<tolerance>\fR
+Tolerance in Thomsons (m/z units) or ppm for predicted fragment ions in .ms2 files. By default \fI<tolerance>\fR is interpreted as Th. To change the units of \fI<tolerance>\fR, use the \fB--matchTyep\fR argument. 0.5 Th is the default.
+.TP
+\fB--matchType\fR
+Specify how the \fB--matchTolerance\fR argument is interpreted. \fBth\fR is the default.
+.TP
+.in +0.75i
+\fBmz, th\fR
+.in +0.75i
+Interpret \fB--matchTolerance\fR as Th or m/z units.
+.in
+.TP
+.in +0.75i
+\fBppm\fR
+.in +0.75i
+Interpret \fB--matchTolerance\fR as ppm.
+.in
+.TP
+\fB--citStats\fR
+Search ms2s with default settings for citrulline. Specifically \fB--citStats\fR sets the following flags:
+.TP
+.in +0.75i
+\fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ
+
+Later specifications of the previous flags will override those set by \fB--citStats\fR.
+.in
+.TP
+\fB--isoAA\fR \fI<amino_acids>\fR
+Specify amino acids whose mass is ambiguous with the amino acids with the dynamic modification.  \fI<amino_acids>\fR should be single letter amino acid codes with no space between them.
+.TP
+\fB--lossMass\fR \fI<mass>\fR
+Specify mass of neutral loss to search for. 
+.TP
+\fB--calcNL\fR \fI<0/1\fR
+Specify whether neutral loss fragment ions should be search for. If this option is set to \fB1\fR without any argument for \fB--lossMass\fR given, it is ignored.  Default is \fB0\fR.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Do not search for neutral loss ions.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Search for neutral loss fragment ions.
+.in
+.TP
+\fB-minC\fR \fI<charge>\fR
+Minimum charge state to be considered. 1 is the default.
+.TP
+\fB-maxC\fR \fI<charge>\fR
+Maximum charge state to be considered. 1 is the default.
+.TP
+\fB-mmComp\fR \fI<compare_method>
+When multiple candidate fragment ions are found within \fB--matchTolerance\fR, how should a tie be broken? Default is \fBintensity\fR.
+.TP
+.in +0.75i
+\fBintensity\fR
+.in +0.75i
+The most intense ion will be used.
+.in
+.TP
+.in +0.75i
+\fBms\fR
+.in +0.75i
+The ion with the closest mz to the predicted mz for the fragment will be used.
+.in
+
+.SS MS2 FILTERING OPTIONS
+.TP
+\fB-minMZ \fI<mz>\fR
+Minimum ion MZ to be considered from \fI.ms2\fR files. By default all identified ions are considered.
+.TP
+\fB-minMZ \fI<mz>\fR
+Maximum ion MZ to be considered from \fI.ms2\fR files. By default all identified ions are considered.
+.TP
+\fB-minInt \fI<relative_intensity>\fR
+Minimum relative intensity to be considered from \fI.ms2\fR files.  Ion intensities are normalized to 100 before labeling, so \fB-minInt\fR should be supplied as a relative intensity.  By default, all ion intensities are considered.
+.TP
+\fB--incAllIons \fI<0/1>\fR
+Specify whether to include unlabeled ions in spectrum output file. \fB1\fR is the default.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Only include labeled fragment ions in spectrum output file.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Include all ions in spectrum output file.
+.in
+
+.SS INPUT / OUTPUT OPTIONS
+.TP
+\fB-d, --dir\fR \fI<path>\fR
+Set working directory from which to run program. By default working directory at runtime is used.
+.TP
+\fB-o, --ofname\fR \fI<ofname>\fR
+Set name of summary output file. By default, \fI<ofname>\fR is \fIpeptide_cit_stats.tsv\fR.
+.TP
+\fB-dta\fR \fI<name>\fR
+Set default name of DTASelect-filter files.  By default, \fI<name>\fR is \fIDTASelect-filter.txt\fR.
+
+.SS OTHER
+.TP
+\fB--fastaFile\fR \fI<path>\fR
+Specify .fasta formated file to lookup numbers of modified residues in \fIpeptide_cit_stats.tsv\fR.
+.TP
+\fB--nThread\fR \fI<n_thread>\fR
+Choose number of thread to use. The part of \fBionFinder\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
+.TP
+\fB-v, --version\fR
+Print binary version number and exit program.
+.TP
+\fB-h, --help\fR
+Display this help file.
+
+.SH PROGRAM OUTLINE
+\fBionFinder\fR has 3 phase. See \fIionFinder_userGuide.pdf\fR for a detailed description of each phase.
+.SS 1) INPUT
+.IP \[bu] 2
+All \fIinput_dir\fR folders are searched for DTASelect-filter files each peptide is read into a data structure in memory.
+.IP \[bu] 2
+Get peptide modification parameters from existing \fIsequest.params\fR files.
+.SS 2) ANALYSIS
+.IP \[bu] 2
+Calculate b, y and neutral loss ions for each peptide. 
+.IP \[bu] 2
+Load the corresponding \fI.ms2\fR file into a buffer in memory
+.IP \[bu] 2
+Find the location of the scan in the \fI.ms2\fR file buffer and parse it into a
+\fIms2::Spectrum\fR object
+.IP \[bu] 2
+Search the \fIms2::Spectrum\fR object for fragment ions within a user defined tolerance.
+.IP \[bu] 2
+Classify the fragment ions which were found.
+.IP \[bu] 2
+Determine whether fragments found unambiguously show that the peptide contains the modification.
+.SS 3) OUTPUT
+.IP \[bu] 2
+Write out \fIpeptide_cit_stats.tsv\fR with a summary of the results.
+
+.SH EXAMPLES
+.TP
+\fBionFinder\fR
+Run \fRionFinder\fR from current working directory using default parameters.
+.TP
+\fBionFinder --citStats\fR
+Run \fRionFinder\fR from current working directory using default parameters for citrulline.  
+.TP
+\fBionFinder --citStats --matchTolerance 100 --matchType ppm/\fR
+Run \fRionFinder\fR from current working directory using default parameters for citrulline with a 50 ppm fragment match tolerance.
+.TP
+\fBionFinder --citStats --printSpectra\fR
+Run \fRionFinder\fR from current working directory using default parameters for citrulline and printing intermediate \fI.spectra\fR files. 
+
+.SH AUTHOR
+\fBionFinder\fR was written by Aaron Maurais. Email questions or bugs to: aaron.maurais@.bc.edu
