@@ -162,11 +162,6 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "--citStats"))
 		{
-			if(!utils::isArg(argv[++i]))
-			{
-				usage();
-				return false;
-			}
 			_neutralLossMass = CIT_NL_MASS;
 			_ambigiousResidues = CIT_AMB_RESIDUES;
 			_calcNL = true;
