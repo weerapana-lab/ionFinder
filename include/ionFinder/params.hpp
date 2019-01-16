@@ -77,7 +77,7 @@ namespace IonFinder{
 			_fastaFile = "";
 			_includeReverse = false;
 			_printSpectraFiles = false;
-			_calcNL = true;
+			_calcNL = false;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
