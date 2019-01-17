@@ -6,7 +6,7 @@
 [options] [input_dir ...]
 
 .SH DESCRIPTION
-\fBionFinder\fR Reads one or more DTASelect-filter files, calculates theoretical B and Y peptide fragments, and searches parent MS-2 scans for theoretical fragments. If no argument is specified for \fIinput_dir\fR, the current working directory is used. 
+\fBionFinder\fR Reads peptides from one or more DTASelect-filter files, calculates theoretical B and Y peptide fragments, and searches parent MS-2 scans for theoretical fragments. If no argument is specified for \fIinput_dir\fR, the current working directory is used. 
 
 The envisioned use case of \fBionFinder\fR is to search for neutral loss ions which are not considered by database searching software.  The program can also be used to automatically generate annotated MS-2 spectra for an entire mass spec run.  Options are available to add neutral loss fragments to the search, and to print annotated MS-2 spectra for each peptide. 
 
@@ -49,7 +49,7 @@ Specify amino acids whose mass is ambiguous with the amino acids with the dynami
 \fB--lossMass\fR \fI<mass>\fR
 Specify mass of neutral loss to search for. 
 .TP
-\fB--calcNL\fR \fI<0/1\fR
+\fB--calcNL\fR \fI<0/1>\fR
 Specify whether neutral loss fragment ions should be search for. If this option is set to \fB1\fR without any argument for \fB--lossMass\fR given, it is ignored.  Default is \fB0\fR.
 .TP
 .in +0.75i
