@@ -417,6 +417,8 @@ bool IonFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	if(!readMs2s(ms2Map, scans)) return false;
 	IonFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
 										success, scansIndex);
+	
+	delete success;
 	return *success;
 }
 
@@ -430,11 +432,12 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 	std::vector<std::string> fileNamesList(len);
 	for(size_t i = 0; i < len; i++)
 		fileNamesList[i] = scans[i].getPrecursorFile();
-	std::set<std::string> fileNames(fileNamesList.begin(), fileNamesList.end());
+	auto it = std::unique(fileNamesList.begin(), fileNamesList.end());
+	fileNamesList.resize(std::distance(fileNamesList.begin(), it));
 	
 	//read ms2 files
 	ms2Map.clear();
-	for(auto it = fileNames.begin(); it != fileNames.end(); ++it)
+	for(auto it = fileNamesList.begin(); it != fileNamesList.end(); ++it)
 	{
 		ms2Map[*it] = ms2::Ms2File();
 		if(!ms2Map[*it].read(*it)){
