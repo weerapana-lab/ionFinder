@@ -16,7 +16,6 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
-#include <set>
 
 #include <ionFinder/ionFinder.hpp>
 #include <ionFinder/params.hpp>
