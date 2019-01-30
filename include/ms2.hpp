@@ -18,6 +18,7 @@
 #include <string>
 
 #include <utils.hpp>
+#include <bufferFile.hpp>
 #include <peptide.hpp>
 #include <ms2Spectrum.hpp>
 
@@ -28,17 +29,9 @@ namespace ms2 {
 	
 	class Ms2File;
 	
-	class Ms2File{
+	class Ms2File : public base::BufferFile{
 	private:
-		//file buffer vars
-		//!stores unparsed ms2 file
-		char* buffer;
-		//!number of chars in buffer
-		size_t size;
-		
 		//metadata
-		//!full file name used for reading
-		std::string fname;
 		//!base file name without extension
 		std::string _parentMs2;
 		size_t firstScan, lastScan;
@@ -57,33 +50,19 @@ namespace ms2 {
 		
 	public:
 
-		Ms2File(std::string _fname = ""){
-			fname = _fname;
-			size = 0;
-			buffer = new char [size];
+		Ms2File(std::string fname = "") : BufferFile(fname){
 			initMetadata();
 		}
-		~Ms2File(){
-			delete [] buffer;
-		}
+		~Ms2File(){}
 		
 		//!copy constructor
-		Ms2File(const Ms2File& rhs)
-		{
-			//copy buffer
-			buffer = new char[rhs.size];
-			std::copy(rhs.buffer, rhs.buffer + rhs.size, buffer);
-			
-			//other vars
-			size = rhs.size;
+		Ms2File(const Ms2File& rhs) : BufferFile(rhs){
 			copyMetadata(rhs);
 		}
 		//!copy assignment
 		Ms2File& operator = (Ms2File rhs)
 		{
-			std::swap(buffer, rhs.buffer);
-			
-			size = rhs.size;
+			BufferFile::operator=(rhs);
 			copyMetadata(rhs);
 			return *this;
 		}

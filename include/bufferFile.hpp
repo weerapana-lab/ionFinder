@@ -13,10 +13,10 @@
 #include <utils.hpp>
 
 namespace base{
-	class FileBuffer;
+	class BufferFile;
 	
 	//!Base class for reading and manipulating large file buffers.
-	class FileBuffer{
+	class BufferFile{
 	protected:
 		//!file path
 		std::string _fname;
@@ -27,15 +27,15 @@ namespace base{
 		//!_buffer length in chars
 		size_t _size;
 	public:
-		FileBuffer(std::string fname = "");
-		FileBuffer(const FileBuffer& rhs);
+		BufferFile(std::string fname = "");
+		BufferFile(const BufferFile& rhs);
 		
-		~FileBuffer(){
+		~BufferFile(){
 			delete [] _buffer;
 		}
 		
 		//modifers
-		FileBuffer& operator = (FileBuffer rhs);
+		BufferFile& operator = (BufferFile rhs);
 		bool read();
 		bool read(std::string);
 	};

@@ -1,4 +1,3 @@
-
 #
 # C++ Compiler
 CXX := g++

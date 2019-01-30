@@ -45,7 +45,7 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
 	std::stringstream ss(temp);
 	
 	std::string line;
-	while(utils::safeGetLine(ss, line))
+	while(utils::safeGetline(ss, line))
 	{
 		if(line[0] == '>') continue;
 		ret += line;

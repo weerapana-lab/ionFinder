@@ -48,7 +48,7 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 	
 	std::string line;
 	std::vector<std::string> elems;
-	while(utils::safeGetLine(inF, line))
+	while(utils::safeGetline(inF, line))
 	{
 		//line = file.getLine_skip_trim();
 		line = utils::trim(line);

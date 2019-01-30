@@ -49,7 +49,7 @@ bool base::ParamsBase::writeSmod(std::string wd) const
 	<< utils::COMMENT_SYMBOL << " File generated on: " << utils::ascTime() << NEW_LINE;
 	
 	std::string line;
-	while(utils::safeGetLine(staticMods, line))
+	while(utils::safeGetline(staticMods, line))
 		outF << line << NEW_LINE;
 	
 	return true;
@@ -65,7 +65,7 @@ void base::ParamsBase::usage(std::ostream& out) const
 {
 	std::ifstream inF(_usageFile);
 	std::string line;
-	while(utils::safeGetLine(inF, line))
+	while(utils::safeGetline(inF, line))
 		out << line << NEW_LINE;
 }
 

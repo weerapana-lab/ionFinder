@@ -17,7 +17,7 @@
 #include <string>
 
 #include <utils.hpp>
-#include <fileBuffer.hpp>
+#include <bufferFile.hpp>
 
 namespace fastaFile {
 	class FastaFile;
@@ -25,7 +25,7 @@ namespace fastaFile {
 	const std::string PROT_SEQ_NOT_FOUND = "PROT_SEQ_NOT_FOUND";
 	const std::string PEP_SEQ_NOT_FOUND = "PEP_SEQ_NOT_FOUND";
 	
-	class FastaFile : public base::FileBuffer{
+	class FastaFile : public base::BufferFile{
 	private:
 		//!All peptide sequences which were already found are stored internally
 		std::map<std::string, std::string> _foundSequences;
@@ -36,13 +36,13 @@ namespace fastaFile {
 		}
 		
 	public:
-		FastaFile(std::string fname = "") : FileBuffer(fname) {}
-		FastaFile(const FastaFile& rhs) : FileBuffer(rhs) {}
+		FastaFile(std::string fname = "") : BufferFile(fname) {}
+		FastaFile(const FastaFile& rhs) : BufferFile(rhs) {}
 		~FastaFile(){}
 		
 		//modifers
 		FastaFile& operator = (FastaFile rhs){
-			FileBuffer::operator=(rhs);
+			BufferFile::operator=(rhs);
 			return *this;
 		}
 		

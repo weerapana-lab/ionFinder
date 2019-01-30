@@ -13,7 +13,6 @@
  */
 void ms2::Ms2File::copyMetadata(const Ms2File& rhs)
 {
-	fname = rhs.fname;
 	_parentMs2 = rhs._parentMs2;
 	firstScan = rhs.firstScan;
 	lastScan = rhs.lastScan;
@@ -26,7 +25,6 @@ void ms2::Ms2File::copyMetadata(const Ms2File& rhs)
  */
 void ms2::Ms2File::initMetadata()
 {
-	fname = "";
 	_parentMs2 = "";
 	firstScan = 0;
 	lastScan = 0;
@@ -34,20 +32,16 @@ void ms2::Ms2File::initMetadata()
 	scanType = "";
 }
 
-bool ms2::Ms2File::read(std::string _fname)
+bool ms2::Ms2File::read(std::string fname)
 {
-	fname = _fname;
-	return read();
+	_fname = fname;
+	return Ms2File::read();
 }
 
 bool ms2::Ms2File::read()
 {
-	calcParentMs2(fname);
-	if(fname.empty())
-		throw std::runtime_error("File must be specified!");
-	
-	utils::readBuffer(fname, &buffer, size);
-	
+	calcParentMs2(_fname);
+	if(!BufferFile::read(_fname)) return false;
 	return getMetaData();
 }
 
@@ -56,9 +50,9 @@ bool ms2::Ms2File::getMetaData()
 	//find header in buffer and put it into ss
 	std::stringstream ss;
 	std::string line;
-	size_t end = utils::offset(buffer, size, "LastScan") + 100;
+	size_t end = utils::offset(_buffer, _size, "LastScan") + 100;
 	for(size_t i = 0; i < end; i++)
-		ss.put(*(buffer + i));
+		ss.put(*(_buffer + i));
 	size_t sLen = ss.str().length();
 	
 	std::vector<std::string> elems;
@@ -66,7 +60,7 @@ bool ms2::Ms2File::getMetaData()
 	
 	//iterate through ss to find metadata
 	while(ss.tellg() < sLen){
-		utils::safeGetLine(ss, line);
+		utils::safeGetline(ss, line);
 		if(line[0] == 'H')
 		{
 			utils::split(line, IN_DELIM, elems);
@@ -137,10 +131,10 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 	
 	const char* query = makeOffsetQuery(queryScan);
 	size_t queryLen = strlen(query);
-	size_t scanOffset = utils::offset(buffer, size, query);
-	size_t endOfScan = utils::offset(buffer + scanOffset + queryLen,
-									 size - (scanOffset + queryLen), "S\t") + queryLen;
-	if(scanOffset == size)
+	size_t scanOffset = utils::offset(_buffer, _size, query);
+	size_t endOfScan = utils::offset(_buffer + scanOffset + queryLen,
+									 _size - (scanOffset + queryLen), "S\t") + queryLen;
+	if(scanOffset == _size)
 	{
 		std::cout << "queryScan could not be found!" << NEW_LINE;
 		return false;
@@ -150,7 +144,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 	std::string line;
 	size_t numIons = 0;
 	
-	std::string temp (buffer + scanOffset, buffer + scanOffset + endOfScan);
+	std::string temp (_buffer + scanOffset, _buffer + scanOffset + endOfScan);
 	std::stringstream ss(temp);
 	std::streampos oldPos = ss.tellg();
 	bool z_found = false;
@@ -191,7 +185,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 		else if(utils::isInteger(std::string(1, elems[0][0])))
 		{
 			ss.seekg(oldPos);
-			while(utils::safeGetLine(ss, line))
+			while(utils::safeGetline(ss, line))
 			{
 				if(line.empty()) continue;
 				
