@@ -6,13 +6,13 @@
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
 //
 
-#include <fileBuffer.hpp>
+#include <bufferFile.hpp>
 
 /**
  \brief constructor
  \param fname path of file to be read
  */
-base::FileBuffer::FileBuffer(std::string fname)
+base::BufferFile::BufferFile(std::string fname)
 {
 	_fname = fname;
 	_size = 0;
@@ -23,7 +23,7 @@ base::FileBuffer::FileBuffer(std::string fname)
  \brief copy constructor
  \param rhs object to copy
  */
-base::FileBuffer::FileBuffer(const base::FileBuffer& rhs)
+base::BufferFile::BufferFile(const base::BufferFile& rhs)
 {
 	//copy buffer
 	_buffer = new char[rhs._size];
@@ -37,7 +37,7 @@ base::FileBuffer::FileBuffer(const base::FileBuffer& rhs)
  \brief copy assignment
  \param rhs object to copy
  */
-base::FileBuffer& base::FileBuffer::operator = (base::FileBuffer rhs)
+base::BufferFile& base::BufferFile::operator = (base::BufferFile rhs)
 {
 	std::swap(_buffer, rhs._buffer);
 	
@@ -50,7 +50,7 @@ base::FileBuffer& base::FileBuffer::operator = (base::FileBuffer rhs)
  \param fname path of file to read
  \return true if sucessful
  */
-bool base::FileBuffer::read(std::string fname)
+bool base::BufferFile::read(std::string fname)
 {
 	_fname = fname;
 	return read();
@@ -61,7 +61,7 @@ bool base::FileBuffer::read(std::string fname)
  \pre FileBuffer::_fname is not empty
  \return true if sucessful
  */
-bool base::FileBuffer::read()
+bool base::BufferFile::read()
 {
 	std::ifstream inF(_fname);
 	if(!inF) return false;
