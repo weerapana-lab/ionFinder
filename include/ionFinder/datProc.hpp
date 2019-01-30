@@ -143,7 +143,7 @@ namespace IonFinder{
 			FRAG,
 			//!B or Y fragments with modification not containing N or Q
 			DET_FRAG,
-			//!B or Y fragments with modification containing N or Q
+			//!B or Y fragments with modification containing amb
 			AMB_MOD_FRAG,
 			//!Cit determining NL fragments
 			DET_NL_FRAG,

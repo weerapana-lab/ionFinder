@@ -9,10 +9,10 @@
 #include <peptide.hpp>
 
 /**
- Convert string to IonType
+ \brief Convert string to IonType <br>
  Accepted options are "b", "y", "m", "M", "^y-", "^b-", and "^M-".
  All others will cause an error.
- @return IonType
+ \return IonType
  */
 PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonType(std::string s)
 {
@@ -178,6 +178,13 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 	}*/
 }
 
+/**
+ \brief Add neutral loss fragment ions to Peptide <br>
+ Neutral loss ions for each b and y ion are added to Peptide for
+ each mass in \p losses.
+ 
+ \param losses list of loss masses to add
+ */
 void PeptideNamespace::Peptide::addNeutralLoss(const std::vector<double>& losses)
 {
 	size_t len = fragments.size();

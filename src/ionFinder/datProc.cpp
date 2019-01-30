@@ -418,8 +418,9 @@ bool IonFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
 	IonFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
 										success, scansIndex);
 	
+	bool ret = *success;
 	delete success;
-	return *success;
+	return ret;
 }
 
 bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
