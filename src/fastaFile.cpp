@@ -8,51 +8,6 @@
 
 #include <fastaFile.hpp>
 
-//!copy constructor
-fastaFile::FastaFile::FastaFile(const FastaFile& rhs)
-{
-	//copy buffer
-	_buffer = new char[rhs._size];
-	std::copy(rhs._buffer, rhs._buffer + rhs._size, _buffer);
-	
-	//other vars
-	_size = rhs._size;
-}
-
-//!copy assignment
-fastaFile::FastaFile& fastaFile::FastaFile::operator = (FastaFile rhs)
-{
-	std::swap(_buffer, rhs._buffer);
-	
-	_size = rhs._size;
-	return *this;
-}
-
-/**
- \brief Read contents of \p fname into FastaFile::_buffer
- \param fname path of file to read
- \return true if sucessful
- */
-bool fastaFile::FastaFile::read(std::string fname)
-{
-	_fname = fname;
-	return read();
-}
-
-/**
- \brief Read contents of FastaFile::_fname into FastaFile::_buffer
- \pre FastaFile::_fname is not empty
- \return true if sucessful
- */
-bool fastaFile::FastaFile::read()
-{
-	std::ifstream inF(_fname);
-	if(!inF) return false;
-	
-	utils::readBuffer(_fname, &_buffer, _size);
-	return true;
-}
-
 /**
  \brief Search for \p proteinID in FastaFile::_buffer and extract protein sequence.
  \param proteinID uniprot ID of protein to search for.

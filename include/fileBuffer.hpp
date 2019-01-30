@@ -1,13 +1,13 @@
 //
-//  bufferFile.hpp
+//  fileBuffer.hpp
 //  ms2_anotator
 //
 //  Created by Aaron Maurais on 1/30/19.
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
 //
 
-#ifndef bufferFile_hpp
-#define bufferFile_hpp
+#ifndef fileBuffer_hpp
+#define fileBuffer_hpp
 
 #include <string>
 #include <utils.hpp>
@@ -15,8 +15,9 @@
 namespace base{
 	class FileBuffer;
 	
+	//!Base class for reading and manipulating large file buffers.
 	class FileBuffer{
-	private:
+	protected:
 		//!file path
 		std::string _fname;
 		
@@ -37,8 +38,7 @@ namespace base{
 		FileBuffer& operator = (FileBuffer rhs);
 		bool read();
 		bool read(std::string);
-		
 	};
 }
 
-#endif /* bufferFile_hpp */
+#endif /* fileBuffer_hpp */

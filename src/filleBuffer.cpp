@@ -6,7 +6,7 @@
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
 //
 
-#include <bufferFile.hpp>
+#include <fileBuffer.hpp>
 
 /**
  \brief constructor
