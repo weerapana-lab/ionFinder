@@ -1,0 +1,71 @@
+//
+//  bufferFile.cpp
+//  ms2_anotator
+//
+//  Created by Aaron Maurais on 1/30/19.
+//  Copyright © 2019 Aaron Maurais. All rights reserved.
+//
+
+#include <bufferFile.hpp>
+
+/**
+ \brief constructor
+ \param fname path of file to be read
+ */
+base::FileBuffer::FileBuffer(std::string fname)
+{
+	_fname = fname;
+	_size = 0;
+	_buffer = new char[_size];
+}
+
+/**
+ \brief copy constructor
+ \param rhs object to copy
+ */
+base::FileBuffer::FileBuffer(const base::FileBuffer& rhs)
+{
+	//copy buffer
+	_buffer = new char[rhs._size];
+	std::copy(rhs._buffer, rhs._buffer + rhs._size, _buffer);
+	
+	//other vars
+	_size = rhs._size;
+}
+
+/**
+ \brief copy assignment
+ \param rhs object to copy
+ */
+base::FileBuffer& base::FileBuffer::operator = (base::FileBuffer rhs)
+{
+	std::swap(_buffer, rhs._buffer);
+	
+	_size = rhs._size;
+	return *this;
+}
+
+/**
+ \brief Read contents of \p fname into FileBuffer::_buffer
+ \param fname path of file to read
+ \return true if sucessful
+ */
+bool base::FileBuffer::read(std::string fname)
+{
+	_fname = fname;
+	return read();
+}
+
+/**
+ \brief Read contents of FileBuffer::_fname into FileBuffer::_buffer
+ \pre FileBuffer::_fname is not empty
+ \return true if sucessful
+ */
+bool base::FileBuffer::read()
+{
+	std::ifstream inF(_fname);
+	if(!inF) return false;
+	
+	utils::readBuffer(_fname, &_buffer, _size);
+	return true;
+}
