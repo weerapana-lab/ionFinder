@@ -602,12 +602,13 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 /**
  Prints peptide stats to out.
  @param stats Peptide stats to print.
- @param ofname name of file to write to.
+ @param pars initalized IonFinder::Params object
  */
-bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::string ofname)
+bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
+								  const IonFinder::Params& pars)
 {
 	//assert(out);
-	std::ofstream outF (ofname);
+	std::ofstream outF (pars.makeOfname());
 	if(!outF) return false;
 	
 	typedef IonFinder::PeptideStats::IonType itcType;
@@ -623,7 +624,6 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats, std::s
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
-	headers.reserve(statNames.size() + oHeaders.size());
 	headers.insert(headers.end(), oHeaders.begin(), oHeaders.end());
 	headers.insert(headers.end(), statNames.begin(), statNames.end());
 	

@@ -40,13 +40,12 @@ int main(int argc, const char** argv)
 	std::cout << "Done!\n";
 	
 	//write data
-	std::string ofname = pars.makeOfname();
-	if(!IonFinder::printPeptideStats(peptideStats, ofname))
+	if(!IonFinder::printPeptideStats(peptideStats, pars))
 	{
 		std::cerr << "Failed to write peptide stats!" << NEW_LINE;
 		return -1;
 	}
-	std::cout << "\nResults written to: " << ofname << NEW_LINE;
+	std::cout << "\nResults written to: " << pars.makeOfname() << NEW_LINE;
 	
 	return 0;
 }

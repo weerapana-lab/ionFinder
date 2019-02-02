@@ -73,7 +73,7 @@ namespace IonFinder{
 						  const IonFinder::Params&);
 	
 	bool printPeptideStats(const std::vector<PeptideStats>&,
-						   std::string);
+						   const IonFinder::Params&);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
 	
@@ -137,7 +137,7 @@ namespace IonFinder{
 									 const IonFinder::Params&);
 		
 		friend bool printPeptideStats(const std::vector<PeptideStats>&,
-									  std::string);
+									  const IonFinder::Params&);
 		enum class IonType{
 			//!All fragments identified
 			FRAG,
