@@ -318,8 +318,10 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 	bool* sucsses = new bool[nThread];
 	
 	//read ms2s
+	std::cout << "Reading parent ms2 files...";
 	Ms2Map ms2Map;
 	if(!IonFinder::readMs2s(ms2Map, scans)) return false;
+	std::cout << "Done!\n";
 	
 	//split up input data for each thread
 	std::vector<PeptideNamespace::Peptide>* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThread];
