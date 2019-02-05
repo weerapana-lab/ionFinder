@@ -302,7 +302,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
  \param pars Params object for information on how to perform analysis
  \return true is all file I/O was sucessful.
  */
-bool IonFinder::findFragmentsParallel(const std::vector<Dtafilter::Scan>& scans,
+bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
 									  const IonFinder::Params& pars)
 {
@@ -407,7 +407,7 @@ void IonFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
  @param pars IonFinder params object.
  @return true if successful
  */
-bool IonFinder::findFragments(const std::vector<Dtafilter::Scan>& scans,
+bool IonFinder::findFragments(std::vector<Dtafilter::Scan>& scans,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
 							  IonFinder::Params& pars)
 {
@@ -458,7 +458,7 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
  @param pars IonFinder params object.
  @param success set to true if function was successful
  */
-void IonFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
+void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 										 const size_t beg, const size_t end,
 										 const IonFinder::Ms2Map& ms2Map,
 										 std::vector<PeptideNamespace::Peptide>& peptides,
@@ -515,6 +515,7 @@ void IonFinder::findFragments_threadSafe(const std::vector<Dtafilter::Scan>& sca
 			throw std::runtime_error("Error reading scan!");
 			return;
 		}
+		scans[i].setPrecursorMZ(spectrum.getPrecursorMZ());
 		
 		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
 		spectrum.labelSpectrum(peptides.back(), pars);
@@ -620,7 +621,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 							ION_TYPES_STR[i].substr(1));
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + N_ION_TYPES);
 	
-	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence is_modified modified_residue charge unique xCorr scan parent_file sample_name";
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr scan parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
@@ -645,6 +646,8 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << it->_scan->getParentDescription() <<
 		OUT_DELIM << it->_scan->getFullSequence() <<
 		OUT_DELIM << it->_scan->getSequence() <<
+		OUT_DELIM << it->_scan->getPrecursorMZ() <<
+		//OUT_DELIM << 0 <<
 		OUT_DELIM << (it->modLocs.size() > 0) <<
 		OUT_DELIM << it->modResidues <<
 		OUT_DELIM << it->_scan->getCharge() <<
@@ -655,7 +658,14 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << it->_scan->getSampleName();
 		
 		//peptide analysis data
-		outF << OUT_DELIM << it->containsCit;
+		outF << OUT_DELIM;
+		if(pars.getCalcNL())
+			 outF << it->containsCit;
+		else{
+			int temp = it->ionTypesCount.at(itcType::DET_FRAG).second;
+			std::cout << temp << std::endl;
+			outF << it->ionTypesCount.at(itcType::DET_FRAG).second;
+		}
 		
 		for(itcType i = itcType::First; i != itcType::Last; ++i)
 			outF << OUT_DELIM << it->ionTypesCount.at(i).second;

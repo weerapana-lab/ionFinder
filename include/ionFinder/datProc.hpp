@@ -36,16 +36,19 @@ namespace IonFinder{
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
 		"detNLFrag", "ambFrag", "artNLFrag"};
 	
+	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
-	int const MAX_PROGRESS_ITTERATIONS = 10;
+	//!Max itterations of progressbar loop with no progress before quiting
+	int const MAX_PROGRESS_ITTERATIONS = 5;
+	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
 	typedef std::map<std::string, ms2::Ms2File> Ms2Map;
 	
-	bool findFragmentsParallel(const std::vector<Dtafilter::Scan>&,
+	bool findFragmentsParallel(std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
 							   const IonFinder::Params&);
 	
-	void findFragments_threadSafe(const std::vector<Dtafilter::Scan>& scans,
+	void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 								  size_t beg, size_t end,
 								  const Ms2Map& ms2Map,
 								  std::vector<PeptideNamespace::Peptide>& peptides,
@@ -58,7 +61,7 @@ namespace IonFinder{
 	
 	bool readMs2s(Ms2Map&, const std::vector<Dtafilter::Scan>&);
 	
-	bool findFragments(const std::vector<Dtafilter::Scan>& scans,
+	bool findFragments(std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
 					   IonFinder::Params& pars);
 	
