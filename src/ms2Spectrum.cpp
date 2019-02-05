@@ -93,7 +93,7 @@ void ms2::Spectrum::clear()
 	precursorFile.clear();
 	precursorScan = 0;
 	charge = 0;
-	precursorMZ = 0;
+	precursorMZ = "";
 	maxInt = 0;
 	ions.clear();
 	ions.shrink_to_fit();

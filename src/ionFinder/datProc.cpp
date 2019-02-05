@@ -647,7 +647,6 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << it->_scan->getFullSequence() <<
 		OUT_DELIM << it->_scan->getSequence() <<
 		OUT_DELIM << it->_scan->getPrecursorMZ() <<
-		//OUT_DELIM << 0 <<
 		OUT_DELIM << (it->modLocs.size() > 0) <<
 		OUT_DELIM << it->modResidues <<
 		OUT_DELIM << it->_scan->getCharge() <<

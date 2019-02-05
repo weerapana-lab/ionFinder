@@ -31,7 +31,7 @@ namespace scanData{
 		std::string fullSequence;
 		int charge;
 		std::string xcorr;
-		double precursorMZ;
+		std::string precursorMZ;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
@@ -43,7 +43,7 @@ namespace scanData{
 			sequence = "";
 			charge = 0;
 			xcorr = "";
-			precursorMZ = 0;
+			precursorMZ = "";
 		}
 		Scan(std::string _sequence, size_t _scanNum, std::string _parentFile){
 			sequence = makeSequenceFromFullSequence(_sequence);
@@ -78,7 +78,7 @@ namespace scanData{
 		void setCharge(double _charge){
 			charge = _charge;
 		}
-		void setPrecursorMZ(double mz){
+		void setPrecursorMZ(std::string mz){
 			precursorMZ = mz;
 		}
 		
@@ -98,7 +98,7 @@ namespace scanData{
 		int getCharge() const{
 			return charge;
 		}
-		double getPrecursorMZ() const{
+		std::string getPrecursorMZ() const{
 			return precursorMZ;
 		}
 		std::string getXcorr() const{

@@ -159,7 +159,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 			assert(elems.size() == 4);
 			utils::split(line, IN_DELIM, elems);
 			scan.scanNum = std::stoi(elems[2]);
-			scan.precursorMZ = std::stod(elems[3]);
+			scan.precursorMZ = elems[3];
 		}
 		else if(elems[0] == "I")
 		{
