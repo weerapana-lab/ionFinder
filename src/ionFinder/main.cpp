@@ -28,6 +28,7 @@ int main(int argc, const char** argv)
 	
 	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
+	peptides.reserve(scans.size());
 	if(!IonFinder::findFragmentsParallel(scans, peptides, pars)){
 		std::cout << "Failed to annotate spectra!" << std::endl;
 	}

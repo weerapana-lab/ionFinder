@@ -663,8 +663,6 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		if(pars.getCalcNL())
 			 outF << it->containsCit;
 		else{
-			int temp = it->ionTypesCount.at(itcType::DET_FRAG).second;
-			std::cout << temp << std::endl;
 			outF << it->ionTypesCount.at(itcType::DET_FRAG).second;
 		}
 		
