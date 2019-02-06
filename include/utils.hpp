@@ -150,6 +150,17 @@ namespace utils{
 		return beg <= comp && comp <= end;
 	}
 	int getInt(int min, int max);
+	
+	/**
+	 Get underlying integer value for enum class
+	 \param value enum class value
+	 \return integer value of \p value
+	 */
+	template <typename Enumeration>
+	auto as_integer(Enumeration const value)-> typename std::underlying_type<Enumeration>::type
+	{
+		return static_cast<typename std::underlying_type<Enumeration>::type>(value);
+	}
 }
 
 #endif /* utils_hpp */
