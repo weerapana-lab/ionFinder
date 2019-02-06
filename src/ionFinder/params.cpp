@@ -165,6 +165,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_neutralLossMass = CIT_NL_MASS;
 			_ambigiousResidues = CIT_AMB_RESIDUES;
 			_calcNL = true;
+			ofname = PEPTIDE_CIT_STATS_OFNAME;
 			continue;
 		}
 		if(!strcmp(argv[i], "--isoAA"))
@@ -297,6 +298,10 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		else{ //we are in input dirs
 			while(i < argc){
+				if(utils::isFlag(argv[i])){
+					usage();
+					return false;
+				}
 				_inDirs.push_back(std::string(argv[i++]));
 				_inDirSpecified = true;
 			}

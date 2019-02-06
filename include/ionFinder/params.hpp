@@ -25,6 +25,8 @@ namespace IonFinder{
 	std::string const PROG_USAGE_FNAME = base::PROG_MAN + "/ionFinder/usage.txt";
 	std::string const PROG_HELP_FILE = base::PROG_MAN + "/ionFinder/helpFile.roff";
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
+	std::string const PEPTIDE_MOD_STATS_OFNAME = "peptide_mod_stats.tsv";
+	std::string const PEPTIDE_CIT_STATS_OFNAME = "peptide_cit_stats.tsv";
 	
 	//!default residues which are isobaric with a modification
 	std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
@@ -81,7 +83,7 @@ namespace IonFinder{
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
-			ofname = "peptide_cit_stats.tsv";
+			ofname = PEPTIDE_MOD_STATS_OFNAME;
 			_numThread = computeThreads();
 			_inDirSpecified = false;
 		}
