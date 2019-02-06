@@ -33,8 +33,8 @@ namespace IonFinder{
 	
 	const std::string FRAG_DELIM = "|";
 	int const N_ION_TYPES = 6;
-	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambModFrag",
-		"detNLFrag", "ambFrag", "artNLFrag"};
+	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambFrag",
+		"ambModFrag", "detNLFrag", "artNLFrag"};
 	
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
@@ -144,15 +144,15 @@ namespace IonFinder{
 		enum class IonType{
 			//!All fragments identified
 			FRAG,
-			//!B or Y fragments with modification not containing N or Q
+			//!B or Y fragments with modification not containing amb residue
 			DET_FRAG,
-			//!B or Y fragments with modification containing amb
-			AMB_MOD_FRAG,
-			//!Cit determining NL fragments
-			DET_NL_FRAG,
 			//!B or Y ions not containing modification
 			AMB_FRAG,
-			 //!NL fragments not contatining modification
+			//!B or Y fragments with modification containing amb residue
+			AMB_MOD_FRAG,
+			//!Modification determining NL fragments
+			DET_NL_FRAG,
+			//!NL fragments not contatining modification
 			ART_NL_FRAG,
 			Last,
 			First = FRAG

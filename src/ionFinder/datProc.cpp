@@ -379,8 +379,7 @@ void IonFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 	size_t curIndex = lastIndex;
 	int noChangeIterations = 0;
 	
-	std::cout << "\nSearching ms2s for neutral loss ions using " <<
-	nThread << " thread(s)...\n";
+	std::cout << "\nSearching ms2s for fragment ions using " << nThread << " thread(s)...\n";
 	while(scansIndex < count)
 	{
 		curIndex = scansIndex.load();
@@ -617,11 +616,26 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	typedef IonFinder::PeptideStats::IonType itcType;
 	//build stat names vector
 	std::vector<std::string> statNames;
-	statNames.push_back("containsCit");
-	for(int i = 0; i < N_ION_TYPES; i++)
-		statNames.push_back("n" + std::string(1, (char)std::toupper(ION_TYPES_STR[i][0])) +
-							ION_TYPES_STR[i].substr(1));
-	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + N_ION_TYPES);
+	
+	if(pars.getCalcNL())
+		statNames.push_back("contains_Cit");
+	else statNames.push_back("contains_mod");
+	
+	//determine when to stop printing peptide stats based on analysis performed
+	itcType pepStatsEnd = itcType::AMB_MOD_FRAG; //var is used laster in function
+	if(!pars.getAmbigiousResidues().empty()) pepStatsEnd = itcType::DET_NL_FRAG;
+	if(pars.getCalcNL()) pepStatsEnd = itcType::Last;
+	
+	//append peptide stats names to headers
+	int statLen = 0;
+	for(itcType it = itcType::First; it != pepStatsEnd; ++it){
+		statNames.push_back("n" +
+							std::string(1, (char)std::toupper(ION_TYPES_STR[utils::as_integer(it)][0])) +
+							ION_TYPES_STR[utils::as_integer(it)].substr(1));
+		statLen++;
+	}
+	
+	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 	
 	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr scan parent_file sample_name";
 	std::vector<std::string> oHeaders;
@@ -663,13 +677,13 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		if(pars.getCalcNL())
 			 outF << it->containsCit;
 		else{
-			outF << it->ionTypesCount.at(itcType::DET_FRAG).second;
+			outF << (it->ionTypesCount.at(itcType::DET_FRAG).second > 0);
 		}
 		
-		for(itcType i = itcType::First; i != itcType::Last; ++i)
+		for(itcType i = itcType::First; i != pepStatsEnd; ++i)
 			outF << OUT_DELIM << it->ionTypesCount.at(i).second;
 		
-		for(itcType i = itcType::First; i != itcType::Last; ++i)
+		for(itcType i = itcType::First; i != pepStatsEnd; ++i)
 			outF << OUT_DELIM << it->ionTypesCount.at(i).first;
 		
 		outF << NEW_LINE;
