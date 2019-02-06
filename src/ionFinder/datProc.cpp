@@ -622,19 +622,27 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	else statNames.push_back("contains_mod");
 	
 	//determine when to stop printing peptide stats based on analysis performed
-	itcType pepStatsEnd = itcType::AMB_MOD_FRAG; //var is used laster in function
-	if(!pars.getAmbigiousResidues().empty()) pepStatsEnd = itcType::DET_NL_FRAG;
-	if(pars.getCalcNL()) pepStatsEnd = itcType::Last;
+	std::vector<itcType> _pepStats; //used to store relavent peptide stats based on params
+	//defaults
+	_pepStats.push_back(itcType::FRAG);
+	_pepStats.push_back(itcType::DET_FRAG);
+	_pepStats.push_back(itcType::AMB_FRAG);
+	//conditional stats
+	if(!pars.getAmbigiousResidues().empty())
+		_pepStats.push_back(itcType::AMB_MOD_FRAG);
+	if(pars.getCalcNL()){
+		_pepStats.push_back(itcType::DET_NL_FRAG);
+		_pepStats.push_back(itcType::ART_NL_FRAG);
+	}
 	
 	//append peptide stats names to headers
 	int statLen = 0;
-	for(itcType it = itcType::First; it != pepStatsEnd; ++it){
+	for(auto it = _pepStats.begin(); it != _pepStats.end(); ++it){
 		statNames.push_back("n" +
-							std::string(1, (char)std::toupper(ION_TYPES_STR[utils::as_integer(it)][0])) +
-							ION_TYPES_STR[utils::as_integer(it)].substr(1));
+							std::string(1, (char)std::toupper(ION_TYPES_STR[utils::as_integer(*it)][0])) +
+							ION_TYPES_STR[utils::as_integer(*it)].substr(1));
 		statLen++;
 	}
-	
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 	
 	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr scan parent_file sample_name";
@@ -680,11 +688,11 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 			outF << (it->ionTypesCount.at(itcType::DET_FRAG).second > 0);
 		}
 		
-		for(itcType i = itcType::First; i != pepStatsEnd; ++i)
-			outF << OUT_DELIM << it->ionTypesCount.at(i).second;
+		for(auto it2 = _pepStats.begin(); it2 != _pepStats.end(); ++it2)
+			outF << OUT_DELIM << it->ionTypesCount.at(*it2).second;
 		
-		for(itcType i = itcType::First; i != pepStatsEnd; ++i)
-			outF << OUT_DELIM << it->ionTypesCount.at(i).first;
+		for(auto it2 = _pepStats.begin(); it2 != _pepStats.end(); ++it2)
+			outF << OUT_DELIM << it->ionTypesCount.at(*it2).first;
 		
 		outF << NEW_LINE;
 	}
