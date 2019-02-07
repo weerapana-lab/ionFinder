@@ -517,6 +517,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 			return;
 		}
 		scans[i].setPrecursorMZ(spectrum.getPrecursorMZ());
+		scans[i].setPrecursorScan(spectrum.getPrecursorScan());
 		
 		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
 		spectrum.labelSpectrum(peptides.back(), pars);
@@ -645,7 +646,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	}
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 	
-	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr scan parent_file sample_name";
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr scan precursor_scan parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
@@ -677,6 +678,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << it->_scan->getUnique() <<
 		OUT_DELIM << it->_scan->getXcorr() <<
 		OUT_DELIM << it->_scan->getScanNum() <<
+		OUT_DELIM << it->_scan->getPrecursorScan() <<
 		OUT_DELIM << utils::baseName(it->_scan->getPrecursorFile()) <<
 		OUT_DELIM << it->_scan->getSampleName();
 		

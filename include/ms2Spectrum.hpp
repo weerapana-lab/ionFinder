@@ -199,7 +199,6 @@ namespace ms2{
 		double precursorInt;
 		//!pretty parent file name with out extension for nameing
 		std::string _parentMs2;
-		int precursorScan;
 		
 		//dynamic metadata
 		double maxInt;
@@ -228,7 +227,6 @@ namespace ms2{
 		{
 			retTime = 0;
 			precursorInt = 0;
-			precursorScan = 0;
 			maxInt = 0;
 			minInt = 0;
 			ionPercent = 0;
