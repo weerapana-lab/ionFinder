@@ -462,8 +462,8 @@ bool utils::isInteger(const std::string & s)
  \brief Read in from std::cin between min and max.
  
  Continue asking for input until user suplies valid value.
- \param min mininum valid value
- \param max maxium valid value
+ \param min minimum valid value
+ \param max maximum valid value
  \return int between min and max
  */
 int utils::getInt(int min, int max)

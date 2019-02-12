@@ -21,7 +21,7 @@ void ms2::Ms2File::copyMetadata(const Ms2File& rhs)
 }
 
 /**
- \brief Initalize metadata values to empty variables
+ \brief Initialize metadata values to empty variables
  */
 void ms2::Ms2File::initMetadata()
 {
@@ -117,7 +117,7 @@ bool ms2::Ms2File::getScan(std::string queryScan, Spectrum& scan) const{
  
  \param queryScan scan number to search for
  \param scan empty ms2::Spectrum to load scan into
- \return false if \p queryScan not found, true if sucessful
+ \return false if \p queryScan not found, true if successful
  */
 bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 {

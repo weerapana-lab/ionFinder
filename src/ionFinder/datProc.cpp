@@ -243,12 +243,12 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		fragmentMap.populateMap(it->getSequence());
 		//it->printFragments(std::cout);
 		
-		//initilize new pepStat object
+		//initialize new pepStat object
 		IonFinder::PeptideStats pepStat(*it); //init pepStat
 		pepStat._scan = &scans[it - peptides.begin()]; //add pointer to scan
 		size_t nFragments = it->getNumFragments();
 		
-		//iterate throught ion fragmetns
+		//iterate through ion fragmetns
 		for(size_t i = 0; i < nFragments; i++)
 		{
 			/*if(it->getFragment(i).getIonStr(false) == "b14-43")
@@ -300,7 +300,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
  \param scans populated list of identified ms2 scans to search for
  \param peptides empty list of peptides to annotate
  \param pars Params object for information on how to perform analysis
- \return true is all file I/O was sucessful.
+ \return true is all file I/O was successful.
  */
 bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 									  std::vector<PeptideNamespace::Peptide>& peptides,
@@ -367,7 +367,7 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 
 /**
  Prints progress bar during findFragmentsParallel. <br>
- \p scansIndex is updated concurently by each thread.
+ \p scansIndex is updated concurrently by each thread.
  \param scansIndex number of scans completed
  \param count total number of scans to search for
  \param sleepTime time before next update is printed (in seconds)
@@ -605,7 +605,7 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 /**
  Prints peptide stats to out.
  @param stats Peptide stats to print.
- @param pars initalized IonFinder::Params object
+ @param pars initialized IonFinder::Params object
  */
 bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 								  const IonFinder::Params& pars)
@@ -623,7 +623,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	else statNames.push_back("contains_mod");
 	
 	//determine when to stop printing peptide stats based on analysis performed
-	std::vector<itcType> _pepStats; //used to store relavent peptide stats based on params
+	std::vector<itcType> _pepStats; //used to store relevant peptide stats based on params
 	//defaults
 	_pepStats.push_back(itcType::FRAG);
 	_pepStats.push_back(itcType::DET_FRAG);

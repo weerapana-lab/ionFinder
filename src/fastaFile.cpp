@@ -61,7 +61,7 @@ std::string fastaFile::FastaFile::getSequence(std::string proteinID)
  \param proteinID parent protein uniprot ID of \p peptideSeq
  \param peptideSeq unmodified peptide sequence.
  \param modLoc location of modified residue in peptide
- (where 0 is the begining of the peptide.)
+ (where 0 is the beginning of the peptide.)
  */
 std::string fastaFile::FastaFile::getModifiedResidue(std::string proteinID,
 													 std::string peptideSeq,
@@ -77,7 +77,7 @@ std::string fastaFile::FastaFile::getModifiedResidue(std::string proteinID,
  \param proteinID parent protein uniprot ID of \p peptideSeq
  \param peptideSeq unmodified peptide sequence.
  \param modLoc location of modified residue in peptide
- (where 0 is the begining of the peptide.)
+ (where 0 is the beginning of the peptide.)
  \param found set to false if first instance of searching for protein and it not being found
  */
 std::string fastaFile::FastaFile::getModifiedResidue(std::string proteinID,

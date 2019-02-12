@@ -48,7 +48,7 @@ base::BufferFile& base::BufferFile::operator = (base::BufferFile rhs)
 /**
  \brief Read contents of \p fname into FileBuffer::_buffer
  \param fname path of file to read
- \return true if sucessful
+ \return true if successful
  */
 bool base::BufferFile::read(std::string fname)
 {
@@ -59,7 +59,7 @@ bool base::BufferFile::read(std::string fname)
 /**
  \brief Read contents of FileBuffer::_fname into FileBuffer::_buffer
  \pre FileBuffer::_fname is not empty
- \return true if sucessful
+ \return true if successful
  */
 bool base::BufferFile::read()
 {

@@ -29,7 +29,7 @@ unsigned int IonFinder::Params::computeThreads() const
  \pre current working directory exists
  \param argc argc from main
  \param argv argv from main
- \return true if args were sucessfully read.
+ \return true if args were successfully read.
  */
 bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 {
@@ -155,7 +155,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			_matchType = strToMatchType(std::string(argv[i]));
 			if(_matchType == MatchType::UNKNOWN){
-				std::cerr << argv[i] << " is an unknow MatchType!" << NEW_LINE;
+				std::cerr << argv[i] << " is an unknown MatchType!" << NEW_LINE;
 				return false;
 			}
 			continue;

@@ -57,7 +57,7 @@ namespace base{
 			//!unknown type
 			UNKNOWN
 		};
-		//!How shoud fragment ion tolerances be calulated?
+		//!How should fragment ion tolerances be calculated?
 		MatchType _matchType;
 		
 		double minMZ;

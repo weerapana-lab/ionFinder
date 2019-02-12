@@ -30,7 +30,7 @@ base::ParamsBase::MatchType base::ParamsBase::strToMatchType(std::string mt)
  
  The file is written to the path \p wd/base::PROG_DEFAULT_SMOD_FILE.
  \param wd directory to write static modifications file to.
- \return true is sucessful
+ \return true is successful
  */
 bool base::ParamsBase::writeSmod(std::string wd) const
 {
@@ -94,7 +94,7 @@ double base::ParamsBase::getMatchTolerance() const{
  \brief Get fragment ion tolerance.
  
  Calculates match tolerance for \p mz.
- Uses ParamsBase::_matchType to determin whether the match tolerance should be in ppm or Th.
+ Uses ParamsBase::_matchType to determine whether the match tolerance should be in ppm or Th.
  \pre ParamsBase::_matchType != MatchType::UNKNOWN
  \param mz ion mz to calculate tolerance for.
  \return fragment match tolerance

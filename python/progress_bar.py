@@ -31,7 +31,7 @@ class FileModifications():
         self.inputDir = ''
         self.modTimes = dict()
 
-    def initilize(self, inputDir, sourceExt, outExt):
+    def initialize(self, inputDir, sourceExt, outExt):
         inputDirTemp = os.path.realpath(inputDir)
         sourceFiles = ['{}/{}'.format(inputDirTemp, x.replace(sourceExt, outExt))
         #sourceFiles = ['{}/{}'.format(inputDirTemp, x)

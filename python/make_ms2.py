@@ -41,7 +41,7 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
     ret = list()
     i = 0
     while(i < nFiles):
-        # get begining and end indecies
+        # get beginning and end indecies
         begNum = i
         endNum = begNum + filesPerProcess
         if endNum > nFiles:

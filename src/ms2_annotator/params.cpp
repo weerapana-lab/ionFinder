@@ -13,7 +13,7 @@
  \pre current working directory exists
  \param argc argc from main
  \param argv argv from main
- \return true if args were sucessfully read.
+ \return true if args were successfully read.
  */
 bool Ms2_annotator::Params::getArgs(int argc, const char* const argv [])
 {

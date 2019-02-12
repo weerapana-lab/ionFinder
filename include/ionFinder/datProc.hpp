@@ -38,7 +38,7 @@ namespace IonFinder{
 	
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
-	//!Max itterations of progressbar loop with no progress before quiting
+	//!Max iterations of progressbar loop with no progress before quitting
 	int const MAX_PROGRESS_ITTERATIONS = 5;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
