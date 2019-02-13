@@ -289,6 +289,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		if(!strcmp(argv[i], "--version"))
 		{
 			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;
+			printGitVersion();
 			return false;
 		}
 		else if(utils::isFlag(argv[i])){

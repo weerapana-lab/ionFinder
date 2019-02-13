@@ -210,6 +210,7 @@ bool Ms2_annotator::Params::getArgs(int argc, const char* const argv [])
 		if(!strcmp(argv[i], "--version"))
 		{
 			std::cout << "annotate_ms2 " << BIN_VERSION << NEW_LINE;
+			printGitVersion();
 			return false;
 		}
 		else{

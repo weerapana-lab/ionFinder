@@ -9,6 +9,14 @@
 #ifndef paramsBase_hpp
 #define paramsBase_hpp
 
+#ifndef GIT_VERSION
+#define GIT_VERSION "UNKNOWN"
+#endif
+
+#ifndef GIT_DATE
+#define GIT_DATE "UNKNOWN"
+#endif
+
 #include <iostream>
 #include <string>
 #include <cassert>
@@ -76,6 +84,7 @@ namespace base{
 		
 		bool writeSmod(std::string wd) const;
 		void usage(std::ostream& out = std::cerr) const;
+		void printGitVersion(std::ostream& out = std::cout) const;
 		void displayHelp() const;
 		static MatchType strToMatchType(std::string);
 		

@@ -110,3 +110,12 @@ double base::ParamsBase::getMatchTolerance(double mz) const
 		throw std::runtime_error("Unknown match type!");
 	}
 }
+
+/**
+ Print git version and date and time of last commit to \p out
+ \param out stream to print to
+ */
+void base::ParamsBase::printGitVersion(std::ostream& out) const{
+	out << "Last git commit: " << GIT_VERSION << NEW_LINE
+		<< "git revision: " << GIT_DATE << NEW_LINE;
+}

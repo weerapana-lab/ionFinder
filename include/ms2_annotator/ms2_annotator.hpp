@@ -20,7 +20,7 @@
 #endif
 
 #ifndef BIN_VERSION
-	#define BIN_VERSION 1.0
+	#define BIN_VERSION "1.0"
 #endif
 
 #ifndef OUT_DELIM

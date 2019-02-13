@@ -8,10 +8,14 @@ MAKE := make
 # latexmk
 TEX := $(shell command -v latexmk 2> /dev/null)
 #
+# git version vars
+GITVERSION:= $(shell git log -1 --pretty='%h')
+GITDATE:= $(shell git log -1 --format=%cd --date=local)
+#
 # Flags
 #
 #   Compiler
-CXXFLAGS += -c -g -Wall -pthread -std=c++11
+CXXFLAGS += -c -g -Wall -pthread -std=c++11 -DGIT_VERSION="\"${GITVERSION}\"" -DGIT_DATE="\"${GITDATE}\""
 #
 #   Linker
 LDFLAGS += -g -lpthread
