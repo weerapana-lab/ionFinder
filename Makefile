@@ -124,7 +124,7 @@ clean:
 	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE)
 	rm -f $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
 	rm -f ionFinder_help.pdf
-	rm -r lib/*
+	#rm -r lib/*
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
 
 #install: $(BINDIR)/$(EXE)
