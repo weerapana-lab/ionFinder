@@ -9,11 +9,6 @@
 #ifndef citFinder_hpp
 #define citFinder_hpp
 
-//deal with older c++ compilers
-#if (__cplusplus == 199711L || __cplusplus == 1)
-#define nullptr NULL
-#endif
-
 //make sure this value is defined
 #ifndef PATH_MAX
 #define PATH_MAX 1024

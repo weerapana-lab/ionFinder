@@ -216,11 +216,17 @@ namespace PeptideNamespace{
 		char getBY() const{
 			return b_y;
 		}
+		//!Get fragment ion number
 		int getNum() const{
 			return num;
 		}
+		//!Get copy of FragmentIon::mod
 		std::string getMod() const{
 			return mod;
+		}
+		//!Get number of modifications on fragment
+		size_t getNumMod() const{
+			return mod.length();
 		}
 		bool getFound() const{
 			return found;
