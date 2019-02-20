@@ -145,61 +145,67 @@ namespace PeptideNamespace{
 		enum class IonType{B, Y, M, B_NL, Y_NL, M_NL};
 		
 	protected:
-		char b_y;
-		int num;
+		char _b_y;
+		int _num;
 		//!Represents all modifications found in fragment.
 		 /** i.e. if two modifications are present, mod will be "**" */
-		std::string mod;
-		bool found;
+		std::string _mod;
+		bool _found;
 		IonType _ionType;
 		 //!Represents neutral loss mass
-		double nlMass;
+		double _nlMass;
+		//!Represents multiples of base neutral loss mass on peptide
+		size_t _numNl;
 		
 	public:
 		//!blank constructor
 		FragmentIon() : Ion(){
-			b_y = '\0';
-			num = 0;
-			mod = "";
-			found = false;
+			_b_y = '\0';
+			_num = 0;
+			_mod = "";
+			_found = false;
 			_ionType = IonType::B;
-			nlMass = 0.0;
+			_nlMass = 0.0;
+			_numNl = 0;
 		}
-		FragmentIon(char _b_y, int _num, int _charge, double _mass,
-					double _modMass, std::string _mod) : Ion() {
-			b_y = _b_y;
-			num = _num;
-			mod = _mod;
-			nlMass = _modMass;
-			initalizeFromMass(_mass, _charge);
-			found = false;
-			_ionType = strToIonType(_b_y);
+		FragmentIon(char b_y, int num, int charge, double mass,
+					double nlMass, size_t numNl, std::string mod) : Ion() {
+			_b_y = b_y;
+			_num = num;
+			_mod = mod;
+			_nlMass = nlMass;
+			_numNl = numNl;
+			initalizeFromMass(mass, charge);
+			_found = false;
+			_ionType = strToIonType(b_y);
 		}
-		FragmentIon(IonType ionType, int _num, int _charge, double _mass,
-					double _modMass, std::string _mod) : Ion() {
-			num = _num;
-			mod = _mod;
-			nlMass = _modMass;
-			initalizeFromMass(_mass, _charge);
-			found = false;
+		FragmentIon(IonType ionType, int num, int charge, double mass,
+					double nlMass, size_t numNl, std::string mod) : Ion() {
+			_num = num;
+			_mod = mod;
+			_nlMass = nlMass;
+			_numNl = numNl;
+			initalizeFromMass(mass, charge);
+			_found = false;
 			_ionType = ionType;
-			b_y = ionTypeToStr()[0];
+			_b_y = ionTypeToStr()[0];
 		}
 		//!copy constructor
 		FragmentIon(const FragmentIon& rhs){
-			b_y = rhs.b_y;
-			num = rhs.num;
-			mod = rhs.mod;
-			found = rhs.found;
+			_b_y = rhs._b_y;
+			_num = rhs._num;
+			_mod = rhs._mod;
+			_found = rhs._found;
 			_ionType = rhs._ionType;
-			nlMass = rhs.nlMass;
+			_nlMass = rhs._nlMass;
+			_numNl = rhs._numNl;
 			charge = rhs.charge;
 			mass = rhs.mass;
 		}
 		~FragmentIon() {}
 		
 		void setFound(bool boo){
-			found = boo;
+			_found = boo;
 		}
 		void setIonType(IonType it){
 			_ionType = it;
@@ -207,29 +213,33 @@ namespace PeptideNamespace{
 		
 		//properties
 		double getMZ() const{
-			if(b_y == 'b')
+			if(_b_y == 'b')
 				return (mass + ((charge - 1) * PeptideNamespace::H_MASS)) / charge;
 			return Ion::getMZ(charge);
 		}
 		std::string getLabel(bool includeMod = true, std::string chargeSep = " ") const;
 		std::string getFormatedLabel() const;
 		char getBY() const{
-			return b_y;
+			return _b_y;
 		}
 		//!Get fragment ion number
 		int getNum() const{
-			return num;
+			return _num;
 		}
 		//!Get copy of FragmentIon::mod
 		std::string getMod() const{
-			return mod;
+			return _mod;
 		}
 		//!Get number of modifications on fragment
 		size_t getNumMod() const{
-			return mod.length();
+			return _mod.length();
+		}
+		//!Get number of neutral loss multiples on fragment
+		size_t getNumNl() const{
+			return _numNl;
 		}
 		bool getFound() const{
-			return found;
+			return _found;
 		}
 		IonType getIonType() const{
 			return _ionType;
@@ -241,7 +251,7 @@ namespace PeptideNamespace{
 		std::string ionTypeToStr() const;
 		std::string getNLStr() const;
 		bool isModified() const{
-			return mod == "";
+			return _mod == "";
 		}
 		//!returns true if fragment is neutral loss ion
 		bool isNL() const{
@@ -291,7 +301,7 @@ namespace PeptideNamespace{
 						bool _calcFragments = true);
 		void calcFragments(int minCharge, int maxCharge,
 						   const aaDB::AADB& aminoAcidsMasses);
-		void addNeutralLoss(const std::vector<double>&);
+		void addNeutralLoss(double losses);
 		double calcMass(const aaDB::AADB& aminoAcidsMasses);
 		void printFragments(std::ostream&) const;
 		
