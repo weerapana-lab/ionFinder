@@ -51,7 +51,7 @@ std::string IonFinder::PeptideFragmentsMap::getIonSeq(char b_y, int num) const{
 }
 
 void IonFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap){
-	sequence = pepMap.getIonSeq(b_y, num);
+	sequence = pepMap.getIonSeq(_b_y, _num);
 }
 
 /**
@@ -189,7 +189,14 @@ void IonFinder::PeptideStats::addSeq(const IonFinder::RichFragmentIon& seq,
 		{
 			//check if NL
 			if(seq.isNL()){
-				incrementIonCount(ionStr, ionTypesCount[IonType::DET_NL_FRAG]);
+				//check multiple of neutral loss
+				if(seq.getNumNl() > seq.getNumMod()){ //if equal to number of modifications, determining NL
+					//std::cout << seq.getLabel() << NEW_LINE;
+					incrementIonCount(ionStr, ionTypesCount[IonType::ART_NL_FRAG]);
+				}
+				else{ //if not equal, artifiact fragment
+					incrementIonCount(ionStr, ionTypesCount[IonType::DET_NL_FRAG]);
+				}
 			}
 			else
 			{
@@ -234,7 +241,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
-		/*if(it->getSequence() == "RVMGPDFG"){
+		/*if(it->getSequence() == "VRVFQATRGK"){
 			std::cout << "Found!" << NEW_LINE;
 			it->printFragments(std::cout);
 		}*/
@@ -251,8 +258,8 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		//iterate through ion fragmetns
 		for(size_t i = 0; i < nFragments; i++)
 		{
-			/*if(it->getFragment(i).getIonStr(false) == "b14-43")
-				std::cout << "Found!" << NEW_LINE;*/
+			/*if(it->getFragment(i).getLabel(false) == "b5-86")
+				std::cout << it->getFragment(i).getLabel(true) << NEW_LINE;*/
 			
 			//skip if not found
 			if(it->getFragment(i).getFound())
@@ -451,8 +458,8 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 }
 
 /**
- Find peptide fragment ions in ms2 files.
- Function is thread safe.
+ Find peptide fragment ions in ms2 files. <br>
+ Function should not be called directly.
  @param peptides empty vector of peptides to be filled from data in scans.
  @param beg index of beginning of scan vector
  @param end index of end of scan vector
@@ -494,16 +501,9 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		peptides.push_back(PeptideNamespace::Peptide(scans[i].getSequence()));
 		peptides.back().initialize(pars, aminoAcidMasses);
 		
+		//add neutral loss fragments to current peptide
 		if(pars.getCalcNL()){
-			//calculate neutral loss combinations
-			int nMods = peptides.back().getNumMod();
-			double nlMass = pars.getNeutralLossMass();
-			std::vector<double> neutralLossIons;
-			for(int i = 1; i <= nMods; i++)
-				neutralLossIons.push_back(i * nlMass);
-			
-			//add neutral loss fragments to current peptide
-			peptides.back().addNeutralLoss(neutralLossIons);
+			peptides.back().addNeutralLoss(pars.getNeutralLossMass());
 		}
 		
 		//load spectrum

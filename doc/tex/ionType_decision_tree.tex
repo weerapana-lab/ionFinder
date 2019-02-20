@@ -9,7 +9,7 @@
             base=bottom,
             child anchor=north,
             align=center,
-            s sep+=0.6cm,                      % or use: s sep +=1.5 cm ...
+            s sep+=0.7cm,                      % or use: s sep +=1.5 cm ...
     straight edge/.style={
         edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
         (!u.parent anchor) -- (.child anchor);}
@@ -33,14 +33,17 @@
 \begin{forest}
  [Spans\\modification?, tikz={\draw[{Latex}-, thick] (.north) --++ (0,1);}
     [Neutral\\loss?
-        [Cit determining NL\\(detNLFrag)]
+        [NL multiple\\$\gt$ nCit
+            [Artifact fragment\\(artNLFrag)]
+            [Cit determining NL\\(detNLFrag)]
+        ]
         [Contains\\N or Q?
             [Ambiguous modified ion\\(ambModFrag)]
             [Cit determining fragment\\(detFrag)]
         ]
     ]   
     [Neutral\\loss?
-        [Artifact fragment\\(artNLFrag)]  
+        [Artifact fragment\\(artNLFrag)]
         [Ambiguous ion\\(ambFrag)] 
     ]   
  ] 
