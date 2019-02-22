@@ -11,7 +11,7 @@
 #include <ionFinder/ionFinder.hpp>
 #include <ionFinder/params.hpp>
 #include <dtafilter.hpp>
-#include <ionFinder/dtafilterFiles.hpp>
+#include <ionFinder/inputFiles.hpp>
 #include <ionFinder/datProc.hpp>
 
 #include <peptide.hpp>

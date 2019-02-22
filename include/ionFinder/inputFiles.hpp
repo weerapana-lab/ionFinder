@@ -1,13 +1,13 @@
 //
-//  dtafilterFiles.hpp
+//  inputFiles.hpp
 //  citFinder
 //
 //  Created by Aaron Maurais on 1/2/19.
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
 //
 
-#ifndef dtafilterFiles_hpp
-#define dtafilterFiles_hpp
+#ifndef inputFiles_hpp
+#define inputFiles_hpp
 
 #include <dtafilter.hpp>
 #include <ionFinder/params.hpp>
@@ -19,4 +19,4 @@ namespace Dtafilter{
 						 std::vector<Dtafilter::Scan>&);
 }
 
-#endif /* dtafilterFile_hpp */
+#endif /* inputFiles_hpp */

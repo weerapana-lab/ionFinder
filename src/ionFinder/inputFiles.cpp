@@ -6,7 +6,7 @@
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
 //
 
-#include <ionFinder/dtafilterFiles.hpp>
+#include <ionFinder/inputFiles.hpp>
 
 /**
  Read list of filter files supplied by \p params
