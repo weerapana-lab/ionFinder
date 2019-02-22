@@ -60,6 +60,21 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			continue;
 		}
+		if(!strcmp(argv[i], "-i") || !strcmp(argv[i], "--inputMode"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			if(!(!strcmp(argv[i], DTAFILTER_INPUT_STR.c_str()) || !strcmp(argv[i], TSV_INPUT_STR.c_str())))
+			{
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "inputMode" << std::endl;
+				return false;
+			}
+			_inputMode = argv[i];
+			continue;
+		}
 		if(!strcmp(argv[i], "-o") || !strcmp(argv[i], "--ofname"))
 		{
 			if(!utils::isArg(argv[++i]))
