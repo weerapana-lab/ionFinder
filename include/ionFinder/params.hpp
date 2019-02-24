@@ -45,6 +45,7 @@ namespace IonFinder{
 		
 	private:
 		std::string _parentDir;
+		//!
 		FilterFilesType _filterFiles;
 		//!how will peptides to be searched for be suplied?
 		std::string _inputMode;
@@ -101,6 +102,9 @@ namespace IonFinder{
 		const FilterFilesType& getFilterFiles() const{
 			return _filterFiles;
 		}
+		const std::vector<std::string>& getInputDirs() const{
+			return _inDirs;
+		}
 		bool getIncludeReverse() const{
 			return _includeReverse;
 		}
@@ -110,6 +114,9 @@ namespace IonFinder{
 		std::string getInputModeIndependentParentDir() const;
 		double getNeutralLossMass() const{
 			return _neutralLossMass;
+		}
+		std::string getInputMode() const{
+			return _inputMode;
 		}
 		std::string getAmbigiousResidues() const{
 			return _ambigiousResidues;

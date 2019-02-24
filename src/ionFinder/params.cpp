@@ -328,9 +328,11 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 	//fix options
 	if(_wd[_wd.length() - 1] != '/')
 		_wd += "/";
-	if(!getFlist()){
-		std::cerr << "Could not find DTAFilter-files!" << NEW_LINE;
-		return false;
+	if(_inputMode == DTAFILTER_INPUT_STR){
+		if(!getFlist()){
+			std::cerr << "Could not find DTAFilter-files!" << NEW_LINE;
+			return false;
+		}
 	}
 	
 	return true;

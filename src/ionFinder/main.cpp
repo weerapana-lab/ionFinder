@@ -16,15 +16,28 @@ int main(int argc, const char** argv)
 	
 	std::cout << "citFinder v" << BIN_VERSION << NEW_LINE;
 	
-	//read filter files
-	std::cout << "\nReading DTAFilter-files...";
+	//read input files
 	std::vector<Dtafilter::Scan> scans;
-	if(!Dtafilter::readFilterFiles(pars, scans))
+	if(pars.getInputMode() == IonFinder::DTAFILTER_INPUT_STR)
 	{
-		std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
-		return -1;
+		std::cout << "\nReading DTAFilter-files...";
+		if(!Dtafilter::readFilterFiles(pars, scans))
+		{
+			std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
+			return -1;
+		}
+		else std::cout << "Done!\n";
 	}
-	std::cout << "Done!\n";
+	else{
+		assert(pars.getInputMode() == IonFinder::TSV_INPUT_STR);
+		std::cout << "\nReading input .tsv files...";
+		if(!IonFinder::readInputTsv(*pars.getInputDirs().begin(), scans))
+		{
+			std::cerr << "Failed to read input .tsv files!" << NEW_LINE;
+			return -1;
+		}
+		else std::cout << "Done!\n";
+	}
 	
 	//calculate and find fragments
 	std::vector<PeptideNamespace::Peptide> peptides;
