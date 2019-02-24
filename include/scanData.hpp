@@ -75,10 +75,15 @@ namespace scanData{
 		void setSequence(std::string _seq){
 			sequence = _seq;
 		}
+		void setFullSequence(std::string s, bool resetSequence = true){
+			fullSequence = s;
+			if(resetSequence)
+				sequence = makeOfSequenceFromSequence(s);
+		}
 		void setPrecursorFile(std::string str){
 			precursorFile = str;
 		}
-		void setCharge(double _charge){
+		void setCharge(int _charge){
 			charge = _charge;
 		}
 		void setPrecursorMZ(std::string mz){
@@ -86,6 +91,12 @@ namespace scanData{
 		}
 		void setPrecursorScan(size_t s){
 			precursorScan = s;
+		}
+		void setScanNum(size_t s){
+			scanNum = s;
+		}
+		void setXcorr(std::string s){
+			xcorr = s;
 		}
 		
 		//properties

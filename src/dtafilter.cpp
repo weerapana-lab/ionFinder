@@ -22,7 +22,15 @@ void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 	xcorr = rhs.xcorr;
 }
 
-Dtafilter::Scan::MatchDirection Dtafilter::Scan::strToMatchDirection(std::string str) const
+/**
+ \brief Get protein match direction. <br>
+ 
+ Match direction is determined by checking  if \p str contains Dtafilter::REVERSE_MATCH.
+ \param str \p db tag from fasta header line.
+ See https://www.uniprot.org/help/fasta-headers for detials on fasta headers.
+ \return match direction for fasta entry
+ */
+Dtafilter::Scan::MatchDirection Dtafilter::Scan::strToMatchDirection(std::string str)
 {
 	if(utils::strContains(REVERSE_MATCH, utils::toLower(str)))
 		return MatchDirection::REVERSE;
