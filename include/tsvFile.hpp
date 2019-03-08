@@ -31,6 +31,7 @@ namespace utils{
 		
 		std::string _fname;
 		bool _hasHeaders;
+		bool _caseSensitive;
 		bool _quote;
 		char _delim;
 		size_t _nCol;
@@ -54,11 +55,23 @@ namespace utils{
 			_nCol = 0; _nRow = 0;
 			_blank = "";
 		}
-		TsvFile(std::string fname, bool hasHeaders = true,
+		/**
+		 Constructor with options.
+		 
+		 \param fname File name to read.
+		 \param caseSensitive Should column headers be case sensitive?
+		 \param hasHeaders Does the first row contain column headers?
+		 \param delim Column delimiter.
+		 \param quote Are colums surounded by quotes?
+		 \param blank What value should be stored for blank colums?
+		 */
+		TsvFile(std::string fname, bool caseSensitive = false, bool hasHeaders = true,
 				char delim = IN_DELIM, bool quote = false, std::string blank = ""){
 			_fname = fname;
 			_hasHeaders = hasHeaders;
+			_caseSensitive = caseSensitive;
 			_delim = delim;
+			_quote = false;
 			_nCol = 0; _nRow = 0;
 			_blank = blank;
 		}
@@ -114,12 +127,14 @@ namespace utils{
 		
 		//metadata access
 		long getColIndex(std::string colName) const{
+			if(!_caseSensitive) colName = utils::toLower(colName);
 			colMapType::const_iterator it = _colNames.find(colName);
 			if(it == _colNames.end())
 				return -1;
 			return it->second;
 		}
 		bool colExists(std::string search) const{
+			if(!_caseSensitive) search = utils::toLower(search);
 			colMapType::const_iterator it = _colNames.find(search);
 			return it != _colNames.end();
 		}

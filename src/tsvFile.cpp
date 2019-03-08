@@ -30,7 +30,10 @@ bool utils::TsvFile::read()
 		for(size_t i = 0; i < _nCol; i++){
 			foundIt = _colNames.find(elems[i]);
 			if(foundIt == _colNames.end()){
-				_colNames[elems[i]] = i;
+				std::string temp = elems[i];
+				if(!_caseSensitive)
+					temp = utils::toLower(temp);
+				_colNames[temp] = i;
 			}
 			else{
 				throw std::runtime_error("Duplicate colnames found!");
