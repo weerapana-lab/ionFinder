@@ -438,12 +438,15 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 	
 	//first get unique names of ms2 files to read
 	size_t len = scans.size();
-	std::vector<std::string> fileNamesList(len);
-	for(size_t i = 0; i < len; i++)
-		fileNamesList[i] = scans[i].getPrecursorFile();
-	auto it = std::unique(fileNamesList.begin(), fileNamesList.end());
-	fileNamesList.resize(std::distance(fileNamesList.begin(), it));
-	
+	std::vector<std::string> fileNamesList;
+	for(size_t i = 0; i < len; i++){
+		if(std::find(fileNamesList.begin(),
+					 fileNamesList.end(),
+					 scans[i].getPrecursorFile()) == fileNamesList.end()){
+			fileNamesList.push_back(scans[i].getPrecursorFile());
+		}
+	}
+		
 	//read ms2 files
 	ms2Map.clear();
 	for(auto it = fileNamesList.begin(); it != fileNamesList.end(); ++it)

@@ -30,6 +30,7 @@ namespace Dtafilter{
 								   std::vector<Dtafilter::Scan>&, bool);
 	public:
 		enum class MatchDirection{FORWARD, REVERSE};
+		static MatchDirection strToMatchDirection(std::string);
 		
 	private:
 		std::string _parentProtein;
@@ -39,7 +40,6 @@ namespace Dtafilter{
 		std::string _sampleName;
 		bool _unique;
 		
-		MatchDirection strToMatchDirection(std::string) const;
 		bool parse_matchDir_ID_Protein(std::string);
 		
 	public:
@@ -53,6 +53,24 @@ namespace Dtafilter{
 		
 		//modifers
 		void operator = (const Scan&);
+		void setParentProtein(std::string s){
+			_parentProtein = s;
+		}
+		void setParentID(std::string s){
+			_parentID = s;
+		}
+		void setMatchDirection(MatchDirection m){
+			_matchDirection = m;
+		}
+		void setSampleName(std::string s){
+			_sampleName = s;
+		}
+		void setParentDescription(std::string s){
+			_parentDescription = s;
+		}
+		void setUnique(bool boo){
+			_unique = boo;
+		}
 		
 		//properties
 		std::string getParentProtein() const{

@@ -27,6 +27,8 @@ namespace IonFinder{
 	std::string const DEFAULT_FILTER_FILE_NAME = "DTASelect-filter.txt";
 	std::string const PEPTIDE_MOD_STATS_OFNAME = "peptide_mod_stats.tsv";
 	std::string const PEPTIDE_CIT_STATS_OFNAME = "peptide_cit_stats.tsv";
+	std::string const DTAFILTER_INPUT_STR = "dtafilter";
+	std::string const TSV_INPUT_STR = "tsv";
 	
 	//!default residues which are isobaric with a modification
 	std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
@@ -43,11 +45,15 @@ namespace IonFinder{
 		
 	private:
 		std::string _parentDir;
+		//!
 		FilterFilesType _filterFiles;
+		//!how will peptides to be searched for be suplied?
+		std::string _inputMode;
 		//!Default name of DTAFilter filter file to search for
 		std::string _dtaFilterBase;
 		//! mass of neutral loss to search for
 		double _neutralLossMass;
+		//! Residues which could be isobaric for _neutralLossMass
 		std::string _ambigiousResidues;
 		
 		//! should reverse peptide matches be considered
@@ -77,6 +83,7 @@ namespace IonFinder{
 		Params() : ParamsBase(PROG_USAGE_FNAME, PROG_HELP_FILE){
 			_parentDir = "";
 			_fastaFile = "";
+			_inputMode = DTAFILTER_INPUT_STR;
 			_includeReverse = false;
 			_printSpectraFiles = false;
 			_calcNL = false;
@@ -95,6 +102,9 @@ namespace IonFinder{
 		const FilterFilesType& getFilterFiles() const{
 			return _filterFiles;
 		}
+		const std::vector<std::string>& getInputDirs() const{
+			return _inDirs;
+		}
 		bool getIncludeReverse() const{
 			return _includeReverse;
 		}
@@ -104,6 +114,9 @@ namespace IonFinder{
 		std::string getInputModeIndependentParentDir() const;
 		double getNeutralLossMass() const{
 			return _neutralLossMass;
+		}
+		std::string getInputMode() const{
+			return _inputMode;
 		}
 		std::string getAmbigiousResidues() const{
 			return _ambigiousResidues;
