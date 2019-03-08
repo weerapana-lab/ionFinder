@@ -62,29 +62,53 @@ bool IonFinder::readInputTsv(std::string ifname,
 	{
 		if(!tsv.colExists(TSV_INPUT_REQUIRED_COLNAMES[i]))
 		{
-			std::cerr << "Error! Required column: " << TSV_INPUT_REQUIRED_COLNAMES[i] <<
+			std::cerr << "\nError! Required column: " << TSV_INPUT_REQUIRED_COLNAMES[i] <<
 			" not found in " << ifname << NEW_LINE;
 			return false;
 		}
+	}
+	
+	//itterate through columns and search for optional colums
+	std::map<std::string, bool> foundOptionalCols;
+	for(int i = 0; i < TSV_INPUT_OPTIONAL_COLNAMES_LEN; i++)
+	{
+		if(tsv.colExists(TSV_INPUT_OPTIONAL_COLNAMES[i]))
+			foundOptionalCols[TSV_INPUT_OPTIONAL_COLNAMES[i]] = true;
+		else foundOptionalCols[TSV_INPUT_OPTIONAL_COLNAMES[i]] = false;
 	}
 	
 	size_t nRow = tsv.getNrow();
 	for(size_t i = 0; i < nRow; i++)
 	{
 		Dtafilter::Scan temp;
-		temp.setSampleName(tsv.getValStr(i, "sampleName"));
-		temp.setParentID(tsv.getValStr(i, "parentID"));
-		temp.setParentProtein(tsv.getValStr(i, "parentProtein"));
-		temp.setParentDescription(tsv.getValStr(i, "parentDescription"));
-		temp.setMatchDirection(Dtafilter::Scan::strToMatchDirection(tsv.getValStr(i, "matchDirection")));
-		temp.setFullSequence(tsv.getValStr(i, "fullSequence"));
-		temp.setUnique(tsv.getValBool(i, "unique"));
-		temp.setCharge(tsv.getValInt(i, "charge"));
-		temp.setXcorr(tsv.getValStr(i, "xcorr"));
+		
+		//requied columns
 		temp.setScanNum(tsv.getValSize(i, "scanNum"));
-		temp.setPrecursorMZ(tsv.getValStr(i, "precursorMZ"));
-		temp.setPrecursorScan(tsv.getValSize(i, "precursorScan"));
+		temp.setSequence(tsv.getValStr(i, "sequence"));
 		temp.setPrecursorFile(tsv.getValStr(i, "precursorFile"));
+		temp.setSampleName(tsv.getValStr(i, "sampleName"));
+		
+		//add optional columns which were found.
+		if(foundOptionalCols["parentID"])
+			temp.setParentID(tsv.getValStr(i, "parentID"));
+		if(foundOptionalCols["parentProtein"])
+			temp.setParentProtein(tsv.getValStr(i, "parentProtein"));
+		if(foundOptionalCols["parentDescription"])
+			temp.setParentDescription(tsv.getValStr(i, "parentDescription"));
+		if(foundOptionalCols["matchDirection"])
+			temp.setMatchDirection(Dtafilter::Scan::strToMatchDirection(tsv.getValStr(i, "matchDirection")));
+		if(foundOptionalCols["fullSequence"])
+			temp.setFullSequence(tsv.getValStr(i, "fullSequence"));
+		if(foundOptionalCols["unique"])
+			temp.setUnique(tsv.getValBool(i, "unique"));
+		if(foundOptionalCols["charge"])
+			temp.setCharge(tsv.getValInt(i, "charge"));
+		if(foundOptionalCols["xcorr"])
+			temp.setXcorr(tsv.getValStr(i, "xcorr"));
+		if(foundOptionalCols["precursorMZ"])
+			temp.setPrecursorMZ(tsv.getValStr(i, "precursorMZ"));
+		if(foundOptionalCols["precursorScan"])
+			temp.setPrecursorScan(tsv.getValSize(i, "precursorScan"));
 		
 		scans.push_back(temp);
 	}

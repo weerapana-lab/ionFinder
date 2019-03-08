@@ -20,8 +20,10 @@ namespace Dtafilter{
 }
 
 namespace IonFinder{
-	const std::string TSV_INPUT_REQUIRED_COLNAMES [] = {"sampleName", "parentID", "parentProtein", "parentDescription", "matchDirection", "sequence", "fullSequence", "unique", "charge", "xcorr", "precursorMZ", "precursorScan", "precursorFile", "scanNum", "sampleName"};
-	int const TSV_INPUT_REQUIRED_COLNAMES_LEN = 15;
+	const std::string TSV_INPUT_REQUIRED_COLNAMES [] = {"sampleName", "sequence", "precursorFile", "scanNum"};
+	int const TSV_INPUT_REQUIRED_COLNAMES_LEN = 4;
+	const std::string TSV_INPUT_OPTIONAL_COLNAMES [] = {"parentID", "parentProtein", "parentDescription", "matchDirection", "fullSequence", "unique", "charge", "xcorr", "precursorMZ", "precursorScan"};
+	int const TSV_INPUT_OPTIONAL_COLNAMES_LEN = 10;
 	
 	bool readInputTsv(std::string ifname, std::vector<Dtafilter::Scan>&);
 }

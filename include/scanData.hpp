@@ -75,7 +75,7 @@ namespace scanData{
 		void setSequence(std::string _seq){
 			sequence = _seq;
 		}
-		void setFullSequence(std::string s, bool resetSequence = true){
+		void setFullSequence(std::string s, bool resetSequence = false){
 			fullSequence = s;
 			if(resetSequence)
 				sequence = makeOfSequenceFromSequence(s);
