@@ -178,7 +178,9 @@ std::string utils::baseName(std::string path, const std::string& delims)
 
 std::string utils::dirName(std::string path, const std::string& delims)
 {
-	return path.substr(0, path.find_last_of(delims));
+	std::string ret = path.substr(0, path.find_last_of(delims));
+	if(ret == path) return "./";
+	return ret;
 }
 
 std::string utils::parentDir(std::string path, char delim)
