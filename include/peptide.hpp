@@ -27,14 +27,14 @@ namespace PeptideNamespace{
 	//forward class declarations
 	class Species;
 	class Ion;
-	class PeptideIon;
+	class AminoAcid;
 	class Peptide;
 	class FragmentIon;
 	
 	const double H_MASS = 1.00732;
-	//const double H_MASS = 1.00783
+	//const double H_MASS = 1.00783;
 	
-	typedef std::vector<PeptideIon> PepIonVecType;
+	typedef std::vector<AminoAcid> PepIonVecType;
 	typedef PepIonVecType::const_iterator PepIonIt;
 	
 	//forward function declarations
@@ -43,7 +43,7 @@ namespace PeptideNamespace{
 	double calcMass(std::string sequence);
 	double calcMass(const PepIonVecType& sequence,
 					PepIonIt begin, PepIonIt end);
-	double calcMass(const std::vector<PeptideIon>& sequence);
+	double calcMass(const std::vector<AminoAcid>& sequence);
 	std::string concatMods(const PepIonVecType& vec,
 						   PepIonIt begin, PepIonIt end);
 	void initAminoAcidsMasses(const base::ParamsBase& pars, std::string seqParFname, aaDB::AADB&);
@@ -100,25 +100,29 @@ namespace PeptideNamespace{
 		std::string makeChargeLable() const;
 	};//end of class
 	
-	class PeptideIon : public Ion{
+	class AminoAcid : public Ion{
 	protected:
+		//!Is amino acid modified?
 		bool modified;
-		char mod;
+		//!str used to represent mod
+		std::string mod;
+		//!modification mass change (can be potitive or negative)
 		double modMass;
 	public:
-		PeptideIon() : Ion() {
+		AminoAcid() : Ion() {
 			modified = false;
 			modMass = 0;
 			mod = '\0';
 		}
-		PeptideIon(double _mass) : Ion() {
+		AminoAcid(double _mass) : Ion() {
 			initalizeFromMass(_mass);
 			modified = false;
 			modMass = 0;
 			mod = '\0';
 		}
 		
-		void setMod(char _mod, double _modMass){
+		//! Set dynamic modification
+		void setMod(std::string _mod, double _modMass){
 			mod = _mod;
 			modMass = _modMass;
 			modified = true;
@@ -128,10 +132,11 @@ namespace PeptideNamespace{
 		double getModMass() const{
 			return modMass;
 		}
+		//!Get base mass of amino acid + modMass
 		double getTotalMass() const{
 			return modMass + mass;
 		}
-		char getMod() const{
+		std::string getMod() const{
 			return mod;
 		}
 		bool isModified() const{
@@ -150,6 +155,7 @@ namespace PeptideNamespace{
 		//!Represents all modifications found in fragment.
 		 /** i.e. if two modifications are present, mod will be "**" */
 		std::string _mod;
+		//!Was peptide fragment found in ms2 spectra?
 		bool _found;
 		IonType _ionType;
 		 //!Represents neutral loss mass
@@ -273,7 +279,7 @@ namespace PeptideNamespace{
 		
 		std::string sequence;
 		std::string fullSequence;
-		std::vector<PeptideIon> aminoAcids;
+		std::vector<AminoAcid> aminoAcids;
 		bool initialized;
 		FragmentIonType fragments;
 		int nMod; //number of modified residues

@@ -68,10 +68,10 @@ std::string PeptideNamespace::Ion::makeChargeLable() const
 	else return std::to_string(charge);
 }
 
-std::string PeptideNamespace::PeptideIon::makeModLable() const
+std::string PeptideNamespace::AminoAcid::makeModLable() const
 {
 	if(modified)
-		return std::string(1, mod);
+		return mod;
 	else return "";
 }
 
@@ -222,7 +222,7 @@ void PeptideNamespace::Peptide::addNeutralLoss(double lossMass)
 void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 										   const char* diffmods)
 {
-	char mod = '\0';
+	std::string mod = "";
 	bool modFound = false;
 	for(size_t i = 0; i < sequence.length(); i++)
 	{
@@ -247,7 +247,7 @@ void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 				}//end of if
 			}//end of for
 		}//end of if
-		PeptideIon temp(aminoAcidsMasses.getMW(sequence[i]));
+		AminoAcid temp(aminoAcidsMasses.getMW(sequence[i]));
 		if(modFound){
 			temp.setMod(mod, aminoAcidsMasses.getMW(mod));
 			nMod++;
@@ -365,7 +365,7 @@ double PeptideNamespace::calcMass(const PeptideNamespace::PepIonVecType& vec,
 }
 
 /**
- Returns a string containing all the modifications in vec.
+ Returns a string containing all the modifications if interest in vec.
  @param vec vector of PeptideIon(s)
  @param begin iterator to start of vec
  @param end iterator to end of vec
