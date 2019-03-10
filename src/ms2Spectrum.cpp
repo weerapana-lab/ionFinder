@@ -91,7 +91,7 @@ void ms2::Spectrum::clear()
 	retTime = 0;
 	precursorInt = 0;
 	precursorFile.clear();
-	precursorScan = 0;
+	precursorScan = "";
 	charge = 0;
 	precursorMZ = "";
 	maxInt = 0;

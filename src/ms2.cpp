@@ -172,7 +172,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 			else if(elems[1] == "PrecursorFile")
 				scan.precursorFile = utils::removeExtension(elems[2]);
 			else if(elems[1] == "PrecursorScan")
-				scan.precursorScan = std::stoi(elems[2]);
+				scan.precursorScan = elems[2];
 		}
 		else if(elems[0] == "Z"){
 			if(!z_found){

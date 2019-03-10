@@ -108,7 +108,7 @@ bool IonFinder::readInputTsv(std::string ifname,
 		if(foundOptionalCols["precursorMZ"])
 			temp.setPrecursorMZ(tsv.getValStr(i, "precursorMZ"));
 		if(foundOptionalCols["precursorScan"])
-			temp.setPrecursorScan(tsv.getValSize(i, "precursorScan"));
+			temp.setPrecursorScan(tsv.getValStr(i, "precursorScan"));
 		
 		scans.push_back(temp);
 	}
