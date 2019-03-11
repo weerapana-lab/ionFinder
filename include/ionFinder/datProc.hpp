@@ -23,6 +23,7 @@
 #include <fastaFile.hpp>
 #include <peptide.hpp>
 #include <ms2.hpp>
+#include <scanData.hpp>
 
 namespace IonFinder{
 
@@ -212,7 +213,7 @@ namespace IonFinder{
 			
 			//Peptide data
 			sequence = p.getSequence();
-			fullSequence = p.getFullSequence();
+			fullSequence = scanData::removeStaticMod(p.getFullSequence(), false);
 			charge = p.getCharge();
 			mass = p.getMass();
 			initModLocs();

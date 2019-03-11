@@ -578,7 +578,7 @@ void IonFinder::PeptideStats::calcContainsCit()
 		return;
 	}
 	
-	//are there 1 or more ambiguous fragments?
+	//are there 1 more ambiguous fragments?
 	if(ionTypesCount[IonType::AMB_FRAG].second >= 1){
 		containsCit = "ambiguous";
 		return;
@@ -673,7 +673,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << it->_scan->getParentProtein() <<
 		OUT_DELIM << it->_scan->getParentDescription() <<
 		OUT_DELIM << it->_scan->getFullSequence() <<
-		OUT_DELIM << it->_scan->getSequence() <<
+		OUT_DELIM << scanData::removeStaticMod(it->_scan->getSequence()) <<
 		OUT_DELIM << it->_scan->getPrecursorMZ() <<
 		OUT_DELIM << (it->modLocs.size() > 0) <<
 		OUT_DELIM << it->modResidues <<
