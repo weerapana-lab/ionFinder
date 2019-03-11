@@ -68,11 +68,40 @@ std::string PeptideNamespace::Ion::makeChargeLable() const
 	else return std::to_string(charge);
 }
 
-std::string PeptideNamespace::AminoAcid::makeModLable() const
+/*std::string PeptideNamespace::AminoAcid::makeModLable() const
 {
-	if(modified)
-		return mod;
+	if(isModified())
+		return _mod;
 	else return "";
+}*/
+
+/**
+ Add \p modMass to AminoAcid::_modMass
+ \param modMass mass to add
+ */
+void PeptideNamespace::AminoAcid::_addMod(double modMass){
+	_modMass += modMass;
+}
+
+/**
+ Set dynamic modification for AminoAcid.
+ \param mod symbol for modification to add.
+ \param modMass mass to add
+ */
+void PeptideNamespace::AminoAcid::setDynamicMod(char mod, double modMass){
+	_mod = mod;
+	_dynamicMod = true;
+	_addMod(modMass);
+}
+
+/**
+ Add statid modification to AminoAcid.
+ \param modMass mass to add
+ */
+void PeptideNamespace::AminoAcid::addStaticMod(double modMass)
+{
+	_staticMod = true;
+	_addMod(modMass);
 }
 
 /**
@@ -219,7 +248,7 @@ void PeptideNamespace::Peptide::addNeutralLoss(double lossMass)
 	}
 }
 
-void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
+/*void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 										   const char* diffmods)
 {
 	std::string mod = "";
@@ -256,6 +285,88 @@ void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 		modFound = false;
 	}//end of for
 }//end of function
+ */
+
+/**
+ \brief Parse explicit static modification from AminoAcid::sequence. <br>
+ 
+ Modification enclosed with parentheses is removed from sequence.
+ 
+ \param startIndex index at which mod begins.
+ \return mass of modification.
+ */
+double PeptideNamespace::Peptide::parseStaticMod(size_t startIndex)
+{
+	//get index of parenthese close
+	size_t end = sequence.find(')', startIndex);
+	if(end == std::string::npos)
+		throw std::runtime_error("Invalid peptide sequence: " + sequence);
+	
+	//get mass of modification
+	double ret = std::stod(sequence.substr(startIndex + 1, end - 1));
+	//erase modification from sequence
+	sequence.erase(sequence.begin() + startIndex, sequence.begin() + end + 1);
+	
+	return ret;
+}
+
+/**
+ \brief Remove explicit static amino acid modifications from sequence. <br>
+ 
+ Sequences in the form AAC(+57.0)AAR*AAK will be parsed AACAARAAK to remove
+ the explicit (+57.0) and * add modifications. Modifications will be preserved
+ in the Peptide::aminoAcids member.
+ */
+void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
+										   const char* diffmods)
+{
+	//check if n term mod
+	double nTermMod = 0;
+	if(sequence[0] == '('){
+		nTermMod = parseStaticMod(0);
+	}
+	
+	//check that n term is not a diff mod
+	for(const char* p = diffmods; *p; p++)
+		if(sequence[0] == *p)
+			throw std::runtime_error("Invalid peptide sequence: " + sequence);
+	
+	//Check that first char is now a letter
+	if(!isalpha(sequence[0]))
+		throw std::runtime_error("Invalid peptide sequence!");
+	
+	for(size_t i = 0; i < sequence.length(); i++)
+	{
+		//first check if current index is a modification.
+		if(sequence[i] == '(')
+		{
+			double m = parseStaticMod(i);
+			aminoAcids.back().addStaticMod(m);
+		}
+		for(const char* p = diffmods; *p; p++){
+			if(sequence[i] == *p){
+				aminoAcids.back().setDynamicMod(sequence[i],
+												aminoAcidsMasses.getMW(sequence[i]));
+				sequence.erase(i, 1);
+				nMod++;
+			}
+		}
+		
+		//exit loop end of sequence
+		if(i >= sequence.length())
+			break;
+		
+		//Check that current char is letter
+		if(!isalpha(sequence[i]))
+			throw std::runtime_error("Invalid peptide sequence: " + sequence);
+		
+		//add new amino acid to
+		aminoAcids.push_back(AminoAcid(aminoAcidsMasses.getMW(sequence[i])));
+	}//end for
+	
+	//add n-terminal modification
+	aminoAcids.begin()->addStaticMod(nTermMod);
+}
 
 double PeptideNamespace::Peptide::calcMass(const aaDB::AADB& aadb)
 {
@@ -375,7 +486,7 @@ std::string PeptideNamespace::concatMods(const PeptideNamespace::PepIonVecType& 
 {
 	std::string ret = "";
 	for(PeptideNamespace::PepIonIt it = begin; it != end; ++it)
-		if(it->isModified())
+		if(it->hasDynamicMod())
 			ret += it->getMod();
 	return ret;
 }

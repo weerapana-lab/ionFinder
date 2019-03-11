@@ -102,46 +102,54 @@ namespace PeptideNamespace{
 	
 	class AminoAcid : public Ion{
 	protected:
-		//!Is amino acid modified?
-		bool modified;
+		//!Does the amino acid bear a static modification?
+		bool _staticMod;
+		//!Does amino acid have a dynamic modification?
+		bool _dynamicMod;
 		//!str used to represent mod
-		std::string mod;
+		char _mod;
 		//!modification mass change (can be potitive or negative)
-		double modMass;
+		double _modMass;
+		
+		void _addMod(double modMass);
 	public:
 		AminoAcid() : Ion() {
-			modified = false;
-			modMass = 0;
-			mod = '\0';
+			_staticMod = false;
+			_dynamicMod = false;
+			_modMass = 0;
+			_mod = '\0';
 		}
-		AminoAcid(double _mass) : Ion() {
-			initalizeFromMass(_mass);
-			modified = false;
-			modMass = 0;
-			mod = '\0';
-		}
-		
-		//! Set dynamic modification
-		void setMod(std::string _mod, double _modMass){
-			mod = _mod;
-			modMass = _modMass;
-			modified = true;
+		AminoAcid(double mass) : Ion() {
+			initalizeFromMass(mass);
+			_staticMod = false;
+			_dynamicMod = false;
+			_modMass = 0;
+			_mod = '\0';
 		}
 		
-		std::string makeModLable() const;
+		void setDynamicMod(char mod, double modMass);
+		void addStaticMod(double modMass);
+		
+		//std::string makeModLable() const;
 		double getModMass() const{
-			return modMass;
+			return _modMass;
 		}
 		//!Get base mass of amino acid + modMass
 		double getTotalMass() const{
-			return modMass + mass;
+			return _modMass + mass;
 		}
-		std::string getMod() const{
-			return mod;
+		char getMod() const{
+			return _mod;
 		}
+		//!Does AA have any modification (static or dynamic)
 		bool isModified() const{
-			return modified;
+			return _staticMod || _dynamicMod;
 		}
+		//!Does AA have dynamic modification
+		bool hasDynamicMod() const{
+			return _dynamicMod;
+		}
+		
 	};
 	
 	//!Used to represent b and y peptide ions
@@ -152,7 +160,7 @@ namespace PeptideNamespace{
 	protected:
 		char _b_y;
 		int _num;
-		//!Represents all modifications found in fragment.
+		//!Represents all symbol for modification 
 		 /** i.e. if two modifications are present, mod will be "**" */
 		std::string _mod;
 		//!Was peptide fragment found in ms2 spectra?
@@ -284,6 +292,7 @@ namespace PeptideNamespace{
 		FragmentIonType fragments;
 		int nMod; //number of modified residues
 		
+		double parseStaticMod(size_t);
 		void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 						const char* diffmods = "*");
 	public:

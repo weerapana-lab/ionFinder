@@ -13,12 +13,8 @@ if(argv[1] == "RStudio")
 {
   #argv <- c("Rstudio", "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_rVEHLQYNLELAFHHHLCK_10974_4.spectrum")
   argv <- c('RStudio', "-mzLab", "1", "-pSize", "large", "-simpleSeq", "0", 
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_TNLFSrEEVTSYQr_12030_2.spectrum",
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_TNLFSREEVTSYQr_9314_2.spectrum", 
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_TNLFSrEEVTSYQrK_11085_2.spectrum", 
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_TNLFSrEEVTSYQrK_11182_3.spectrum", 
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_TNLFSREEVTSYQrK_12763_2.spectrum",
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_TPPAGSrGADTLTYTLGLSDGQLPLGASPDLPEASACPPGLLr_26105_3.spectrum")
+            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_rrVEHLQYNLELAFHHHLCK_12518_4.spectrum",
+            "/Volumes/Data/msData/ms2_anotator/citFinder/pad_nl2/spectraFiles/nl_ca_03_SQVrGAIIPGLLGVGEPLIYGVTLPrMK_40350_3.spectrum")
   iBeg <-  2
 } else {
   iBeg = min(grep('--args', argv))
