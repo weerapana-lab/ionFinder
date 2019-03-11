@@ -26,15 +26,33 @@ std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
 
 std::string scanData::Scan::makeOfSequenceFromSequence(std::string s) const
 {
-	if(!utils::strContains('*', s))
+	//if s does not contain any modifications, just return s
+	if(!(utils::strContains('*', s) ||
+		 utils::strContains('(', s) ||
+		 utils::strContains(')', s)))
 		return s;
 	
 	std::string ret = "";
-	size_t len = s.length();
-	for(int i = 0; i < len; i++)
+	for(int i = 0; i < s.length(); i++)
 	{
-		if(s[i] == '*')
+		if(s[i] == ')')
+			throw std::runtime_error("Invalid sequence: " + s);
+		
+		if(s[i] == '*'){
 			ret[ret.length() - 1] = std::tolower(ret.back());
+		}
+		else if(s[i] == '('){
+			//get end of paren
+			size_t end = s.find(')', i);
+			if(end == std::string::npos)
+				throw std::runtime_error("Invalid sequence: " + s);
+			
+			//erase paren from s
+			//sequence.erase(sequence.begin() + startIndex, sequence.begin() + end + 1);
+			s.erase(s.begin() + i, s.begin() + end + 1);
+			
+			ret[ret.length() - 1] = std::tolower(ret.back());
+		}
 		else ret += s[i];
 	}
 	
