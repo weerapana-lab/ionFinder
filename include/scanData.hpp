@@ -23,6 +23,9 @@ namespace scanData{
 	typedef std::vector<Scan> scansType;
 	std::string const OF_EXT = ".spectrum";
 	
+	std::string removeStaticMod(std::string s, bool lowercase = true);
+	std::string removeDynamicMod(std::string s, bool lowercase = true);
+	
 	class Scan{
 	protected:
 		std::string precursorFile;

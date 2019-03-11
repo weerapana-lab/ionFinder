@@ -24,11 +24,18 @@ std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
 	return fs;
 }
 
-std::string scanData::Scan::makeOfSequenceFromSequence(std::string s) const
+/**
+ \brief Remove static modification symbols from peptide sequence \p s.
+ 
+ \param s peptide sequence
+ \param lowercase Should modified residue be transformed to lowercase?
+ 
+ \return \s with static modifications removed.
+ */
+std::string scanData::removeStaticMod(std::string s, bool lowercase)
 {
 	//if s does not contain any modifications, just return s
-	if(!(utils::strContains('*', s) ||
-		 utils::strContains('(', s) ||
+	if(!(utils::strContains('(', s) ||
 		 utils::strContains(')', s)))
 		return s;
 	
@@ -38,25 +45,55 @@ std::string scanData::Scan::makeOfSequenceFromSequence(std::string s) const
 		if(s[i] == ')')
 			throw std::runtime_error("Invalid sequence: " + s);
 		
-		if(s[i] == '*'){
-			ret[ret.length() - 1] = std::tolower(ret.back());
-		}
-		else if(s[i] == '('){
+		if(s[i] == '('){
 			//get end of paren
 			size_t end = s.find(')', i);
 			if(end == std::string::npos)
 				throw std::runtime_error("Invalid sequence: " + s);
 			
 			//erase paren from s
-			//sequence.erase(sequence.begin() + startIndex, sequence.begin() + end + 1);
 			s.erase(s.begin() + i, s.begin() + end + 1);
 			
-			ret[ret.length() - 1] = std::tolower(ret.back());
+			if(lowercase)
+				ret[ret.length() - 1] = std::tolower(ret.back());
 		}
 		else ret += s[i];
 	}
 	
 	return ret;
+}
+
+/**
+ \brief Remove dynamic modification symbols from peptide sequence \p s.
+ 
+ \param s peptide sequence
+ \param lowercase Should modified residue be transformed to lowercase?
+ 
+ \return \s with dynamic modifications removed.
+ */
+std::string scanData::removeDynamicMod(std::string s, bool lowercase)
+{
+	//if s does not contain any modifications, just return s
+	if(!utils::strContains('*', s))
+		return s;
+	
+	std::string ret = "";
+	for(int i = 0; i < s.length(); i++)
+	{
+		if(s[i] == '*'){
+			if(lowercase)
+				ret[ret.length() - 1] = std::tolower(ret.back());
+		}
+		else ret += s[i];
+	}
+	
+	return ret;
+}
+
+std::string scanData::Scan::makeOfSequenceFromSequence(std::string s) const{
+	s = removeStaticMod(s);
+	s = removeDynamicMod(s);
+	return s;
 }
 
 void scanData::Scan::initilizeFromLine(std::string line)
