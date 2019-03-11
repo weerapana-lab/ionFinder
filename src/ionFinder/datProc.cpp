@@ -578,7 +578,7 @@ void IonFinder::PeptideStats::calcContainsCit()
 		return;
 	}
 	
-	//are there 1 more ambiguous fragments?
+	//are there 1 or more ambiguous fragments?
 	if(ionTypesCount[IonType::AMB_FRAG].second >= 1){
 		containsCit = "ambiguous";
 		return;

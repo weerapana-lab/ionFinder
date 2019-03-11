@@ -16,7 +16,7 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 		<< "ofname" << OUT_DELIM << getOfNameBase(_parentMs2, fullSequence) << NEW_LINE
 		<< "scanNumber" << OUT_DELIM << scanNum << NEW_LINE
 		<< "sequence" << OUT_DELIM << sequence << NEW_LINE
-		<< "fullSequence" << OUT_DELIM << fullSequence << NEW_LINE
+		<< "fullSequence" << OUT_DELIM << scanData::removeStaticMod(fullSequence) << NEW_LINE
 		<< "retTime" << OUT_DELIM << retTime << NEW_LINE
 		<< "precursorCharge" << OUT_DELIM << charge << NEW_LINE
 		<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << NEW_LINE;
