@@ -246,7 +246,8 @@ namespace IonFinder{
 			fullSequence = scanData::removeStaticMod(p.getFullSequence(), false);
 			charge = p.getCharge();
 			mass = p.getMass();
-			initModLocs();
+			modLocs.clear();
+			modLocs.insert(modLocs.begin(), p.getModLocs().begin(), p.getModLocs().end());
 		}
 		~PeptideStats(){
 			//delete _scan;

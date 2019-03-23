@@ -348,11 +348,12 @@ void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 				aminoAcids.back().setDynamicMod(sequence[i],
 												aminoAcidsMasses.getMW(sequence[i]));
 				sequence.erase(i, 1);
-				nMod++;
+				modLocs.push_back(aminoAcids.size() - 1); //add location of mod to modLocs
+				nMod++; //increment nMod
 			}
 		}
 		
-		//exit loop end of sequence
+		//exit loop if at end of sequence
 		if(i >= sequence.length())
 			break;
 		

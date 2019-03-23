@@ -290,7 +290,10 @@ namespace PeptideNamespace{
 		std::vector<AminoAcid> aminoAcids;
 		bool initialized;
 		FragmentIonType fragments;
-		int nMod; //number of modified residues
+		//!number of modified residues
+		int nMod;
+		//!Locations of dynamic modifications on peptide sequence
+		std::vector<size_t> modLocs;
 		
 		double parseStaticMod(size_t);
 		void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
@@ -344,6 +347,9 @@ namespace PeptideNamespace{
 		std::string getFormatedLabel(size_t i) const{
 			return fragments[i].getFormatedLabel();
 		}
+		bool getForceLabel(size_t i) const{
+			return fragments[i].getForceLabel();
+		}
 		template<typename _Tp>
 		std::string getFormatedLabel(size_t i, _Tp num) const{
 			return fragments[i].getFormatedLabel(num);
@@ -359,6 +365,9 @@ namespace PeptideNamespace{
 		}
 		int getNumMod() const{
 			return nMod;
+		}
+		const std::vector<size_t>& getModLocs() const{
+			return modLocs;
 		}
 	};//end of class
 	

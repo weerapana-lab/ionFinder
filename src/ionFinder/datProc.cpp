@@ -8,16 +8,15 @@
 
 #include <ionFinder/datProc.hpp>
 
-/**
- Clear PeptideFragmentsMap.
- */
+
+//!clear PeptideFragmentsMap.
 void IonFinder::PeptideFragmentsMap::clear()
 {
 	fragmentMap.clear();
 	_sequence.clear();
 }
 
-//!Constructor
+//!constructor
 IonFinder::FragmentData::FragmentData(std::string seq, size_t begin, size_t end)
 {
 	_sequence = seq;
@@ -101,7 +100,7 @@ void IonFinder::PeptideStats::initStats()
 	containsCit = "false";
 }
 
-void IonFinder::PeptideStats::initModLocs(const char* diffmods)
+/*void IonFinder::PeptideStats::initModLocs(const char* diffmods)
 {
 	size_t modLoc = std::string::npos;
 	bool modFound = false;
@@ -133,7 +132,7 @@ void IonFinder::PeptideStats::initModLocs(const char* diffmods)
 		if(modFound) modLocs.push_back(int(modLoc));
 		modFound = false;
 	}//end of for
-}
+}*/
 
 void IonFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::string fragDelim)
 {
