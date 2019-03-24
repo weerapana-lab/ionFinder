@@ -204,12 +204,12 @@ void IonFinder::PeptideStats::addSeq(const IonFinder::RichFragmentIon& seq,
 			//check if NL
 			if(seq.isNL()){
 				//check multiple of neutral loss
-				if(seq.getNumNl() > seq.getNumMod()){ //if equal to number of modifications, determining NL
-					//std::cout << seq.getLabel() << NEW_LINE;
-					incrementIonCount(ionStr, ionTypesCount[IonType::ART_NL_FRAG]);
+				if(seq.getNumNl() == seq.getNumMod()){ //if equal to number of modifications, determining NL
+					incrementIonCount(ionStr, ionTypesCount[IonType::DET_NL_FRAG]);
 				}
 				else{ //if not equal, artifiact fragment
-					incrementIonCount(ionStr, ionTypesCount[IonType::DET_NL_FRAG]);
+					//std::cout << seq.getLabel() << NEW_LINE;
+					incrementIonCount(ionStr, ionTypesCount[IonType::ART_NL_FRAG]);
 				}
 			}
 			else
@@ -259,7 +259,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			std::cout << "Found!" << NEW_LINE;
 			it->printFragments(std::cout);
 		}*/
-		/*if(scans[it - peptides.begin()].getScanNum() == 19174){
+		/*if(scans[it - peptides.begin()].getScanNum() == 13288){
 			std::cout << "Found!" << NEW_LINE;
 			it->printFragments(std::cout);
 		}*/
@@ -276,8 +276,8 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		//iterate through ion fragmetns
 		for(size_t i = 0; i < nFragments; i++)
 		{
-			/*if(it->getFragment(i).getLabel(false) == "y1")
-				std::cout << it->getFragment(i).getLabel(true) << NEW_LINE;*/
+			//if(it->getFragment(i).getLabel(false) == "b4-43")
+			//	std::cout << it->getFragment(i).getLabel(true) << NEW_LINE;
 			
 			//skip if not found
 			if(it->getFragment(i).getFound())
