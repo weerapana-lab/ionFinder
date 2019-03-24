@@ -61,7 +61,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 	out << NEW_LINE;
 	
 	std::streamsize ss = std::cout.precision();
-	std::cout.precision(5); //set out to print 5 floating point decimal places
+	out.precision(5); //set out to print 5 floating point decimal places
 	for(ionsTypeConstIt it = ions.begin(); it != ions.end(); ++it)
 	{
 		out << std::fixed << it->getMZ() << OUT_DELIM
@@ -79,10 +79,10 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 		<< it->label.arrow.end.getX() << OUT_DELIM
 		<< it->label.arrow.end.getY() << NEW_LINE;
 	}
-	std::cout.precision(ss);
+	out.precision(ss);
 	
 	if(includeMetaData)
-		out << ms2::END_SPECTRUM <<NEW_LINE;
+		out << ms2::END_SPECTRUM << NEW_LINE;
 }
 
 void ms2::Spectrum::clear()
@@ -307,15 +307,18 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 		}
 		
 		//if label is not already labeled or if peptide.getFragment(i) is not a NL
-		if(!(*label)->getLabeledIon() || !peptide.getFragment(i).isNL())
+		if(!(*label)->getLabeledIon() || peptide.getFragment(i).isNL())
 		{
-			(*label)->setLabel(peptide.getFragmentLabel(i));
-			(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
-			(*label)->setLabeledIon(true);
-			(*label)->label.setIncludeLabel(true);
-			(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
-			(*label)->setIonNum(peptide.getFragment(i).getNum());
-			labledCount++;
+			if(peptide.getIncludeLabel(i)) //only label spectrum if fragment should be labeled.
+			{
+				(*label)->setLabel(peptide.getFragmentLabel(i));
+				(*label)->setFormatedLabel(peptide.getFormatedLabel(i));
+				(*label)->setLabeledIon(true);
+				(*label)->label.setIncludeLabel(true);
+				(*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
+				(*label)->setIonNum(peptide.getFragment(i).getNum());
+				labledCount++;
+			}
 		}
 		peptide.setFound(i, true);
 	}//end of for

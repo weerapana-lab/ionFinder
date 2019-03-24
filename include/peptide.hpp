@@ -38,14 +38,16 @@ namespace PeptideNamespace{
 	typedef PepIonVecType::const_iterator PepIonIt;
 	
 	//forward function declarations
+	//peptide mass functions
 	double calcMass(double mz, int charge);
 	double calcMZ(double mass, int charge);
 	double calcMass(std::string sequence);
-	double calcMass(const PepIonVecType& sequence,
-					PepIonIt begin, PepIonIt end);
-	double calcMass(const std::vector<AminoAcid>& sequence);
-	std::string concatMods(const PepIonVecType& vec,
-						   PepIonIt begin, PepIonIt end);
+	double calcMass(PepIonIt begin, PepIonIt end);
+	
+	//Modification helper functions
+	std::string concatMods(PepIonIt begin, PepIonIt end);
+	
+	//mass calculation functions
 	void initAminoAcidsMasses(const base::ParamsBase& pars, std::string seqParFname, aaDB::AADB&);
 	void initAminoAcidsMasses(const base::ParamsBase&, aaDB::AADB&);
 	
@@ -170,6 +172,17 @@ namespace PeptideNamespace{
 		double _nlMass;
 		//!Represents multiples of base neutral loss mass on peptide
 		size_t _numNl;
+		//!Should ion label be included in spectrum?
+		bool _includeLabel;
+		
+		//!sequence of fragment
+		std::string _sequence;
+		//!index of begining of fragment relative to full sequence
+		size_t _beg;
+		//!index of end of fragment relative to full sequence
+		size_t _end;
+		
+		void _initFragSpan(const std::string&);
 		
 	public:
 		//!blank constructor
@@ -181,28 +194,23 @@ namespace PeptideNamespace{
 			_ionType = IonType::B;
 			_nlMass = 0.0;
 			_numNl = 0;
+			_sequence = "";
+			_beg = std::string::npos;
+			_end = std::string::npos;
+			_includeLabel = false;
 		}
 		FragmentIon(char b_y, int num, int charge, double mass,
-					double nlMass, size_t numNl, std::string mod) : Ion() {
+					std::string mod, const std::string& pepSequence) : Ion() {
 			_b_y = b_y;
 			_num = num;
 			_mod = mod;
-			_nlMass = nlMass;
-			_numNl = numNl;
+			_nlMass = 0;
+			_numNl = 0;
 			initalizeFromMass(mass, charge);
 			_found = false;
 			_ionType = strToIonType(b_y);
-		}
-		FragmentIon(IonType ionType, int num, int charge, double mass,
-					double nlMass, size_t numNl, std::string mod) : Ion() {
-			_num = num;
-			_mod = mod;
-			_nlMass = nlMass;
-			_numNl = numNl;
-			initalizeFromMass(mass, charge);
-			_found = false;
-			_ionType = ionType;
-			_b_y = ionTypeToStr()[0];
+			_initFragSpan(pepSequence);
+			_includeLabel = true;
 		}
 		//!copy constructor
 		FragmentIon(const FragmentIon& rhs){
@@ -215,6 +223,10 @@ namespace PeptideNamespace{
 			_numNl = rhs._numNl;
 			charge = rhs.charge;
 			mass = rhs.mass;
+			_sequence = rhs._sequence;
+			_beg = rhs._beg;
+			_end = rhs._end;
+			_includeLabel = rhs._includeLabel;
 		}
 		~FragmentIon() {}
 		
@@ -223,6 +235,9 @@ namespace PeptideNamespace{
 		}
 		void setIonType(IonType it){
 			_ionType = it;
+		}
+		void setForceLabel(bool boo){
+			_includeLabel = boo;
 		}
 		
 		//properties
@@ -258,6 +273,9 @@ namespace PeptideNamespace{
 		IonType getIonType() const{
 			return _ionType;
 		}
+		bool getIncludeLabel() const{
+			return _includeLabel;
+		}
 		static IonType strToIonType(std::string);
 		static IonType strToIonType(char c){
 			return strToIonType(std::string(1, c));
@@ -273,9 +291,20 @@ namespace PeptideNamespace{
 			_ionType == IonType::Y_NL ||
 			_ionType == IonType::M_NL;
 		}
-		//!returns true if fragment is parent ion or parent neutral loss
+		//!\return true if fragment is parent ion or parent neutral loss
 		bool isM() const{
 			return _ionType == IonType::M || _ionType == IonType::M_NL;
+		}
+		FragmentIon makeNLFrag(double lossMass, size_t numNL) const;
+		
+		std::string getSequence() const{
+			return _sequence;
+		}
+		size_t getBegin() const{
+			return _beg;
+		}
+		size_t getEnd() const{
+			return _end;
 		}
 	};
 	
@@ -298,6 +327,7 @@ namespace PeptideNamespace{
 		double parseStaticMod(size_t);
 		void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 						const char* diffmods = "*");
+		int nModsInSpan(size_t beg, size_t end) const;
 	public:
 		//constructors
 		Peptide() : Ion(){
@@ -319,7 +349,7 @@ namespace PeptideNamespace{
 						bool _calcFragments = true);
 		void calcFragments(int minCharge, int maxCharge,
 						   const aaDB::AADB& aminoAcidsMasses);
-		void addNeutralLoss(double losses);
+		void addNeutralLoss(double losses, bool labelDecoyNL = false);
 		double calcMass(const aaDB::AADB& aminoAcidsMasses);
 		void printFragments(std::ostream&) const;
 		
@@ -347,8 +377,8 @@ namespace PeptideNamespace{
 		std::string getFormatedLabel(size_t i) const{
 			return fragments[i].getFormatedLabel();
 		}
-		bool getForceLabel(size_t i) const{
-			return fragments[i].getForceLabel();
+		bool getIncludeLabel(size_t i) const{
+			return fragments[i].getIncludeLabel();
 		}
 		template<typename _Tp>
 		std::string getFormatedLabel(size_t i, _Tp num) const{

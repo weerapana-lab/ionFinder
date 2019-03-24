@@ -76,92 +76,7 @@ namespace IonFinder{
 						   const IonFinder::Params&);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
-	
-	/**
-	 Stores fragment ion sequence and begining and end indecies relative
-	 to peptide seq.
-	 */
-	class FragmentData{
-	protected:
-		//!sequence of fragment
-		std::string _sequence;
-		//!index of begining of fragment relative to full sequence
-		size_t _begin;
-		//!index of end of fragment relative to full sequence
-		size_t _end;
-	public:
-		//!default constructor
-		FragmentData(){
-			_sequence = "";
-			_begin = std::string::npos;
-			_end = std::string::npos;
-		}
-		FragmentData(std::string, size_t, size_t);
-		~FragmentData(){}
 		
-		//modifers
-		FragmentData& operator = (const FragmentData& rhs);
-		//void operator = (const FragmentData& rhs);
-		
-		//properties
-		std::string getSequence() const{
-			return _sequence;
-		}
-		size_t getBegin() const{
-			return _begin;
-		}
-		size_t getEnd() const{
-			return _end;
-		}
-	};
-	
-	//!Used to map fragment ions to a peptide sequence
-	class PeptideFragmentsMap{
-	private:
-		typedef std::map<std::string, FragmentData> FragmentMapType;
-		FragmentMapType fragmentMap;
-		std::string _sequence;
-		
-	public:
-		//!default constructor
-		PeptideFragmentsMap() {
-			_sequence = "";
-		}
-		//!Constructor from string
-		PeptideFragmentsMap(std::string sequence){
-			_sequence = sequence;
-			populateMap(_sequence);
-		}
-		~PeptideFragmentsMap() {}
-		
-		//modifers
-		void populateMap(std::string);
-		void clear();
-		
-		//properties
-		FragmentData at(std::string key) const{
-			return fragmentMap.at(key);
-		}
-	};
-	
-	//!Used to keep track of fragment ions which were found in sequence analysis.
-	class RichFragmentIon : public PeptideNamespace::FragmentIon, public FragmentData{
-	public:
-		//!default constructor
-		RichFragmentIon() : FragmentIon(){
-			_sequence = "";
-		}
-		//!constructor from FragmentIon
-		RichFragmentIon(const PeptideNamespace::FragmentIon& f) :
-			PeptideNamespace::FragmentIon(f){
-			_sequence = "";
-		}
-		
-		//modifers
-		void calcSequence(const PeptideFragmentsMap&);
-	};
-	
-	
 	class PeptideStats{
 	public:
 		friend bool analyzeSequences(std::vector<Dtafilter::Scan>&,
@@ -255,7 +170,7 @@ namespace IonFinder{
 		
 		//modifers
 		//void setScan(Dtafilter::Scan)
-		void addSeq(const IonFinder::RichFragmentIon&, const std::string&);
+		void addSeq(const PeptideNamespace::FragmentIon&, const std::string&);
 		static std::string ionTypeToStr(const IonType&);
 	};
 	

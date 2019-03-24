@@ -8,67 +8,6 @@
 
 #include <ionFinder/datProc.hpp>
 
-
-//!clear PeptideFragmentsMap.
-void IonFinder::PeptideFragmentsMap::clear()
-{
-	fragmentMap.clear();
-	_sequence.clear();
-}
-
-//!constructor
-IonFinder::FragmentData::FragmentData(std::string seq, size_t begin, size_t end)
-{
-	_sequence = seq;
-	_begin = begin;
-	_end = end;
-}
-
-//!copy assignment
-IonFinder::FragmentData& IonFinder::FragmentData::operator =(const FragmentData& rhs)
-{
-	_sequence = rhs._sequence;
-	_begin = rhs._begin;
-	_end = rhs._end;
-	return *this;
-}
-
-/**
- \brief Generate fragment map from sequence.
- 
- From a full sequence given, the sequence of all b and y ions are calculated
- and stored in the object.
- \param sequence the peptide sequence to calculate fragments from
- */
-void IonFinder::PeptideFragmentsMap::populateMap(std::string sequence)
-{
-	_sequence = sequence;
-	size_t len = _sequence.length();
-	for(int i = 0; i < len; i++)
-	{
-		std::string beg = _sequence.substr(0, i + 1);
-		std::string end = _sequence.substr(i);
-		
-		fragmentMap["b" + std::to_string(i+1)] = FragmentData(beg, 0, i);
-		
-		if(i == 0) fragmentMap["M"] = FragmentData(end, i, len - 1); //if first y ion, y ion is actually M
-		else fragmentMap["y" + std::to_string(len-i)] = FragmentData(end, i, len - 1); //regular y ion
-	}
-}
-
-/**
- \brief Search for fragment seqence, and begin and end indecies in \p pepMap <br>
- 
- \pre ion exists in \p pepMap
- \param pepMap initalized fragment map to get data from.
- */
-void IonFinder::RichFragmentIon::calcSequence(const PeptideFragmentsMap& pepMap){
-	std::string searchStr = std::string(1, _b_y) +
-		(_b_y == 'M' || _b_y == 'm' ? "" : std::to_string(_num)); //only add num if not M ion
-	
-	FragmentData::operator=(pepMap.at(searchStr));
-}
-
 /**
  \brief Align ref sequence to query sequence.
  
@@ -99,40 +38,6 @@ void IonFinder::PeptideStats::initStats()
 	
 	containsCit = "false";
 }
-
-/*void IonFinder::PeptideStats::initModLocs(const char* diffmods)
-{
-	size_t modLoc = std::string::npos;
-	bool modFound = false;
-	size_t len = fullSequence.length();
-	std::string tempSeq = fullSequence;
-	for(size_t i = 0; i < len; i++)
-	{
-		//check that current char is not a mod char
-		for(const char* p = diffmods; *p; p++)
-			if(tempSeq[i] == *p)
-				throw std::runtime_error("Invalid peptide sequence!");
-		
-		//if not at second to last AA, search for diff mod
-		if((i + 1) < tempSeq.length())
-		{
-			//iterate through diffmods
-			for(const char* p = diffmods; *p; p++)
-			{
-				//check if next char in sequence is diff mod char
-				if(tempSeq[i + 1] == *p)
-				{
-					modFound = true;
-					modLoc = i;
-					tempSeq.erase(i + 1, 1);
-					break;
-				}//end of if
-			}//end of for
-		}//end of if
-		if(modFound) modLocs.push_back(int(modLoc));
-		modFound = false;
-	}//end of for
-}*/
 
 void IonFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::string fragDelim)
 {
@@ -185,7 +90,7 @@ bool IonFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues
  \param seq fragment ion to add
  \param ambResidues ambiguous residues to search for.
  */
-void IonFinder::PeptideStats::addSeq(const IonFinder::RichFragmentIon& seq,
+void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 									 const std::string& ambResidues)
 {
 	//first check that seq is found in *this sequence
@@ -242,7 +147,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 std::vector<PeptideStats>& peptideStats,
 								 const IonFinder::Params& pars)
 {
-	IonFinder::PeptideFragmentsMap fragmentMap;
+	//IonFinder::PeptideFragmentsMap fragmentMap;
 	bool allSucess = true;
 	bool addModResidues = pars.getFastaFile() != "";
 	fastaFile::FastaFile seqFile;
@@ -264,8 +169,8 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			it->printFragments(std::cout);
 		}*/
 		
-		fragmentMap.clear();
-		fragmentMap.populateMap(it->getSequence());
+		//fragmentMap.clear();
+		//fragmentMap.populateMap(it->getSequence());
 		//it->printFragments(std::cout);
 		
 		//initialize new pepStat object
@@ -280,11 +185,8 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			//	std::cout << it->getFragment(i).getLabel(true) << NEW_LINE;
 			
 			//skip if not found
-			if(it->getFragment(i).getFound())
-			{
-				IonFinder::RichFragmentIon fragTemp(it->getFragment(i));
-				fragTemp.calcSequence(fragmentMap);
-				pepStat.addSeq(fragTemp, pars.getAmbigiousResidues());
+			if(it->getFragment(i).getFound()){
+				pepStat.addSeq(it->getFragment(i), pars.getAmbigiousResidues());
 			} //end of if
 		}//end of for i
 		pepStat.calcContainsCit();

@@ -499,19 +499,22 @@ int utils::getInt(int min, int max)
 
 /**
  Prints progress bar to std::out
- @param progress as a fraction of 1
+ \pre \p progress <= 1
+ \param progress as a fraction of 1
  */
 void utils::printProgress(float progress, int barWidth){
 	utils::printProgress(progress, std::cout, barWidth);
 }
 
 /**
- Prints progress bar to out
- @param progress as a fraction of 1
- @param out stream to print to
+ Prints progress bar to \p out
+ \pre \p progress <= 1
+ \param progress as a fraction of 1
+ \param out stream to print to
  */
 void utils::printProgress(float progress, std::ostream& out, int barWidth)
 {
+	assert(progress <= 1);
 	std::cout << "[";
 	int pos = barWidth * progress;
 	for(int i = 0; i < barWidth; ++i) {
