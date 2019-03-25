@@ -125,7 +125,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 	scan._parentMs2 = _parentMs2;
 	if(!((queryScan >= firstScan) && (queryScan <= lastScan)))
 	{
-		std::cout << "queryScan not in file scan range!" << NEW_LINE;
+		std::cerr << "queryScan not in file scan range!" << NEW_LINE;
 		return false;
 	}
 	
@@ -136,7 +136,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 									 _size - (scanOffset + queryLen), "S\t") + queryLen;
 	if(scanOffset == _size)
 	{
-		std::cout << "queryScan could not be found!" << NEW_LINE;
+		std::cerr << "queryScan: " << queryScan << ", could not be found in: " << _fname << NEW_LINE;
 		return false;
 	}
 	
