@@ -30,6 +30,7 @@ base::BufferFile::BufferFile(const base::BufferFile& rhs)
 	std::copy(rhs._buffer, rhs._buffer + rhs._size, _buffer);
 	
 	//other vars
+	_fname = rhs._fname;
 	_size = rhs._size;
 }
 
@@ -41,6 +42,8 @@ base::BufferFile& base::BufferFile::operator = (base::BufferFile rhs)
 {
 	std::swap(_buffer, rhs._buffer);
 	
+	//other vars
+	_fname = rhs._fname;
 	_size = rhs._size;
 	return *this;
 }
