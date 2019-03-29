@@ -18,8 +18,8 @@ parent_parser.add_argument('-round', type = int, default = 2,
                                   'Default is 2.')
 
 parent_parser.add_argument('-t', '--nThread', type=int,
-                    help='Specify number of subprocesses to spawn per job. '
-                         'By default, nThread will be 2 x the number of cores on your system.')
+						   help='Specify number of subprocesses to spawn per job. '
+                           'By default, nThread will be the number of logical cores on your system.')
 
 parent_parser.add_argument('--dir', help = 'Directory to run program from.'
                                         ' If not specified, current working directory is used.')

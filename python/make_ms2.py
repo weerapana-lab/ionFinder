@@ -116,7 +116,7 @@ def main():
     # get number of threads if not specified
     nThread = args.nThread
     if nThread is None:
-        nThread = cpu_count() * 2
+        nThread = cpu_count()
 
     _make_ms2_parallel(nThread, wd, progDir, args.round, args.input_files, verbose = args.verbose,
                       mzLab=args.mzLab, pSize=args.pSize, simpleSeq=args.simpleSeq)
