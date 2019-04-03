@@ -130,10 +130,10 @@ namespace utils{
 	
 	/**
 	 Determine whether compare is between compare - range and compare + range.
-	 @param value reference value
-	 @param compare value to search for in range
-	 @param range the range
-	 @return True if compare is in range
+	 \param value reference value
+	 \param compare value to search for in range
+	 \param range the range
+	 \return True if compare is in range
 	 */
 	template<typename _Tp> bool inRange(_Tp value, _Tp compare, _Tp range){
 		return abs(value - compare) <= range;
@@ -141,10 +141,10 @@ namespace utils{
 	
 	/**
 	 Determine whether comp is beg <= comp and comp <= end
-	 @param beg beginning of range
-	 @param end end of range
-	 @param comp the value to search for in range
-	 @return True if comp is in range
+	 \param beg beginning of range
+	 \param end end of range
+	 \param comp the value to search for in range
+	 \return True if comp is in range
 	 */
 	template<typename _Tp> bool inSpan(_Tp beg, _Tp end, _Tp comp){
 		return beg <= comp && comp <= end;

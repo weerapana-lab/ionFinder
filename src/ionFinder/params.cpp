@@ -341,7 +341,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 /**
  Searches all directories in _inDirs for DTAFilter files.
  If _inDirs is empty, current working directory is used.
- @return true if > 1 filter file was found, else false
+ \return true if > 1 filter file was found, else false
  */
 bool IonFinder::Params::getFlist()
 {

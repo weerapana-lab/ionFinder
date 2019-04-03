@@ -131,7 +131,7 @@ void PeptideNamespace::AminoAcid::addStaticMod(double modMass)
 
 /**
  Get ion label.
- @return unformatted ion label
+ \return unformatted ion label
  */
 std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod, std::string chargeSep) const
 {
@@ -148,7 +148,7 @@ std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod, std::string
 
 /**
  Format label with markup for ggplot ms2 spectrum.
- @return formatted ion label
+ \return formatted ion label
  */
 std::string PeptideNamespace::FragmentIon::getFormatedLabel() const
 {
@@ -460,7 +460,7 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 /**
  Prints peptide fragmetns and calculated MZs to out.
  For debugging
- @param out stream to print to.
+ \param out stream to print to.
  */
 void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 {

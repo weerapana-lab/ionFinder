@@ -318,8 +318,8 @@ void utils::split (const std::string& str, const char delim, std::vector<std::st
 
 /**
  remove trailing WHITESPACE
- @param str string to trim
- @return trimmed string
+ \param str string to trim
+ \return trimmed string
 */
 std::string utils::trimTraling(const std::string& str)
 {
@@ -330,8 +330,8 @@ std::string utils::trimTraling(const std::string& str)
 
 /**
  remove leading utils::WHITESPACE
- @param str string to trim
- @return trimmed string
+ \param str string to trim
+ \return trimmed string
  */
 std::string utils::trimLeading(const std::string& str)
 {
@@ -342,8 +342,8 @@ std::string utils::trimLeading(const std::string& str)
 
 /**
  Remove trailing and leading utils::WHITESPACE
- @param str string to trim
- @return trimmed string
+ \param str string to trim
+ \return trimmed string
  */
 std::string utils::trim(const std::string& str)
 {

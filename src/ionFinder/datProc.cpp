@@ -48,9 +48,9 @@ void IonFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::st
 
 /**
  Add ionStr and increment ion count for ion
- @param ionStr ion string to add
- @param ion PeptideStats::IonTypeDatType to increment
- @param inc amt to add to ion count
+ \param ionStr ion string to add
+ \param ion PeptideStats::IonTypeDatType to increment
+ \param inc amt to add to ion count
  */
 void IonFinder::PeptideStats::incrementIonCount(std::string ionStr,
 												PeptideStats::IonTypeDatType& ion,
@@ -69,9 +69,9 @@ void IonFinder::PeptideStats::addMod(std::string mod){
 
 /**
  Tests whether sequence contains ambiguous residues.
- @param ambResidues ambiguous residues to search for
- @param fragSeq sequence of fragment to search for ambiguous residues.
- @return True if an ambiguous residue is found.
+ \param ambResidues ambiguous residues to search for
+ \param fragSeq sequence of fragment to search for ambiguous residues.
+ \return True if an ambiguous residue is found.
 */
 bool IonFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues,
 												  std::string fragSeq) const
@@ -140,7 +140,7 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 
 /**
  
- @param peptides vector of peptides to analyze
+ \param peptides vector of peptides to analyze
  */
 bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 const std::vector<PeptideNamespace::Peptide>& peptides,
@@ -330,10 +330,10 @@ void IonFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 
 /**
  Find peptide fragment ions in ms2 files.
- @param scans Populated vector of scan objects to search for
- @param peptides empty vector of peptides to be filled from data in scans.
- @param pars IonFinder params object.
- @return true if successful
+ \param scans Populated vector of scan objects to search for
+ \param peptides empty vector of peptides to be filled from data in scans.
+ \param pars IonFinder params object.
+ \return true if successful
  */
 bool IonFinder::findFragments(std::vector<Dtafilter::Scan>& scans,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
@@ -383,11 +383,12 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 /**
  Find peptide fragment ions in ms2 files. <br>
  Function should not be called directly.
- @param peptides empty vector of peptides to be filled from data in scans.
- @param beg index of beginning of scan vector
- @param end index of end of scan vector
- @param pars IonFinder params object.
- @param success set to true if function was successful
+ Use IonFinder::findFragments or IonFinder::findFragmentsParallel instead.
+ \param peptides empty vector of peptides to be filled from data in scans.
+ \param beg index of beginning of scan vector
+ \param end index of end of scan vector
+ \param pars IonFinder params object.
+ \param success set to true if function was successful
  */
 void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 										 const size_t beg, const size_t end,
@@ -432,7 +433,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		//load spectrum
 		auto ms2FileIt = ms2Map.find(scans[i].getPrecursorFile());
 		if(ms2FileIt == ms2Map.end()){
-			throw std::runtime_error("Key error in Ms2Map!");
+			throw std::out_of_range("Key error in Ms2Map!");
 			return;
 		}
 		if(!ms2FileIt->second.getScan(scans[i].getScanNum(), spectrum)){
@@ -505,6 +506,12 @@ void IonFinder::PeptideStats::calcContainsCit()
 	}
 }
 
+/**
+ \brief Convert \p it into a string representation. <br>
+ IonFinder::ION_TYPES_STR contains string representations used.
+ \param it IonType to convert.
+ \return string representation of \p it.
+ */
 std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 {
 	switch(it){
@@ -527,8 +534,9 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 
 /**
  Prints peptide stats to out.
- @param stats Peptide stats to print.
- @param pars initialized IonFinder::Params object
+ \param stats Peptide stats to print.
+ \param pars initialized IonFinder::Params object
+ \return true if sucessful.
  */
 bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 								  const IonFinder::Params& pars)
