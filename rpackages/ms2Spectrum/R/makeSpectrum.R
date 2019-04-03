@@ -1,8 +1,18 @@
 
-#require(foreach, warn.conflicts = FALSE, quietly = TRUE)
-#require(doParallel, warn.conflicts = FALSE, quietly = TRUE)
+getSpaceDiv <- function(plotWidth, simpleSeq = F)
+{
+  #get slpe and intercept
+  slope_ = -0.00239899
+  intercept_ = 0.046969697
+  if(simpleSeq){
+    slope_ = -0.001027192
+    intercept_ = 0.023625411
+  }
+  #calc divisor
+  return((slope_ * plotWidth) + intercept_)
+}
 
-makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, plotSize = 'large', nDigits = 3)
+makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, nDigits = 3)
 {
   dat <- specDat$spectrum
   dat$label <- as.character(dat$label)
@@ -22,24 +32,12 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
   B_NL_COLOR = "green4"
   BLANK_COLOR = 'grey35'
   INCLUDE_ARROWS = (nrow(dat[dat$includeArrow,]) > 0)
+  plotWidth = specDat$metaData$plotWidth
 
   MZ_RANGE <- max(dat$mz) - min(dat$mz)
 
-  if(simpleSequence){
-    if(plotSize == 'small'){
-      SEQ_SPACE = MZ_RANGE/64.90187
-    } else {
-      SEQ_SPACE = MZ_RANGE/88.50255
-    }
-    SEQ_X_LEN = SEQ_SPACE * length(SEQ_STAR)
-  } else {
-    if(plotSize == 'small'){
-      SEQ_SPACE = MZ_RANGE/36
-    } else {
-      SEQ_SPACE = MZ_RANGE/55
-    }
-    SEQ_X_LEN = SEQ_SPACE * length(SEQ_STAR)
-  }
+  SEQ_SPACE = MZ_RANGE * (getSpaceDiv(plotWidth, simpleSequence))
+  SEQ_X_LEN = SEQ_SPACE * length(SEQ_STAR)
 
   SEQ_BEGIN_X = max(dat$mz) - SEQ_X_LEN
 
@@ -157,7 +155,10 @@ makeSpectrum <- function(specDat, simpleSequence = FALSE, includeMZLab = TRUE, p
     }
   }
 
-  return(list(ofname = paste0(specDat$metaData$ofname, '.pdf'), spectrum = mspect))
+  return(list(ofname = paste0(specDat$metaData$ofname, '.pdf'),
+              width = plotWidth,
+              height = specDat$metaData$plotHeight,
+              spectrum = mspect))
 }
 
 makeAllSpectrum <- function(spectraFiles, ...)

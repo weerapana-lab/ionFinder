@@ -6,9 +6,6 @@ parent_parser = argparse.ArgumentParser(add_help=False)
 parent_parser.add_argument('-mzLab', choices=[0, 1], default=1, type = int,
                     help='Choose whether to include MZ labels in spectrum. Default is 1.')
 
-parent_parser.add_argument('-pSize', choices=['small', 'large'], default='large',
-                    help='Specfy plot size. Default is large (12x4 in). Small is 8x3 in.')
-
 parent_parser.add_argument('-simpleSeq', choices=[0, 1], default=0, type = int,
                     help='Choose whether to write simplified peptide sequence on plot. '
                          '0 is the default.')

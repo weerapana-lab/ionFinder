@@ -11,10 +11,8 @@ library(tools)
 
 if(argv[1] == "RStudio")
 {
-  #argv <- c("Rstudio", "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_rVEHLQYNLELAFHHHLCK_10974_4.spectrum")
-  argv <- c('RStudio', "-mzLab", "1", "-pSize", "large", "-simpleSeq", "0", 
-            "/Volumes/Data/msData/ms2_anotator/citFinder/rorpad_mouse/spectraFiles/ror_pad_rrVEHLQYNLELAFHHHLCK_12518_4.spectrum",
-            "/Volumes/Data/msData/ms2_anotator/citFinder/pad_nl2/spectraFiles/nl_ca_03_SQVrGAIIPGLLGVGEPLIYGVTLPrMK_40350_3.spectrum")
+  argv <- c('RStudio', "-mzLab", "1", "-simpleSeq", "0", 
+            '/Volumes/Data/msData/ms2_anotator/citFinder/rorpad/spectraFiles/ror_pad_ASWTWGPEGQGAILLVNCDr_24478_2.spectrum')
   iBeg <-  2
 } else {
   iBeg = min(grep('--args', argv))
@@ -29,11 +27,7 @@ inFiles <- NA
 ofnames <- NA
 includeMzLab <- TRUE
 simpleSeq <- FALSE
-plotSize <- 'large'
-plotWidth <- 12
-plotHeight <- 4
 nDigits <- 2
-
 
 while(i <= argc){
   if(!isArg(argv[i]) && !endArgs)
@@ -88,21 +82,6 @@ while(i <= argc){
         stop("Bad arg for -simpleSeq")
       }
     }
-    else if(argv[i] == "-pSize")
-    {
-      i = i + 1
-      plotSize <- argv[i]
-      if(plotSize == 'small'){
-        plotWidth <- 8
-        plotHeight <- 3
-      } else if(plotSize == 'large' | plotSize == 'default'){
-        plotWidth <- 12
-        plotHeight <- 4
-      } else {
-        printUsage()
-        stop("Bad arg for -pSize")
-      }
-    }
   }
   else if(isArg(argv[i]))
   {
@@ -123,7 +102,7 @@ spectraFiles <- getAllSpectra(inFiles)
 print("Done!", quote = FALSE)
 print("Generating labeled ms2 spectra...", quote = FALSE)
 spectra <- makeAllSpectrum(spectraFiles, includeMZLab = includeMzLab, 
-                           simpleSequence = simpleSeq, plotSize = plotSize, nDigits = nDigits)
+                           simpleSequence = simpleSeq, nDigits = nDigits)
 print("Done!", quote = FALSE)
 print("Writing spectra...", quote = FALSE)
 
@@ -132,6 +111,6 @@ for(i in 1:length(inFiles))
 {
   print(paste("Working on ", spectra[[i]]$ofname, "...", sep = ""), quote = FALSE)
   ggsave(paste(base::dirname(inFiles[i]), spectra[[i]]$ofname, sep = '/'),
-         plot = spectra[[i]]$spectrum, dpi = 600, width = plotWidth, height = plotHeight)
+         plot = spectra[[i]]$spectrum, width = spectra[[i]]$width, height = spectra[[i]]$height)
   print("Done", quote = FALSE)
 }

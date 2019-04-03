@@ -60,7 +60,7 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
 
 
 def _make_ms2_parallel(nThread, spectraDir, progDir, round, inputFiles,
-                      verbose = False, mzLab = 1, pSize = 'large', simpleSeq = 0):
+                      verbose = False, mzLab = 1, simpleSeq = 0):
 
     files, nFiles = getFileLists(nThread, spectraDir, inputFiles)
 
@@ -72,9 +72,9 @@ def _make_ms2_parallel(nThread, spectraDir, progDir, round, inputFiles,
     #spawn subprocesses
     procecies = list()
     for item in files:
-        command = '{} -mzLab {} -pSize {} -simpleSeq {} -round {} {}'.format(rscriptCommand,
-                                                                             mzLab, pSize, simpleSeq, round,
-                                                                             ' '.join(item))
+        command = '{} -mzLab {} -simpleSeq {} -round {} {}'.format(rscriptCommand,
+                                                                   mzLab, simpleSeq, round,
+                                                                   ' '.join(item))
         if verbose:
             sys.stdout.write('{}\n'.format(command))
 
@@ -119,7 +119,7 @@ def main():
         nThread = cpu_count()
 
     _make_ms2_parallel(nThread, wd, progDir, args.round, args.input_files, verbose = args.verbose,
-                      mzLab=args.mzLab, pSize=args.pSize, simpleSeq=args.simpleSeq)
+                      mzLab=args.mzLab, simpleSeq=args.simpleSeq)
 
 
 if __name__ == '__main__':

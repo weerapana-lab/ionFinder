@@ -109,10 +109,8 @@ def main():
     #submit jobs
     for i, item in enumerate(spectraFiles):
         makeMs2_args = '-v -mzLab {} ' \
-                       '-pSize {} ' \
                        '-simpleSeq {} ' \
                        '-round {} {}'.format(args.mzLab,
-                                             args.pSize,
                                              args.simpleSeq,
                                              args.round,
                                              ' '.join(item))

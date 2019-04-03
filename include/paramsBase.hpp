@@ -32,6 +32,8 @@ namespace base{
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
 	double const DEFAULT_MATCH_TOLERANCE = 0.5;
+	double const DEFAULT_PLOT_HEIGHT = 4;
+	double const DEFAULT_PLOT_WIDTH = 12;
 	
 	std::string const DEFAULT_SMOD_NAME = "staticModifications.txt";
 	
@@ -73,6 +75,8 @@ namespace base{
 		double minIntensity;
 		bool includeAllIons;
 		std::string multipleMatchCompare;
+		double plotWidth;
+		double plotHeight;
 		
 		bool smodSpecified;
 		bool seqParSpecified;
@@ -108,6 +112,8 @@ namespace base{
 			seqParSpecified = false;
 			minMZ = 0;
 			maxMZ = 0;
+			plotWidth = DEFAULT_PLOT_WIDTH;
+			plotHeight = DEFAULT_PLOT_HEIGHT;
 			minMzSpecified = false;
 			maxMzSpecified = false;
 			minIntensity = 0;
@@ -154,6 +160,12 @@ namespace base{
 		}
 		double getMaxMZ() const{
 			return maxMZ;
+		}
+		double getPlotHeight() const{
+			return plotHeight;
+		}
+		double getPlotWidth() const{
+			return plotWidth;
 		}
 		bool getMZSpecified() const{
 			return maxMzSpecified || minMzSpecified;

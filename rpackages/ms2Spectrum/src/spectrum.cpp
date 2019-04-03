@@ -27,6 +27,7 @@ Rcpp::List getSpectrum(std::string fname)
     throw std::runtime_error("Could not read " + fname);
 
   std::string scanNum, parentFile, ofname, sequence, fullSequence, precursorCharge;
+  double plotWidth, plotHeight;
   Rcpp::NumericVector mz;
   Rcpp::NumericVector intensity;
   Rcpp::CharacterVector label;
@@ -64,29 +65,29 @@ Rcpp::List getSpectrum(std::string fname)
         utils::trimAll(elems);
         if(elems.size() < 2)
           throw std::runtime_error("bad metadata!");
-        if(elems[0] == "scanNumber")
-        {
+        if(elems[0] == "scanNumber"){
           scanNum = elems[1];
         }
-        else if(elems[0] == "precursorFile")
-        {
+        else if(elems[0] == "precursorFile"){
           parentFile = elems[1];
         }
-        else if(elems[0] == "ofname")
-        {
+        else if(elems[0] == "ofname"){
           ofname = elems[1];
         }
-        else if(elems[0] == "sequence")
-        {
+        else if(elems[0] == "sequence"){
           sequence = elems[1];
         }
-        else if(elems[0] == "fullSequence")
-        {
+        else if(elems[0] == "fullSequence"){
           fullSequence = elems[1];
         }
-        else if(elems[0] == "precursorCharge")
-        {
+        else if(elems[0] == "precursorCharge"){
           precursorCharge = elems[1];
+        }
+        else if(elems[0] == "plotHeight"){
+          plotHeight = std::stod(elems[1]);
+        }
+        else if(elems[0] == "plotWidth"){
+          plotWidth = std::stod(elems[1]);
         }
       }
     }
@@ -136,7 +137,9 @@ Rcpp::List getSpectrum(std::string fname)
     Rcpp::Named("scanNum") = scanNum,
     Rcpp::Named("parentFile") = parentFile,
     Rcpp::Named("ofname") = ofname,
-    Rcpp::Named("precursorCharge") = precursorCharge)),
+    Rcpp::Named("precursorCharge") = precursorCharge,
+    Rcpp::Named("plotWidth") = plotWidth,
+    Rcpp::Named("plotHeight") = plotHeight)),
     Rcpp::Named("spectrum") = Rcpp::DataFrame::create(Rcpp::Named("mz") = mz,
                            Rcpp::Named("intensity") = intensity,
                            Rcpp::Named("label") = label,

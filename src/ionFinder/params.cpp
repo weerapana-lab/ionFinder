@@ -256,6 +256,26 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			minIntensitySpecified = true;
 			continue;
 		}
+		if(!strcmp(argv[i], "-y") || !strcmp(argv[i], "--height"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			plotHeight = std::stod(argv[i]);
+			continue;
+		}
+		if(!strcmp(argv[i], "-w") || !strcmp(argv[i], "--width"))
+		{
+			if(!utils::isArg(argv[++i]))
+			{
+				usage();
+				return false;
+			}
+			plotWidth = std::stod(argv[i]);
+			continue;
+		}
 		if(!strcmp(argv[i], "-mmComp"))
 		{
 			if(!utils::isArg(argv[++i]))

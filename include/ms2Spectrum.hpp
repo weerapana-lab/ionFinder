@@ -207,6 +207,10 @@ namespace ms2{
 		double maxMZ;
 		double mzRange;
 		
+		//static metadata
+		double plotHeight;
+		double plotWidth;
+		
 		//match stats
 		double ionPercent;
 		double spScore;
@@ -234,6 +238,8 @@ namespace ms2{
 			minMZ = 0;
 			maxMZ = 0;
 			mzRange = 0;
+			plotWidth = 0;
+			plotHeight = 0;
 		}
 		~Spectrum() {}
 		

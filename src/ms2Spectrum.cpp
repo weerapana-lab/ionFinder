@@ -19,6 +19,8 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 		<< "fullSequence" << OUT_DELIM << scanData::removeStaticMod(fullSequence) << NEW_LINE
 		<< "retTime" << OUT_DELIM << retTime << NEW_LINE
 		<< "precursorCharge" << OUT_DELIM << charge << NEW_LINE
+		<< "plotHeight" << OUT_DELIM << plotHeight << NEW_LINE
+		<< "plotWidth" << OUT_DELIM << plotWidth << NEW_LINE
 		<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << NEW_LINE;
 	out.unsetf(std::ios::scientific);
 	out << "precursorScan" << OUT_DELIM << precursorScan << NEW_LINE
@@ -210,11 +212,13 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 								  const base::ParamsBase& pars,
 								  bool removeUnlabeledFrags, size_t labelTop)
 {
+	plotWidth = pars.getPlotWidth();
+	plotHeight = pars.getPlotHeight();
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
 	sequence = peptide.getSequence();
 	fullSequence = peptide.getFullSequence();
-	double _labelTolerance; // = pars.getMatchTolerance();
+	double _labelTolerance;
 	bool seqPrinted = false;
 	
 	typedef std::list<ms2::DataPoint*> listType;

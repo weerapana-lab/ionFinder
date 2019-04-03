@@ -1,4 +1,6 @@
 
+library(ggplot2)
+
 getBRC <- function(rect){
   x <- (rect$x + rect$w/2)
   y <- (rect$y - rect$h/2)
