@@ -27,13 +27,15 @@ namespace fastaFile {
 	
 	class FastaFile : public base::BufferFile{
 	private:
+		typedef std::pair<size_t, size_t> IntPair;
+		typedef std::map<std::string, IntPair> IndexMapType;
+		
 		//!All peptide sequences which were already found are stored internally
 		std::map<std::string, std::string> _foundSequences;
+		//!Stores begining and ending offset indecies of eacn protein ID
+		IndexMapType _idIndex;
 		
-		std::string makeOffsetQuery(std::string proteinID, std::string database) const{
-			std::string ret = ">" + database + "|" + proteinID + "|";
-			return ret;
-		}
+		void _buildIndex();
 		
 	public:
 		FastaFile(std::string fname = "") : BufferFile(fname) {}
@@ -43,19 +45,20 @@ namespace fastaFile {
 		//modifers
 		FastaFile& operator = (FastaFile rhs){
 			BufferFile::operator=(rhs);
+			_idIndex = rhs._idIndex;
+			_foundSequences = rhs._foundSequences;
 			return *this;
 		}
+		bool read();
+		bool read(std::string);
 		
 		//properties
-		std::string getSequence(std::string proteinID);
-		//void getMatchRange()
-		//std::string getModifiedResidue(std::string peptideSeq) const;
+		std::string getSequence(std::string proteinID, bool verbose = false);
 		std::string getModifiedResidue(std::string proteinID, std::string peptideSeq, int modLoc);
 		std::string getModifiedResidue(std::string proteinID, std::string peptideSeq,
-									   int modLoc, bool& found);
+									   int modLoc, bool verbose, bool& found);
 		int getMoodifiedResidueNumber(std::string peptideSeq, int modLoc) const;
 	};
-	
 }
 
 #endif /* fastaFile_hpp */

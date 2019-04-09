@@ -147,7 +147,6 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 std::vector<PeptideStats>& peptideStats,
 								 const IonFinder::Params& pars)
 {
-	//IonFinder::PeptideFragmentsMap fragmentMap;
 	bool allSucess = true;
 	bool addModResidues = pars.getFastaFile() != "";
 	fastaFile::FastaFile seqFile;
@@ -168,11 +167,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			std::cout << "Found!" << NEW_LINE;
 			it->printFragments(std::cout);
 		}*/
-		
-		//fragmentMap.clear();
-		//fragmentMap.populateMap(it->getSequence());
-		//it->printFragments(std::cout);
-		
+				
 		//initialize new pepStat object
 		IonFinder::PeptideStats pepStat(*it); //init pepStat
 		pepStat._scan = &scans[it - peptides.begin()]; //add pointer to scan
@@ -198,14 +193,11 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 			{
 				bool found; //set to true if peptide and prot sequences are found in FastaFile
 				std::string modTemp = seqFile.getModifiedResidue(pepStat._scan->getParentID(),
-																 pepStat.sequence, int(*it), found);
+																 pepStat.sequence, int(*it),
+																 pars.getVerbose(), found);
 				pepStat.addMod(modTemp);
 				if(!found)
-				{
 					nSeqNotFound++;
-					if(pars.getVerbose())
-						std::cerr << NEW_LINE;
-				}
 			}
 		}
 		peptideStats.push_back(pepStat);

@@ -82,7 +82,7 @@ namespace utils{
 	std::istream& safeGetline(std::istream& is, std::string& t);
 	std::istream& safeGetline(std::istream& is, std::string& t, std::streampos& oldPos);
 		
-	//std::string utils
+	//string utils
 	bool strContains(std::string, std::string);
 	bool strContains(char, std::string);
 	bool startsWith(std::string whithinStr, std::string findStr);
@@ -100,6 +100,7 @@ namespace utils{
 	size_t offset(const char* buf, size_t len, const char* str);
 	size_t offset(const char* buf, size_t len, std::string s);
 	void removeEmptyStrings(std::vector<std::string>&);
+	void getIdxOfSubstr(char*, const char*, std::vector<size_t>&);
 	
 	//other
 	bool isInteger(const std::string & s);

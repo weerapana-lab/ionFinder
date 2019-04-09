@@ -526,3 +526,21 @@ void utils::printProgress(float progress, std::ostream& out, int barWidth)
 	out.flush();
 }
 
+/**
+ \brief Find indecies of all instances of substrings in string.
+ 
+ \param searchStr Buffer to search.
+ \param findStr String to find.
+ \param indecies set contain all indecies
+ */
+void utils::getIdxOfSubstr(char* searchStr, const char* findStr,
+						   std::vector<size_t>& indecies)
+{
+	char* tmp = searchStr;
+	size_t incrementAmt = strlen(findStr);
+	while((tmp = strstr(tmp, findStr)) != nullptr){
+		indecies.push_back((size_t)(tmp - searchStr));
+		tmp += incrementAmt;
+	}
+}
+
