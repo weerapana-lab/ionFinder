@@ -29,7 +29,7 @@ namespace ms2 {
 	
 	class Ms2File;
 	
-	class Ms2File : public base::BufferFile{
+	class Ms2File : public utils::BufferFile{
 	private:
 		//metadata
 		//!base file name without extension

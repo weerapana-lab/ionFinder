@@ -24,7 +24,7 @@ LDFLAGS += -g -lpthread
 LIBFLAGS :=
 #
 #   Include
-INCLUDEFLAGS :=
+INCLUDEFLAGS := -I./utils/include
 #
 #
 # Program name
@@ -33,6 +33,10 @@ ION_FINDER_EXE := ionFinder
 #
 #
 # Directories
+#
+# utils
+UTILS_DIR := utils
+UTILS_LIB := lib/utils.a
 #
 #   Headers
 HEADERDIR := include
@@ -51,6 +55,9 @@ OBJDIR := obj
 MS2_ANNOTATOR_OBJDIR := $(OBJDIR)/ms2_annotator
 ION_FINDER_OBJDIR := $(OBJDIR)/ionFinder
 #
+#	Libraries
+LIBDIR := lib
+#
 #   Binary
 BINDIR := bin
 #
@@ -60,17 +67,14 @@ SCRIPTS := scripts
 #   Tex dir
 TEX_DIR := doc/tex
 #
-#   Install dirrectory
-INSTALL_DIR := /usr/local/bin/
-#
 #
 ################################################################################
 
-#HEADERS := $(wildcard $(HEADERDIR)/*.h)
+HEADERS := $(wildcard $(HEADERDIR)/*.hpp)
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
 MS2_ANNOTATOR_SRCS := $(wildcard $(MS2_ANNOTATOR_SRCDIR)/*.cpp)
 ION_FINDER_SRCS := $(wildcard $(ION_FINDER_SRCDIR)/*.cpp)
-#ALL_SRCS = $(SRCS) $(MS2_ANNOTATOR_SRCS)
+
 
 OBJS := $(subst $(SRCDIR)/,$(OBJDIR)/,$(SRCS:.cpp=.o))
 MS2_ANNOTATOR_OBJS += $(OBJS) $(subst src/,obj/,$(MS2_ANNOTATOR_SRCS:.cpp=.o))
@@ -82,7 +86,6 @@ LDFLAGS += $(LIBFLAGS)
 
 .PHONY: all clean distclean install uninstall multi
 
-#TARGETS = $(HEADERDIR)/$(GIT_VERSION) $(BINDIR)/$(EXE) $(BINDIR)/DTsetup helpFile.pdf DTarray_pro-Userguide.pdf
 TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) ionFinder_help.pdf $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
 
 all: $(TARGETS)
@@ -99,17 +102,22 @@ multi:
 # 	cp $(TEX_DIR)/DTarray_pro-Userguide.pdf .
 # endif
 
-$(BINDIR)/$(MS2_ANNOTATOR_EXE): $(MS2_ANNOTATOR_OBJS)
+$(BINDIR)/$(MS2_ANNOTATOR_EXE): $(UTILS_LIB) $(MS2_ANNOTATOR_OBJS)
 	mkdir -p $(BINDIR)
-	$(CXX) $(LDFLAGS) $(MS2_ANNOTATOR_OBJS) -o $@
+	$(CXX) $(LDFLAGS) $(MS2_ANNOTATOR_OBJS) $(UTILS_LIB) -o $@
 
-$(BINDIR)/$(ION_FINDER_EXE): $(ION_FINDER_OBJS)
+$(BINDIR)/$(ION_FINDER_EXE): $(UTILS_LIB) $(ION_FINDER_OBJS)
 	mkdir -p $(BINDIR)
-	$(CXX) $(LDFLAGS) $(ION_FINDER_OBJS) -o $@
+	$(CXX) $(LDFLAGS) $(ION_FINDER_OBJS) $(UTILS_LIB) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERDIR)/%.hpp
 	mkdir -p $(OBJDIR) $(MS2_ANNOTATOR_OBJDIR) $(ION_FINDER_OBJDIR)
 	$(CXX) $(CXXFLAGS) $< -o $@
+
+$(UTILS_LIB):
+	cd $(UTILS_DIR); $(MAKE)
+	mkdir -p $(LIBDIR)
+	cd $(LIBDIR); ln -s ../$(UTILS_DIR)/$(UTILS_LIB)
 
 $(BINDIR)/make_ms2: $(PYTHON_DIR)/make_ms2.py
 	bash $(SCRIPTS)/addPythonFiles.sh $(PYTHON_DIR)/make_ms2.py
@@ -121,9 +129,10 @@ ionFinder_help.pdf : man/ionFinder/helpFile.roff
 	bash $(SCRIPTS)/updateMan.sh man/ionFinder/helpFile.roff ionFinder_help.pdf
 
 clean:
-	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE)
+	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) $(LIBDIR)/*.a
 	rm -f $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
 	rm -f ionFinder_help.pdf
+	cd $(UTILS_DIR); $(MAKE) clean
 	#rm -r lib/*
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
 

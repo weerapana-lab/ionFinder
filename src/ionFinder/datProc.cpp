@@ -149,7 +149,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 {
 	bool allSucess = true;
 	bool addModResidues = pars.getFastaFile() != "";
-	fastaFile::FastaFile seqFile;
+	utils::FastaFile seqFile;
 	int nSeqNotFound = 0;
 	if(addModResidues){
 		std::cout << "\nReading FASTA file...";
