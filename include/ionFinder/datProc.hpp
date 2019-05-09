@@ -132,7 +132,6 @@ namespace IonFinder{
 		
 		void initStats();
 		void initModLocs(const char* diffmods = "*");
-		static void addChar(std::string, std::string&, std::string fragDelim = FRAG_DELIM);
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
 		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);

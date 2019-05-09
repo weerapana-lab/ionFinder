@@ -39,13 +39,6 @@ void IonFinder::PeptideStats::initStats()
 	containsCit = "false";
 }
 
-void IonFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::string fragDelim)
-{
-	if(s.empty())
-		s = toAdd;
-	else s += fragDelim + toAdd;
-}
-
 /**
  Add ionStr and increment ion count for ion
  \param ionStr ion string to add
@@ -55,7 +48,7 @@ void IonFinder::PeptideStats::addChar(std::string toAdd, std::string& s, std::st
 void IonFinder::PeptideStats::incrementIonCount(std::string ionStr,
 												PeptideStats::IonTypeDatType& ion,
 												int inc){
-	addChar(ionStr, ion.first, _fragDelim);
+	utils::addChar(ionStr, ion.first, _fragDelim);
 	ion.second += inc;
 }
 
@@ -64,7 +57,7 @@ void IonFinder::PeptideStats::incrementIonCount(std::string ionStr,
  \param mod Modified residue in the form <residue><number> as in C57
  */
 void IonFinder::PeptideStats::addMod(std::string mod){
-	addChar(mod, modResidues, _fragDelim);
+	utils::addChar(mod, modResidues, _fragDelim);
 }
 
 /**
