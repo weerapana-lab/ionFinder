@@ -1,3 +1,4 @@
+#Files I added
 testFiles/*
 bin/*
 .DS_Store
@@ -18,6 +19,8 @@ lib/*
 *.Rprofile
 .idea/*
 *.pyc
+*.pbs.*
+*.pbs
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
