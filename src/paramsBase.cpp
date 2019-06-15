@@ -81,7 +81,7 @@ void base::ParamsBase::displayHelp() const{
  
  Only works if MatchType is MatchType::TH.
  If MatchType::PPM the mz would be needed to calculate the tolerance. <br>
- Also see double ParamsBase::getMatchTolerance(double ms) const.
+ Also see ParamsBase::getMatchTolerance(double ms) const.
  \pre ParamsBase::_matchType == MatchType::TH
  \return fragment match tolerance
  */
