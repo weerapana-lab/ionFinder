@@ -1,6 +1,6 @@
 //
 //  params.cpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 12/9/18.
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
@@ -323,7 +323,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "--version"))
 		{
-			std::cout << "citFinder " << BIN_VERSION << NEW_LINE;
+			std::cout << "ionFinder " << BIN_VERSION << NEW_LINE;
 			printGitVersion();
 			return false;
 		}
