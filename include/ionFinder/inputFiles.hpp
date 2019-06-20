@@ -1,6 +1,6 @@
 //
 //  inputFiles.hpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 1/2/19.
 //  Copyright © 2019 Aaron Maurais. All rights reserved.

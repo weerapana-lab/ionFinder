@@ -177,7 +177,7 @@ namespace PeptideNamespace{
 		
 		//!sequence of fragment
 		std::string _sequence;
-		//!index of begining of fragment relative to full sequence
+		//!index of beginning of fragment relative to full sequence
 		size_t _beg;
 		//!index of end of fragment relative to full sequence
 		size_t _end;

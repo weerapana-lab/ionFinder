@@ -151,7 +151,7 @@ Set default name of DTASelect-filter files.  By default, \fI<name>\fR is \fIDTAS
 Specify .fasta formatted file to lookup numbers of modified residues in \fIpeptide_cit_stats.tsv\fR.
 .TP
 \fB--nThread\fR \fI<n_thread>\fR
-Choose number of thread to use. The part of \fBionFinder\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
+Choose number of threads to use. The part of \fBionFinder\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
 .TP
 \fB-v, --version\fR
 Print binary version number and exit program.
@@ -192,7 +192,7 @@ Run \fRionFinder\fR from current working directory using default parameters.
 \fBionFinder --citStats\fR
 Run \fRionFinder\fR from current working directory using default parameters for citrulline.  
 .TP
-\fBionFinder --citStats --matchTolerance 100 --matchType ppm\fR
+\fBionFinder --citStats --matchTolerance 50 --matchType ppm\fR
 Run \fRionFinder\fR from current working directory using default parameters for citrulline with a 50 ppm fragment match tolerance.
 .TP
 \fBionFinder --citStats --printSpectra\fR

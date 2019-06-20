@@ -1,6 +1,6 @@
 //
 //  params.hpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 12/9/18.
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
@@ -47,7 +47,7 @@ namespace IonFinder{
 		std::string _parentDir;
 		//!
 		FilterFilesType _filterFiles;
-		//!how will peptides to be searched for be suplied?
+		//!how will peptides to be searched for be supplied?
 		std::string _inputMode;
 		//!Default name of DTAFilter filter file to search for
 		std::string _dtaFilterBase;

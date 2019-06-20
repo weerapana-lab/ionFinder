@@ -1,13 +1,13 @@
 //
-//  citFinder.hpp
+//  ionFinder.hpp
 //  ms2_anotator
 //
 //  Created by Aaron Maurais on 12/9/18.
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
 //
 
-#ifndef citFinder_hpp
-#define citFinder_hpp
+#ifndef ionFinder_hpp
+#define ionFinder_hpp
 
 //make sure this value is defined
 #ifndef PATH_MAX
@@ -32,5 +32,5 @@
 
 //#include <iostream>
 
-#endif /* citFinder_hpp */
+#endif /* ionFinder_hpp */
 

@@ -1,6 +1,6 @@
 //
 //  datProc.hpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 12/10/18.
 //  Copyright © 2018 Aaron Maurais. All rights reserved.

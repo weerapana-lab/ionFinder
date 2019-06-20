@@ -1,6 +1,6 @@
 //
 //  main.hpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 12/9/18.
 //

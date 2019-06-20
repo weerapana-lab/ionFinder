@@ -1,6 +1,6 @@
 //
 //  dtafilterFiles.cpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 1/2/19.
 //  Copyright © 2019 Aaron Maurais. All rights reserved.
@@ -45,8 +45,8 @@ bool Dtafilter::readFilterFiles(const IonFinder::Params& params,
  */
 
 /**
- Read list of tsv formated peptide lists supplied by \p pars <br>
- \p ifname must have atleast columns with the headers in IonFinder::TSV_INPUT_REQUIRED_COLNAMES
+ Read list of tsv formatted peptide lists supplied by \p pars <br>
+ \p ifname must have at least columns with the headers in IonFinder::TSV_INPUT_REQUIRED_COLNAMES
  \param ifname path of .tsv file of peptides to search for
  \param scans empty list of scans to fill
  \returns true if all files were successfully read.
@@ -68,7 +68,7 @@ bool IonFinder::readInputTsv(std::string ifname,
 		}
 	}
 	
-	//itterate through columns and search for optional colums
+	//itterate through columns and search for optional columns
 	std::map<std::string, bool> foundOptionalCols;
 	for(int i = 0; i < TSV_INPUT_OPTIONAL_COLNAMES_LEN; i++)
 	{
@@ -82,7 +82,7 @@ bool IonFinder::readInputTsv(std::string ifname,
 	{
 		Dtafilter::Scan temp;
 		
-		//requied columns
+		//required columns
 		temp.setScanNum(tsv.getValSize(i, "scanNum"));
 		temp.setSequence(tsv.getValStr(i, "sequence"));
 		temp.setPrecursorFile(tsv.getValStr(i, "precursorFile"));

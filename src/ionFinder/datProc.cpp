@@ -1,6 +1,6 @@
 //
 //  datProc.cpp
-//  citFinder
+//  ionFinder
 //
 //  Created by Aaron Maurais on 12/10/18.
 //  Copyright © 2018 Aaron Maurais. All rights reserved.
@@ -521,7 +521,7 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
  Prints peptide stats to out.
  \param stats Peptide stats to print.
  \param pars initialized IonFinder::Params object
- \return true if sucessful.
+ \return true if successful.
  */
 bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 								  const IonFinder::Params& pars)

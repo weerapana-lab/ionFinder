@@ -40,7 +40,7 @@ std::string PeptideNamespace::FragmentIon::getNLStr() const{
 }
 
 /**
- \brief Given a peptide sequence, initalize the _beg, _end, and _sequence members.
+ \brief Given a peptide sequence, initialize the _beg, _end, and _sequence members.
  
  \param sequence Full peptide sequence.
  */
@@ -259,7 +259,7 @@ int PeptideNamespace::Peptide::nModsInSpan(size_t beg, size_t end) const
 }
 
 /**
- Create a new FragmentIon object with the coresponding \p lossMass neutral loss.
+ Create a new FragmentIon object with the corresponding \p lossMass neutral loss.
  
  \param lossMass Mass of neutral loss given as a positive number.
  \param numNL Multlipicity of neutral loss.
@@ -332,7 +332,7 @@ void PeptideNamespace::Peptide::addNeutralLoss(double lossMass, bool labelDecoyN
  */
 double PeptideNamespace::Peptide::parseStaticMod(size_t startIndex)
 {
-	//get index of parenthese close
+	//get index of parentheses close
 	size_t end = sequence.find(')', startIndex);
 	if(end == std::string::npos)
 		throw std::runtime_error("Invalid peptide sequence: " + sequence);
