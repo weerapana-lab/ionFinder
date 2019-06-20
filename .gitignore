@@ -21,6 +21,7 @@ lib/*
 *.pyc
 *.pbs.*
 *.pbs
+*symbols.rds
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
