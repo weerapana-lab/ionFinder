@@ -9,7 +9,7 @@ import make_ms2
 import parent_parser
 
 PYTHON_PBS_VERSION = 'python/2.7.10'
-R_PBS_VERSION = 'R/3.3.0'
+R_PBS_VERSION = 'R/3.5.0.gnu'
 PBS_MODULE_LOAD_COMMAND = 'module load'
 #PBS_PYTHON_COMMAND = 'python'
 MAKE_MS2_PY_PATH = 'make_ms2'
@@ -17,7 +17,6 @@ MAKE_MS2_PY_PATH = 'make_ms2'
 def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
     pbsName = '{}/make_ms2.pbs'.format(wd)
     outF = open(pbsName, 'w')
-    #outF = sys.stdout
 
     outF.write("#!/bin/tcsh\n")
     outF.write('#PBS -l mem={}gb,nodes=1:ppn={},walltime={}\n\n'.format(mem, ppn, walltime))
@@ -50,9 +49,9 @@ def main():
     #                    help = 'Prints summary of system resources needed, but does not submit jobs.'
     #                           'Overides -g command. Default is 0.')
 
-    parser.add_argument('-j', '--jobMode', choices = ['pbs', 'inplace'], default = 'pbs',
-                        help = 'Choose how to run jobs. pbs will create and submit <NJOB> PBS jobs. '
-                               'inplace will run in the current terminal.')
+    #parser.add_argument('-j', '--jobMode', choices = ['pbs', 'inplace'], default = 'pbs',
+    #                    help = 'Choose how to run jobs. pbs will create and submit <NJOB> PBS jobs. '
+    #                           'inplace will run in the current terminal.')
 
     parser.add_argument('-n', '--nJob', type=int, default = 1,
                         help='Specify number of jobs to split into.'
