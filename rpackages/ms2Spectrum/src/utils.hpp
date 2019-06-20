@@ -8,6 +8,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <cstdlib>
+#include <string>
 
 #ifndef utils_hpp
 #define utils_hpp
