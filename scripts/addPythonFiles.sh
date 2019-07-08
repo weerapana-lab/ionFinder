@@ -1,7 +1,6 @@
 
 BIN_DIR="bin"
-PYTHON_EXE=$(which python2.7)
-
+PYTHON_EXE=$(which python)
 
 #returns the absolute path of a relative reference
 function absPath {

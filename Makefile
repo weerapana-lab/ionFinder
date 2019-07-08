@@ -86,7 +86,7 @@ LDFLAGS += $(LIBFLAGS)
 
 .PHONY: all clean distclean install uninstall multi
 
-TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) ionFinder_help.pdf $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
+TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) ionFinder_help.pdf $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2 $(BINDIR)/parse_scaffold
 
 all: $(TARGETS)
 
@@ -125,12 +125,15 @@ $(BINDIR)/make_ms2: $(PYTHON_DIR)/make_ms2.py
 $(BINDIR)/run_make_ms2: $(PYTHON_DIR)/run_make_ms2.py
 	bash $(SCRIPTS)/addPythonFiles.sh $(PYTHON_DIR)/run_make_ms2.py
 
+$(BINDIR)/parse_scaffold: $(PYTHON_DIR)/parse_scaffold.py
+	bash $(SCRIPTS)/addPythonFiles.sh $(PYTHON_DIR)/parse_scaffold.py
+
 ionFinder_help.pdf : man/ionFinder/helpFile.roff
 	bash $(SCRIPTS)/updateMan.sh man/ionFinder/helpFile.roff ionFinder_help.pdf
 
 clean:
 	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) $(LIBDIR)/*.a
-	rm -f $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2
+	rm -f $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2 $(BINDIR)/parse_scaffold
 	rm -f ionFinder_help.pdf
 	cd $(UTILS_DIR); $(MAKE) clean
 	#rm -r lib/*
