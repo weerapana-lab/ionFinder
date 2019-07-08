@@ -88,7 +88,12 @@ def main():
     parser.add_argument('--inplace', default=False, action='store_true',
                         help='Should input_file be overwritten? Overides ofname.')
     parser.add_argument('-o', '--ofname', help='Name of output file.', default = '')
-    #parser.add_argument('-')
+
+    #arguments to customize mod residue
+    parser.add_argument('--mod_residue', default='R',
+                        help = "Residue to put '*' on")
+    parser.add_argument('--mod_mass', default = 0.98, type=float,
+                        help='Mass of modification.')
 
     args = parser.parse_args()
 
@@ -136,7 +141,8 @@ def main():
         s = str()
         for a in seq:
             s += str(a)
-        s = s.replace('R(+0.98)', 'R*')
+        _mod_temp = '{0}({1:+})'.format(args.mod_residue, args.mod_mass)
+        s = s.replace(_mod_temp, '{}*'.format(args.mod_residue))
         seq_str_list.append(s)
 
     dat['sequence'] = pd.Series(seq_str_list)
