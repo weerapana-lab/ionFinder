@@ -3,6 +3,7 @@ import os
 import re
 import pandas as pd
 import numpy as np
+import argparse
 
 
 class AminoAcid(object):
@@ -19,7 +20,7 @@ class AminoAcid(object):
             return '{}({:+})'.format(self.aa, self.mod)
 
 
-def strToAminoAcids(seq: str):
+def strToAminoAcids(seq):
     ret = list()
 
     # add n term
@@ -34,7 +35,7 @@ def strToAminoAcids(seq: str):
     return ret
 
 
-def extractModifications(seq: list, mods: str):
+def extractModifications(seq, mods):
     '''
     Extract modifications from modifications description and populate
     to a list of AminoAcid objects.
@@ -75,69 +76,95 @@ def extractModifications(seq: list, mods: str):
             seq[num].mod += modMass
 
 
-# read and format properly
-dat = pd.read_csv('data/20190301_ThompsonLab_Kaplan.tsv', sep='\t')
-# dat = pd.read_csv('data/20190320_ThompsonLab_Kallin.tsv', sep = '\t')
-dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
+def main():
 
-# extract scan column
-dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
+    parser = argparse.ArgumentParser(prog='parse_scaffold',
+                                     description='Convert Scaffold output to proper input for ionFinder tsv input.',
+                                     epilog="parse_scaffold was written by Aaron Maurais.\n"
+                                            "Email questions or bugs to aaron.maurais@bc.edu")
 
-# extract precursorFile column
-dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
+    parser.add_argument('input_file', help = 'Name of file to parse. Should be a tab delimited text file.')
 
-seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
+    parser.add_argument('--inplace', default=False, action='store_true',
+                        help='Should input_file be overwritten? Overides ofname.')
+    parser.add_argument('-o', '--ofname', help='Name of output file.', default = '')
+    #parser.add_argument('-')
 
-# parse protein id and name
-matches = [re.search('^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS=',
-                     s) for s in dat['protein_name'].values.tolist()]
-dat = dat[[bool(x) for x in matches]]
-matches = [re.search('^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS=',
-                     s) for s in dat['protein_name'].values.tolist()]
-dat['parentProtein'] = pd.Series(list(map(lambda x: x.group(3), matches)))
-dat['parentID'] = pd.Series(list(map(lambda x: x.group(2), matches)))
-dat['parentDescription'] = pd.Series(list(map(lambda x: x.group(4), matches)))
+    args = parser.parse_args()
 
-# add static modifications
-for i, value in dat['fixed_modifications_identified_by_spectrum'].iteritems():
-    extractModifications(seq_list[i], value)
+    if args.inplace:
+        ofname = args.input_file
+    else:
+        if args.ofname == '':
+            s = os.path.splitext(os.path.basename(args.input_file))
+            ofname = '{}_parsed{}'.format(s[0], s[1])
+        else: ofname = args.ofname
 
-# add dynamic modifications
-for i, value in dat['variable_modifications_identified_by_spectrum'].iteritems():
-    extractModifications(seq_list[i], value)
+    # read and format properly
+    dat = pd.read_csv(args.input_file, sep='\t')
+    dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
 
-# get seq as string and change R(+0.98) to R*
-seq_str_list = list()
-for seq in seq_list:
-    s = str()
-    for a in seq:
-        s += str(a)
-    s = s.replace('R(+0.98)', 'R*')
-    seq_str_list.append(s)
+    # extract scan column
+    dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
 
-dat['sequence'] = pd.Series(seq_str_list)
-dat['fullSequence'] = pd.Series(seq_str_list)
+    # extract precursorFile column
+    dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
 
-keep_cols = ["experiment_name",
-             'precursorFile',
-             "parentID",
-             'parentProtein',
-             'parentDescription',
-             'fullSequence',
-             'sequence',
-             'scanNum',
-             'exclusive',
-             'observed_m/z',
-             "spectrum_charge"]
+    seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
 
-dat = dat[keep_cols]
+    # parse protein id and name
+    matches = [re.search('^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS=',
+                         s) for s in dat['protein_name'].values.tolist()]
+    dat = dat[[bool(x) for x in matches]]
+    matches = [re.search('^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS=',
+                         s) for s in dat['protein_name'].values.tolist()]
+    dat['parentProtein'] = pd.Series(list(map(lambda x: x.group(3), matches)))
+    dat['parentID'] = pd.Series(list(map(lambda x: x.group(2), matches)))
+    dat['parentDescription'] = pd.Series(list(map(lambda x: x.group(4), matches)))
 
-dat.rename({'experiment_name': 'sampleName',
-            'exclusive': 'unique',
-            'observed_m/z': 'precursorMZ',
-            'spectrum_charge': 'charge'},
-           axis='columns', inplace=True)
+    # add static modifications
+    for i, value in dat['fixed_modifications_identified_by_spectrum'].iteritems():
+        extractModifications(seq_list[i], value)
 
-dat.to_csv('tables/20190301_ThompsonLab_Kaplan_parsed.tsv', sep='\t', index=False)
-# dat.to_csv('tables/20190320_ThompsonLab_Kaplan_parsed.tsv', sep = '\t', index = False)
+    # add dynamic modifications
+    for i, value in dat['variable_modifications_identified_by_spectrum'].iteritems():
+        extractModifications(seq_list[i], value)
+
+    # get seq as string and change R(+0.98) to R*
+    seq_str_list = list()
+    for seq in seq_list:
+        s = str()
+        for a in seq:
+            s += str(a)
+        s = s.replace('R(+0.98)', 'R*')
+        seq_str_list.append(s)
+
+    dat['sequence'] = pd.Series(seq_str_list)
+    dat['fullSequence'] = pd.Series(seq_str_list)
+
+    keep_cols = ["experiment_name",
+                 'precursorFile',
+                 "parentID",
+                 'parentProtein',
+                 'parentDescription',
+                 'fullSequence',
+                 'sequence',
+                 'scanNum',
+                 'exclusive',
+                 'observed_m/z',
+                 "spectrum_charge"]
+
+    dat = dat[keep_cols]
+
+    dat.rename({'experiment_name': 'sampleName',
+                'exclusive': 'unique',
+                'observed_m/z': 'precursorMZ',
+                'spectrum_charge': 'charge'},
+               axis='columns', inplace=True)
+
+    dat.to_csv(ofname, sep='\t', index=False)
+
+
+if __name__ == '__main__':
+    main()
 
