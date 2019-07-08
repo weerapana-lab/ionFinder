@@ -33,7 +33,7 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
 
     #calculate number of files per thread
     nFiles = len(files)
-    filesPerProcess = nFiles / nThread
+    filesPerProcess = nFiles // nThread
     if nFiles % nThread != 0:
         filesPerProcess += 1
 
