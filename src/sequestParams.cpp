@@ -8,6 +8,9 @@
 
 #include <sequestParams.hpp>
 
+/**
+ Initialize SequestParamsFile::SequestParamsFile.
+ */
 void seqpar::SequestParamsFile::initSmodMap()
 {
 	smodMap["add_C_terminus"] = "C_term";
@@ -40,9 +43,6 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 	if(fname.empty())
 		throw std::runtime_error("fname must be specified!");
 	
-	//utils::File file(fname);
-	//if(!file.read())
-	
 	std::ifstream inF(fname);
 	if(!inF) return false;
 	
@@ -50,16 +50,21 @@ bool seqpar::SequestParamsFile::read(std::string _fname)
 	std::vector<std::string> elems;
 	while(utils::safeGetline(inF, line))
 	{
-		//line = file.getLine_skip_trim();
 		line = utils::trim(line);
 		if(utils::isCommentLine(line) || line.empty())
 			continue;
+		
+		//get amino acid modifications
 		if(utils::strContains('=', line))
 		{
 			utils::split(line, '=', elems);
 			utils::trimAll(elems);
 			
-			if(smodMap.find(elems[0]) != smodMap.end()) //if line contains smod for an aa
+			if(elems[0] == DATABSE_NAME_LINE) //get fasta file
+			{
+				fasta_path = elems.at(1);
+			}
+			else if(smodMap.find(elems[0]) != smodMap.end()) //if line contains smod for an aa
 			{
 				std::string modMass = elems[1];
 				std::string aa = smodMap[elems[0]];

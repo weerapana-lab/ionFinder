@@ -20,6 +20,7 @@
 namespace seqpar{
 
 	std::string const DIFF_MOD_LINE = "diff_search_options";
+	std::string const DATABSE_NAME_LINE = "database_name";
 	
 	class SequestParamsFile;
 	
@@ -28,6 +29,8 @@ namespace seqpar{
 		std::map<std::string,std::string> smodMap;
 		std::string fname;
 		aaDB::aminoAcidsDBType aaMap;
+		//!Path to fasta file used for database searching
+		std::string fasta_path;
 		
 		void initSmodMap();
 	public:
