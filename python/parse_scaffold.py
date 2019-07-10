@@ -118,11 +118,10 @@ def main():
     seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
 
     # parse protein id and name
-    matches = [re.search('^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS=',
-                         s) for s in dat['protein_name'].values.tolist()]
+    uniprot_id_re = '^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS='
+    matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
     dat = dat[[bool(x) for x in matches]]
-    matches = [re.search('^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS=',
-                         s) for s in dat['protein_name'].values.tolist()]
+    matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
     dat['parentProtein'] = pd.Series(list(map(lambda x: x.group(3), matches)))
     dat['parentID'] = pd.Series(list(map(lambda x: x.group(2), matches)))
     dat['parentDescription'] = pd.Series(list(map(lambda x: x.group(4), matches)))
