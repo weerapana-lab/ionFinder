@@ -18,17 +18,18 @@
  \param end End of match. If no match, left unchanged.
  \return bool representing if match was found.
  */
-bool IonFinder::allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end)
-{
-	//find query in match
-	size_t match = ref.find(query);
-	if(match == std::string::npos) return false;
-	
-	beg = match;
-	end = match + query.length() - 1;
-	
-	return true;
-}
+//Has been moved to utils lib.
+//bool IonFinder::allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end)
+//{
+//	//find query in match
+//	size_t match = ref.find(query);
+//	if(match == std::string::npos) return false;
+//
+//	beg = match;
+//	end = match + query.length() - 1;
+//
+//	return true;
+//}
 
 void IonFinder::PeptideStats::initStats()
 {
