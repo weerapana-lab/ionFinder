@@ -16,6 +16,7 @@
 #include <cassert>
 #include <list>
 #include <string>
+#include <map>
 
 #include <utils.hpp>
 #include <bufferFile.hpp>
@@ -24,13 +25,22 @@
 
 namespace ms2 {
 	
-	size_t const NUM_DIGITS_IN_SCAN = 6;
+	//size_t const NUM_DIGITS_IN_SCAN = 6;
 	int const MD_NUM = 4;
+	size_t const SCAN_INDEX_NOT_FOUND = std::string::npos;
 	
 	class Ms2File;
 	
 	class Ms2File : public utils::BufferFile{
 	private:
+		typedef std::pair<size_t, size_t> IntPair;
+		typedef std::vector<IntPair> OffsetIndexType;
+		
+		OffsetIndexType _offsetIndex;
+		std::map<size_t, size_t> _scanMap;
+		//!Actual number of scans read from file
+		size_t _scanCount;
+		
 		//metadata
 		//!base file name without extension
 		std::string _parentMs2;
@@ -39,14 +49,16 @@ namespace ms2 {
 		std::string scanType;
 		
 		bool getMetaData();
-		const char* makeOffsetQuery(std::string) const;
-		const char* makeOffsetQuery(size_t) const;
+		/*const char* makeOffsetQuery(std::string) const;
+		const char* makeOffsetQuery(size_t) const;*/
 		void calcParentMs2(std::string path){
 			_parentMs2 = utils::baseName(utils::removeExtension(path));
 		}
 		
 		void copyMetadata(const Ms2File& rhs);
 		void initMetadata();
+		void _buildIndex();
+		size_t _getScanIndex(size_t) const;
 		
 	public:
 

@@ -8,6 +8,13 @@
 
 #include <ms2.hpp>
 
+size_t ms2::Ms2File::_getScanIndex(size_t i) const{
+	auto it = _scanMap.find(i);
+	if(it == _scanMap.end())
+		return SCAN_INDEX_NOT_FOUND;
+	return it->second;
+}
+
 /**
  \brief Copy metadata values from rhs to *this
  */
@@ -18,6 +25,9 @@ void ms2::Ms2File::copyMetadata(const Ms2File& rhs)
 	lastScan = rhs.lastScan;
 	dataType = rhs.dataType;
 	scanType = rhs.scanType;
+	_offsetIndex = rhs._offsetIndex;
+	_scanCount = rhs._scanCount;
+	_scanMap = rhs._scanMap;
 }
 
 /**
@@ -30,6 +40,7 @@ void ms2::Ms2File::initMetadata()
 	lastScan = 0;
 	dataType = "";
 	scanType = "";
+	_scanCount = 0;
 }
 
 bool ms2::Ms2File::read(std::string fname)
@@ -42,7 +53,35 @@ bool ms2::Ms2File::read()
 {
 	calcParentMs2(_fname);
 	if(!BufferFile::read(_fname)) return false;
+	_buildIndex();
 	return getMetaData();
+}
+
+void ms2::Ms2File::_buildIndex()
+{
+	std::vector<size_t> scanIndecies;
+	utils::getIdxOfSubstr(_buffer, "S\t", scanIndecies);
+	scanIndecies.push_back(_size);
+	
+	_scanCount = 0;
+	int const scanLen = 20;
+	std::string newID;
+	size_t len = scanIndecies.size();
+	for(size_t i = 0; i < len - 1; i++)
+	{
+		char* c = &_buffer[scanIndecies[i] + 2];
+		newID = "";
+		for(int j = 0; j < scanLen; j++)
+		{
+			newID += *c;
+			c += 1;
+			if(*c == '\t')
+				break;
+		}
+		_scanMap[std::stoi(newID)] = _scanCount;
+		_offsetIndex.push_back(IntPair(scanIndecies[i], scanIndecies.at(i + 1)));
+		_scanCount ++;
+	}
 }
 
 bool ms2::Ms2File::getMetaData()
@@ -86,6 +125,7 @@ bool ms2::Ms2File::getMetaData()
 	return false;
 }
 
+/*
 const char* ms2::Ms2File::makeOffsetQuery(std::string queryScan) const
 {
 	size_t qsInt = std::stoi(queryScan);
@@ -103,7 +143,7 @@ const char* ms2::Ms2File::makeOffsetQuery(size_t queryScan) const
 		"\t" + utils::repeat("0", repeatNum) + std::to_string(queryScan);
 	
 	return ret.c_str();
-}
+}*/
 
 /**
  \brief Overloaded function with \p queryScan as string
@@ -129,6 +169,7 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 		return false;
 	}
 	
+	/*
 	const char* query = makeOffsetQuery(queryScan);
 	size_t queryLen = strlen(query);
 	size_t scanOffset = utils::offset(_buffer, _size, query);
@@ -139,12 +180,23 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 		std::cerr << "queryScan: " << queryScan << ", could not be found in: " << _fname << NEW_LINE;
 		return false;
 	}
+	*/
+	
+	size_t scanOffset, endOfScan;
+	size_t scanIndex = _getScanIndex(queryScan);
+	if(scanIndex == SCAN_INDEX_NOT_FOUND)
+	{
+		std::cerr << "queryScan: " << queryScan << ", could not be found in: " << _fname << NEW_LINE;
+		return false;
+	}
+	scanOffset = _offsetIndex[scanIndex].first;
+	endOfScan = _offsetIndex[scanIndex].second;
 	
 	std::vector<std::string> elems;
 	std::string line;
 	size_t numIons = 0;
 	
-	std::string temp (_buffer + scanOffset, _buffer + scanOffset + endOfScan);
+	std::string temp(_buffer + scanOffset, _buffer + scanOffset + (endOfScan - scanOffset));
 	std::stringstream ss(temp);
 	std::streampos oldPos = ss.tellg();
 	bool z_found = false;
