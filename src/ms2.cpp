@@ -8,8 +8,16 @@
 
 #include <ms2.hpp>
 
-size_t ms2::Ms2File::_getScanIndex(size_t i) const{
-	auto it = _scanMap.find(i);
+/**
+ \brief Get index for scan in Ms2File::_offsetIndex. <br>
+ 
+ If \p scan is not found, ms2::SCAN_INDEX_NOT_FOUND is returned.
+ 
+ \param scan Scan number to search for.
+ \return Index for \p scan.
+ */
+size_t ms2::Ms2File::_getScanIndex(size_t scan) const{
+	auto it = _scanMap.find(scan);
 	if(it == _scanMap.end())
 		return SCAN_INDEX_NOT_FOUND;
 	return it->second;
@@ -125,26 +133,6 @@ bool ms2::Ms2File::getMetaData()
 	return false;
 }
 
-/*
-const char* ms2::Ms2File::makeOffsetQuery(std::string queryScan) const
-{
-	size_t qsInt = std::stoi(queryScan);
-	return makeOffsetQuery(qsInt);
-}
-
-const char* ms2::Ms2File::makeOffsetQuery(size_t queryScan) const
-{
-	size_t numDigitsFinal = NUM_DIGITS_IN_SCAN;
-	size_t numDigitsQuery = utils::numDigits(queryScan);
-	int repeatNum = int(numDigitsFinal - numDigitsQuery);
-	
-	std::string ret = "S\t" +
-		utils::repeat("0", repeatNum) + std::to_string(queryScan) +
-		"\t" + utils::repeat("0", repeatNum) + std::to_string(queryScan);
-	
-	return ret.c_str();
-}*/
-
 /**
  \brief Overloaded function with \p queryScan as string
  */
@@ -169,19 +157,6 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 		return false;
 	}
 	
-	/*
-	const char* query = makeOffsetQuery(queryScan);
-	size_t queryLen = strlen(query);
-	size_t scanOffset = utils::offset(_buffer, _size, query);
-	size_t endOfScan = utils::offset(_buffer + scanOffset + queryLen,
-									 _size - (scanOffset + queryLen), "S\t") + queryLen;
-	if(scanOffset == _size)
-	{
-		std::cerr << "queryScan: " << queryScan << ", could not be found in: " << _fname << NEW_LINE;
-		return false;
-	}
-	*/
-	
 	size_t scanOffset, endOfScan;
 	size_t scanIndex = _getScanIndex(queryScan);
 	if(scanIndex == SCAN_INDEX_NOT_FOUND)
@@ -196,7 +171,8 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 	std::string line;
 	size_t numIons = 0;
 	
-	std::string temp(_buffer + scanOffset, _buffer + scanOffset + (endOfScan - scanOffset));
+	std::string temp(_buffer + scanOffset,
+					 _buffer + scanOffset + (endOfScan - scanOffset));
 	std::stringstream ss(temp);
 	std::streampos oldPos = ss.tellg();
 	bool z_found = false;

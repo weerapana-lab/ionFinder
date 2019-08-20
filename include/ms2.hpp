@@ -36,7 +36,9 @@ namespace ms2 {
 		typedef std::pair<size_t, size_t> IntPair;
 		typedef std::vector<IntPair> OffsetIndexType;
 		
+		//!Stores pairs of offset values for scans
 		OffsetIndexType _offsetIndex;
+		//!Maps scan numbers to indecies in _offsetIndex
 		std::map<size_t, size_t> _scanMap;
 		//!Actual number of scans read from file
 		size_t _scanCount;
@@ -49,8 +51,6 @@ namespace ms2 {
 		std::string scanType;
 		
 		bool getMetaData();
-		/*const char* makeOffsetQuery(std::string) const;
-		const char* makeOffsetQuery(size_t) const;*/
 		void calcParentMs2(std::string path){
 			_parentMs2 = utils::baseName(utils::removeExtension(path));
 		}
