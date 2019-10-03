@@ -30,7 +30,7 @@ simpleSeq <- FALSE
 nDigits <- 2
 
 while(i <= argc){
-  if(!isArg(argv[i]) && !endArgs)
+  if(!ms2Spectrum::isArg(argv[i]) && !endArgs)
   {
     if(argv[i] == "-o")
     {
@@ -83,7 +83,7 @@ while(i <= argc){
       }
     }
   }
-  else if(isArg(argv[i]))
+  else if(ms2Spectrum::isArg(argv[i]))
   {
     endArgs = TRUE
     if(is.na(inFiles))
