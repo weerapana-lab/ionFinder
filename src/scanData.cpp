@@ -15,6 +15,7 @@ void scanData::Scan::clear()
 	sequence.clear();
 	charge = 0;
 	fullSequence.clear();
+	modified = false;
 }
 
 std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
@@ -74,13 +75,13 @@ std::string scanData::removeStaticMod(std::string s, bool lowercase)
 std::string scanData::removeDynamicMod(std::string s, bool lowercase)
 {
 	//if s does not contain any modifications, just return s
-	if(!utils::strContains('*', s))
+	if(!utils::strContains(scanData::MOD_CHAR, s))
 		return s;
 	
 	std::string ret = "";
 	for(int i = 0; i < s.length(); i++)
 	{
-		if(s[i] == '*'){
+		if(s[i] == scanData::MOD_CHAR){
 			if(lowercase)
 				ret[ret.length() - 1] = std::tolower(ret.back());
 		}
@@ -102,6 +103,7 @@ void scanData::Scan::initilizeFromLine(std::string line)
 	utils::split(line, IN_DELIM, elems);
 	fullSequence = elems[12];
 	sequence = makeSequenceFromFullSequence(fullSequence);
+	modified = utils::strContains(MOD_CHAR, sequence);
 	xcorr = elems[2];
 	
 	std::string scanLine = elems[1];

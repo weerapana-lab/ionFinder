@@ -22,6 +22,7 @@ namespace scanData{
 	
 	typedef std::vector<Scan> scansType;
 	std::string const OF_EXT = ".spectrum";
+	const char MOD_CHAR = '*';
 	
 	std::string removeStaticMod(std::string s, bool lowercase = true);
 	std::string removeDynamicMod(std::string s, bool lowercase = true);
@@ -36,6 +37,7 @@ namespace scanData{
 		std::string xcorr;
 		std::string precursorMZ;
 		std::string precursorScan;
+		bool modified;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
@@ -49,12 +51,14 @@ namespace scanData{
 			xcorr = "";
 			precursorMZ = "";
 			precursorScan = "";
+			modified = false;
 		}
 		Scan(std::string _sequence, size_t _scanNum, std::string _parentFile){
 			sequence = makeSequenceFromFullSequence(_sequence);
 			fullSequence = _sequence;
 			scanNum = _scanNum;
 			precursorFile = _parentFile;
+			modified = utils::strContains(MOD_CHAR, sequence);
 		}
 		
 		Scan(std::string line){
@@ -126,6 +130,10 @@ namespace scanData{
 		}
 		std::string getXcorr() const{
 			return xcorr;
+		}
+		//!Does the peptide contain a dynamic modification?
+		bool isModified() const{
+			return modified;
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;

@@ -25,7 +25,6 @@
 
 namespace ms2 {
 	
-	//size_t const NUM_DIGITS_IN_SCAN = 6;
 	int const MD_NUM = 4;
 	size_t const SCAN_INDEX_NOT_FOUND = std::string::npos;
 	
