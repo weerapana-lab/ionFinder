@@ -140,7 +140,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					   (modFilter == 2 && newScan.isModified()))
 						continue;
 					
-					else scans.push_back(newScan);
+					scans.push_back(newScan);
 					
 				}//end of while
 				inF.seekg(sp); //reset streampos so line is not skipped in next itteration

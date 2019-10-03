@@ -111,7 +111,7 @@ namespace IonFinder{
 		bool getIncludeReverse() const{
 			return _includeReverse;
 		}
-		bool getModFilter() const{
+		int getModFilter() const{
 			return _modFilter;
 		}
 		bool getCalcNL() const{

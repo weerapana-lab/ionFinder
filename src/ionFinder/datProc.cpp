@@ -226,6 +226,11 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 		peptidePerThread += 1;
 	std::atomic<size_t> scansIndex(0); //used to update progress for findFragmentsProgress
 	
+	if(nScans == 0){
+		std::cout << "No scans in input!\n";
+		return false;
+	}
+	
 	//init threads
 	std::vector<std::thread> threads;
 	bool* sucsses = new bool[nThread];
