@@ -58,6 +58,8 @@ namespace IonFinder{
 		
 		//! should reverse peptide matches be considered
 		bool _includeReverse;
+		//! Which modification statuses should be included in output?
+		int _modFilter;
 		//!Should annotaed spectra be printed?
 		bool _printSpectraFiles;
 		//!Should NL ions be search for?
@@ -85,6 +87,7 @@ namespace IonFinder{
 			_fastaFile = "";
 			_inputMode = DTAFILTER_INPUT_STR;
 			_includeReverse = false;
+			_modFilter = 1;
 			_printSpectraFiles = false;
 			_calcNL = false;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
@@ -107,6 +110,9 @@ namespace IonFinder{
 		}
 		bool getIncludeReverse() const{
 			return _includeReverse;
+		}
+		bool getModFilter() const{
+			return _modFilter;
 		}
 		bool getCalcNL() const{
 			return _calcNL;

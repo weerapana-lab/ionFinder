@@ -62,15 +62,20 @@ bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
 /**
  Read DTAFilter-file and populate peptides into \p scans.
  \p scans does not have to be empty. New scans are added with the std::vector::push_back method.
- \param fname file name
- \param sampleName sample name to add to _sampleName member of each scan in \p scans
- \param scans vector of scans to add to
- \param skipReverse specify whether reverse peptide matches should be skipped
+ \param fname File name
+ \param sampleName Sample name to add to _sampleName member of each scan in \p scans
+ \param scans Vector of scans to add to
+ \param skipReverse Should reverse peptide matches be skipped?
+ \param modFilter Which scans should be added to \p scans?
+ 	0: only modified, 1: all peptides regardless of modification, 2: only unmodified pepeitde.
+ 
+ \return true if file I/O was sucessful.
  */
 bool Dtafilter::readFilterFile(std::string fname,
 							   std::string sampleName,
 							   std::vector<Dtafilter::Scan>& scans,
-							   bool skipReverse)
+							   bool skipReverse,
+							   int modFilter)
 {
 	std::ifstream inF(fname);
 	if(!inF) return false;
@@ -125,8 +130,16 @@ bool Dtafilter::readFilterFile(std::string fname,
 					newScan.initilizeFromLine(line);
 					newScan._unique = line[0] == '*';
 					newScan.setPrecursorFile(utils::dirName(fname) + "/" + newScan.getPrecursorFile());
-					if(skipReverse && newScan._matchDirection == Dtafilter::Scan::MatchDirection::REVERSE)
+					
+					//reverse match filter
+					if(skipReverse && newScan.getMatchDirection() == Dtafilter::Scan::MatchDirection::REVERSE)
 						continue;
+					
+					//mod filter
+					if((modFilter == 0 && !newScan.isModified()) ||
+					   (modFilter == 2 && newScan.isModified()))
+						continue;
+					
 					else scans.push_back(newScan);
 					
 				}//end of while

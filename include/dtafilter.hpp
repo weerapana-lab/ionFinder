@@ -23,11 +23,12 @@ namespace Dtafilter{
 	
 	bool readFilterFile(std::string fname, std::string sampleName,
 						std::vector<Dtafilter::Scan>& scans,
-						bool skipReverse = true);
+						bool skipReverse = false, int modFilter = 1);
 	
 	class Scan : public scanData::Scan{
 		friend bool readFilterFile(std::string, std::string,
-								   std::vector<Dtafilter::Scan>&, bool);
+								   std::vector<Dtafilter::Scan>&,
+								   bool, int);
 	public:
 		enum class MatchDirection{FORWARD, REVERSE};
 		static MatchDirection strToMatchDirection(std::string);

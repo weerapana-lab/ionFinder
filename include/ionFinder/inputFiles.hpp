@@ -25,7 +25,8 @@ namespace IonFinder{
 	const std::string TSV_INPUT_OPTIONAL_COLNAMES [] = {"parentID", "parentProtein", "parentDescription", "matchDirection", "fullSequence", "unique", "charge", "xcorr", "precursorMZ", "precursorScan"};
 	int const TSV_INPUT_OPTIONAL_COLNAMES_LEN = 10;
 	
-	bool readInputTsv(std::string ifname, std::vector<Dtafilter::Scan>&);
+	bool readInputTsv(std::string ifname, std::vector<Dtafilter::Scan>&scans,
+					  bool skipReverse = false, int modFilter = 1);
 }
 
 #endif /* inputFiles_hpp */

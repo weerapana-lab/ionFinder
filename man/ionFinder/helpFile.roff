@@ -85,6 +85,44 @@ The most intense ion will be used.
 The ion with the closest mz to the predicted mz for the fragment will be used.
 .in
 
+.SS INPUT FILTERING OPTIONS
+.TP
+\fB-rev \fI<0/1>\fR
+Specify whether to include decoy matches in spectrum output file. \fB1\fR is the default.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Only include forward matches in spectrum output file.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Include all peptides in spectrum output file.
+.in
+.TP
+\fB-m, --matchFilter \fI<filter>\fR
+Specify how to include modified peptides in output. \fB1\fR is the default.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Require peptides to be modified.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Include peptides regardless of modification.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Exclude modified peptides.
+.in
+
 .SS MS2 FILTERING OPTIONS
 .TP
 \fB-minMZ \fI<mz>\fR

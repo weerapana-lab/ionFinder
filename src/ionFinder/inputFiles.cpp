@@ -20,7 +20,8 @@ bool Dtafilter::readFilterFiles(const IonFinder::Params& params,
 	auto endIt = params.getFilterFiles().end();
 	for(auto it = params.getFilterFiles().begin(); it != endIt; ++it)
 	{
-		if(!Dtafilter::readFilterFile(it->second, it->first, scans, !params.getIncludeReverse()))
+		if(!Dtafilter::readFilterFile(it->second, it->first, scans,
+									  !params.getIncludeReverse(), params.getModFilter()))
 			return false;
 	}
 	
@@ -49,10 +50,15 @@ bool Dtafilter::readFilterFiles(const IonFinder::Params& params,
  \p ifname must have at least columns with the headers in IonFinder::TSV_INPUT_REQUIRED_COLNAMES
  \param ifname path of .tsv file of peptides to search for
  \param scans empty list of scans to fill
+ \param skipReverse Should reverse peptide matches be skipped?
+ \param modFilter Which scans should be added to \p scans?
+ 0: only modified, 1: all peptides regardless of modification, 2: only unmodified pepeitde.
+ 
  \returns true if all files were successfully read.
  */
 bool IonFinder::readInputTsv(std::string ifname,
-							 std::vector<Dtafilter::Scan>& scans)
+							 std::vector<Dtafilter::Scan>& scans,
+							 bool skipReverse, int modFilter)
 {
 	utils::TsvFile tsv(ifname);
 	if(!tsv.read()) return false;
@@ -109,6 +115,15 @@ bool IonFinder::readInputTsv(std::string ifname,
 			temp.setPrecursorMZ(tsv.getValStr(i, "precursorMZ"));
 		if(foundOptionalCols["precursorScan"])
 			temp.setPrecursorScan(tsv.getValStr(i, "precursorScan"));
+		
+		//reverse match filter
+		if(skipReverse && temp.getMatchDirection() == Dtafilter::Scan::MatchDirection::REVERSE)
+			continue;
+		
+		//mod filter
+		if((modFilter == 0 && !temp.isModified()) ||
+		   (modFilter == 2 && temp.isModified()))
+			continue;
 		
 		scans.push_back(temp);
 	}
