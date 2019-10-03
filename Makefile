@@ -84,15 +84,11 @@ ALL_OBJS = $(OBJS) $(MS2_ANNOTATOR_OBJS) $(ION_FINDER_OBJS)
 CXXFLAGS += $(INCLUDEFLAGS) -I$(HEADERDIR)
 LDFLAGS += $(LIBFLAGS)
 
-.PHONY: all clean distclean install uninstall multi
+.PHONY: all clean distclean install uninstall doc
 
 TARGETS += $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) ionFinder_help.pdf $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2 $(BINDIR)/parse_scaffold
 
 all: $(TARGETS)
-
-multi:
-	$(MAKE) -j8 all
-	$(MAKE)
 
 #DTarray_pro-Userguide.pdf : $(TEX_DIR)/DTarray_pro-Userguide.tex
 #ifndef TEX
@@ -131,6 +127,9 @@ $(BINDIR)/parse_scaffold: $(PYTHON_DIR)/parse_scaffold.py
 ionFinder_help.pdf : man/ionFinder/helpFile.roff
 	bash $(SCRIPTS)/updateMan.sh man/ionFinder/helpFile.roff ionFinder_help.pdf
 
+doc:
+	doxygen doc/doxygen/Doxyfile
+
 clean:
 	rm -f $(ALL_OBJS) $(BINDIR)/$(MS2_ANNOTATOR_EXE) $(BINDIR)/$(ION_FINDER_EXE) $(LIBDIR)/*.a
 	rm -f $(BINDIR)/make_ms2 $(BINDIR)/run_make_ms2 $(BINDIR)/parse_scaffold
@@ -138,11 +137,5 @@ clean:
 	cd $(UTILS_DIR); $(MAKE) clean
 	#rm -r lib/*
 	#cd $(TEX_DIR) && rm -f ./*.aux ./*.dvi ./*.fdb_latexmk ./*.fls ./*.log ./*.out ./*.pdf ./*.toc 
-
-#install: $(BINDIR)/$(EXE)
-#	cp $(BINDIR)/$(EXE) $(INSTALL_DIR)/$(EXE)
-
-#uninstall:
-#	rm -fv $(INSTALL_DIR)/$(EXE)
 
 distclean: clean
