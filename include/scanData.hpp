@@ -29,36 +29,39 @@ namespace scanData{
 	
 	class Scan{
 	protected:
-		std::string precursorFile;
-		size_t scanNum;
-		std::string sequence;
-		std::string fullSequence;
-		int charge;
-		std::string xcorr;
-		std::string precursorMZ;
-		std::string precursorScan;
-		bool modified;
+		std::string _precursorFile;
+		size_t _scanNum;
+		std::string _sequence;
+		std::string _fullSequence;
+		int _charge;
+		std::string _xcorr;
+		std::string _precursorMZ;
+		std::string _precursorScan;
+		bool _modified;
+		int _spectralCounts;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
 		std::string makeOfSequenceFromSequence(std::string) const;
 	public:
 		Scan(){
-			precursorFile = "";
-			scanNum = 0;
-			sequence = "";
-			charge = 0;
-			xcorr = "";
-			precursorMZ = "";
-			precursorScan = "";
-			modified = false;
+			_precursorFile = "";
+			_scanNum = 0;
+			_sequence = "";
+			_charge = 0;
+			_xcorr = "";
+			_precursorMZ = "";
+			_precursorScan = "";
+			_modified = false;
+			_spectralCounts = 0;
 		}
-		Scan(std::string _sequence, size_t _scanNum, std::string _parentFile){
-			sequence = makeSequenceFromFullSequence(_sequence);
-			fullSequence = _sequence;
-			scanNum = _scanNum;
-			precursorFile = _parentFile;
-			modified = utils::strContains(MOD_CHAR, sequence);
+		Scan(std::string sequence, size_t scanNum, std::string parentFile){
+			_sequence = makeSequenceFromFullSequence(sequence);
+			_fullSequence = sequence;
+			_scanNum = scanNum;
+			_precursorFile = parentFile;
+			_modified = utils::strContains(MOD_CHAR, _sequence);
+			_spectralCounts = 0;
 		}
 		
 		Scan(std::string line){
@@ -70,70 +73,77 @@ namespace scanData{
 		void clear();
 	
 		void operator = (const Scan& rhs){
-			precursorFile = rhs.precursorFile;
-			scanNum = rhs.scanNum;
-			sequence = rhs.sequence;
-			fullSequence = rhs.fullSequence;
-			charge = rhs.charge;
-			xcorr = rhs.xcorr;
-			precursorScan = rhs.precursorScan;
+			_precursorFile = rhs._precursorFile;
+			_scanNum = rhs._scanNum;
+			_sequence = rhs._sequence;
+			_fullSequence = rhs._fullSequence;
+			_charge = rhs._charge;
+			_xcorr = rhs._xcorr;
+			_precursorScan = rhs._precursorScan;
+			_spectralCounts = rhs._spectralCounts;
 		}
 		
-		void setSequence(std::string _seq){
-			sequence = _seq;
+		void setSequence(std::string seq){
+			_sequence = seq;
 		}
 		void setFullSequence(std::string s, bool resetSequence = false){
-			fullSequence = s;
+			_fullSequence = s;
 			if(resetSequence)
-				sequence = makeOfSequenceFromSequence(s);
+				_sequence = makeOfSequenceFromSequence(s);
 		}
 		void setPrecursorFile(std::string str){
-			precursorFile = str;
+			_precursorFile = str;
 		}
-		void setCharge(int _charge){
-			charge = _charge;
+		void setCharge(int charge){
+			_charge = charge;
 		}
 		void setPrecursorMZ(std::string mz){
-			precursorMZ = mz;
+			_precursorMZ = mz;
 		}
 		void setPrecursorScan(std::string s){
-			precursorScan = s;
+			_precursorScan = s;
 		}
 		void setScanNum(size_t s){
-			scanNum = s;
+			_scanNum = s;
 		}
 		void setXcorr(std::string s){
-			xcorr = s;
+			_xcorr = s;
+		}
+		void setSpectralCounts(int sc){
+			_spectralCounts = sc;
 		}
 		
 		//properties
 		std::string getPrecursorFile() const{
-			return precursorFile;
+			return _precursorFile;
 		}
 		size_t getScanNum() const{
-			return scanNum;
+			return _scanNum;
 		}
 		std::string getSequence() const{
-			return sequence;
+			return _sequence;
 		}
 		std::string getFullSequence() const{
-			return fullSequence;
+			return _fullSequence;
 		}
 		int getCharge() const{
-			return charge;
+			return _charge;
 		}
 		std::string getPrecursorMZ() const{
-			return precursorMZ;
+			return _precursorMZ;
 		}
 		std::string getPrecursorScan() const{
-			return precursorScan;
+			return _precursorScan;
 		}
 		std::string getXcorr() const{
-			return xcorr;
+			return _xcorr;
+		}
+		int getSpectralCounts() const{
+			return _spectralCounts;
 		}
 		//!Does the peptide contain a dynamic modification?
 		bool isModified() const{
-			return modified;
+			return _modified;
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;

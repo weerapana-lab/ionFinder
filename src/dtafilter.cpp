@@ -14,12 +14,12 @@ void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 	_parentID = rhs._parentID;
 	_matchDirection = rhs._matchDirection;
 	_sampleName = rhs._sampleName;
-	precursorFile = rhs.precursorFile;
-	scanNum = rhs.scanNum;
-	sequence = rhs.sequence;
-	fullSequence = rhs.fullSequence;
-	charge = rhs.charge;
-	xcorr = rhs.xcorr;
+	_precursorFile = rhs._precursorFile;
+	_scanNum = rhs._scanNum;
+	_sequence = rhs._sequence;
+	_fullSequence = rhs._fullSequence;
+	_charge = rhs._charge;
+	_xcorr = rhs._xcorr;
 }
 
 /**
@@ -108,11 +108,11 @@ bool Dtafilter::readFilterFile(std::string fname,
 				
 				Scan baseScan;
 				baseScan.parse_matchDir_ID_Protein(elems[0]);
-				baseScan._sampleName = sampleName;
+				baseScan.setSampleName(sampleName);
 				
 				//extract shortened protein name and description
 				size_t endOfDescription = elems[8].find(" [");
-				baseScan._parentDescription = elems[8].substr(0, endOfDescription);
+				baseScan.setParentDescription(elems[8].substr(0, endOfDescription));
 				
 				while(!inF.eof())
 				{
@@ -128,7 +128,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
-					newScan._unique = line[0] == '*';
+					newScan.setUnique(line[0] == '*');
 					newScan.setPrecursorFile(utils::dirName(fname) + "/" + newScan.getPrecursorFile());
 					
 					//reverse match filter

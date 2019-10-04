@@ -12,18 +12,18 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 {
 	assert(out);
 	out << ms2::BEGIN_METADATA << NEW_LINE
-		<< "precursorFile" << OUT_DELIM << precursorFile << NEW_LINE
-		<< "ofname" << OUT_DELIM << getOfNameBase(_parentMs2, fullSequence) << NEW_LINE
-		<< "scanNumber" << OUT_DELIM << scanNum << NEW_LINE
-		<< "sequence" << OUT_DELIM << sequence << NEW_LINE
-		<< "fullSequence" << OUT_DELIM << scanData::removeStaticMod(fullSequence) << NEW_LINE
+		<< "precursorFile" << OUT_DELIM << _precursorFile << NEW_LINE
+		<< "ofname" << OUT_DELIM << getOfNameBase(_parentMs2, _fullSequence) << NEW_LINE
+		<< "scanNumber" << OUT_DELIM << _scanNum << NEW_LINE
+		<< "sequence" << OUT_DELIM << _sequence << NEW_LINE
+		<< "fullSequence" << OUT_DELIM << scanData::removeStaticMod(_fullSequence) << NEW_LINE
 		<< "retTime" << OUT_DELIM << retTime << NEW_LINE
-		<< "precursorCharge" << OUT_DELIM << charge << NEW_LINE
+		<< "precursorCharge" << OUT_DELIM << _charge << NEW_LINE
 		<< "plotHeight" << OUT_DELIM << plotHeight << NEW_LINE
 		<< "plotWidth" << OUT_DELIM << plotWidth << NEW_LINE
 		<< "precursorInt" << OUT_DELIM << std::scientific << precursorInt << NEW_LINE;
 	out.unsetf(std::ios::scientific);
-	out << "precursorScan" << OUT_DELIM << precursorScan << NEW_LINE
+	out << "precursorScan" << OUT_DELIM << _precursorScan << NEW_LINE
 		<< ms2::END_METADATA <<NEW_LINE << ms2::BEGIN_SPECTRUM << NEW_LINE;
 }
 
@@ -89,13 +89,13 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 
 void ms2::Spectrum::clear()
 {
-	scanNum = 0;
+	_scanNum = 0;
 	retTime = 0;
 	precursorInt = 0;
-	precursorFile.clear();
-	precursorScan = "";
-	charge = 0;
-	precursorMZ = "";
+	_precursorFile.clear();
+	_precursorScan = "";
+	_charge = 0;
+	_precursorMZ = "";
 	maxInt = 0;
 	ions.clear();
 	ions.shrink_to_fit();
@@ -216,8 +216,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 	plotHeight = pars.getPlotHeight();
 	size_t len = peptide.getNumFragments();
 	size_t labledCount = 0;
-	sequence = peptide.getSequence();
-	fullSequence = peptide.getFullSequence();
+	_sequence = peptide.getSequence();
+	_fullSequence = peptide.getFullSequence();
 	double _labelTolerance;
 	bool seqPrinted = false;
 	

@@ -10,12 +10,13 @@
 
 void scanData::Scan::clear()
 {
-	precursorFile.clear();
-	scanNum = 0;
-	sequence.clear();
-	charge = 0;
-	fullSequence.clear();
-	modified = false;
+	_precursorFile.clear();
+	_scanNum = 0;
+	_sequence.clear();
+	_charge = 0;
+	_fullSequence.clear();
+	_modified = false;
+	_spectralCounts = 0;
 }
 
 std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
@@ -101,17 +102,18 @@ void scanData::Scan::initilizeFromLine(std::string line)
 {
 	std::vector<std::string> elems;
 	utils::split(line, IN_DELIM, elems);
-	fullSequence = elems[12];
-	sequence = makeSequenceFromFullSequence(fullSequence);
-	modified = utils::strContains(MOD_CHAR, sequence);
-	xcorr = elems[2];
+	_fullSequence = elems[12];
+	_sequence = makeSequenceFromFullSequence(_fullSequence);
+	_modified = utils::strContains(MOD_CHAR, _sequence);
+	_xcorr = elems[2];
+	_spectralCounts = std::stoi(elems[11]);
 	
 	std::string scanLine = elems[1];
 	utils::split(scanLine, '.', elems);
 	
-	precursorFile = elems[0] + ".ms2";
-	scanNum = std::stoi(elems[1]);
-	charge = std::stoi(elems[3]);
+	_precursorFile = elems[0] + ".ms2";
+	_scanNum = std::stoi(elems[1]);
+	_charge = std::stoi(elems[3]);
 }
 
 /**
@@ -121,9 +123,9 @@ std::string scanData::Scan::getOfNameBase(std::string parentFile, std::string se
 {
 	std::string ret;
 	ret = utils::removeExtension(parentFile);
-	ret += ("_" + makeOfSequenceFromSequence(seq) + "_" + std::to_string(scanNum));
-	if(charge != 0)
-		ret += ("_" + std::to_string(charge));
+	ret += ("_" + makeOfSequenceFromSequence(seq) + "_" + std::to_string(_scanNum));
+	if(_charge != 0)
+		ret += ("_" + std::to_string(_charge));
 	return ret;
 }
 
@@ -133,5 +135,5 @@ std::string scanData::Scan::getOfNameBase(std::string parentFile, std::string se
  Only added for backwards compatibility.
  */
 std::string scanData::Scan::getOfname() const{
-	return getOfNameBase(precursorFile, sequence) + OF_EXT;
+	return getOfNameBase(_precursorFile, _sequence) + OF_EXT;
 }
