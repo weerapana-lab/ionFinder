@@ -442,7 +442,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		{
 			std::string dirNameTemp = (pars.getInDirSpecified() ? pars.getWD() : curWD) + "/spectraFiles";
 			if(!utils::dirExists(dirNameTemp))
-				if(!utils::mkdir(dirNameTemp.c_str())){
+				if(!utils::mkdir(dirNameTemp.c_str(), "-p")){
 					throw std::runtime_error("Failed to make dir: " + dirNameTemp);
 					return;
 				}
