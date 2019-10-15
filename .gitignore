@@ -1,23 +1,22 @@
 #Files I added
+*_build/*
 testFiles/*
 bin/*
 .DS_Store
 .Rproj.user
 .git
 *.Rproj
-ms2_anotator.xcodeproj
 rplots/*
 rscripts/lib/*
 helpFile.pdf
-obj/*
-doc/doxygen/html/*
-include/config.hpp
+ionFinder/doc/doxygen/html/*
+ionFinder/include/config.hpp
 lib/*
 *.o
 *.so
 *.Rbuildignore
 *.Rprofile
-.idea/*
+ionFinder/.idea/*
 *.pyc
 *.pbs.*
 *.pbs

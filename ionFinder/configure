@@ -45,10 +45,12 @@ while ! [[ -z "$1" ]] ; do
 done		
 
 #update config.hpp
+if [ ! -f $CONFIG_HPP ]; then
 echo "Updating config.hpp..."
 echo -e "\n#ifndef config_hpp" > $CONFIG_HPP
 echo -e "#define config_hpp\n" >> $CONFIG_HPP
 echo "#define CONFIG_PROG_WD_DIR $PROG_DIR;" >> $CONFIG_HPP
 echo -e "\n#endif /* config_hpp */" >> $CONFIG_HPP
+fi
 
 
