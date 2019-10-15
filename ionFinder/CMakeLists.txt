@@ -30,7 +30,7 @@ add_executable(${ION_FINDER_TARGET}
 
 add_custom_target(
         config_hpp ALL
-        COMMAND ${CMAKE_SOURCE_DIR}/configure
+        COMMAND ${CMAKE_SOURCE_DIR}/configure -d ${CMAKE_SOURCE_DIR}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
