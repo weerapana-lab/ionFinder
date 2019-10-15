@@ -2,6 +2,7 @@
 set(FIND_UTILS_PATHS
         /usr/local
         ${PROJECT_SOURCE_DIR}/../utils
+        ${PROJECT_SOURCE_DIR}/../utils/lib
         ${PROJECT_SOURCE_DIR}/../utils_build
         )
 
@@ -15,8 +16,7 @@ find_path(UTILS_INCLUDE_DIR
         PATH_SUFFIXES include
         PATHS ${FIND_UTILS_PATHS})
 
-find_path(UTILS_LIB
+find_library(UTILS_LIB
         NAMES utils
-        PATH_SUFFIXES lib
-        PATHS ${FIND_UTILS_PATHS})
+        HINTS ${FIND_UTILS_PATHS})
 
