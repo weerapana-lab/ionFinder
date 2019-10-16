@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <string>
 #include <iomanip>
+#include <type_traits>
+
 
 #include <utils.hpp>
 #include <peptide.hpp>
@@ -53,22 +55,19 @@ namespace ms2{
 	
 	class Ion{
 	public:
-		//typedef int mz_intType;
 		Ion(){
 			intensity = 0;
 			mz = 0;
-			//mz_int = 0;
 		}
 		Ion(double _mz, double _int){
 			mz = _mz;
 			intensity = _int;
-			//mz_int = utils::round(mz); //mz_int is rounded here
 		}
-		~Ion() {};
-		
-		template<typename _Tp>
-		void normalizeIntensity(_Tp den){
-			intensity = intensity / den;
+		~Ion() = default;;
+
+        template<typename _Tp> void normalizeIntensity(_Tp den){
+			static_assert(std::is_arithmetic<_Tp>::value, "den must be arithmetic!");
+            intensity = intensity / den;
 		}
 		
 		double getIntensity() const{
@@ -78,12 +77,11 @@ namespace ms2{
 			return mz;
 		}
 		
-		void write(std::ofstream&) const;
+		//void write(std::ofstream&) const;
 	protected:
 		
 		double intensity;
 		double mz;
-		//mz_intType mz_int;
 	};
 	
 	class DataPoint : public Ion{
@@ -95,10 +93,8 @@ namespace ms2{
 		bool topAbundant;
 		std::string ionType;
 		int ionNum;
-		
-		/**
-		 Initialize DataPoint stats with default values.
-		 */
+
+		//! Initialize DataPoint stats with default values.
 		void initStats(){
 			label = geometry::DataLabel();
 			labeledIon = false;
@@ -241,9 +237,15 @@ namespace ms2{
 		~Spectrum() = default;
 		
 		//modifers
-		void clear();
+		void clear() override;
+
+		/**
+		 * Normalize ion intensities so that the max intensity is \p max.
+		 * \param max Max intensity.
+		 */
 		template<typename _Tp> void normalizeIonInts(_Tp max){
-			double den = getMaxIntensity() / max;
+			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
+		    double den = getMaxIntensity() / max;
 			for(auto & ion : ions)
 				ion.normalizeIntensity(den);
 			
