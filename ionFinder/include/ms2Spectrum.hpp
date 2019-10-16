@@ -242,8 +242,8 @@ namespace ms2{
 		
 		//modifers
 		void clear();
-		template<typename _Tp> void normalizeIonInts(_Tp _den){
-			double den = getMaxIntensity() / _den;
+		template<typename _Tp> void normalizeIonInts(_Tp max){
+			double den = getMaxIntensity() / max;
 			for(auto & ion : ions)
 				ion.normalizeIntensity(den);
 			

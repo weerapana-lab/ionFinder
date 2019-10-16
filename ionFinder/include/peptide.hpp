@@ -189,6 +189,7 @@ namespace PeptideNamespace{
 
         void _initFragSpan(const std::string&);
 
+
     public:
         //!blank constructor
         FragmentIon() : Ion(){
@@ -357,7 +358,7 @@ namespace PeptideNamespace{
             initialized = false;
             nMod = 0;
         }
-        Peptide(std::string _sequence) : Ion(){
+        explicit Peptide(std::string _sequence) : Ion(){
             sequence = _sequence;
             fullSequence = sequence;
             initialized = false;
@@ -384,6 +385,7 @@ namespace PeptideNamespace{
             fragments[i].setFoundIntensity(intensity);
         }
         void removeUnlabeledFrags();
+        void normalizeLabelIntensity(double den);
 
         //properties
         std::string getSequence() const{

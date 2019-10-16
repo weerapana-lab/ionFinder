@@ -413,6 +413,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		
 		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
 		spectrum.labelSpectrum(peptides.back(), pars);
+        peptides.back().normalizeLabelIntensity(spectrum.getMaxIntensity() / 100);
 		
 		//print spectra file
 		if(pars.getPrintSpectraFiles())
@@ -423,10 +424,11 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 					throw std::runtime_error("Failed to make dir: " + dirNameTemp);
 					return;
 				}
+
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
 			spectrum.setCharge(scans[i].getCharge());
-			
+
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
 			std::ofstream outF((temp).c_str());
 			if(!outF){
@@ -439,7 +441,6 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 	} //end of for
 	
 	*success = true;
-	return;
 }
 
 void IonFinder::PeptideStats::calcContainsCit()

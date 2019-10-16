@@ -484,6 +484,17 @@ void PeptideNamespace::Peptide::removeUnlabeledFrags()
 	}
 }
 
+/**
+ * Divide all fragment ions by \p den.
+ * \param den Denominator do divide ion intensities by.
+ */
+void PeptideNamespace::Peptide::normalizeLabelIntensity(double den)
+{
+    for(auto & fragment : fragments)
+        if(fragment.getFound())
+            fragment.setFoundIntensity(fragment.getFoundIntensity() / den);
+}
+
 double PeptideNamespace::calcMass(double mz, int charge){
 	return mz * charge - (charge * PeptideNamespace::H_MASS);
 }
