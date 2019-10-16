@@ -78,7 +78,7 @@ namespace PeptideNamespace{
         Ion() : Species(){
             charge = 0;
         }
-        ~Ion(){}
+        ~Ion() = default;
 
         //modifers
         void initializeFromMZ(double _mz, int _charge){
@@ -93,7 +93,8 @@ namespace PeptideNamespace{
         double getMZ(int _charge) const{
             return calcMZ(mass, _charge);
         }
-        double getMZ() const{
+
+        virtual double getMZ() const{
             return getMZ(charge);
         }
         int getCharge() const{
@@ -236,7 +237,7 @@ namespace PeptideNamespace{
             _foundMZ = rhs._foundMZ;
             _foundIntensity = rhs._foundIntensity;
         }
-        ~FragmentIon() {}
+        ~FragmentIon() = default;
 
         void setFound(bool boo){
             _found = boo;
@@ -255,7 +256,7 @@ namespace PeptideNamespace{
         }
 
         //properties
-        double getMZ() const{
+        double getMZ() const override{
             if(_b_y == 'b')
                 return (mass + ((charge - 1) * PeptideNamespace::H_MASS)) / charge;
             return Ion::getMZ(charge);
@@ -297,7 +298,7 @@ namespace PeptideNamespace{
         std::string ionTypeToStr() const;
         std::string getNLStr() const;
         bool isModified() const{
-            return _mod == "";
+            return _mod.empty();
         }
         //!returns true if fragment is neutral loss ion
         bool isNL() const{
@@ -362,7 +363,7 @@ namespace PeptideNamespace{
             initialized = false;
             nMod = 0;
         }
-        ~Peptide() {}
+        ~Peptide() = default;
 
         //modifers
         void initialize(const base::ParamsBase&, const aaDB::AADB& aadb,
