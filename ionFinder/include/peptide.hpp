@@ -78,7 +78,7 @@ namespace PeptideNamespace{
 		Ion() : Species(){
 			charge = 0;
 		}
-		~Ion(){}
+		~Ion()= default;
 		
 		//modifers
 		void initializeFromMZ(double _mz, int _charge){
@@ -93,7 +93,8 @@ namespace PeptideNamespace{
 		double getMZ(int _charge) const{
 			return calcMZ(mass, _charge);
 		}
-		double getMZ() const{
+
+        virtual double getMZ() const{
 			return getMZ(charge);
 		}
 		int getCharge() const{
@@ -178,9 +179,9 @@ namespace PeptideNamespace{
 		//!sequence of fragment
 		std::string _sequence;
 		//!index of beginning of fragment relative to full sequence
-		size_t _beg;
+		size_t _beg{};
 		//!index of end of fragment relative to full sequence
-		size_t _end;
+		size_t _end{};
 		
 		void _initFragSpan(const std::string&);
 		
@@ -213,7 +214,7 @@ namespace PeptideNamespace{
 			_includeLabel = true;
 		}
 		//!copy constructor
-		FragmentIon(const FragmentIon& rhs){
+		FragmentIon(const FragmentIon& rhs) : Ion(rhs) {
 			_b_y = rhs._b_y;
 			_num = rhs._num;
 			_mod = rhs._mod;
@@ -228,7 +229,7 @@ namespace PeptideNamespace{
 			_end = rhs._end;
 			_includeLabel = rhs._includeLabel;
 		}
-		~FragmentIon() {}
+		~FragmentIon() = default;
 		
 		void setFound(bool boo){
 			_found = boo;
@@ -241,7 +242,7 @@ namespace PeptideNamespace{
 		}
 		
 		//properties
-		double getMZ() const{
+		double getMZ() const override{
 			if(_b_y == 'b')
 				return (mass + ((charge - 1) * PeptideNamespace::H_MASS)) / charge;
 			return Ion::getMZ(charge);

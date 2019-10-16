@@ -68,8 +68,8 @@ namespace scanData{
 			initilizeFromLine(line);
 		}
 		~Scan() {}
-		
-		//modifers
+
+        virtual //modifers
 		void clear();
 	
 		void operator = (const Scan& rhs){

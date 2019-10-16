@@ -77,9 +77,6 @@ namespace ms2{
 		double getMZ() const{
 			return mz;
 		}
-		/*mz_intType getMZInt() const{
-			return mz_int;
-		}*/
 		
 		void write(std::ofstream&) const;
 	protected:
@@ -117,7 +114,7 @@ namespace ms2{
 		DataPoint(double _mz, double _int) : Ion(_mz, _int){
 			initStats();
 		}
-		~DataPoint () {}
+		~DataPoint () = default;
 		
 		void setLabeledIon(bool _lab){
 			labeledIon = _lab;
@@ -171,17 +168,17 @@ namespace ms2{
 		}
 		
 		struct MZComparison {
-			bool const operator()(const DataPoint& lhs, const DataPoint& rhs) const{
+			bool operator()(const DataPoint& lhs, const DataPoint& rhs) const{
 				return lhs.getMZ() < rhs.getMZ();
 			}
 			
-			bool const operator()(const DataPoint& lhs, double rhs) const{
+			bool operator()(const DataPoint& lhs, double rhs) const{
 				return lhs.getMZ() < rhs;
 			}
 		};
 		
 		struct IntComparison {
-			bool const operator()(DataPoint *lhs, DataPoint *rhs) const{
+			bool operator()(DataPoint *lhs, DataPoint *rhs) const{
 				return lhs->insertCompare(*rhs);
 			}
 		};
@@ -241,14 +238,14 @@ namespace ms2{
 			plotWidth = 0;
 			plotHeight = 0;
 		}
-		~Spectrum() {}
+		~Spectrum() = default;
 		
 		//modifers
 		void clear();
 		template<typename _Tp> void normalizeIonInts(_Tp _den){
 			double den = getMaxIntensity() / _den;
-			for(ionVecType::iterator it = ions.begin(); it != ions.end(); ++it)
-				it->normalizeIntensity(den);
+			for(auto & ion : ions)
+				ion.normalizeIntensity(den);
 			
 			updateDynamicMetadata();
 		}

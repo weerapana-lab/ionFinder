@@ -397,7 +397,7 @@ void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 			throw std::runtime_error("Invalid peptide sequence: " + sequence);
 		
 		//add new amino acid to
-		aminoAcids.push_back(AminoAcid(aminoAcidsMasses.getMW(sequence[i])));
+		aminoAcids.emplace_back(aminoAcidsMasses.getMW(sequence[i]));
 	}//end for
 	
 	//add n-terminal modification
@@ -502,7 +502,7 @@ double PeptideNamespace::calcMZ(double mass, int charge){
 double PeptideNamespace::calcMass(PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
 	double ret = 0;
-	for(PeptideNamespace::PepIonIt it = begin; it != end; ++it)
+	for(auto it = begin; it != end; ++it)
 		ret += it->getTotalMass();
 	return ret;
 }
@@ -518,7 +518,7 @@ double PeptideNamespace::calcMass(PeptideNamespace::PepIonIt begin, PeptideNames
 std::string PeptideNamespace::concatMods(PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
 	std::string ret = "";
-	for(PeptideNamespace::PepIonIt it = begin; it != end; ++it)
+	for(auto it = begin; it != end; ++it)
 		if(it->hasDynamicMod())
 			ret += it->getMod();
 	return ret;
