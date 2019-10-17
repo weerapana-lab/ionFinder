@@ -36,7 +36,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 	_wd = utils::pwd();
 	assert(utils::dirExists(_wd));
 	
-	//!TODO: add all options to getArgs
+	//TODO: add all options to getArgs
 	for(int i = 1; i < argc; i++)
 	{
 		if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help"))
@@ -162,7 +162,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 				usage();
 				return false;
 			}
-			//!TODO: Maybe add option to search for multiple loeese
+			//TODO: Maybe add option to search for multiple losses
 			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
@@ -230,8 +230,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "-minMZ"))
 		{
-			if(!utils::isArg(argv[++i]))
-			{
+			if(!utils::isArg(argv[++i])){
 				usage();
 				return false;
 			}
@@ -353,7 +352,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 					usage();
 					return false;
 				}
-				_inDirs.push_back(std::string(argv[i++]));
+				_inDirs.emplace_back(argv[i++]);
 				_inDirSpecified = true;
 			}
 		}
@@ -380,22 +379,19 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
  */
 bool IonFinder::Params::getFlist()
 {
-	if(_inDirs.size() == 0){
+	if(_inDirs.empty()){
 		_inDirs.push_back(_wd);
 		_wd = utils::parentDir(_wd);
 	}
-	for(auto it = _inDirs.begin(); it != _inDirs.end(); ++it)
+	for(auto & _inDir : _inDirs)
 	{
-		std::string fname = (_inDirSpecified ? (_wd + *it) : *it) + ("/" + _dtaFilterBase);
+		std::string fname = (_inDirSpecified ? (_wd + _inDir) : _inDir) + ("/" + _dtaFilterBase);
 		if(utils::fileExists(fname)){
-			_filterFiles[utils::baseName(*it)] = fname;
+			_filterFiles[utils::baseName(_inDir)] = fname;
 		}
 		else{
-			std::cerr << "Warning: No filter file found in: " << *it << NEW_LINE;
+			std::cerr << "Warning: No filter file found in: " << _inDir << NEW_LINE;
 		}
 	}
-	if(_filterFiles.size() == 0)
-		return false;
-	
-	return true;
+    return !_filterFiles.empty();
 }

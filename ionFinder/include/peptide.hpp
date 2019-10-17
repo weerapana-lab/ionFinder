@@ -301,13 +301,17 @@ namespace PeptideNamespace{
         bool isModified() const{
             return _mod.empty();
         }
-        //!returns true if fragment is neutral loss ion
+        /**
+         * \return true if fragment is neutral loss ion
+         */
         bool isNL() const{
             return _ionType == IonType::B_NL ||
                    _ionType == IonType::Y_NL ||
                    _ionType == IonType::M_NL;
         }
-        //!\return true if fragment is parent ion or parent neutral loss
+        /**
+         * \return true if fragment is parent ion or parent neutral loss
+         */
         bool isM() const{
             return _ionType == IonType::M || _ionType == IonType::M_NL;
         }

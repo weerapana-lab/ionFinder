@@ -119,3 +119,7 @@ void base::ParamsBase::printGitVersion(std::ostream& out) const{
 	out << "Last git commit: " << GIT_VERSION << NEW_LINE
 		<< "git revision: " << GIT_DATE << NEW_LINE;
 }
+
+bool base::ParamsBase::getArgs(int, const char *const *) {
+    return false;
+}

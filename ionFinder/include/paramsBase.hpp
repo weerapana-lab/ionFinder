@@ -48,7 +48,7 @@ namespace base{
 		std::string _smodFile;
 		std::string _usageFile;
 		std::string _helpFile;
-		bool wdSpecified;
+		bool wdSpecified{};
 		std::string sequestParamsFname;
 		std::string ofname;
 		
@@ -78,7 +78,7 @@ namespace base{
 		double plotWidth;
 		double plotHeight;
 		
-		bool smodSpecified;
+		bool smodSpecified{};
 		bool seqParSpecified;
 		bool minMzSpecified;
 		bool maxMzSpecified;
@@ -120,10 +120,11 @@ namespace base{
 			minIntensitySpecified = false;
 			includeAllIons = true;
 			verbose = false;
+			smodSpecified = false;
 		}
-		
-		//modifers
-		bool getArgs(int, const char* const[]);
+
+        //modifers
+        virtual bool getArgs(int, const char* const[]);
 		
 		void setSeqParFname(std::string path){
 			sequestParamsFname = path;

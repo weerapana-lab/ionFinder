@@ -243,7 +243,8 @@ namespace ms2{
 		 * Normalize ion intensities so that the max intensity is \p max.
 		 * \param max Max intensity.
 		 */
-		template<typename _Tp> void normalizeIonInts(_Tp max){
+		template<typename _Tp> void normalizeIonInts(_Tp max)
+		{
 			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
 		    double den = getMaxIntensity() / max;
 			for(auto & ion : ions)
