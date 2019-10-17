@@ -344,7 +344,8 @@ namespace PeptideNamespace{
                            const aaDB::AADB& aminoAcidsMasses);
         void addNeutralLoss(double losses, bool labelDecoyNL = false);
         double calcMass(const aaDB::AADB& aminoAcidsMasses);
-        void printFragments(std::ostream&) const;
+        void printFragments(std::ostream& out,
+                bool printHeader = false, bool printFoundIntensity = false) const;
 
         void setFound(size_t i, bool boo){
             fragments[i].setFound(boo);

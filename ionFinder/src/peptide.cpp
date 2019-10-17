@@ -509,16 +509,32 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 }
 
 /**
- Prints peptide fragmetns and calculated MZs to out.
+ Prints peptide fragments and calculated MZs to out.
  For debugging
  \param out stream to print to.
+ \param printHeader Should a header be printed?
+ \param printFoundIntensity Should the intensity for the fragment be printed?
  */
-void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
+void PeptideNamespace::Peptide::printFragments(std::ostream& out,
+        bool printHeader, bool printFoundIntensity) const
 {
 	assert(out);
+
+	if(printHeader) {
+        out << "index" << OUT_DELIM << "label" << OUT_DELIM << "mz";
+        if(printFoundIntensity)
+            out << OUT_DELIM << "foundIntensity";
+        out << NEW_LINE;
+    }
 	size_t len = fragments.size();
-	for(size_t i = 0; i < len; i++)
-		out << i << ") " << fragments[i].getLabel() << ": " << fragments[i].getMZ() << NEW_LINE;
+	for(size_t i = 0; i < len; i++) {
+        out << i << OUT_DELIM <<
+            fragments[i].getLabel() <<
+            OUT_DELIM << fragments[i].getMZ();
+            if(printFoundIntensity)
+                out << OUT_DELIM << fragments[i].getFoundIntensity();
+        out << NEW_LINE;
+    }
 }
 
 /**
