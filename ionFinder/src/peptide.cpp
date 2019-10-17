@@ -8,6 +8,14 @@
 
 #include <peptide.hpp>
 
+PeptideNamespace::Species::Species(const PeptideNamespace::Species& rhs){
+    mass = rhs.mass;
+}
+
+PeptideNamespace::Ion::Ion(const PeptideNamespace::Ion & rhs) : PeptideNamespace::Species::Species(rhs) {
+    charge = rhs.charge;
+}
+
 /**
  \brief Convert string to IonType <br>
  Accepted options are "b", "y", "m", "M", "^y-", "^b-", and "^M-".
@@ -309,10 +317,12 @@ PeptideNamespace::FragmentIon::FragmentIon(char b_y, int num, int charge, double
     _ionType = strToIonType(b_y);
     _initFragSpan(pepSequence);
     _includeLabel = true;
+    _foundMZ = 0;
+    _foundIntensity = 0;
 }
 
 //!copy constructor
-PeptideNamespace::FragmentIon::FragmentIon(const PeptideNamespace::FragmentIon &rhs) {
+PeptideNamespace::FragmentIon::FragmentIon(const PeptideNamespace::FragmentIon &rhs) : Ion(rhs) {
     _b_y = rhs._b_y;
     _num = rhs._num;
     _mod = rhs._mod;
@@ -517,12 +527,40 @@ void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
  */
 void PeptideNamespace::Peptide::removeUnlabeledFrags()
 {
-	for(FragmentIonItType it = fragments.begin(); it != fragments.end();)
+	for(auto it = fragments.begin(); it != fragments.end();)
 	{
 		if(!it->getFound())
 			fragments.erase(it);
 		else ++it;
 	}
+}
+
+/**
+ * Remove FragmentIon (s) which are below a specified intensity threshold.
+ * \param min_int Minium ion intensity to allow.
+ * \param require_nl Should only neutral loss fragment ions be removed?
+ */
+void PeptideNamespace::Peptide::removeLabelIntensityBelow(double min_int, bool require_nl, bool remove)
+{
+    for(auto it = fragments.begin(); it != fragments.end();)
+    {
+        if(it->getFoundIntensity() <= min_int)
+        {
+            if(require_nl && !it->isNL()) {
+                ++it;
+                continue;
+            }
+
+            if(remove) {
+                fragments.erase(it);
+                continue;
+            }
+            else {
+                it->setFound(false);
+            }
+        }
+        ++it;
+    }
 }
 
 /**

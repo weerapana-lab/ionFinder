@@ -62,6 +62,7 @@ namespace PeptideNamespace{
         Species(){
             mass = 0;
         }
+        Species(const Species&);
 
         //properties
         double getMass() const{
@@ -78,6 +79,7 @@ namespace PeptideNamespace{
         Ion() : Species(){
             charge = 0;
         }
+        Ion(const Ion& rhs);
         ~Ion() = default;
 
         //modifers
@@ -304,7 +306,6 @@ namespace PeptideNamespace{
     class Peptide : public Ion{
     private:
         typedef std::vector<FragmentIon> FragmentIonType;
-        typedef FragmentIonType::const_iterator FragmentIonItType;
 
         std::string sequence;
         std::string fullSequence;
@@ -356,6 +357,7 @@ namespace PeptideNamespace{
         }
         void removeUnlabeledFrags();
         void normalizeLabelIntensity(double den);
+        void removeLabelIntensityBelow(double min_int, bool require_nl = false, bool remove = false);
 
         //properties
         std::string getSequence() const{
