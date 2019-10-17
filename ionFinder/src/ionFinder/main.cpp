@@ -46,7 +46,14 @@ int main(int argc, const char** argv)
 	if(!IonFinder::findFragmentsParallel(scans, peptides, pars)){
 		std::cout << "Failed to annotate spectra!" << std::endl;
 	}
-	
+
+	/*
+	std::ofstream outF("/Users/Aaron/local/ionFinder/testFiles/int_co_test.tsv");
+	for(int i = 0; i < peptides.size(); i++){
+	    peptides[i].printFragments(outF, (i == 0), true);
+	}
+	*/
+
 	//analyze sequences
 	std::cout << "\nAnalyzing peptide sequences...";
 	std::vector<IonFinder::PeptideStats> peptideStats;
