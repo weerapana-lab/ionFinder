@@ -166,6 +166,16 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
+        if(!strcmp(argv[i], "--nlIntCo"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage();
+                return false;
+            }
+            _nlIntCo = std::stod(argv[i]);
+            continue;
+        }
 		if(!strcmp(argv[i], "-mt") || !strcmp(argv[i], "--matchTolerance"))
 		{
 			if(!utils::isArg(argv[++i]))

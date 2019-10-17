@@ -414,7 +414,8 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
 		spectrum.labelSpectrum(peptides.back(), pars);
         peptides.back().normalizeLabelIntensity(spectrum.getMaxIntensity() / 100);
-		
+        peptides.back().removeLabelIntensityBelow(pars.getNlIntCo(), true, false);
+
 		//print spectra file
 		if(pars.getPrintSpectraFiles())
 		{
