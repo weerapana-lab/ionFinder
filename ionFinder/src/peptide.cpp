@@ -129,6 +129,14 @@ void PeptideNamespace::AminoAcid::addStaticMod(double modMass)
 	_addMod(modMass);
 }
 
+PeptideNamespace::AminoAcid::AminoAcid(double mass) : Ion() {
+    initalizeFromMass(mass);
+    _staticMod = false;
+    _dynamicMod = false;
+    _modMass = 0;
+    _mod = '\0';
+}
+
 /**
  Get ion label.
  \return unformatted ion label
@@ -287,6 +295,39 @@ PeptideNamespace::FragmentIon PeptideNamespace::FragmentIon::makeNLFrag(double l
 	ret._numNl = numNL;
 
 	return ret;
+}
+
+PeptideNamespace::FragmentIon::FragmentIon(char b_y, int num, int charge, double mass, std::string mod,
+                                           const std::string &pepSequence) : Ion() {
+    _b_y = b_y;
+    _num = num;
+    _mod = mod;
+    _nlMass = 0;
+    _numNl = 0;
+    initalizeFromMass(mass, charge);
+    _found = false;
+    _ionType = strToIonType(b_y);
+    _initFragSpan(pepSequence);
+    _includeLabel = true;
+}
+
+//!copy constructor
+PeptideNamespace::FragmentIon::FragmentIon(const PeptideNamespace::FragmentIon &rhs) {
+    _b_y = rhs._b_y;
+    _num = rhs._num;
+    _mod = rhs._mod;
+    _found = rhs._found;
+    _ionType = rhs._ionType;
+    _nlMass = rhs._nlMass;
+    _numNl = rhs._numNl;
+    charge = rhs.charge;
+    mass = rhs.mass;
+    _sequence = rhs._sequence;
+    _beg = rhs._beg;
+    _end = rhs._end;
+    _includeLabel = rhs._includeLabel;
+    _foundMZ = rhs._foundMZ;
+    _foundIntensity = rhs._foundIntensity;
 }
 
 /**
@@ -471,7 +512,7 @@ void PeptideNamespace::Peptide::printFragments(std::ostream& out) const
 }
 
 /**
- Removes all unlabeled fragment ions from fragments.
+ Removes all unlabeled FragmentIon(s) from fragments.
  For debugging.
  */
 void PeptideNamespace::Peptide::removeUnlabeledFrags()

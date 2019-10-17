@@ -208,6 +208,13 @@ void ms2::Spectrum::removeIntensityBelow(double min_int)
     updateDynamicMetadata();
 }
 
+/**
+ * Label spectrum with predicted fragment ions from \p peptide.
+ * \param peptide Peptide to label spectrum with.
+ * \param pars Initalized params object.
+ * \param removeUnlabeledFrags Should unlabeled F
+ * \param labelTop
+ */
 void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
                                   const base::ParamsBase& pars,
                                   bool removeUnlabeledFrags, size_t labelTop)

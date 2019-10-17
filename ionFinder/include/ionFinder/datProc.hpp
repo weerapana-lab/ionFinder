@@ -149,7 +149,7 @@ namespace IonFinder{
 			charge = 0;
 			mass = 0;
 		}
-		PeptideStats(const PeptideNamespace::Peptide& p){
+		explicit PeptideStats(const PeptideNamespace::Peptide& p){
 			//PeptideStats data
 			_scan = new Dtafilter::Scan;
 			_fragDelim = FRAG_DELIM;
@@ -163,9 +163,7 @@ namespace IonFinder{
 			modLocs.clear();
 			modLocs.insert(modLocs.begin(), p.getModLocs().begin(), p.getModLocs().end());
 		}
-		~PeptideStats(){
-			//delete _scan;
-		}
+		~PeptideStats(){}
 		
 		//modifers
 		//void setScan(Dtafilter::Scan)

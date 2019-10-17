@@ -122,13 +122,7 @@ namespace PeptideNamespace{
             _modMass = 0;
             _mod = '\0';
         }
-        AminoAcid(double mass) : Ion() {
-            initalizeFromMass(mass);
-            _staticMod = false;
-            _dynamicMod = false;
-            _modMass = 0;
-            _mod = '\0';
-        }
+        explicit AminoAcid(double mass);
 
         void setDynamicMod(char mod, double modMass);
         void addStaticMod(double modMass);
@@ -208,36 +202,8 @@ namespace PeptideNamespace{
             _foundIntensity = 0;
         }
         FragmentIon(char b_y, int num, int charge, double mass,
-                    std::string mod, const std::string& pepSequence) : Ion() {
-            _b_y = b_y;
-            _num = num;
-            _mod = mod;
-            _nlMass = 0;
-            _numNl = 0;
-            initalizeFromMass(mass, charge);
-            _found = false;
-            _ionType = strToIonType(b_y);
-            _initFragSpan(pepSequence);
-            _includeLabel = true;
-        }
-        //!copy constructor
-        FragmentIon(const FragmentIon& rhs){
-            _b_y = rhs._b_y;
-            _num = rhs._num;
-            _mod = rhs._mod;
-            _found = rhs._found;
-            _ionType = rhs._ionType;
-            _nlMass = rhs._nlMass;
-            _numNl = rhs._numNl;
-            charge = rhs.charge;
-            mass = rhs.mass;
-            _sequence = rhs._sequence;
-            _beg = rhs._beg;
-            _end = rhs._end;
-            _includeLabel = rhs._includeLabel;
-            _foundMZ = rhs._foundMZ;
-            _foundIntensity = rhs._foundIntensity;
-        }
+                    std::string mod, const std::string& pepSequence);
+        FragmentIon(const FragmentIon& rhs);
         ~FragmentIon() = default;
 
         void setFound(bool boo){
