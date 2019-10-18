@@ -541,10 +541,10 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	
 	//append peptide stats names to headers
 	int statLen = 0;
-	for(auto it = _pepStats.begin(); it != _pepStats.end(); ++it){
+	for(auto & _pepStat : _pepStats){
 		statNames.push_back("n" +
-							std::string(1, (char)std::toupper(ION_TYPES_STR[utils::as_integer(*it)][0])) +
-							ION_TYPES_STR[utils::as_integer(*it)].substr(1));
+							std::string(1, (char)std::toupper(ION_TYPES_STR[utils::as_integer(_pepStat)][0])) +
+							ION_TYPES_STR[utils::as_integer(_pepStat)].substr(1));
 		statLen++;
 	}
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
@@ -575,7 +575,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << stat._scan->getFullSequence() <<
 		OUT_DELIM << scanData::removeStaticMod(stat._scan->getSequence()) <<
 		OUT_DELIM << stat._scan->getPrecursorMZ() <<
-		OUT_DELIM << (stat.modLocs.empty()) <<
+		OUT_DELIM << (!stat.modLocs.empty()) <<
 		OUT_DELIM << stat.modResidues <<
 		OUT_DELIM << stat._scan->getCharge() <<
 		OUT_DELIM << stat._scan->getUnique() <<
