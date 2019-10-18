@@ -119,7 +119,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 								 const IonFinder::Params& pars)
 {
 	bool allSucess = true;
-	bool addModResidues = pars.getFastaFile() != "";
+	bool addModResidues = !pars.getFastaFile().empty();
 	utils::FastaFile seqFile;
 	int nSeqNotFound = 0;
 	if(addModResidues){
@@ -160,11 +160,11 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		//add modified residues if fasta file was specified
 		if(addModResidues)
 		{
-			for(auto it = pepStat.modLocs.begin(); it != pepStat.modLocs.end(); ++it)
+			for(auto it2 = pepStat.modLocs.begin(); it2 != pepStat.modLocs.end(); ++it2)
 			{
 				bool found; //set to true if peptide and prot sequences are found in FastaFile
 				std::string modTemp = seqFile.getModifiedResidue(pepStat._scan->getParentID(),
-																 pepStat.sequence, int(*it),
+																 pepStat.sequence, int(*it2),
 																 pars.getVerbose(), found);
 				pepStat.addMod(modTemp);
 				if(!found)
