@@ -1,0 +1,6 @@
+
+TEMP_PS="temp.ps"
+
+@GROFF@ -mandoc > $TEMP_PS `man -w @TARGET_MAN_PDF_IN@`
+@PS2PDF@ $TEMP_PS @TARGET_MAN_PDF_OUT@
+rm $TEMP_PS

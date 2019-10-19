@@ -1,0 +1,10 @@
+
+find_program(PS2PDF ps2pdf)
+
+if(PS2PDF MATCHES PS2PDF-NOTFOUND)
+    set(PS2PDF_FOUND FALSE)
+    set(PS2PDF_NOT_FOUND TRUE)
+else()
+    set(PS2PDF_FOUND TRUE)
+    set(PS2PDF_NOT_FOUND FALSE)
+endif()
