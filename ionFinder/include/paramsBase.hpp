@@ -21,12 +21,11 @@
 #include <string>
 #include <cassert>
 
-#include <config.hpp>
 #include <utils.hpp>
 
 namespace base{
 	
-	std::string const PROG_WD = CONFIG_PROG_WD_DIR;
+	std::string const PROG_WD = PROG_WD_DIR;
 	std::string const PROG_DB = PROG_WD + "/db";
 	std::string const PROG_MAN = PROG_WD + "/man";
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";

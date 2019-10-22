@@ -12,6 +12,10 @@ set(CMAKE_CXX_STANDARD 11)
 #file(GLOB ION_FINDER_SRC ${PROJECT_SOURCE_DIR}/src/ionFinder/*.cpp)
 #set(ION_FINDER_SRC "${ION_FINDER_SRC} ${COMMON_SOURCE_FILES}")
 
+set(PROG_WD_DIR "${PROJECT_SOURCE_DIR}" CACHE STRING "Path to directory with defaultResidueAtoms.txt")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPROG_WD_DIR=\\\"${PROG_WD_DIR}\\\"")
+
 add_executable(${ION_FINDER_TARGET}
         src/ionFinder/main.cpp
         src/scanData.cpp
@@ -27,14 +31,6 @@ add_executable(${ION_FINDER_TARGET}
         src/ionFinder/datProc.cpp
         src/ionFinder/inputFiles.cpp
         src/ionFinder/params.cpp)
-
-add_custom_target(
-        config_hpp ALL
-        COMMAND ${CMAKE_SOURCE_DIR}/configure -d ${CMAKE_SOURCE_DIR}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-
-add_dependencies(${ION_FINDER_TARGET} config_hpp)
 
 target_include_directories(${ION_FINDER_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
@@ -61,7 +57,6 @@ if (DOXYGEN_FOUND)
 
     # request to configure the file
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
-    #message("Doxyfile configured!")
 
     # note the option ALL which allows to build the docs together with the application
     add_custom_target(doxygen ALL
@@ -89,7 +84,6 @@ if(BUILD_MAN_PDF MATCHES ON)
             file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
             configure_file(${BUILD_MAN_PDF_IN} ${BUILD_MAN_PDF_OUT} @ONLY)
-            #message("${TARGET_MAN_PDF_IN} configured!")
 
             add_custom_target(${target}_help_pdf ALL
                     COMMAND sh ${BUILD_MAN_PDF_OUT}
