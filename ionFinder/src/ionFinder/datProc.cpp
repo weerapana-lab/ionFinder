@@ -549,7 +549,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	}
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 	
-	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan parent_file sample_name";
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
@@ -583,6 +583,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << stat._scan->getSpectralCounts() <<
 		OUT_DELIM << stat._scan->getScanNum() <<
 		OUT_DELIM << stat._scan->getPrecursor().getScan() <<
+		OUT_DELIM << stat._scan->getPrecursor().getRT() <<
 		OUT_DELIM << utils::baseName(stat._scan->getPrecursor().getFile()) <<
 		OUT_DELIM << stat._scan->getSampleName();
 		
