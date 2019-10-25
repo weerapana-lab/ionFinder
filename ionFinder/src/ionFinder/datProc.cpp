@@ -85,13 +85,13 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 				}
 				else{ //if not equal, artifiact fragment
 					//std::cout << seq.getLabel() << NEW_LINE;
-					incrementIonCount(ionStr, ionTypesCount[IonType::ART_NL_FRAG]);
+					incrementIonCount(ionStr, ionTypesCount[IonType::AMB_NL_FRAG]);
 				}
 			}
 			else
 			{
 				if(containsAmbResidues(ambResidues, seq.getSequence())){ //is ambModFrag
-					incrementIonCount(ionStr, ionTypesCount[IonType::AMB_MOD_FRAG]);
+					incrementIonCount(ionStr, ionTypesCount[IonType::AMB_FRAG]);
 				}
 				else{ //is detFrag
 					incrementIonCount(ionStr, ionTypesCount[IonType::DET_FRAG]);
@@ -401,11 +401,10 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		//load spectrum
 		auto ms2FileIt = ms2Map.find(scans[i].getPrecursor().getFile());
 		if(ms2FileIt == ms2Map.end()){
-			throw std::out_of_range("Key error in Ms2Map!");
-			return;
+			throw std::out_of_range("\nKey error in Ms2Map!");
 		}
 		if(!ms2FileIt->second.getScan(scans[i].getScanNum(), spectrum)){
-			throw std::runtime_error("Error reading scan!");
+			throw std::runtime_error("\nError reading scan!");
 			return;
 		}
 		scans[i].setPrecursor(spectrum.getPrecursor());
@@ -423,20 +422,16 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 			std::string dirNameTemp = (pars.getInDirSpecified() ? pars.getWD() : curWD) + "/spectraFiles";
 			if(!utils::dirExists(dirNameTemp))
 				if(!utils::mkdir(dirNameTemp.c_str(), "-p")){
-					throw std::runtime_error("Failed to make dir: " + dirNameTemp);
-					return;
+					throw std::runtime_error("\nFailed to make dir: " + dirNameTemp);
 				}
 
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
-			//spectrum.setCharge(scans[i].getCharge());
-			spectrum.getPrecursor().setCharge(scans[i].getPrecursor().getCharge());
 
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
 			std::ofstream outF((temp).c_str());
 			if(!outF){
-				throw std::runtime_error("Failed to write spectrum!");
-				return;
+				throw std::runtime_error("\nFailed to write spectrum!");
 			}
 			spectrum.printLabeledSpectrum(outF, true);
 		}
@@ -472,7 +467,8 @@ void IonFinder::PeptideStats::calcContainsCit()
 	}
 	
 	//are there 1 more ambiguous fragments?
-	if(ionTypesCount[IonType::AMB_FRAG].second >= 1){
+	if(ionTypesCount[IonType::AMB_FRAG].second >= 1 ||
+	    ionTypesCount[IonType::AMB_NL_FRAG].second>= 1){
 		containsCit = "ambiguous";
 		return;
 	}
@@ -491,12 +487,12 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 			break;
 		case IonType::DET_FRAG: return ION_TYPES_STR[1];
 			break;
-		case IonType::AMB_MOD_FRAG: return ION_TYPES_STR[2];
+		case IonType::AMB_FRAG: return ION_TYPES_STR[2];
 			break;
-		case IonType::DET_NL_FRAG: return ION_TYPES_STR[3];
-			break;
-		case IonType::AMB_FRAG: return ION_TYPES_STR[4];
-			break;
+        case IonType::DET_NL_FRAG: return ION_TYPES_STR[3];
+            break;
+        case IonType::AMB_NL_FRAG: return ION_TYPES_STR[4];
+            break;
 		case IonType::ART_NL_FRAG: return ION_TYPES_STR[5];
 			break;
 		case IonType::Last: return "Last";
@@ -532,10 +528,9 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	_pepStats.push_back(itcType::DET_FRAG);
 	_pepStats.push_back(itcType::AMB_FRAG);
 	//conditional stats
-	if(!pars.getAmbigiousResidues().empty())
-		_pepStats.push_back(itcType::AMB_MOD_FRAG);
 	if(pars.getCalcNL()){
 		_pepStats.push_back(itcType::DET_NL_FRAG);
+		_pepStats.push_back(itcType::AMB_NL_FRAG);
 		_pepStats.push_back(itcType::ART_NL_FRAG);
 	}
 	
