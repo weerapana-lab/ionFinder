@@ -8,15 +8,24 @@
 
 #include <scanData.hpp>
 
+void scanData::PrecursorScan::clear()
+{
+    _mz.clear();
+    _scan.clear();
+    _rt = 0;
+    _file.clear();
+    _charge = 0;
+    _intensity = 0;
+}
+
 void scanData::Scan::clear()
 {
-	_precursorFile.clear();
 	_scanNum = 0;
 	_sequence.clear();
-	_charge = 0;
 	_fullSequence.clear();
 	_modified = false;
 	_spectralCounts = 0;
+	_precursor.clear();
 }
 
 std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
@@ -111,9 +120,9 @@ void scanData::Scan::initilizeFromLine(std::string line)
 	std::string scanLine = elems[1];
 	utils::split(scanLine, '.', elems);
 	
-	_precursorFile = elems[0] + ".ms2";
+	_precursor.setFile(elems[0] + ".ms2");
 	_scanNum = std::stoi(elems[1]);
-	_charge = std::stoi(elems[3]);
+	_precursor.setCharge(std::stoi(elems[3]));
 }
 
 /**
@@ -124,8 +133,8 @@ std::string scanData::Scan::getOfNameBase(std::string parentFile, std::string se
 	std::string ret;
 	ret = utils::removeExtension(parentFile);
 	ret += ("_" + makeOfSequenceFromSequence(seq) + "_" + std::to_string(_scanNum));
-	if(_charge != 0)
-		ret += ("_" + std::to_string(_charge));
+	if(_precursor.getCharge() != 0)
+		ret += ("_" + std::to_string(_precursor.getCharge()));
 	return ret;
 }
 
@@ -135,5 +144,61 @@ std::string scanData::Scan::getOfNameBase(std::string parentFile, std::string se
  Only added for backwards compatibility.
  */
 std::string scanData::Scan::getOfname() const{
-	return getOfNameBase(_precursorFile, _sequence) + OF_EXT;
+	return getOfNameBase(_precursor.getFile(), _sequence) + OF_EXT;
+}
+
+const scanData::PrecursorScan& scanData::Scan::getPrecursor() const {
+    return _precursor;
+}
+
+scanData::PrecursorScan& scanData::Scan::getPrecursor() {
+    return _precursor;
+}
+
+const std::string &scanData::PrecursorScan::getMZ() const {
+    return _mz;
+}
+
+void scanData::PrecursorScan::setMZ(const std::string &mz) {
+    _mz = mz;
+}
+
+const std::string &scanData::PrecursorScan::getScan() const {
+    return _scan;
+}
+
+void scanData::PrecursorScan::setScan(const std::string &scan) {
+    _scan = scan;
+}
+
+double scanData::PrecursorScan::getRT() const {
+    return _rt;
+}
+
+void scanData::PrecursorScan::setRT(const double rt) {
+    _rt = rt;
+}
+
+const std::string &scanData::PrecursorScan::getFile() const {
+    return _file;
+}
+
+void scanData::PrecursorScan::setFile(const std::string &file) {
+    _file = file;
+}
+
+void scanData::PrecursorScan::setCharge(int rhs) {
+    _charge = rhs;
+}
+
+int scanData::PrecursorScan::getCharge() const {
+    return _charge;
+}
+
+double scanData::PrecursorScan::getIntensity() const {
+    return 0;
+}
+
+void scanData::PrecursorScan::setIntensity(double rhs) {
+    _intensity = rhs;
 }

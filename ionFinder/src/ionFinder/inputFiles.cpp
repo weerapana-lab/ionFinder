@@ -91,7 +91,7 @@ bool IonFinder::readInputTsv(std::string ifname,
 		//required columns
 		temp.setScanNum(tsv.getValSize(i, "scanNum"));
 		temp.setSequence(tsv.getValStr(i, "sequence"));
-		temp.setPrecursorFile(tsv.getValStr(i, "precursorFile"));
+		temp.getPrecursor().setFile(tsv.getValStr(i, "precursorFile"));
 		temp.setSampleName(tsv.getValStr(i, "sampleName"));
 		
 		//add optional columns which were found.
@@ -108,13 +108,13 @@ bool IonFinder::readInputTsv(std::string ifname,
 		if(foundOptionalCols["unique"])
 			temp.setUnique(tsv.getValBool(i, "unique"));
 		if(foundOptionalCols["charge"])
-			temp.setCharge(tsv.getValInt(i, "charge"));
+			temp.getPrecursor().setCharge(tsv.getValInt(i, "charge"));
 		if(foundOptionalCols["xcorr"])
 			temp.setXcorr(tsv.getValStr(i, "xcorr"));
 		if(foundOptionalCols["precursorMZ"])
-			temp.setPrecursorMZ(tsv.getValStr(i, "precursorMZ"));
+			temp.getPrecursor().setMZ(tsv.getValStr(i, "precursorMZ"));
 		if(foundOptionalCols["precursorScan"])
-			temp.setPrecursorScan(tsv.getValStr(i, "precursorScan"));
+            temp.getPrecursor().setScan(tsv.getValStr(i, "precursorScan"));
 		
 		//reverse match filter
 		if(skipReverse && temp.getMatchDirection() == Dtafilter::Scan::MatchDirection::REVERSE)

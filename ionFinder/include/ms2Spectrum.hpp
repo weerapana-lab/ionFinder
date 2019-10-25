@@ -187,9 +187,6 @@ namespace ms2{
 		typedef ionVecType::const_iterator ionsTypeConstIt;
 		typedef ionVecType::iterator ionsTypeIt;
 		
-		//static metadata
-		double retTime;
-		double precursorInt;
 		//!pretty parent file name with out extension for naming
 		std::string _parentMs2;
 		
@@ -222,8 +219,6 @@ namespace ms2{
 	public:
 		Spectrum() : scanData::Scan()
 		{
-			retTime = 0;
-			precursorInt = 0;
 			maxInt = 0;
 			minInt = 0;
 			ionPercent = 0;

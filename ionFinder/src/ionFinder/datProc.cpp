@@ -330,8 +330,8 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 	for(size_t i = 0; i < len; i++){
 		if(std::find(fileNamesList.begin(),
 					 fileNamesList.end(),
-					 scans[i].getPrecursorFile()) == fileNamesList.end()){
-			fileNamesList.push_back(scans[i].getPrecursorFile());
+					 scans[i].getPrecursor().getFile()) == fileNamesList.end()){
+			fileNamesList.push_back(scans[i].getPrecursor().getFile());
 		}
 	}
 		
@@ -375,13 +375,13 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 	for(size_t i = beg; i < end; i++)
 	{
 		//first get current wd name
-		curWD = utils::dirName(scans[i].getPrecursorFile());
+		curWD = utils::dirName(scans[i].getPrecursor().getFile());
 		spFname = curWD + "/sequest.params";
 		
 		if(curSample != scans[i].getSampleName())
 		{
 			//re-init Peptide::AminoAcidMasses for each sample
-			curWD = utils::dirName(scans[i].getPrecursorFile());
+			curWD = utils::dirName(scans[i].getPrecursor().getFile());
 			spFname = curWD + "/sequest.params";
 			
 			//read sequest params file and init aadb
@@ -399,7 +399,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		}
 		
 		//load spectrum
-		auto ms2FileIt = ms2Map.find(scans[i].getPrecursorFile());
+		auto ms2FileIt = ms2Map.find(scans[i].getPrecursor().getFile());
 		if(ms2FileIt == ms2Map.end()){
 			throw std::out_of_range("Key error in Ms2Map!");
 			return;
@@ -408,9 +408,8 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 			throw std::runtime_error("Error reading scan!");
 			return;
 		}
-		scans[i].setPrecursorMZ(spectrum.getPrecursorMZ());
-		scans[i].setPrecursorScan(spectrum.getPrecursorScan());
-		
+		scans[i].setPrecursor(spectrum.getPrecursor());
+
 		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
         spectrum.labelSpectrum(peptides.back(), pars);
         peptides.back().normalizeLabelIntensity(spectrum.getMaxIntensity() / 100);
@@ -430,7 +429,8 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 
 			spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
-			spectrum.setCharge(scans[i].getCharge());
+			//spectrum.setCharge(scans[i].getCharge());
+			spectrum.getPrecursor().setCharge(scans[i].getPrecursor().getCharge());
 
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
 			std::ofstream outF((temp).c_str());
@@ -574,16 +574,16 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		OUT_DELIM << stat._scan->getParentDescription() <<
 		OUT_DELIM << stat._scan->getFullSequence() <<
 		OUT_DELIM << scanData::removeStaticMod(stat._scan->getSequence()) <<
-		OUT_DELIM << stat._scan->getPrecursorMZ() <<
+		OUT_DELIM << stat._scan->getPrecursor().getMZ() <<
 		OUT_DELIM << (!stat.modLocs.empty()) <<
 		OUT_DELIM << stat.modResidues <<
-		OUT_DELIM << stat._scan->getCharge() <<
+		OUT_DELIM << stat._scan->getPrecursor().getCharge() <<
 		OUT_DELIM << stat._scan->getUnique() <<
 		OUT_DELIM << stat._scan->getXcorr() <<
 		OUT_DELIM << stat._scan->getSpectralCounts() <<
 		OUT_DELIM << stat._scan->getScanNum() <<
-		OUT_DELIM << stat._scan->getPrecursorScan() <<
-		OUT_DELIM << utils::baseName(stat._scan->getPrecursorFile()) <<
+		OUT_DELIM << stat._scan->getPrecursor().getScan() <<
+		OUT_DELIM << utils::baseName(stat._scan->getPrecursor().getFile()) <<
 		OUT_DELIM << stat._scan->getSampleName();
 		
 		//peptide analysis data

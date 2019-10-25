@@ -10,16 +10,13 @@
 
 void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 {
-	_parentProtein = rhs._parentProtein;
+	scanData::Scan::operator=(rhs);
+    _parentProtein = rhs._parentProtein;
 	_parentID = rhs._parentID;
+	_parentDescription = rhs._parentDescription;
 	_matchDirection = rhs._matchDirection;
 	_sampleName = rhs._sampleName;
-	_precursorFile = rhs._precursorFile;
-	_scanNum = rhs._scanNum;
-	_sequence = rhs._sequence;
-	_fullSequence = rhs._fullSequence;
-	_charge = rhs._charge;
-	_xcorr = rhs._xcorr;
+	_unique = rhs._unique;
 }
 
 /**
@@ -129,7 +126,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					Scan newScan = baseScan;
 					newScan.initilizeFromLine(line);
 					newScan.setUnique(line[0] == '*');
-					newScan.setPrecursorFile(utils::dirName(fname) + "/" + newScan.getPrecursorFile());
+					newScan.getPrecursor().setFile(utils::dirName(fname) + "/" + newScan.getPrecursor().getFile());
 					
 					//reverse match filter
 					if(skipReverse && newScan.getMatchDirection() == Dtafilter::Scan::MatchDirection::REVERSE)

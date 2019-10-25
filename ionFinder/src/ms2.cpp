@@ -125,12 +125,10 @@ bool ms2::Ms2File::getMetaData()
 	}
 	
 	//check that md is good
-	if(scanType == "MS2" &&
-	   dataType == "Centroid" &&
-	   firstScan <= lastScan &&
-	   mdCount == MD_NUM)
-		return true;
-	return false;
+    return scanType == "MS2" &&
+           dataType == "Centroid" &&
+           firstScan <= lastScan &&
+           mdCount == MD_NUM;
 }
 
 /**
@@ -187,26 +185,26 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 			assert(elems.size() == 4);
 			utils::split(line, IN_DELIM, elems);
 			scan._scanNum = std::stoi(elems[2]);
-			scan._precursorMZ = elems[3];
+			scan.getPrecursor().setMZ(elems[3]);
 		}
 		else if(elems[0] == "I")
 		{
 			assert(elems.size() == 3);
 			utils::split(line, IN_DELIM, elems);
 			if(elems[1] == "RetTime")
-				scan.retTime = std::stod(elems[2]);
+				scan.getPrecursor().setRT(std::stod(elems[2]));
 			else if(elems[1] == "PrecursorInt")
-				scan.precursorInt = std::stod(elems[2]);
+				scan.getPrecursor().setIntensity(std::stod(elems[2]));
 			else if(elems[1] == "PrecursorFile")
-				scan._precursorFile = utils::removeExtension(elems[2]);
+                scan.getPrecursor().setFile(utils::removeExtension(elems[2]));
 			else if(elems[1] == "PrecursorScan")
-				scan._precursorScan = elems[2];
+                scan.getPrecursor().setScan(elems[2]);
 		}
 		else if(elems[0] == "Z"){
 			if(!z_found){
 				assert(elems.size() == 3);
 				utils::split(line, IN_DELIM, elems);
-				scan._charge = std::stoi(elems[1]);
+				scan.getPrecursor().setCharge(std::stoi(elems[1]));
 				z_found = true;
 			}
 		}

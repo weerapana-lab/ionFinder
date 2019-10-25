@@ -12,18 +12,18 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 {
     assert(out);
     out << ms2::BEGIN_METADATA << NEW_LINE
-        << "precursorFile" << OUT_DELIM << _precursorFile << NEW_LINE
+        << "precursorFile" << OUT_DELIM << _precursor.getFile() << NEW_LINE
         << "ofname" << OUT_DELIM << getOfNameBase(_parentMs2, _fullSequence) << NEW_LINE
         << "scanNumber" << OUT_DELIM << _scanNum << NEW_LINE
         << "sequence" << OUT_DELIM << _sequence << NEW_LINE
         << "fullSequence" << OUT_DELIM << scanData::removeStaticMod(_fullSequence) << NEW_LINE
-        << "retTime" << OUT_DELIM << retTime << NEW_LINE
-        << "precursorCharge" << OUT_DELIM << _charge << NEW_LINE
+        << "retTime" << OUT_DELIM << _precursor.getIntensity() << NEW_LINE
+        << "precursorCharge" << OUT_DELIM << _precursor.getCharge() << NEW_LINE
         << "plotHeight" << OUT_DELIM << plotHeight << NEW_LINE
         << "plotWidth" << OUT_DELIM << plotWidth << NEW_LINE
-        << "precursorInt" << OUT_DELIM << std::scientific << precursorInt << NEW_LINE;
+        << "precursorInt" << OUT_DELIM << std::scientific << _precursor.getIntensity() << NEW_LINE;
     out.unsetf(std::ios::scientific);
-    out << "precursorScan" << OUT_DELIM << _precursorScan << NEW_LINE
+    out << "precursorScan" << OUT_DELIM << _precursor.getScan() << NEW_LINE
         << ms2::END_METADATA <<NEW_LINE << ms2::BEGIN_SPECTRUM << NEW_LINE;
 }
 
@@ -41,8 +41,8 @@ void ms2::Spectrum::printSpectrum(std::ostream& out, bool includeMetaData) const
     }
     out << NEW_LINE;
 
-    for(ionsTypeConstIt it = ions.begin(); it != ions.end(); ++it)
-        out << it->getMZ() << OUT_DELIM << it->getIntensity() <<NEW_LINE;
+    for(const auto & ion : ions)
+        out << ion.getMZ() << OUT_DELIM << ion.getIntensity() <<NEW_LINE;
 
     if(includeMetaData)
         out << ms2::END_SPECTRUM <<NEW_LINE;
@@ -89,13 +89,9 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 
 void ms2::Spectrum::clear()
 {
+    scanData::Scan::clear();
     _scanNum = 0;
-    retTime = 0;
-    precursorInt = 0;
-    _precursorFile.clear();
-    _precursorScan = "";
-    _charge = 0;
-    _precursorMZ = "";
+    _precursor.clear();
     maxInt = 0;
     ions.clear();
     ions.shrink_to_fit();

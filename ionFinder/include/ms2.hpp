@@ -40,7 +40,7 @@ namespace ms2 {
 		//!Maps scan numbers to indecies in _offsetIndex
 		std::map<size_t, size_t> _scanMap;
 		//!Actual number of scans read from file
-		size_t _scanCount;
+		size_t _scanCount{};
 		
 		//metadata
 		//!base file name without extension

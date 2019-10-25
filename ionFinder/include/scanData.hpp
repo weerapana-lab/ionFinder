@@ -10,6 +10,7 @@
 #define scanData_hpp
 
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -19,68 +20,107 @@
 namespace scanData{
 	
 	class Scan;
-	
+	class PrecursorScan;
+
 	typedef std::vector<Scan> scansType;
 	std::string const OF_EXT = ".spectrum";
 	const char MOD_CHAR = '*';
 	
 	std::string removeStaticMod(std::string s, bool lowercase = true);
 	std::string removeDynamicMod(std::string s, bool lowercase = true);
-	
+
+    class PrecursorScan{
+    private:
+        std::string _mz;
+        std::string _scan;
+        double _rt;
+        std::string _file;
+        int _charge;
+        double _intensity;
+
+    public:
+        PrecursorScan(){
+            _mz = "";
+            _scan = "";
+            _rt = 0;
+            _file = "";
+            _charge = 0;
+            _intensity = 0;
+        }
+
+        PrecursorScan& operator = (const PrecursorScan& rhs){
+            _mz = rhs._mz;
+            _scan = rhs._scan;
+            _rt = rhs._rt;
+            _file = rhs._file;
+            _charge = 0;
+            _intensity = 0;
+            return *this;
+        }
+
+        //modifers
+        void setMZ(const std::string &mz);
+        void setScan(const std::string &scan);
+        void setRT(double rt);
+        void setFile(const std::string &file);
+        void setCharge(int);
+        void setIntensity(double);
+        void clear();
+
+        //properties
+        const std::string &getMZ() const;
+        const std::string &getScan() const;
+        double getRT() const;
+        const std::string &getFile() const;
+        double getIntensity() const;
+        int getCharge() const;
+    };
+
 	class Scan{
 	protected:
-		std::string _precursorFile;
 		size_t _scanNum;
-		std::string _sequence;
+        std::string _sequence;
 		std::string _fullSequence;
-		int _charge;
 		std::string _xcorr;
-		std::string _precursorMZ;
-		std::string _precursorScan;
 		bool _modified;
 		int _spectralCounts;
+
+        PrecursorScan _precursor;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
 		std::string makeOfSequenceFromSequence(std::string) const;
 	public:
-		Scan(){
-			_precursorFile = "";
+		Scan(): _precursor(){
 			_scanNum = 0;
 			_sequence = "";
-			_charge = 0;
-			_xcorr = "";
-			_precursorMZ = "";
-			_precursorScan = "";
 			_modified = false;
 			_spectralCounts = 0;
 		}
-		Scan(std::string sequence, size_t scanNum, std::string parentFile){
+		Scan(const std::string& sequence, size_t scanNum, const std::string& parentFile): _precursor(){
 			_sequence = makeSequenceFromFullSequence(sequence);
 			_fullSequence = sequence;
 			_scanNum = scanNum;
-			_precursorFile = parentFile;
 			_modified = utils::strContains(MOD_CHAR, _sequence);
 			_spectralCounts = 0;
+			_precursor.setFile(parentFile);
 		}
 		
 		Scan(std::string line){
-			initilizeFromLine(line);
+			initilizeFromLine(std::move(line));
 		}
-		~Scan() {}
+		~Scan() = default;
 
-        virtual //modifers
-		void clear();
+        virtual void clear();
 	
-		void operator = (const Scan& rhs){
-			_precursorFile = rhs._precursorFile;
+		Scan& operator = (const Scan& rhs){
 			_scanNum = rhs._scanNum;
 			_sequence = rhs._sequence;
 			_fullSequence = rhs._fullSequence;
-			_charge = rhs._charge;
 			_xcorr = rhs._xcorr;
-			_precursorScan = rhs._precursorScan;
 			_spectralCounts = rhs._spectralCounts;
+			_precursor = rhs._precursor;
+			return *this;
 		}
 		
 		void setSequence(std::string seq){
@@ -91,18 +131,6 @@ namespace scanData{
 			if(resetSequence)
 				_sequence = makeOfSequenceFromSequence(s);
 		}
-		void setPrecursorFile(std::string str){
-			_precursorFile = str;
-		}
-		void setCharge(int charge){
-			_charge = charge;
-		}
-		void setPrecursorMZ(std::string mz){
-			_precursorMZ = mz;
-		}
-		void setPrecursorScan(std::string s){
-			_precursorScan = s;
-		}
 		void setScanNum(size_t s){
 			_scanNum = s;
 		}
@@ -112,11 +140,11 @@ namespace scanData{
 		void setSpectralCounts(int sc){
 			_spectralCounts = sc;
 		}
-		
-		//properties
-		std::string getPrecursorFile() const{
-			return _precursorFile;
+		void setPrecursor(const PrecursorScan& rhs){
+		    _precursor = rhs;
 		}
+
+		//properties
 		size_t getScanNum() const{
 			return _scanNum;
 		}
@@ -125,15 +153,6 @@ namespace scanData{
 		}
 		std::string getFullSequence() const{
 			return _fullSequence;
-		}
-		int getCharge() const{
-			return _charge;
-		}
-		std::string getPrecursorMZ() const{
-			return _precursorMZ;
-		}
-		std::string getPrecursorScan() const{
-			return _precursorScan;
 		}
 		std::string getXcorr() const{
 			return _xcorr;
@@ -147,6 +166,8 @@ namespace scanData{
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;
+        const PrecursorScan& getPrecursor() const;
+        PrecursorScan& getPrecursor();
 	};
 }
 
