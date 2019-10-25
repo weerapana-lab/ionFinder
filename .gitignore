@@ -21,6 +21,7 @@ ionFinder/.idea/*
 *.pbs.*
 *.pbs
 *symbols.rds
+build/*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
