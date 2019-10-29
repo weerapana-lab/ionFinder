@@ -59,21 +59,45 @@ namespace scanData{
         }
 
         //modifers
-        void setMZ(const std::string &mz);
-        void setScan(const std::string &scan);
-        void setRT(double rt);
-        void setFile(const std::string &file);
-        void setCharge(int);
-        void setIntensity(double);
+        void setMZ(const std::string &mz){
+            _mz = mz;
+        }
+        void setScan(const std::string &scan){
+            _scan = scan;
+        }
+        void setRT(double rt){
+            _rt = rt;
+        }
+        void setFile(const std::string &file){
+            _file = file;
+        }
+        void setCharge(int charge){
+            _charge = charge;
+        }
+        void setIntensity(double intensity){
+            _intensity = intensity;
+        }
         void clear();
 
         //properties
-        const std::string &getMZ() const;
-        const std::string &getScan() const;
-        double getRT() const;
-        const std::string &getFile() const;
-        double getIntensity() const;
-        int getCharge() const;
+        const std::string &getMZ() const{
+            return _mz;
+        }
+        const std::string &getScan() const{
+            return _scan;
+        }
+        double getRT() const{
+            return _rt;
+        }
+        const std::string &getFile() const{
+            return _file;
+        }
+        double getIntensity() const{
+            return _intensity;
+        }
+        int getCharge() const{
+            return _charge;
+        }
     };
 
 	class Scan{
@@ -166,8 +190,12 @@ namespace scanData{
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;
-        const PrecursorScan& getPrecursor() const;
-        PrecursorScan& getPrecursor();
+        const PrecursorScan& getPrecursor() const{
+            return _precursor;
+        }
+        PrecursorScan& getPrecursor(){
+            return _precursor;
+        }
 	};
 }
 
