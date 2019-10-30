@@ -87,14 +87,6 @@ function(GitStateChangedAction _state_as_list)
 endfunction()
 
 
-function(WriteBlankGitHeader)
-    set(GIT_RETRIEVED_STATE "false")
-    set(GIT_HEAD_SHA1 "GIT_NOT_FOUND")
-    set(GIT_IS_DIRTY "GIT_NOT_FOUND")
-    set(GIT_LAST_COMMIT_DATE "GIT_NOT_FOUND")
-    configure_file("${GIT_PRE_CONFIGURE_FILE}" "${GIT_POST_CONFIGURE_FILE}" @ONLY)
-endfunction()
-
 # Function: GetGitState
 # Description: gets the current state of the git repo.
 # Args:
@@ -217,21 +209,17 @@ endfunction()
 # Description: primary entry-point to the script. Functions are selected based
 #              on whether it's configure or build time.
 function(Main)
-    #if(TRACK_GIT MATCHES ON)
-        if(_BUILD_TIME_CHECK_GIT)
-            # Check if the repo has changed.
-            # If so, run the change action.
-            CheckGit("${GIT_WORKING_DIR}" did_change state)
-            if(did_change)
-                GitStateChangedAction("${state}")
-            endif()
-        else()
-            # >> Executes at configure time.
-            SetupGitMonitoring()
+    if(_BUILD_TIME_CHECK_GIT)
+        # Check if the repo has changed.
+        # If so, run the change action.
+        CheckGit("${GIT_WORKING_DIR}" did_change state)
+        if(did_change)
+            GitStateChangedAction("${state}")
         endif()
-    #else()
-    #    WriteBlankGitHeader()
-    #endif()
+    else()
+        # >> Executes at configure time.
+        SetupGitMonitoring()
+    endif()
 
 endfunction()
 

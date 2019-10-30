@@ -14,21 +14,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(PROG_WD_DIR "${PROJECT_SOURCE_DIR}" CACHE STRING "Path to program source parent directory.")
 set(PROG_SHARE_DIR "${PROJECT_SOURCE_DIR}/share" CACHE STRING "Path directory with aa masses and default smod file.")
-
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPROG_WD_DIR=\\\"${PROG_WD_DIR}\\\"")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGIT_DATE=\\\"${PROG_GIT_DATE}\\\"")
-
-#set up cmake generated headers
-set(CONFIG_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in)
-set(CONFIG_POST_CONFIGURE_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/config.h)
-configure_file(${CONFIG_PRE_CONFIGURE_FILE} ${CONFIG_POST_CONFIGURE_FILE})
-
-#git tracking
-#option(TRACK_GIT "Include git status of build in executible?" ON)
 set(GIT_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_info.h.in)
 set(GIT_POST_CONFIGURE_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/git_info.h)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_watcher.cmake)
 
 add_executable(${ION_FINDER_TARGET}
         src/ionFinder/main.cpp
@@ -48,7 +35,6 @@ add_executable(${ION_FINDER_TARGET}
         src/ionFinder/inputFiles.cpp
         src/ionFinder/params.cpp)
 
-add_dependencies(${ION_FINDER_TARGET} check_git_repository)
 target_include_directories(${ION_FINDER_TARGET}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
@@ -62,6 +48,29 @@ target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
 #add thread library
 find_package(Threads)
 target_link_libraries(${ION_FINDER_TARGET} ${CMAKE_THREAD_LIBS_INIT})
+
+#set up cmake generated headers
+set(CONFIG_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in)
+set(CONFIG_POST_CONFIGURE_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/config.h)
+configure_file(${CONFIG_PRE_CONFIGURE_FILE} ${CONFIG_POST_CONFIGURE_FILE})
+
+#git tracking
+option(TRACK_GIT "Should git tracking be enabeled?" ON)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
+if(TRACK_GIT)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_watcher.cmake)
+    add_dependencies(${ION_FINDER_TARGET} check_git_repository)
+else()
+    function(WriteBlankGitHeader)
+        set(GIT_RETRIEVED_STATE "false")
+        set(GIT_HEAD_SHA1 "GIT_NOT_FOUND")
+        set(GIT_IS_DIRTY "false")
+        set(GIT_LAST_COMMIT_DATE "GIT_NOT_FOUND")
+        configure_file("${GIT_PRE_CONFIGURE_FILE}" "${GIT_POST_CONFIGURE_FILE}" @ONLY)
+    endfunction()
+    WriteBlankGitHeader()
+#    add_dependencies(${ION_FINDER_TARGET} ${GIT_POST_CONFIGURE_FILE})
+endif()
 
 option(BUILD_DOC "Build documentation" OFF)
 if(BUILD_DOC MATCHES ON)

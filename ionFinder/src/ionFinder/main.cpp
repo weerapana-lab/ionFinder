@@ -14,7 +14,6 @@ int main(int argc, const char** argv)
 	if(!pars.getArgs(argc, argv))
 		return -1;
 	
-	//std::cout << "ionFinder v" << BIN_VERSION << NEW_LINE;
 	pars.printVersion(std::cout);
 	
 	//read input files
