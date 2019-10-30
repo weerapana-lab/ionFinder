@@ -9,19 +9,13 @@
 #ifndef paramsBase_hpp
 #define paramsBase_hpp
 
-#ifndef GIT_VERSION
-#define GIT_VERSION "UNKNOWN"
-#endif
-
-#ifndef GIT_DATE
-#define GIT_DATE "UNKNOWN"
-#endif
-
 #include <iostream>
 #include <string>
 #include <cassert>
 
 #include <utils.hpp>
+#include <config.h>
+#include <git_info.h>
 
 namespace base{
 	

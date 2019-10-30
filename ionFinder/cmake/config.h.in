@@ -1,0 +1,9 @@
+
+// This file was created automatically by CMake.
+
+#ifndef config_hpp
+#define config_hpp
+
+#define PROG_WD_DIR "@PROG_WD_DIR@"
+
+#endif
