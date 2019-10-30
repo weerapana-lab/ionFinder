@@ -8,6 +8,8 @@
 
 #include <peptide.hpp>
 
+unsigned int PeptideNamespace::Peptide::obj_count = 0;
+
 PeptideNamespace::Species::Species(const PeptideNamespace::Species& rhs){
     mass = rhs.mass;
 }
@@ -623,7 +625,7 @@ double PeptideNamespace::calcMass(PeptideNamespace::PepIonIt begin, PeptideNames
  */
 std::string PeptideNamespace::concatMods(PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
-	std::string ret = "";
+	std::string ret;
 	for(auto it = begin; it != end; ++it)
 		if(it->hasDynamicMod())
 			ret += it->getMod();

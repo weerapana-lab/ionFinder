@@ -316,6 +316,9 @@ namespace PeptideNamespace{
         int nMod;
         //!Locations of dynamic modifications on peptide sequence
         std::vector<size_t> modLocs;
+        //!A unique identifier for each Peptide object created.
+        unsigned int _id;
+        static unsigned int obj_count;
 
         double parseStaticMod(size_t);
         void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
@@ -324,12 +327,14 @@ namespace PeptideNamespace{
     public:
         //constructors
         Peptide() : Ion(){
+            _id = Peptide::obj_count++;
             sequence = "";
             fullSequence = sequence;
             initialized = false;
             nMod = 0;
         }
         explicit Peptide(std::string _sequence) : Ion(){
+            _id = Peptide::obj_count++;
             sequence = _sequence;
             fullSequence = sequence;
             initialized = false;
@@ -407,6 +412,10 @@ namespace PeptideNamespace{
         const std::vector<size_t>& getModLocs() const{
             return modLocs;
         }
+        unsigned int getID() const{
+            return _id;
+        }
+
     };//end of class
 
 }//end of namespace
