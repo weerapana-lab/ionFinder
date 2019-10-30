@@ -20,7 +20,7 @@
 namespace base{
 	
 	std::string const PROG_WD = PROG_WD_DIR;
-	std::string const PROG_DB = PROG_WD + "/db";
+	std::string const PROG_DB = PROG_SHARE_DIR;
 	std::string const PROG_MAN = PROG_WD + "/man";
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";

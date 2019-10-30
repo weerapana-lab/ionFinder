@@ -29,9 +29,9 @@ namespace IonFinder{
 	std::string const PEPTIDE_CIT_STATS_OFNAME = "peptide_cit_stats.tsv";
 	std::string const DTAFILTER_INPUT_STR = "dtafilter";
 	std::string const TSV_INPUT_STR = "tsv";
-	
-	//!default residues which are isobaric with a modification
-	std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
+
+    //!default residues which are isobaric with a modification
+    std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
 	std::string const CIT_AMB_RESIDUES = "NQ";
 	
 	double const CIT_NL_MASS = 43.0058;
@@ -106,6 +106,7 @@ namespace IonFinder{
 		bool getArgs(int, const char* const[]) override;
 		
 		//properties
+        void printVersion(std::ostream& = std::cout) const;
 		const FilterFilesType& getFilterFiles() const{
 			return _filterFiles;
 		}

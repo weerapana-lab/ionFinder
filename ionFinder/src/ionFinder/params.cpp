@@ -347,8 +347,8 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "--version"))
 		{
-			std::cout << "ionFinder " << BIN_VERSION << NEW_LINE;
-			printGitVersion();
+			printVersion(std::cout);
+			printGitVersion(std::cout);
 			return false;
 		}
 		else if(utils::isFlag(argv[i])){
@@ -404,4 +404,14 @@ bool IonFinder::Params::getFlist()
 		}
 	}
     return !_filterFiles.empty();
+}
+
+/**
+ * Print program version and git repo info to stream.
+ * \param out Stream to print to.
+ */
+void IonFinder::Params::printVersion(std::ostream& out) const{
+    out << "ionFinder v" << PROG_VERSION_MAJOR << "."
+        << PROG_VERSION_MINOR << "."
+        << PROG_VERSION_PATCH << NEW_LINE;
 }

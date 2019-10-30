@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(ionFinder VERSION 1.0.1)
+project(ionFinder VERSION 0.1.1)
 
 SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD 11)
 #set(ION_FINDER_SRC "${ION_FINDER_SRC} ${COMMON_SOURCE_FILES}")
 
 set(PROG_WD_DIR "${PROJECT_SOURCE_DIR}" CACHE STRING "Path to program source parent directory.")
+set(PROG_SHARE_DIR "${PROJECT_SOURCE_DIR}/share" CACHE STRING "Path directory with aa masses and default smod file.")
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPROG_WD_DIR=\\\"${PROG_WD_DIR}\\\"")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGIT_DATE=\\\"${PROG_GIT_DATE}\\\"")

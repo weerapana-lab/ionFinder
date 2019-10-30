@@ -14,10 +14,6 @@
 #define PATH_MAX 1024
 #endif
 
-#ifndef BIN_VERSION
-#define BIN_VERSION "1.0"
-#endif
-
 #ifndef OUT_DELIM
 #define OUT_DELIM '\t'
 #endif

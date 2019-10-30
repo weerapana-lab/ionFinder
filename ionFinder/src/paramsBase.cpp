@@ -118,7 +118,7 @@ double base::ParamsBase::getMatchTolerance(double mz) const
 void base::ParamsBase::printGitVersion(std::ostream& out) const{
 	if(GIT_RETRIEVED_STATE) {
         out << "Last git commit: " << GIT_HEAD_SHA1 << NEW_LINE
-            << "git revision: " << GIT_LAST_COMMIT_DATE << NEW_LINE;
+            << "Git revision: " << GIT_LAST_COMMIT_DATE << NEW_LINE;
         if(GIT_IS_DIRTY)
             out << "WARN: there were uncommitted changes." << NEW_LINE;
     }
