@@ -47,6 +47,7 @@ void IonFinder::PeptideStats::consolidate(const PeptideStats& rhs)
 
     //combined contains cit
     containsCit = std::min(containsCit, rhs.containsCit);
+    addMod(rhs.modResidues);
 
     //combine ionTypesCount
     for(PeptideStats::IonType it = PeptideStats::IonType::First;

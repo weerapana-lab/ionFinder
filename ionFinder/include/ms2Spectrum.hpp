@@ -63,7 +63,7 @@ namespace ms2{
 			mz = _mz;
 			intensity = _int;
 		}
-		~Ion() = default;;
+		~Ion() = default;
 
         template<typename _Tp> void normalizeIntensity(_Tp den){
 			static_assert(std::is_arithmetic<_Tp>::value, "den must be arithmetic!");

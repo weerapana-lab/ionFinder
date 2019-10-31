@@ -47,14 +47,22 @@ namespace scanData{
             _charge = 0;
             _intensity = 0;
         }
+        PrecursorScan(const PrecursorScan& rhs){
+            _mz = rhs._mz;
+            _scan = rhs._scan;
+            _rt = rhs._rt;
+            _file = rhs._file;
+            _charge = rhs._charge;
+            _intensity = rhs._intensity;
+        }
 
         PrecursorScan& operator = (const PrecursorScan& rhs){
             _mz = rhs._mz;
             _scan = rhs._scan;
             _rt = rhs._rt;
             _file = rhs._file;
-            _charge = 0;
-            _intensity = 0;
+            _charge = rhs._charge;
+            _intensity = rhs._intensity;
             return *this;
         }
 
