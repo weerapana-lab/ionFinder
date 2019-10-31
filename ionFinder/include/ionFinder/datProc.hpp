@@ -18,6 +18,7 @@
 #include <chrono>
 #include <atomic>
 #include <stdexcept>
+#include <set>
 
 #include <ionFinder/ionFinder.hpp>
 #include <ionFinder/params.hpp>
@@ -78,7 +79,8 @@ namespace IonFinder{
 						   const IonFinder::Params&);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
-		
+
+
 	class PeptideStats{
 	public:
 		friend bool analyzeSequences(std::vector<Dtafilter::Scan>&,
@@ -108,8 +110,8 @@ namespace IonFinder{
 		enum class ContainsCitType {FALSE = 0, AMBIGUOUS = 1, LIKELY = 2, TRUE = 3};
 	private:
 		
-		typedef std::pair<std::string, int> IonTypeDatType;
-		typedef std::map<IonType, IonTypeDatType> IonTypesCountType;
+		typedef std::set<std::string> IonStrings;
+		typedef std::map<IonType, IonStrings> IonTypesCountType;
 		IonTypesCountType ionTypesCount;
 		
 		//!Does peptide contain cit
@@ -138,10 +140,8 @@ namespace IonFinder{
 		Dtafilter::Scan* _scan;
 		
 		void initStats();
-		//void initModLocs(const char* diffmods = "*");
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
 		void calcContainsCit();
-		void incrementIonCount(std::string ionStr, IonTypeDatType& ion, int inc = 1);
 		void addMod(std::string mod);
 	
 	public:		
@@ -162,7 +162,7 @@ namespace IonFinder{
 			_scan = new Dtafilter::Scan;
 			_fragDelim = FRAG_DELIM;
 			initStats();
-			
+
 			//Peptide data
 			sequence = p.getSequence();
 			fullSequence = scanData::removeStaticMod(p.getFullSequence(), false);

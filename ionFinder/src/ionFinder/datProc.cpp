@@ -23,6 +23,7 @@ IonFinder::PeptideStats::PeptideStats(const IonFinder::PeptideStats& rhs) {
     _scan = rhs._scan;
 }
 
+//!Copy assignment
 IonFinder::PeptideStats& IonFinder::PeptideStats::operator=(const IonFinder::PeptideStats& rhs)
 {
     _fragDelim = rhs._fragDelim;
@@ -52,8 +53,10 @@ void IonFinder::PeptideStats::consolidate(const PeptideStats& rhs)
         it != PeptideStats::IonType::Last;
         ++it)
     {
-        utils::addChar(rhs.ionTypesCount.at(it).first, ionTypesCount.at(it).first, _fragDelim);
-        ionTypesCount.at(it).second += rhs.ionTypesCount.at(it).second;
+        //utils::addChar(rhs.ionTypesCount.at(it).first, ionTypesCount.at(it).first, _fragDelim);
+        ionTypesCount.at(it).insert(rhs.ionTypesCount.at(it).begin(),
+                                          rhs.ionTypesCount.at(it).end());
+//        ionTypesCount.at(it).second += rhs.ionTypesCount.at(it).second;
     }
 }
 
@@ -61,23 +64,10 @@ void IonFinder::PeptideStats::consolidate(const PeptideStats& rhs)
 void IonFinder::PeptideStats::initStats()
 {
 	for(IonType i = IonType::First; i != IonType::Last; ++i){
-		ionTypesCount[i] = IonTypeDatType("", 0);
+		ionTypesCount[i] = IonStrings();
 	}
-	
-	containsCit = ContainsCitType::FALSE;
-}
 
-/**
- Add ionStr and increment ion count for ion
- \param ionStr ion string to add
- \param ion PeptideStats::IonTypeDatType to increment
- \param inc amt to add to ion count
- */
-void IonFinder::PeptideStats::incrementIonCount(std::string ionStr,
-												PeptideStats::IonTypeDatType& ion,
-												int inc){
-	utils::addChar(ionStr, ion.first, _fragDelim);
-	ion.second += inc;
+	containsCit = ContainsCitType::FALSE;
 }
 
 /**
@@ -121,7 +111,7 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 	
 	//increment total fragment ions found
 	std::string ionStr = seq.getLabel(true);
-	incrementIonCount(ionStr, ionTypesCount[IonType::FRAG]);
+	ionTypesCount[IonType::FRAG].insert(ionStr);
 	
 	//check if seq spans any modified residues
 	//for(unsigned long & modLoc : modLocs)
@@ -133,29 +123,29 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 			if(seq.isNL()){
 				//check multiple of neutral loss
 				if(seq.getNumNl() == seq.getNumMod()){ //if equal to number of modifications, determining NL
-					incrementIonCount(ionStr, ionTypesCount[IonType::DET_NL_FRAG]);
+					ionTypesCount[IonType::DET_NL_FRAG].insert(ionStr);
 				}
 				else{ //if not equal, artifiact fragment
 					//std::cout << seq.getLabel() << NEW_LINE;
-					incrementIonCount(ionStr, ionTypesCount[IonType::AMB_NL_FRAG]);
+					ionTypesCount[IonType::AMB_NL_FRAG].insert(ionStr);
 				}
 			}
 			else
 			{
 				if(containsAmbResidues(ambResidues, seq.getSequence())){ //is ambModFrag
-					incrementIonCount(ionStr, ionTypesCount[IonType::AMB_FRAG]);
+					ionTypesCount[IonType::AMB_FRAG].insert(ionStr);
 				}
 				else{ //is detFrag
-					incrementIonCount(ionStr, ionTypesCount[IonType::DET_FRAG]);
+					ionTypesCount[IonType::DET_FRAG].insert(ionStr);
 				}
 			}
 		}
 		else{
 			if(seq.isNL()){ //is artifact NL frag
-				incrementIonCount(ionStr, ionTypesCount[IonType::ART_NL_FRAG]);
+				ionTypesCount[IonType::ART_NL_FRAG].insert(ionStr);
 			}
 			else{ //is amg frag
-				incrementIonCount(ionStr, ionTypesCount[IonType::AMB_FRAG]);
+				ionTypesCount[IonType::AMB_FRAG].insert(ionStr);
 			}//end of else
 		}//end of else
 	//}//end of for
@@ -180,68 +170,44 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 		std::cout << "Done!" << NEW_LINE;
 	}
 
-	//int modCount = 0;
-	//for(const auto& peptide: peptides){
-	//    modCount += peptide.getNumMod();
-	//}
-
-	//std::vector
-
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
 		std::vector<IonFinder::PeptideStats> this_stats;
 	    for(auto mod_it = it->getModLocs().begin(); mod_it != it->getModLocs().end(); ++mod_it)
 		{
-            /*if(it->getSequence() == "VRVFQATRGK"){
-                std::cout << "Found!" << NEW_LINE;
-                it->printFragments(std::cout);
-            }*/
-            /*if(scans[it - peptides.begin()].getScanNum() == 13288){
-                std::cout << "Found!" << NEW_LINE;
-                it->printFragments(std::cout);
-            }*/
-
             //initialize new pepStat object
-            IonFinder::PeptideStats pepStat(*it); //init pepStat
-            pepStat._scan = &scans[it - peptides.begin()]; //add pointer to scan
+            //IonFinder::PeptideStats pepStat(*it); //init pepStat
+            this_stats.emplace_back(*it);
+            this_stats.back()._scan = &scans[it - peptides.begin()]; //add pointer to scan
             size_t nFragments = it->getNumFragments();
 
             //iterate through ion fragmetns
             for (size_t i = 0; i < nFragments; i++) {
-                //if(it->getFragment(i).getLabel(false) == "b4-43")
-                //	std::cout << it->getFragment(i).getLabel(true) << NEW_LINE;
-
                 //skip if not found
                 if (it->getFragment(i).getFound()) {
-                    pepStat.addSeq(it->getFragment(i), *mod_it, pars.getAmbigiousResidues());
+                    this_stats.back().addSeq(it->getFragment(i), *mod_it, pars.getAmbigiousResidues());
                 } //end of if
             }//end of for i
-            pepStat.calcContainsCit();
+            this_stats.back().calcContainsCit();
 
-            //add modified residues if fasta file was specified
             if (addModResidues) {
-            //    for (auto it2 = pepStat.modLocs.begin(); it2 != pepStat.modLocs.end(); ++it2) {
                     bool found; //set to true if peptide and prot sequences are found in FastaFile
-                    std::string modTemp = seqFile.getModifiedResidue(pepStat._scan->getParentID(),
-                                                                     pepStat.sequence, int(*mod_it),
+                    std::string modTemp = seqFile.getModifiedResidue(this_stats.back()._scan->getParentID(),
+                                                                     this_stats.back().sequence, int(*mod_it),
                                                                      pars.getVerbose(), found);
-                    pepStat.addMod(modTemp);
+                    this_stats.back().addMod(modTemp);
                     if (!found)
                         nSeqNotFound++;
-             //   }
             }
-            this_stats.push_back(pepStat);
-            //peptideStats.push_back(pepStat);
         }//end for mod_it
 
+        assert(pars.getGroupMod() == 0 || pars.getGroupMod() == 1);
         if(pars.getGroupMod() == 0) {
 
             PeptideStats::ContainsCitType cc = PeptideStats::ContainsCitType::TRUE;
             for (const auto &s:this_stats) {
                 cc = std::min(cc, s.containsCit);
-                //std::cout << PeptideStats::containsCitToStr(s.containsCit) << ",";
             }
-            //std::cout << " -> " <<  PeptideStats::containsCitToStr(cc) << "\n";
 
             for(auto & this_stat : this_stats) {
                 this_stat.containsCit = cc;
@@ -249,16 +215,13 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
             }
         }
         else {
-            for(auto this_stats_it = this_stats.begin(); this_stats_it != this_stats.end(); ++this_stats_it){
-                if(this_stats_it == this_stats.begin())
-                    peptideStats.push_back(*this_stats_it);
-                else peptideStats.back().consolidate(*this_stats_it);
+            for(auto s = this_stats.begin(); s != this_stats.end(); ++s){
+                if(s == this_stats.begin())
+                    peptideStats.push_back(*s);
+                else peptideStats.back().consolidate(*s);
             }
         }
 	    
-	    //if(this_stats.size() > 3)
-	    //    std::cout << "Found!\n";
-
 	}//end if for it
 	if(nSeqNotFound > 0){
 		std::cerr << NEW_LINE << nSeqNotFound << " protein sequences not found in " <<
@@ -540,21 +503,21 @@ void IonFinder::PeptideStats::calcContainsCit()
 	if(modLocs.back() == sequence.length() - 1) return;
 	
 	//is there more than 1 determining NLs?
-	if(ionTypesCount[IonType::DET_NL_FRAG].second > 1){
+	if(ionTypesCount[IonType::DET_NL_FRAG].size() > 1){
 		containsCit = ContainsCitType::TRUE;
 		return;
 	}
 	
 	//are there 1 or more determining NLs or determining frags?
-	if(ionTypesCount[IonType::DET_NL_FRAG].second >= 1 ||
-	   ionTypesCount[IonType::DET_FRAG].second >= 1){
+	if(ionTypesCount[IonType::DET_NL_FRAG].size() >= 1 ||
+	   ionTypesCount[IonType::DET_FRAG].size() >= 1){
 		containsCit = ContainsCitType::LIKELY;
 		return;
 	}
 	
 	//are there 1 more ambiguous fragments?
-	if(ionTypesCount[IonType::AMB_FRAG].second >= 1 ||
-	    ionTypesCount[IonType::AMB_NL_FRAG].second>= 1){
+	if(ionTypesCount[IonType::AMB_FRAG].size() >= 1 ||
+	    ionTypesCount[IonType::AMB_NL_FRAG].size()>= 1){
 		containsCit = ContainsCitType::AMBIGUOUS;
 		return;
 	}
@@ -644,7 +607,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	}
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 	
-	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
+	std::string otherHeaders = "peptide_unique_ID protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
@@ -664,38 +627,47 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	for(const auto & stat : stats)
 	{
 		//scan data
-		outF << stat._scan->getParentID() <<
-		OUT_DELIM << stat._scan->getParentProtein() <<
-		OUT_DELIM << stat._scan->getParentDescription() <<
-		OUT_DELIM << stat._scan->getFullSequence() <<
-		OUT_DELIM << scanData::removeStaticMod(stat._scan->getSequence()) <<
-		OUT_DELIM << stat._scan->getPrecursor().getMZ() <<
-		OUT_DELIM << (!stat.modLocs.empty()) <<
-		OUT_DELIM << stat.modResidues <<
-		OUT_DELIM << stat._scan->getPrecursor().getCharge() <<
-		OUT_DELIM << stat._scan->getUnique() <<
-		OUT_DELIM << stat._scan->getXcorr() <<
-		OUT_DELIM << stat._scan->getSpectralCounts() <<
-		OUT_DELIM << stat._scan->getScanNum() <<
-		OUT_DELIM << stat._scan->getPrecursor().getScan() <<
-		OUT_DELIM << stat._scan->getPrecursor().getRT() <<
-		OUT_DELIM << utils::baseName(stat._scan->getPrecursor().getFile()) <<
-		OUT_DELIM << stat._scan->getSampleName();
+		outF << stat._id <<
+		    OUT_DELIM << stat._scan->getParentID() <<
+		    OUT_DELIM << stat._scan->getParentProtein() <<
+		    OUT_DELIM << stat._scan->getParentDescription() <<
+		    OUT_DELIM << stat._scan->getFullSequence() <<
+		    OUT_DELIM << scanData::removeStaticMod(stat._scan->getSequence()) <<
+		    OUT_DELIM << stat._scan->getPrecursor().getMZ() <<
+		    OUT_DELIM << (!stat.modLocs.empty()) <<
+		    OUT_DELIM << stat.modResidues <<
+		    OUT_DELIM << stat._scan->getPrecursor().getCharge() <<
+		    OUT_DELIM << stat._scan->getUnique() <<
+		    OUT_DELIM << stat._scan->getXcorr() <<
+		    OUT_DELIM << stat._scan->getSpectralCounts() <<
+		    OUT_DELIM << stat._scan->getScanNum() <<
+		    OUT_DELIM << stat._scan->getPrecursor().getScan() <<
+		    OUT_DELIM << stat._scan->getPrecursor().getRT() <<
+		    OUT_DELIM << utils::baseName(stat._scan->getPrecursor().getFile()) <<
+		    OUT_DELIM << stat._scan->getSampleName();
 		
 		//peptide analysis data
 		outF << OUT_DELIM;
 		if(pars.getCalcNL())
 			 outF << PeptideStats::containsCitToStr(stat.containsCit);
 		else{
-			outF << (stat.ionTypesCount.at(itcType::DET_FRAG).second > 0);
+			outF << (stat.ionTypesCount.at(itcType::DET_FRAG).size() > 0);
 		}
 		
 		for(auto & _pepStat : _pepStats)
-			outF << OUT_DELIM << stat.ionTypesCount.at(_pepStat).second;
-		
-		for(auto & _pepStat : _pepStats)
-			outF << OUT_DELIM << stat.ionTypesCount.at(_pepStat).first;
-		
+			outF << OUT_DELIM << stat.ionTypesCount.at(_pepStat).size();
+
+		for(auto & _pepStat : _pepStats){
+		    outF << OUT_DELIM;
+            for(auto it = stat.ionTypesCount.at(_pepStat).begin();
+                it != stat.ionTypesCount.at(_pepStat).end();
+                ++it)
+            {
+                if(it == stat.ionTypesCount.at(_pepStat).begin())
+                    outF << *it;
+                else outF << "|" << *it;
+            }
+        }
 		outF << NEW_LINE;
 	}
 	return true;
