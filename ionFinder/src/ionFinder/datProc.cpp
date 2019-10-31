@@ -15,6 +15,7 @@ IonFinder::PeptideStats::PeptideStats(const IonFinder::PeptideStats& rhs) {
     containsCit = rhs.containsCit;
     sequence = rhs.sequence;
     modLocs = rhs.modLocs;
+    modResidues = rhs.modResidues;
     _id = rhs._id;
     charge = rhs.charge;
     fullSequence = rhs.fullSequence;
@@ -31,6 +32,7 @@ IonFinder::PeptideStats& IonFinder::PeptideStats::operator=(const IonFinder::Pep
     containsCit = rhs.containsCit;
     sequence = rhs.sequence;
     modLocs = rhs.modLocs;
+    modResidues = rhs.modResidues;
     _id = rhs._id;
     charge = rhs.charge;
     fullSequence = rhs.fullSequence;
@@ -666,7 +668,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
             {
                 if(it == stat.ionTypesCount.at(_pepStat).begin())
                     outF << *it;
-                else outF << "|" << *it;
+                else outF << stat._fragDelim << *it;
             }
         }
 		outF << NEW_LINE;
