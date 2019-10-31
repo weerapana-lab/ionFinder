@@ -17,6 +17,7 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
+#include <stdexcept>
 
 #include <ionFinder/ionFinder.hpp>
 #include <ionFinder/params.hpp>
@@ -37,6 +38,7 @@ namespace IonFinder{
 	int const N_ION_TYPES = 6;
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambFrag",
 		 "detNLFrag", "ambNLFrag", "artNLFrag"};
+	const std::string CONTAINS_CIT_STR [] {"false", "ambiguous", "likely", "true"};
 	
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
@@ -102,6 +104,8 @@ namespace IonFinder{
 			Last,
 			First = FRAG
 		};
+
+		enum class ContainsCitType {FALSE = 0, AMBIGUOUS = 1, LIKELY = 2, TRUE = 3};
 	private:
 		
 		typedef std::pair<std::string, int> IonTypeDatType;
@@ -109,8 +113,8 @@ namespace IonFinder{
 		IonTypesCountType ionTypesCount;
 		
 		//!Does peptide contain cit
-		std::string containsCit;
-		
+		ContainsCitType containsCit;
+
 		//!Fragment deliminator in output
 		std::string _fragDelim;
 		
@@ -123,6 +127,9 @@ namespace IonFinder{
 		double mass;
 		//!Positions of modifications
 		std::vector<size_t> modLocs;
+
+		//!unique identifier of peptide
+		unsigned int _id;
 		
 		//!Positions of modified residues on protein
 		std::string modResidues;
@@ -142,12 +149,13 @@ namespace IonFinder{
 			_scan = new Dtafilter::Scan;
 			initStats();
 			_fragDelim = FRAG_DELIM;
-			
+
 			//peptide data
 			sequence = "";
 			fullSequence = "";
 			charge = 0;
 			mass = 0;
+			_id = -1;
 		}
 		explicit PeptideStats(const PeptideNamespace::Peptide& p){
 			//PeptideStats data
@@ -162,12 +170,23 @@ namespace IonFinder{
 			mass = p.getMass();
 			modLocs.clear();
 			modLocs.insert(modLocs.begin(), p.getModLocs().begin(), p.getModLocs().end());
+			_id = p.getID();
 		}
+		PeptideStats(const PeptideStats&);
+
 		~PeptideStats() = default;
-		
+
+		//properties
+		bool canConsolidate(const PeptideStats& rhs) const {
+		    return _id == rhs._id;
+		}
+
 		//modifers
-		void addSeq(const PeptideNamespace::FragmentIon&, const std::string&);
+		PeptideStats& operator = (const PeptideStats&);
+		void addSeq(const PeptideNamespace::FragmentIon&, unsigned long modLoc, const std::string&);
 		static std::string ionTypeToStr(const IonType&);
+		static std::string containsCitToStr(const ContainsCitType&);
+		void consolidate(const PeptideStats&);
 	};
 	
 	inline PeptideStats::IonType operator++(PeptideStats::IonType& x ){

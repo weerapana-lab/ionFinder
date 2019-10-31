@@ -166,6 +166,20 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
+        if(!strcmp(argv[i], "-g") || !strcmp(argv[i], "--groupMod"))
+        {
+            if(!utils::isArg(argv[++i])) {
+                usage();
+                return false;
+            }
+            if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+            {
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "--groupMod" << NEW_LINE;
+                return false;
+            }
+            _groupMod = std::stoi(argv[i]);
+            continue;
+        }
         if(!strcmp(argv[i], "--nlIntCo"))
         {
             if(!utils::isArg(argv[++i]))

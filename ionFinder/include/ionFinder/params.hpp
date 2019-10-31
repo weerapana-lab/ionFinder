@@ -69,7 +69,7 @@ namespace IonFinder{
 		bool _inDirSpecified;
 
 		//!Intensity cutoff for
-		double _nlIntCo{};
+		double _nlIntCo;
 
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
@@ -79,10 +79,13 @@ namespace IonFinder{
 		
 		//! path of fasta file to get modified residue numbers
 		std::string _fastaFile;
+
+		//! How to deal with peptides with multiple modifications
+		int _groupMod;
 		
 		bool getFlist();
 		unsigned int computeThreads() const;
-		
+
 	public:
 		
 		Params() : ParamsBase(PROG_USAGE_FNAME, PROG_HELP_FILE){
@@ -100,6 +103,7 @@ namespace IonFinder{
 			_numThread = computeThreads();
 			_inDirSpecified = false;
 			_nlIntCo = 0;
+			_groupMod = 1;
 		}
 		
 		//modifers
@@ -153,6 +157,9 @@ namespace IonFinder{
 		}
 		double getNlIntCo() const{
 		    return _nlIntCo;
+		}
+		int getGroupMod() const{
+		    return _groupMod;
 		}
 	};
 }
