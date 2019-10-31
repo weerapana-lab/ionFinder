@@ -19,8 +19,6 @@ set(GIT_POST_CONFIGURE_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/git_info.h)
 
 add_executable(${ION_FINDER_TARGET}
         src/ionFinder/main.cpp
-        ${CONFIG_POST_CONFIGURE_FILE}
-        ${GIT_POST_CONFIGURE_FILE}
         src/scanData.cpp
         src/geometry.cpp
         src/calcLableLocs.cpp
@@ -69,7 +67,6 @@ else()
         configure_file("${GIT_PRE_CONFIGURE_FILE}" "${GIT_POST_CONFIGURE_FILE}" @ONLY)
     endfunction()
     WriteBlankGitHeader()
-#    add_dependencies(${ION_FINDER_TARGET} ${GIT_POST_CONFIGURE_FILE})
 endif()
 
 option(BUILD_DOC "Build documentation" OFF)
@@ -115,6 +112,7 @@ if(BUILD_MAN_PDF MATCHES ON)
 
             add_custom_target(${target}_help_pdf ALL
                     COMMAND sh ${BUILD_MAN_PDF_OUT}
+                    DEPENDS ${BUILD_MAN_PDF_IN} ${TARGET_MAN_PDF_IN}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
                     COMMENT "Generating ${TARGET_MAN_PDF_OUT}"
                     VERBATIM)
@@ -132,4 +130,4 @@ if(BUILD_MAN_PDF MATCHES ON)
 
     build_man_page(${ION_FINDER_TARGET})
     #build_man_page(ms2_annotator)
-endif ()
+endif()
