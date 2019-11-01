@@ -85,7 +85,7 @@ The most intense ion will be used.
 The ion with the closest mz to the predicted mz for the fragment will be used.
 .in
 
-.SS INPUT FILTERING OPTIONS
+.SS PEPTIDE FILTERING OPTIONS
 .TP
 \fB-rev \fI<0/1>\fR
 Specify whether to include decoy matches in spectrum output file. \fB1\fR is the default.
@@ -132,7 +132,13 @@ Minimum ion MZ to be considered from \fI.ms2\fR files. By default all identified
 Maximum ion MZ to be considered from \fI.ms2\fR files. By default all identified ions are considered.
 .TP
 \fB-minInt \fI<relative_intensity>\fR
-Minimum relative intensity to be considered from \fI.ms2\fR files.  Ion intensities are normalized to 100 before labeling, so \fB-minInt\fR should be supplied as a relative intensity.  By default, all ion intensities are considered.
+Minimum relative intensity to include from \fI.ms2\fR files.  Ion intensities are normalized to 100 before labeling, so \fB-minInt\fR should be supplied as a relative intensity. If this option is set, an intensity filter will be applied to spectra before annotation. By default, all ion intensities are included.
+.TP
+\fB-minLabInt \fI<relative_intensity>\fR
+Minimum relative intensity to include from \fI.ms2\fR files. If this option is set, only ion with relative intensities above \fI<relative_intensity>\fR will be labeled. By default, all ions are considered in labeling regardless of intensity.
+.TP
+\fB-minNlLabInt \fI<relative_intensity>\fR
+Same as \fB-minLabInt\fR, but only applies to neutral loss ions.
 .TP
 \fB--incAllIons \fI<0/1>\fR
 Specify whether to include unlabeled ions in spectrum output file. \fB1\fR is the default.
@@ -149,7 +155,7 @@ Only include labeled fragment ions in spectrum output file.
 Include all ions in spectrum output file.
 .in
 
-.SS INPUT / OUTPUT OPTIONS
+.SS MS2 PLOTTING OPTIONS
 .TP
 \fB-p, --printSpectra\fR
 Print \fI.spectrum\fR files for each peptide analyzed?
@@ -159,6 +165,8 @@ Specify ms2 plot height in inches to calculate label positions for in \fI.spectr
 .TP
 \fB-w, --plotWidth\fR \fI<height>\fR
 Specify ms2 plot width in inches to calculate label positions for in \fI.spectrum\fR output files. Default is \fB12\fR inches.
+
+.SS INPUT / OUTPUT OPTIONS
 .TP
 \fB-i, --inputMode\fR \fI<input_mode>\fR
 Specify how peptides to search for in .ms2 file will be supplied. Default is \fBdtafilter\fR.
@@ -190,6 +198,21 @@ Set default name of DTASelect-filter files.  By default, \fI<name>\fR is \fIDTAS
 .TP
 \fB--fastaFile\fR \fI<path>\fR
 Specify .fasta formatted file to lookup numbers of modified residues in \fIpeptide_cit_stats.tsv\fR.
+.TP
+\fB-g, --groupMod\fR \fI<group_method>\fR
+Choose how to group peptides with multiple modifications. \fB1\fR is the default.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Do not group modifications. The output file will have a separate line for each modification site in a peptide.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Group modifications onto a single line for each peptide.
+.in
 .TP
 \fB--nThread\fR \fI<n_thread>\fR
 Choose number of threads to use. The part of \fBionFinder\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
