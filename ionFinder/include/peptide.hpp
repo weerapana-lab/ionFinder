@@ -323,7 +323,7 @@ namespace PeptideNamespace{
         double parseStaticMod(size_t);
         void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
                         const char* diffmods = "*");
-        int nModsInSpan(size_t beg, size_t end) const;
+        size_t nModsInSpan(size_t beg, size_t end) const;
     public:
         //constructors
         Peptide() : Ion(){

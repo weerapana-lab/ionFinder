@@ -200,7 +200,7 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 	size_t beg_end, end_beg;
 	
 	size_t len = aminoAcids.size();
-	for(int i = 0; i < len; i++)
+	for(size_t i = 0; i < len; i++)
 	{
 		beg_end = i + 1;
 		end_beg = i;
@@ -267,9 +267,9 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 	}*/
 }
 
-int PeptideNamespace::Peptide::nModsInSpan(size_t beg, size_t end) const
+size_t PeptideNamespace::Peptide::nModsInSpan(size_t beg, size_t end) const
 {
-	int ret = 0;
+	size_t ret = 0;
 	for(auto it = modLocs.begin(); it != modLocs.end(); ++it)
 		if(utils::inSpan(beg, end, *it))
 			ret++;
@@ -367,7 +367,7 @@ void PeptideNamespace::Peptide::addNeutralLoss(double lossMass, bool labelDecoyN
 			
 			//calc forceLabel
 			if(!labelDecoyNL){
-				int modCount_temp = nModsInSpan(fragments.back().getBegin(), fragments.back().getEnd());
+				size_t modCount_temp = nModsInSpan(fragments.back().getBegin(), fragments.back().getEnd());
 				bool forceLabel = modCount_temp == fragments.back().getNumNl();
 				fragments.back().setForceLabel(forceLabel);
 			}//end if

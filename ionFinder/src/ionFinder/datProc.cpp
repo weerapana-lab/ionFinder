@@ -549,6 +549,8 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 			break;
 		case IonType::Last: return "Last";
 			break;
+	    default:
+	        throw std::runtime_error("No a valid option!");
 	}
 }
 
@@ -563,6 +565,8 @@ std::string IonFinder::PeptideStats::containsCitToStr(const ContainsCitType& cc)
             break;
         case ContainsCitType::TRUE: return CONTAINS_CIT_STR[3];
             break;
+        default:
+            throw std::runtime_error("No a valid option!");
     }
 }
 

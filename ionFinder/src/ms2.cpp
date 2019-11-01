@@ -100,7 +100,7 @@ bool ms2::Ms2File::getMetaData()
 	size_t end = utils::offset(_buffer, _size, "LastScan") + 100;
 	for(size_t i = 0; i < end; i++)
 		ss.put(*(_buffer + i));
-	size_t sLen = ss.str().length();
+	std::streampos sLen = std::streampos(ss.str().length());
 	
 	std::vector<std::string> elems;
 	int mdCount = 0;
