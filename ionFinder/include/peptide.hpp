@@ -267,7 +267,7 @@ namespace PeptideNamespace{
         std::string ionTypeToStr() const;
         std::string getNLStr() const;
         bool isModified() const{
-            return _mod.empty();
+            return !_mod.empty();
         }
         /**
          * \return true if fragment is neutral loss ion

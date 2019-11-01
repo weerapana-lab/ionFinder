@@ -370,7 +370,7 @@ void PeptideNamespace::Peptide::addNeutralLoss(double lossMass, bool labelDecoyN
 			//calc forceLabel
 			if(!labelDecoyNL){
 				size_t modCount_temp = nModsInSpan(fragments.back().getBegin(), fragments.back().getEnd());
-				bool forceLabel = modCount_temp == fragments.back().getNumNl();
+				bool forceLabel = (modCount_temp == fragments.back().getNumNl());
 				fragments.back().setForceLabel(forceLabel);
 			}//end if
 		}//end for j

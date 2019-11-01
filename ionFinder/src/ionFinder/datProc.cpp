@@ -128,7 +128,7 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 				if(seq.getNumNl() == seq.getNumMod()){ //if equal to number of modifications, determining NL
 					ionTypesCount[IonType::DET_NL_FRAG].insert(ionStr);
 				}
-				else{ //if not equal, artifiact fragment
+				else{ //if not equal, ambiguous NL fragment
 					//std::cout << seq.getLabel() << NEW_LINE;
 					ionTypesCount[IonType::AMB_NL_FRAG].insert(ionStr);
 				}
@@ -145,7 +145,9 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
 		}
 		else{
 			if(seq.isNL()){ //is artifact NL frag
-				ionTypesCount[IonType::ART_NL_FRAG].insert(ionStr);
+				if(seq.isModified() && (seq.getNumNl() <= seq.getNumMod()))
+                    ionTypesCount[IonType::AMB_NL_FRAG].insert(ionStr);
+			    else ionTypesCount[IonType::ART_NL_FRAG].insert(ionStr);
 			}
 			else{ //is amg frag
 				ionTypesCount[IonType::AMB_FRAG].insert(ionStr);
