@@ -461,7 +461,13 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 			throw std::runtime_error("\nError reading scan!");
 			return;
 		}
-		scans[i].setPrecursor(spectrum.getPrecursor());
+
+		//set all but precursor info except file
+        scans[i].getPrecursor().setMZ(spectrum.getPrecursor().getMZ());
+        scans[i].getPrecursor().setScan(spectrum.getPrecursor().getScan());
+        scans[i].getPrecursor().setRT(spectrum.getPrecursor().getRT());
+        scans[i].getPrecursor().setCharge(spectrum.getPrecursor().getCharge());
+        scans[i].getPrecursor().setIntensity(spectrum.getPrecursor().getIntensity());
 
 		spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
         //spectrum.labelSpectrum(peptides.back(), pars);

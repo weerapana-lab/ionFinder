@@ -51,7 +51,7 @@ std::string scanData::removeStaticMod(std::string s, bool lowercase)
 		return s;
 	
 	std::string ret = "";
-	for(int i = 0; i < s.length(); i++)
+	for(size_t i = 0; i < s.length(); i++)
 	{
 		if(s[i] == ')')
 			throw std::runtime_error("Invalid sequence: " + s);
@@ -89,7 +89,7 @@ std::string scanData::removeDynamicMod(std::string s, bool lowercase)
 		return s;
 	
 	std::string ret = "";
-	for(int i = 0; i < s.length(); i++)
+	for(size_t i = 0; i < s.length(); i++)
 	{
 		if(s[i] == scanData::MOD_CHAR){
 			if(lowercase)
