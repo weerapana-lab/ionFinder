@@ -93,6 +93,8 @@ std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
 			break;
 		case IonType::M_NL : return "M_nl";
 			break;
+		default:
+			throw std::runtime_error("Not a valid option!");
 	}
 }
 
