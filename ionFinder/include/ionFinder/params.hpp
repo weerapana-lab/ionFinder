@@ -69,7 +69,7 @@ namespace IonFinder{
 		bool _inDirSpecified;
 
 		//!Intensity cutoff for
-		double _nlIntCo;
+		double _minNlLabelIntensity;
 
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
@@ -102,7 +102,7 @@ namespace IonFinder{
 			ofname = PEPTIDE_MOD_STATS_OFNAME;
 			_numThread = computeThreads();
 			_inDirSpecified = false;
-			_nlIntCo = 0;
+            _minNlLabelIntensity = 0;
 			_groupMod = 1;
 		}
 		
@@ -156,7 +156,7 @@ namespace IonFinder{
 			return _fastaFile;
 		}
 		double getNlIntCo() const{
-		    return _nlIntCo;
+		    return _minNlLabelIntensity;
 		}
 		int getGroupMod() const{
 		    return _groupMod;

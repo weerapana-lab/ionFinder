@@ -462,7 +462,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 			return;
 		}
 
-		//set all but precursor info except file
+		//set all precursor info except file
         scans[i].getPrecursor().setMZ(spectrum.getPrecursor().getMZ());
         scans[i].getPrecursor().setScan(spectrum.getPrecursor().getScan());
         scans[i].getPrecursor().setRT(spectrum.getPrecursor().getRT());
