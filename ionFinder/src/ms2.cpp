@@ -183,14 +183,12 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 		if(elems[0] == "S")
 		{
 			assert(elems.size() == 4);
-			utils::split(line, IN_DELIM, elems);
 			scan._scanNum = std::stoi(elems[2]);
 			scan.getPrecursor().setMZ(elems[3]);
 		}
 		else if(elems[0] == "I")
 		{
 			assert(elems.size() == 3);
-			utils::split(line, IN_DELIM, elems);
 			if(elems[1] == "RetTime")
 				scan.getPrecursor().setRT(std::stod(elems[2]));
 			else if(elems[1] == "PrecursorInt")
@@ -203,7 +201,6 @@ bool ms2::Ms2File::getScan(size_t queryScan, ms2::Spectrum& scan) const
 		else if(elems[0] == "Z"){
 			if(!z_found){
 				assert(elems.size() == 3);
-				utils::split(line, IN_DELIM, elems);
 				scan.getPrecursor().setCharge(std::stoi(elems[1]));
 				z_found = true;
 			}
