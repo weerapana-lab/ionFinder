@@ -60,9 +60,22 @@ find_package(Threads)
 target_link_libraries(${ION_FINDER_TARGET} ${CMAKE_THREAD_LIBS_INIT})
 
 #set up cmake generated headers
+set(PROG_MAN_DIR ${CMAKE_CURRENT_BINARY_DIR}/man)
 set(CONFIG_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in)
 set(CONFIG_POST_CONFIGURE_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/config.h)
-configure_file(${CONFIG_PRE_CONFIGURE_FILE} ${CONFIG_POST_CONFIGURE_FILE})
+configure_file(${CONFIG_PRE_CONFIGURE_FILE} ${CONFIG_POST_CONFIGURE_FILE} @ONLY)
+
+#configure man page
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/man)
+macro(configure_man_troff target)
+    file(MAKE_DIRECTORY ${PROG_MAN_DIR}/${target})
+    set(MAN_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/man/${target}/helpFile.roff.in)
+    set(MAN_POST_CONFIGURE_FILE ${PROG_MAN_DIR}/${target}/helpFile.roff)
+    string(TIMESTAMP BUILD_TIMESTAMP "%d %b %y")
+    configure_file(${MAN_PRE_CONFIGURE_FILE} ${MAN_POST_CONFIGURE_FILE} @ONLY)
+endmacro()
+configure_man_troff(${ION_FINDER_TARGET})
+#configure_man_troff(ms2_annotator)
 
 #git tracking
 option(TRACK_GIT "Should git tracking be enabeled?" ON)
@@ -116,7 +129,7 @@ if(BUILD_MAN_PDF MATCHES ON)
         if(${GROFF_FOUND} AND ${PS2PDF_FOUND})
             set(BUILD_MAN_PDF_IN ${CMAKE_CURRENT_SOURCE_DIR}/man/updateMan.in)
             set(BUILD_MAN_PDF_OUT ${CMAKE_BINARY_DIR}/doc/update_${target}_help.sh)
-            set(TARGET_MAN_PDF_IN ${CMAKE_CURRENT_SOURCE_DIR}/man/${target}/helpFile.roff)
+            set(TARGET_MAN_PDF_IN ${PROG_MAN_DIR}/${target}/helpFile.roff)
             set(TARGET_MAN_PDF_OUT ${CMAKE_BINARY_DIR}/doc/${target}_helpFile.pdf)
 
             file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc)

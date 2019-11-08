@@ -1,14 +1,14 @@
-.TH "ionFinder v1.0" 1 "11 Jan 2019" "ionFinder"
+.TH "@ION_FINDER_TARGET@ @PROJECT_VERSION@" 1 "@BUILD_TIMESTAMP@" "@ION_FINDER_TARGET@"
 .SH NAME
-\fBionFinder\fR - perform high a throughput search for fragment ions in ms2 spectra.
+\fB@ION_FINDER_TARGET@\fR - perform high a throughput search for fragment ions in ms2 spectra.
 .SH SYNOPSIS
-.B ionFinder
+.B @ION_FINDER_TARGET@
 [options] [input_dir ...]
 
 .SH DESCRIPTION
-\fBionFinder\fR Reads peptides from one or more DTASelect-filter files, calculates theoretical B and Y peptide fragments, and searches parent MS-2 scans for theoretical fragments. If no argument is specified for \fIinput_dir\fR, the current working directory is used. 
+\fB@ION_FINDER_TARGET@\fR Reads peptides from one or more DTASelect-filter files, calculates theoretical B and Y peptide fragments, and searches parent MS-2 scans for theoretical fragments. If no argument is specified for \fIinput_dir\fR, the current working directory is used. 
 
-The envisioned use case of \fBionFinder\fR is to search for neutral loss ions which are not considered by database searching software.  The program can also be used to automatically generate annotated MS-2 spectra for an entire mass spec run.  Options are available to add neutral loss fragments to the search, and to print annotated MS-2 spectra for each peptide. 
+The envisioned use case of \fB@ION_FINDER_TARGET@\fR is to search for neutral loss ions which are not considered by database searching software.  The program can also be used to automatically generate annotated MS-2 spectra for an entire mass spec run.  Options are available to add neutral loss fragments to the search, and to print annotated MS-2 spectra for each peptide. 
 
 .SH OPTIONS
 .TP
@@ -215,7 +215,7 @@ Group modifications onto a single line for each peptide.
 .in
 .TP
 \fB--nThread\fR \fI<n_thread>\fR
-Choose number of threads to use. The part of \fBionFinder\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
+Choose number of threads to use. The part of \fB@ION_FINDER_TARGET@\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
 .TP
 \fB-v, --version\fR
 Print binary version number and exit program.
@@ -224,7 +224,7 @@ Print binary version number and exit program.
 Display this help file.
 
 .SH PROGRAM OUTLINE
-\fBionFinder\fR has 3 phase. See \fIionFinder_userGuide.pdf\fR for a detailed description of each phase.
+\fB@ION_FINDER_TARGET@\fR has 3 phase. See \fI@ION_FINDER_TARGET@_userGuide.pdf\fR for a detailed description of each phase.
 .SS 1) INPUT
 .IP \[bu] 2
 All \fIinput_dir\fR folders are searched for DTASelect-filter files each peptide is read into a data structure in memory.
@@ -250,17 +250,17 @@ Write out \fIpeptide_cit_stats.tsv\fR with a summary of the results.
 
 .SH EXAMPLES
 .TP
-\fBionFinder\fR
-Run \fRionFinder\fR from current working directory using default parameters.
+\fB@ION_FINDER_TARGET@\fR
+Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters.
 .TP
-\fBionFinder --citStats\fR
-Run \fRionFinder\fR from current working directory using default parameters for citrulline.  
+\fB@ION_FINDER_TARGET@ --citStats\fR
+Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters for citrulline.  
 .TP
-\fBionFinder --citStats --matchTolerance 50 --matchType ppm\fR
-Run \fRionFinder\fR from current working directory using default parameters for citrulline with a 50 ppm fragment match tolerance.
+\fB@ION_FINDER_TARGET@ --citStats --matchTolerance 50 --matchType ppm\fR
+Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters for citrulline with a 50 ppm fragment match tolerance.
 .TP
-\fBionFinder --citStats --printSpectra\fR
-Run \fRionFinder\fR from current working directory using default parameters for citrulline and printing intermediate \fI.spectra\fR files. 
+\fB@ION_FINDER_TARGET@ --citStats --printSpectra\fR
+Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters for citrulline and printing intermediate \fI.spectra\fR files. 
 
 .SH AUTHOR
-\fBionFinder\fR was written by Aaron Maurais. Email questions or bugs to: aaron.maurais@.bc.edu
+\fB@ION_FINDER_TARGET@\fR was written by Aaron Maurais. Email questions or bugs to: aaron.maurais@.bc.edu
