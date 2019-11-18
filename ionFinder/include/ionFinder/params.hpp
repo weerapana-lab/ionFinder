@@ -106,7 +106,7 @@ namespace IonFinder{
 			_groupMod = 1;
 		}
 		
-		//modifers
+		//modifiers
 		bool getArgs(int, const char* const[]) override;
 		
 		//properties

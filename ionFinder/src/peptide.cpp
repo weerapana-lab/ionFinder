@@ -557,7 +557,7 @@ void PeptideNamespace::Peptide::removeUnlabeledFrags()
 
 /**
  * Remove FragmentIon (s) which are below a specified intensity threshold.
- * \param min_int Minium ion intensity to allow.
+ * \param min_int Minimum ion intensity to allow.
  * \param require_nl Should only neutral loss fragment ions be removed?
  */
 void PeptideNamespace::Peptide::removeLabelIntensityBelow(double min_int, bool require_nl, bool remove)

@@ -82,7 +82,7 @@ namespace PeptideNamespace{
         Ion(const Ion& rhs);
         ~Ion() = default;
 
-        //modifers
+        //modifiers
         void initializeFromMZ(double _mz, int _charge){
             mass = calcMass(_mz, _charge);
             charge = _charge;
@@ -342,7 +342,7 @@ namespace PeptideNamespace{
         }
         ~Peptide() = default;
 
-        //modifers
+        //modifiers
         void initialize(const base::ParamsBase&, const aaDB::AADB& aadb,
                         bool _calcFragments = true);
         void calcFragments(int minCharge, int maxCharge,

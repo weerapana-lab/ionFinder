@@ -90,6 +90,7 @@ namespace ms2{
 		bool labeledIon;
 		geometry::DataLabel label;
 		std::string formatedLabel;
+		//!Is the ion one of the top n most intense ions in the Spectrum?
 		bool topAbundant;
 		std::string ionType;
 		int ionNum;
@@ -231,7 +232,7 @@ namespace ms2{
 		}
 		~Spectrum() = default;
 		
-		//modifers
+		//modifiers
 		void clear() override;
 
 		/**

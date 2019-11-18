@@ -78,7 +78,7 @@ namespace ms2 {
 			return *this;
 		}
 		
-		//modifers
+		//modifiers
 		bool read(std::string);
 		bool read();
 		

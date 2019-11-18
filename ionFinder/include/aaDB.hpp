@@ -43,7 +43,7 @@ namespace aaDB{
 		}
 		~AminoAcid() {};
 		
-		//modifers
+		//modifiers
 		void operator += (double mod){
 			modification += mod;
 		}
@@ -71,7 +71,7 @@ namespace aaDB{
 		typedef aminoAcidsDBType::const_iterator itType;
 		aminoAcidsDBType aminoAcidsDB;
 		
-		//modifers
+		//modifiers
 		bool readInAADB(std::string);
 		bool readInModDB(std::string, aminoAcidsDBType&);
 		void addStaticMod(const aminoAcidsDBType&, bool);
@@ -81,7 +81,7 @@ namespace aaDB{
 		AADB(){}
 		~AADB(){}
 		
-		//modifers
+		//modifiers
 		bool initialize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings = true);
 		bool initialize(std::string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
 		

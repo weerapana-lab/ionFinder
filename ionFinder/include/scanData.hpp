@@ -66,7 +66,7 @@ namespace scanData{
             return *this;
         }
 
-        //modifers
+        //modifiers
         void setMZ(const std::string &mz){
             _mz = mz;
         }

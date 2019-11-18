@@ -12,7 +12,7 @@
 // Whether or not there were uncommitted changes present.
 #define GIT_IS_DIRTY @GIT_IS_DIRTY@
 
-// Last commit date with pretty formating
+// Last commit date with pretty formatting
 #define GIT_LAST_COMMIT_DATE "@GIT_LAST_COMMIT_DATE@"
 
 #endif

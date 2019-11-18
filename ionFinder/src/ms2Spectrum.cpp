@@ -207,7 +207,7 @@ void ms2::Spectrum::removeIntensityBelow(double min_int)
 /**
  * Label spectrum with predicted fragment ions from \p peptide.
  * \param peptide Peptide to label spectrum with.
- * \param pars Initalized params object.
+ * \param pars Initialized params object.
  * \param removeUnlabeledFrags Should unlabeled F
  * \param labelTop
  */
@@ -240,10 +240,6 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
     //iterate through all calculated fragment ions and label ions on spectrum if they are found
     for(size_t i = 0; i < len; i++)
     {
-        /*std::string temp = peptide.getFragment(i).getIonStr(false);
-        if(temp == "b11")
-            std::cout << "Found!" << std::endl;*/
-
         double tempMZ = peptide.getFragmentMZ(i);
 
         rangeList.clear();
@@ -251,8 +247,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
         //first get lowest value in range
         _labelTolerance = pars.getMatchTolerance(tempMZ);
         auto lowerBound = std::lower_bound(ions.begin(), ions.end(),
-                                                 (tempMZ - (_labelTolerance)),
-                                                 DataPoint::MZComparison());
+                (tempMZ - (_labelTolerance)),
+                DataPoint::MZComparison());
 
         //ittreate throughout all ions above in range
         for(auto it = lowerBound; it != ions.end(); ++it)

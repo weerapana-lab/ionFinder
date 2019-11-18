@@ -579,7 +579,7 @@ std::string IonFinder::PeptideStats::containsCitToStr(const ContainsCitType& cc)
 }
 
 /**
- Prints peptide stats to out.
+ Prints peptide stats to file.
  \param stats Peptide stats to print.
  \param pars initialized IonFinder::Params object
  \return true if successful.

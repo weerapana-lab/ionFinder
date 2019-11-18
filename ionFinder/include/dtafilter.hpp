@@ -52,7 +52,7 @@ namespace Dtafilter{
 			_matchDirection = MatchDirection::REVERSE;
 		}
 		
-		//modifers
+		//modifiers
 		void operator = (const Scan&);
 		void setParentProtein(std::string s){
 			_parentProtein = s;

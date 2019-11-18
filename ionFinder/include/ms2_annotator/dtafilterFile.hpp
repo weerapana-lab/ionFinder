@@ -37,7 +37,7 @@ namespace Ms2_annotator{
 		}
 		~DtaFilterFile(){}
 		
-		//modifers
+		//modifiers
 		bool read(std::string);
 		bool read();
 		

@@ -66,7 +66,7 @@ bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
  \param modFilter Which scans should be added to \p scans?
  	0: only modified, 1: all peptides regardless of modification, 2: only unmodified pepeitde.
  
- \return true if file I/O was sucessful.
+ \return true if file I/O was successful.
  */
 bool Dtafilter::readFilterFile(std::string fname,
 							   std::string sampleName,
@@ -140,7 +140,7 @@ bool Dtafilter::readFilterFile(std::string fname,
 					scans.push_back(newScan);
 					
 				}//end of while
-				inF.seekg(sp); //reset streampos so line is not skipped in next itteration
+				inF.seekg(sp); //reset streampos so line is not skipped in next iteration
 			}
 		}//end if
 	}//end while

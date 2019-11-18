@@ -180,7 +180,7 @@ Use DTAFilter-file(s) as input.
 .in +0.75i
 \fBtsv\fR
 .in +0.75i
-Supply peptide list as .tsv formated file. Required columns are: "sampleName", "sequence", "precursorFile", "scanNum".
+Supply peptide list as .tsv formatted file. Required columns are: "sampleName", "sequence", "precursorFile", "scanNum".
 
 Optional columns are: "parentID", "parentProtein", "parentDescription", "matchDirection", "fullSequence", "unique", "charge", "xcorr", "precursorMZ", "precursorScan".
 .in

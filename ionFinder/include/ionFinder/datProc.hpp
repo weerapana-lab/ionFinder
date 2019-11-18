@@ -95,7 +95,7 @@ namespace IonFinder{
 			FRAG,
 			//!B or Y fragments with modification not containing amb residue
 			DET_FRAG,
-			//!B or Y ions not containing modification or ambigious residue
+			//!B or Y ions not containing modification or ambiguous residue
 			AMB_FRAG,
 			//!Modification determining NL fragments
 			DET_NL_FRAG,
@@ -181,7 +181,7 @@ namespace IonFinder{
 		    return _id == rhs._id;
 		}
 
-		//modifers
+		//modifiers
 		PeptideStats& operator = (const PeptideStats&);
 		void addSeq(const PeptideNamespace::FragmentIon&, unsigned long modLoc, const std::string&);
 		static std::string ionTypeToStr(const IonType&);

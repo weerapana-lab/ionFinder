@@ -40,7 +40,7 @@ def extractModifications(seq, mods):
     Extract modifications from modifications description and populate
     to a list of AminoAcid objects.
 
-    Paramaters
+    Parameters
     ---------
     seq : list
         List of AminoAcid objects
@@ -86,7 +86,7 @@ def main():
     parser.add_argument('input_file', help = 'Name of file to parse. Should be a tab delimited text file.')
 
     parser.add_argument('--inplace', default=False, action='store_true',
-                        help='Should input_file be overwritten? Overides ofname.')
+                        help='Should input_file be overwritten? Overrides ofname.')
     parser.add_argument('-o', '--ofname', help='Name of output file.', default = '')
 
     #arguments to customize mod residue

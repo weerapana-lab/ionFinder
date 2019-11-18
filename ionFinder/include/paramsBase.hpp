@@ -116,7 +116,7 @@ namespace base{
 			smodSpecified = false;
 		}
 
-        //modifers
+        //modifiers
         virtual bool getArgs(int, const char* const[]);
 		
 		void setSeqParFname(std::string path){
