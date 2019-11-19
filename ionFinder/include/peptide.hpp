@@ -16,6 +16,7 @@
 #include <cassert>
 #include <string>
 #include <iomanip>
+#include <atomic>
 
 #include <utils.hpp>
 #include <aaDB.hpp>
@@ -317,8 +318,8 @@ namespace PeptideNamespace{
         //!Locations of dynamic modifications on peptide sequence
         std::vector<size_t> modLocs;
         //!A unique identifier for each Peptide object created.
-        unsigned int _id;
-        static unsigned int obj_count;
+        std::uint64_t _id;
+        static std::atomic<std::uint64_t> _obj_count;
 
         double parseStaticMod(size_t);
         void fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
@@ -327,14 +328,14 @@ namespace PeptideNamespace{
     public:
         //constructors
         Peptide() : Ion(){
-            _id = Peptide::obj_count++;
+            _id = Peptide::_obj_count++;
             sequence = "";
             fullSequence = sequence;
             initialized = false;
             nMod = 0;
         }
         explicit Peptide(std::string _sequence) : Ion(){
-            _id = Peptide::obj_count++;
+            _id = Peptide::_obj_count++;
             sequence = _sequence;
             fullSequence = sequence;
             initialized = false;

@@ -8,7 +8,7 @@
 
 #include <peptide.hpp>
 
-unsigned int PeptideNamespace::Peptide::obj_count = 0;
+std::atomic<std::uint64_t> PeptideNamespace::Peptide::_obj_count(0);
 
 PeptideNamespace::Species::Species(const PeptideNamespace::Species& rhs){
     mass = rhs.mass;
