@@ -64,6 +64,7 @@ bool base::ParamsBase::writeSmod(std::string wd) const
 void base::ParamsBase::usage(std::ostream& out) const
 {
 	std::ifstream inF(_usageFile);
+	if(!inF) std::cerr << "Could not open usage file at:\n\t" << _usageFile << NEW_LINE;
 	std::string line;
 	while(utils::safeGetline(inF, line))
 		out << line << NEW_LINE;
