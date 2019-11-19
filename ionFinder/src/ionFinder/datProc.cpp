@@ -469,12 +469,19 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
         scans[i].getPrecursor().setCharge(spectrum.getPrecursor().getCharge());
         scans[i].getPrecursor().setIntensity(spectrum.getPrecursor().getIntensity());
 
-		spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
-        //spectrum.labelSpectrum(peptides.back(), pars);
-        peptides.back().normalizeLabelIntensity(spectrum.getMaxIntensity() / 100);
+        //label spectrum
+        spectrum.normalizeIonInts(spectrum.getMaxIntensity() / 100);
+        //remove ions below specified intensity
+        if(pars.getMinIntensitySpecified())
+            spectrum.removeIntensityBelow(pars.getMinIntensity());
+		//spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
+        spectrum.labelSpectrum(peptides.back(), pars);
 
-        //probably temporary
-        peptides.back().removeLabelIntensityBelow(pars.getNlIntCo(), true, true);
+        //Filter ion intensities
+        if(pars.getMinLabelIntensity() > 0)
+            peptides.back().removeLabelIntensityBelow(pars.getMinLabelIntensity(), false, false);
+        if(pars.getNlIntCo() > 0)
+            peptides.back().removeLabelIntensityBelow(pars.getNlIntCo(), true, false);
 
 		//print spectra file
 		if(pars.getPrintSpectraFiles())

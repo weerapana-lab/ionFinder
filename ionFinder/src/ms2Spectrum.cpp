@@ -128,6 +128,13 @@ void ms2::Spectrum::updateDynamicMetadata()
     mzRange = maxMZ - minMZ;
 }
 
+/**
+ * Set the DataPoint::topAbundant value for the top n ion intensities.<br><br>
+ *
+ * The function iterates through the Spectrum and finds the top n most
+ * intense ions.
+ * \param labelTop Top n ion intensities to label.
+ */
 void ms2::Spectrum::setLabelTop(size_t labelTop)
 {
     typedef std::list<ms2::DataPoint*> listType;
@@ -146,6 +153,13 @@ void ms2::Spectrum::setLabelTop(size_t labelTop)
         it->setTopAbundant(true);
 }
 
+/**
+ * Set mz range in spectra. Ions below \p minMZ and above \p maxInt will be removed.
+ * \param minMZ
+ * \param maxMZ
+ * \param _sort Should ions be sorted before filtering? This option should be set to true
+ * if ions are not already in order.
+ */
 void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
 {
     //sort ions by mz
@@ -192,6 +206,10 @@ void ms2::Spectrum::removeUnlabeledIons()
     updateDynamicMetadata();
 }
 
+/**
+ * Remove ions below \p min_int.
+ * \param min_int Minimum intensity to remove.
+ */
 void ms2::Spectrum::removeIntensityBelow(double min_int)
 {
     for(auto it = ions.begin(); it != ions.end();)
@@ -256,13 +274,10 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
             if(it->getMZ() > (tempMZ + _labelTolerance))
                 break;
 
-            if(it->getTopAbundant())
-            {
+            if(it->getTopAbundant()){
+                //check that it->mz is in range
                 bool inRange = utils::inRange(it->getMZ(), tempMZ, _labelTolerance);
-                bool intenseEnough = (it->getIntensity() > pars.getMinLabelIntensity());
-
-                if(inRange && //check that it->mz is in range
-                   intenseEnough) //check that it->int is sufficiently high
+                if(inRange)
                     rangeList.push_back(&(*it));
             }//end of if
         }
@@ -328,18 +343,14 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
     }//end of for
     ionPercent = (double(labledCount) / double(len)) * 100;
 
-    //remove unlabeled ions if necisary
+    //remove unlabeled ions if necessary
     if(!pars.getIncludeAllIons())
         removeUnlabeledIons();
 
-    //remove unlabeled peptide fragmetns
+    //remove unlabeled peptide fragments
     //only used for debugging
     if(removeUnlabeledFrags)
         peptide.removeUnlabeledFrags();
-
-    //remove ions below specified intensity
-    if(pars.getMinIntensitySpecified())
-        removeIntensityBelow(pars.getMinIntensity());
 
 }//end of function
 

@@ -210,9 +210,7 @@ namespace ms2{
 		
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
-		void setMZRange(double minMZ, double maxMZ, bool _sort = true);
 		void removeUnlabeledIons();
-		void removeIntensityBelow(double minInt);
 		double calcMaxInt() const;
 		double calcMinInt() const;
 		void updateDynamicMetadata();
@@ -234,6 +232,8 @@ namespace ms2{
 		
 		//modifiers
 		void clear() override;
+        void removeIntensityBelow(double minInt);
+        void setMZRange(double minMZ, double maxMZ, bool _sort = true);
 
 		/**
 		 * Normalize ion intensities so that the max intensity is \p max.
