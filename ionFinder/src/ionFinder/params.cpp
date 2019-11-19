@@ -16,7 +16,7 @@
  */
 unsigned int IonFinder::Params::computeThreads() const
 {
-	unsigned int ret = std::thread::hardware_concurrency() / 2;
+	unsigned int ret = std::thread::hardware_concurrency();
 	if(ret == 0){
 		std::cerr << "\nError detecting hardware_concurrency. Only 1 thread being used." << NEW_LINE;
 		return 1;
@@ -354,6 +354,11 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_numThread = std::stoi(argv[i]);
 			continue;
 		}
+        if(!strcmp(argv[i], "--parallel"))
+        {
+            _numThread = computeThreads();
+            continue;
+        }
 		if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose"))
 		{
 			verbose = true;

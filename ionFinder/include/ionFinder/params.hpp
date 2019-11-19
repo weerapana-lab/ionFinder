@@ -100,7 +100,7 @@ namespace IonFinder{
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
 			ofname = PEPTIDE_MOD_STATS_OFNAME;
-			_numThread = computeThreads();
+			_numThread = 1;
 			_inDirSpecified = false;
             _minNlLabelIntensity = 0;
 			_groupMod = 1;

@@ -214,8 +214,11 @@ Do not group modifications. The output file will have a separate line for each m
 Group modifications onto a single line for each peptide.
 .in
 .TP
+\fB--parallel\fR
+The part of \fB@ION_FINDER_TARGET@\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default only a single thread is used. If this option is set, the number of threads returned by std::thread::hardware_concurrency() are used.
+.TP
 \fB--nThread\fR \fI<n_thread>\fR
-Choose number of threads to use. The part of \fB@ION_FINDER_TARGET@\fR which searches .ms2 files for fragment ions is written to run concurrently on multiple threads. By default the number of threads is calculated at runtime and is set to std::thread::hardware_concurrency() / 2.
+Manually set the number of threads to use.
 .TP
 \fB-v, --version\fR
 Print binary version number and exit program.
