@@ -135,7 +135,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_fastaFile = utils::absPath(argv[i]);
 			continue;
 		}
-        if(!strcmp(argv[i], "-u") || strcmp(argv[i], "--peptideUID"))
+        if(!strcmp(argv[i], "-u") || !strcmp(argv[i], "--peptideUID"))
         {
             if(!utils::isArg(argv[++i]))
             {
