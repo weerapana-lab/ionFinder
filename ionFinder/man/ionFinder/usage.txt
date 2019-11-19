@@ -1,1 +1,0 @@
-usage:	ionFinder [options] [input_dir ...]
