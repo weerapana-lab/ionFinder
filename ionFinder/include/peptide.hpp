@@ -328,14 +328,14 @@ namespace PeptideNamespace{
     public:
         //constructors
         Peptide() : Ion(){
-            _id = Peptide::_obj_count++;
+            _id = ++Peptide::_obj_count;
             sequence = "";
             fullSequence = sequence;
             initialized = false;
             nMod = 0;
         }
         explicit Peptide(std::string _sequence) : Ion(){
-            _id = Peptide::_obj_count++;
+            _id = ++Peptide::_obj_count;
             sequence = _sequence;
             fullSequence = sequence;
             initialized = false;
