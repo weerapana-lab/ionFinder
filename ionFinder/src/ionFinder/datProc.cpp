@@ -622,10 +622,12 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	}
 	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 	
-	std::string otherHeaders = "peptide_unique_ID protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
+	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
 	std::vector<std::string> headers;
+	if(pars.getPrintPeptideUID())
+	    headers.push_back("peptide_unique_ID");
 	headers.insert(headers.end(), oHeaders.begin(), oHeaders.end());
 	headers.insert(headers.end(), statNames.begin(), statNames.end());
 	
@@ -642,8 +644,10 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	for(const auto & stat : stats)
 	{
 		//scan data
-		outF << stat._id <<
-		    OUT_DELIM << stat._scan->getParentID() <<
+		if(pars.getPrintPeptideUID())
+		    outF << stat._id << OUT_DELIM;
+
+        outF << stat._scan->getParentID() <<
 		    OUT_DELIM << stat._scan->getParentProtein() <<
 		    OUT_DELIM << stat._scan->getParentDescription() <<
 		    OUT_DELIM << stat._scan->getFullSequence() <<

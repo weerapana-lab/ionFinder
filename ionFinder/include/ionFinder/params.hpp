@@ -82,6 +82,9 @@ namespace IonFinder{
 
 		//! How to deal with peptides with multiple modifications
 		int _groupMod;
+
+		//!Should unique peptide be printed?
+		bool _printPeptideUID;
 		
 		bool getFlist();
 		unsigned int computeThreads() const;
@@ -104,6 +107,7 @@ namespace IonFinder{
 			_inDirSpecified = false;
             _minNlLabelIntensity = 0;
 			_groupMod = 1;
+			_printPeptideUID = false;
 		}
 		
 		//modifiers
@@ -161,6 +165,9 @@ namespace IonFinder{
 		int getGroupMod() const{
 		    return _groupMod;
 		}
+		bool getPrintPeptideUID() const {
+            return _printPeptideUID;
+        }
 	};
 }
 
