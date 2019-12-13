@@ -3,6 +3,7 @@ project(ionFinder VERSION 0.1.1)
 
 SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -159,4 +160,40 @@ if(BUILD_MAN_PDF MATCHES ON)
 
     build_man_page(${ION_FINDER_TARGET})
     #build_man_page(ms2_annotator)
+endif()
+
+option(BUILDN_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
+if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
+    find_program(BASH bash DOC "Path to bash interpreter.")
+    execute_process(COMMAND which python OUTPUT_VARIABLE FOUND_PYTHON_EXE_PATH)
+    string(REGEX REPLACE "\n$" "" FOUND_PYTHON_EXE_PATH "${FOUND_PYTHON_EXE_PATH}")
+    set(PYTHON_PATH ${FOUND_PYTHON_EXE_PATH} CACHE STRING "Path to python interpreter to use.")
+    set(RUN_MAKE_MS2_SCR_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/run_make_ms2.py
+            CACHE STRING "Path to run_make_ms2.py")
+    set(MAKE_MS2_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/make_ms2.py
+            CACHE STRING "Path to make_ms2.py")
+    set(PYTHON_BUILD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/addPythonFiles.sh
+            CACHE STRING "Path to make_ms2.py")
+
+    add_custom_target(make_ms2
+            ALL
+            DEPENDS ${MAKE_MS2_SRC_PATH}
+            COMMENT "Adding make_ms2 executable."
+            COMMAND
+                ${BASH} ${PYTHON_BUILD_SCRIPT}
+                --pythonExe ${PYTHON_PATH}
+                --mainArgs ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
+                ${MAKE_MS2_SRC_PATH}
+            )
+
+    add_custom_target(run_make_ms2
+            ALL
+            DEPENDS ${RUN_MAKE_MS2_SCR_PATH}
+            COMMENT "Adding run_make_ms2 executable."
+            COMMAND
+                ${BASH} ${PYTHON_BUILD_SCRIPT}
+                --pythonExe ${PYTHON_PATH}
+                ${RUN_MAKE_MS2_SCR_PATH}
+            )
+
 endif()
