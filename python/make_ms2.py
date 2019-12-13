@@ -8,8 +8,7 @@ import re
 
 import parent_parser
 
-RSCRIPT_PATH = 'rscripts/makeMs2.R'
-THIS_PATH = ''
+RSCRIPT_PATH = '../ionFinder/rscripts/makeMs2.R'
 RSCRIPT = 'Rscript'
 
 def getFileLists(nThread, spectraDir, inputFiles = None):
@@ -59,7 +58,7 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
     return ret, nFiles
 
 
-def _make_ms2_parallel(nThread, spectraDir, progDir, round, inputFiles,
+def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round, inputFiles,
                       verbose = False, mzLab = 1, simpleSeq = 0):
 
     files, nFiles = getFileLists(nThread, spectraDir, inputFiles)
@@ -67,7 +66,7 @@ def _make_ms2_parallel(nThread, spectraDir, progDir, round, inputFiles,
     if nFiles == 0:
         raise RuntimeError('No .spectra files found in {}'.format(spectraDir))
 
-    rscriptCommand = '{} {}/{}'.format(RSCRIPT, progDir, RSCRIPT_PATH)
+    rscriptCommand = "{} {}".format(RSCRIPT, make_ms2_r_path)
 
     #spawn subprocesses
     procecies = list()
@@ -96,7 +95,7 @@ def _make_ms2_parallel(nThread, spectraDir, progDir, round, inputFiles,
             print(o)
 
 
-def main():
+def main(make_ms2_r_path):
     parser = argparse.ArgumentParser('run_make_ms2',
                                      parents=[parent_parser.parent_parser],
                                      description='Run rscripts/makeMS2.R and manage parallelism.')
@@ -105,8 +104,6 @@ def main():
                         help = '')
 
     args = parser.parse_args()
-    
-    progDir = os.path.dirname(os.path.realpath(sys.argv[0])).replace('bin', '')
     
     # get wd
     wd = args.dir
@@ -118,9 +115,9 @@ def main():
     if nThread is None:
         nThread = cpu_count()
 
-    _make_ms2_parallel(nThread, wd, progDir, args.round, args.input_files, verbose = args.verbose,
+    _make_ms2_parallel(nThread, wd, make_ms2_r_path, args.round, args.input_files, verbose = args.verbose,
                       mzLab=args.mzLab, simpleSeq=args.simpleSeq)
 
 
 if __name__ == '__main__':
-    main()
+    main(RSCRIPT_PATH)

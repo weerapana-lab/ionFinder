@@ -11,7 +11,6 @@ import parent_parser
 PYTHON_PBS_VERSION = 'python/2.7.10'
 R_PBS_VERSION = 'R/3.5.0.gnu'
 PBS_MODULE_LOAD_COMMAND = 'module load'
-#PBS_PYTHON_COMMAND = 'python'
 MAKE_MS2_PY_PATH = 'make_ms2'
 
 def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
