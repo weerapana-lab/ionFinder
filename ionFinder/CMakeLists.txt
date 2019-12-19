@@ -56,6 +56,25 @@ find_package(utils REQUIRED)
 target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
 target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
 
+#add auto generated headers
+set(SRC_ETC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../etc)
+set(SRC_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts)
+set(.SPEC_CONSTANTS_NAME spectrum_constants)
+add_custom_target(SpectrumConstantsHpp
+        DEPENDS
+            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.config
+            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.hpp.in
+        COMMENT "Writing custom ${.SPEC_CONSTANTS_NAME} header..."
+        BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
+        COMMAND
+            ${SRC_SCRIPTS_DIR}/configure_file
+            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.config
+            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.hpp.in
+            ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
+        )
+add_dependencies(${ION_FINDER_TARGET} SpectrumConstantsHpp)
+
+
 #add thread library
 find_package(Threads)
 target_link_libraries(${ION_FINDER_TARGET} ${CMAKE_THREAD_LIBS_INIT})
@@ -172,7 +191,7 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
             CACHE STRING "Path to run_make_ms2.py")
     set(MAKE_MS2_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/make_ms2.py
             CACHE STRING "Path to make_ms2.py")
-    set(PYTHON_BUILD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/addPythonFiles.sh
+    set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")
 
     add_custom_target(make_ms2

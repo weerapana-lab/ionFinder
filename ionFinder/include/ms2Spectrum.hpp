@@ -26,20 +26,16 @@
 #include <geometry.hpp>
 #include <calcLableLocs.hpp>
 #include <scanData.hpp>
+#include <spectrum_constants.hpp>
 
 namespace ms2{
 	
-	std::string const SPECTRUM_COL_HEADERS [] = {"mz", "intensity", "label", "includeLabel",
-		"ionType", "ionNum", "formatedLabel", "labelX", "labelY", "includeArrow", "arrowBegX",
-		"arrowBegY", "arrowEndX", "arrowEndX"};
+	std::string const SPECTRUM_COL_HEADERS [] = {MZ, INTENSITY, LABEL, INCLUDE_LABEL,
+		ION_TYPE, ION_NUM, FORMATED_LABEL, LABEL_X, LABEL_Y, INCLUDE_ARROW, ARROW_BEG_X,
+		ARROW_BEG_Y, ARROW_END_X, ARROW_END_X};
 	size_t const NUM_SPECTRUM_COL_HEADERS_SHORT = 2;
 	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 14;
 	std::string const NA_STR = "NA";
-	
-	std::string const BEGIN_METADATA = "<metadata>";
-	std::string const END_METADATA = "</metadata>";
-	std::string const BEGIN_SPECTRUM = "<spectrum>";
-	std::string const END_SPECTRUM = "</spectrum>";
 	
 	double const POINT_PADDING = 1;
 	double const DEFAULT_MAX_PERC = 1;

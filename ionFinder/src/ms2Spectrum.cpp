@@ -12,16 +12,16 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
 {
     assert(out);
     out << ms2::BEGIN_METADATA << NEW_LINE
-        << "precursorFile" << OUT_DELIM << _precursor.getFile() << NEW_LINE
-        << "ofname" << OUT_DELIM << getOfNameBase(_parentMs2, _fullSequence) << NEW_LINE
-        << "scanNumber" << OUT_DELIM << _scanNum << NEW_LINE
-        << "sequence" << OUT_DELIM << _sequence << NEW_LINE
-        << "fullSequence" << OUT_DELIM << scanData::removeStaticMod(_fullSequence) << NEW_LINE
-        << "retTime" << OUT_DELIM << _precursor.getIntensity() << NEW_LINE
-        << "precursorCharge" << OUT_DELIM << _precursor.getCharge() << NEW_LINE
-        << "plotHeight" << OUT_DELIM << plotHeight << NEW_LINE
-        << "plotWidth" << OUT_DELIM << plotWidth << NEW_LINE
-        << "precursorInt" << OUT_DELIM << std::scientific << _precursor.getIntensity() << NEW_LINE;
+        << ms2::PRECURSOR_FILE << OUT_DELIM << _precursor.getFile() << NEW_LINE
+        << ms2::OFNAME << OUT_DELIM << getOfNameBase(_parentMs2, _fullSequence) << NEW_LINE
+        << ms2::SCAN_NUMBER << OUT_DELIM << _scanNum << NEW_LINE
+        << ms2::SEQUENCE << OUT_DELIM << _sequence << NEW_LINE
+        << ms2::FULL_SEQUENCE << OUT_DELIM << scanData::removeStaticMod(_fullSequence) << NEW_LINE
+        << ms2::RET_TIME << OUT_DELIM << _precursor.getIntensity() << NEW_LINE
+        << ms2::PRECURSOR_CHARGE << OUT_DELIM << _precursor.getCharge() << NEW_LINE
+        << ms2::PLOT_HEIGHT << OUT_DELIM << plotHeight << NEW_LINE
+        << ms2::PLOT_WIDTH << OUT_DELIM << plotWidth << NEW_LINE
+        << ms2::PRECURSOR_INT << OUT_DELIM << std::scientific << _precursor.getIntensity() << NEW_LINE;
     out.unsetf(std::ios::scientific);
     out << "precursorScan" << OUT_DELIM << _precursor.getScan() << NEW_LINE
         << ms2::END_METADATA <<NEW_LINE << ms2::BEGIN_SPECTRUM << NEW_LINE;

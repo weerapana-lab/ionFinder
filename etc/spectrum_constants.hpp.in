@@ -1,0 +1,45 @@
+// This file was created automatically by CMake.
+
+#ifndef spectrum_constants_hpp
+#define spectrum_constants_hpp
+
+#include <string>
+
+namespace ms2 { 
+    // metadata tags
+    const std::string BEGIN_METADATA = "@BEGIN_METADATA@";
+    const std::string END_METADATA = "@END_METADATA@";
+    const std::string BEGIN_SPECTRUM = "@BEGIN_SPECTRUM@";
+    const std::string END_SPECTRUM = "@END_SPECTRUM@";
+
+    // metadata values
+    const std::string PRECURSOR_FILE = "@PRECURSOR_FILE@";
+    const std::string OFNAME = "@OFNAME@";
+    const std::string SCAN_NUMBER = "@SCAN_NUMBER@";
+    const std::string SEQUENCE = "@SEQUENCE@";
+    const std::string FULL_SEQUENCE = "@FULL_SEQUENCE@";
+    const std::string RET_TIME = "@RET_TIME@";
+    const std::string PRECURSOR_CHARGE = "@PRECURSOR_CHARGE@";
+    const std::string PLOT_HEIGHT = "@PLOT_HEIGHT@";
+    const std::string PLOT_WIDTH = "@PLOT_WIDTH@";
+    const std::string PRECURSOR_INT = "@PRECURSOR_INT@";
+
+    // column heders
+    const std::string MZ = "@MZ@";
+    const std::string INTENSITY = "@INTENSITY@";
+    const std::string LABEL = "@LABEL@";
+    const std::string INCLUDE_LABEL = "@INCLUDE_LABEL@";
+    const std::string ION_TYPE = "@ION_TYPE@";
+    const std::string ION_NUM = "@ION_NUM@";
+    const std::string FORMATED_LABEL = "@FORMATED_LABEL@";
+    const std::string LABEL_X = "@LABEL_X@";
+    const std::string LABEL_Y = "@LABEL_Y@";
+    const std::string INCLUDE_ARROW = "@INCLUDE_ARROW@";
+    const std::string ARROW_BEG_X = "@ARROW_BEG_X@";
+    const std::string ARROW_BEG_Y = "@ARROW_BEG_Y@";
+    const std::string ARROW_END_X = "@ARROW_END_X@";
+    const std::string ARROW_END_Y = "@ARROW_END_Y@";
+}
+
+#endif
+
