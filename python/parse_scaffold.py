@@ -110,10 +110,12 @@ def main():
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
 
     # extract scan column
-    dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
+    #dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
+    dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search('_(\d+)$', x).group(1))
 
     # extract precursorFile column
-    dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
+    #dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
+    dat['precursorFile'] = dat['ms/ms_sample_name']
 
     seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
 
