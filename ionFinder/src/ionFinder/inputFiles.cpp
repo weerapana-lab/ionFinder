@@ -87,7 +87,8 @@ bool IonFinder::readInputTsv(std::string ifname,
 	for(size_t i = 0; i < nRow; i++)
 	{
 		Dtafilter::Scan temp;
-		
+		temp.setMatchDirection(Dtafilter::Scan::MatchDirection::FORWARD);
+
 		//required columns
 		temp.setScanNum(tsv.getValSize(i, "scanNum"));
 		temp.setSequence(tsv.getValStr(i, "sequence"));
