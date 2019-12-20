@@ -191,6 +191,8 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
             CACHE STRING "Path to run_make_ms2.py")
     set(MAKE_MS2_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/make_ms2.py
             CACHE STRING "Path to make_ms2.py")
+    set(PARSE_SCAFFOLD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/parse_scaffold.py
+            CACHE STRING "Path to parse_scaffold.py")
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")
 
@@ -213,6 +215,16 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
                 --pythonExe ${PYTHON_PATH}
                 ${RUN_MAKE_MS2_SCR_PATH}
+            )
+
+    add_custom_target(parse_scaffold
+            ALL
+            DEPENDS ${PARSE_SCAFFOLD_PATH}
+            COMMENT "Adding parse_scaffold executable."
+            COMMAND
+            ${BASH} ${PYTHON_BUILD_SCRIPT}
+            --pythonExe ${PYTHON_PATH}
+            ${PARSE_SCAFFOLD_PATH}
             )
 
 endif()
