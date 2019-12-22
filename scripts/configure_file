@@ -5,11 +5,22 @@ import re
 import sys
 
 def read_source(fname):
-    """read_source
+    """
+    Read variable source file.
 
-    :param fname: Path to variable source file.
+    Variables should be in the format: `VAR_NAME=VALUE`
+    Matching double or single quotes surrounding `VALUE`
+    will be removed.
 
-    :return: dict of variables.
+    Parameters
+    ----------
+    fname : str
+        Path to variable source file.
+
+    Returns
+    -------
+    variables: dict
+        Dict containing all variables in variables in `fname`.
     """
 
     lines = list()
@@ -31,7 +42,21 @@ def read_source(fname):
 
 
 def substutute_variabies(variables, template_path, output_path,
-                         sub_re = r'@(\w+)@'):
+                         sub_re=r'@(\w+)@'):
+    """
+    Substutute tags matching `sub_re` in `template_path` with the 
+    key value pairs in `variables` and write to `output_path`.
+    
+    Parameters
+    ----------
+    variables : dict
+    template_path : str
+    output_path : str
+    sub_re : str
+        Regex should match all tags. Capturing group should extract
+        the variable key to match in `variables`
+    """
+
     with open(template_path, 'r') as inF:
         template_lines = inF.readlines()
     
