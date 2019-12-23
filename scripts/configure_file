@@ -33,7 +33,7 @@ def read_source(fname):
 
     ret = dict()
     for line in lines:
-        m = re.search(r'^(\w+)=([\'\"](.+)[\"\']|.+)$', line)
+        m = re.search(r'^(\w+)[ ]*=[ ]*([\'\"](.+)[\"\']|.+)$', line)
         if not m:
             raise SyntaxError("Could not parse line: {}".format(line))
         ret[m.group(1)] = m.group(2) if m.group(3) is None else m.group(3)
