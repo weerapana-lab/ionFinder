@@ -60,17 +60,20 @@ target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
 set(SRC_ETC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../etc)
 set(SRC_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts)
 set(.SPEC_CONSTANTS_NAME spectrum_constants)
-add_custom_target(SpectrumConstantsHpp
+add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
         DEPENDS
             ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.config
             ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.hpp.in
         COMMENT "Writing custom ${.SPEC_CONSTANTS_NAME} header..."
-        BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
         COMMAND
             ${SRC_SCRIPTS_DIR}/configure_file
             ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.config
             ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.hpp.in
             ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
+        )
+add_custom_target(SpectrumConstantsHpp ALL
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
         )
 add_dependencies(${ION_FINDER_TARGET} SpectrumConstantsHpp)
 
@@ -159,12 +162,16 @@ if(BUILD_MAN_PDF MATCHES ON)
 
             configure_file(${BUILD_MAN_PDF_IN} ${BUILD_MAN_PDF_OUT} @ONLY)
 
-            add_custom_target(${target}_help_pdf ALL
+            add_custom_command(
+                    OUTPUT ${TARGET_MAN_PDF_OUT}
                     COMMAND sh ${BUILD_MAN_PDF_OUT}
                     DEPENDS ${BUILD_MAN_PDF_IN} ${TARGET_MAN_PDF_IN}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc
                     COMMENT "Generating ${TARGET_MAN_PDF_OUT}"
                     VERBATIM)
+            add_custom_target(${target}_help_pdf ALL
+                    DEPENDS ${TARGET_MAN_PDF_OUT}
+                    )
 
        else()
            if(${GROFF_NOT_FOUND})
@@ -196,8 +203,7 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")
 
-    add_custom_target(make_ms2
-            ALL
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
             DEPENDS ${MAKE_MS2_SRC_PATH}
             COMMENT "Adding make_ms2 executable."
             COMMAND
@@ -206,9 +212,11 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
                 --mainArgs ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
                 ${MAKE_MS2_SRC_PATH}
             )
+    add_custom_target(make_ms2 ALL
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
+            )
 
-    add_custom_target(run_make_ms2
-            ALL
+    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
             DEPENDS ${RUN_MAKE_MS2_SCR_PATH}
             COMMENT "Adding run_make_ms2 executable."
             COMMAND
@@ -216,9 +224,12 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
                 --pythonExe ${PYTHON_PATH}
                 ${RUN_MAKE_MS2_SCR_PATH}
             )
+    add_custom_target(run_make_ms2 ALL
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
+            )
 
-    add_custom_target(parse_scaffold
-            ALL
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
             DEPENDS ${PARSE_SCAFFOLD_PATH}
             COMMENT "Adding parse_scaffold executable."
             COMMAND
@@ -226,5 +237,7 @@ if(BUILDN_VISUALIZATION_SCRIPTS MATCHES ON)
             --pythonExe ${PYTHON_PATH}
             ${PARSE_SCAFFOLD_PATH}
             )
-
+    add_custom_target(parse_scaffold ALL
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
+            )
 endif()
