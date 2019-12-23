@@ -33,7 +33,9 @@ unsigned int IonFinder::Params::computeThreads() const
  */
 bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 {
-	_wd = utils::pwd();
+	//Should program continue if no filter files are found in a dir?
+	bool force = false;
+    _wd = utils::pwd();
 	assert(utils::dirExists(_wd));
 	
 	//TODO: add all options to getArgs
@@ -48,7 +50,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			_wd = utils::absPath(argv[i]);
@@ -64,7 +66,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			if(!(!strcmp(argv[i], DTAFILTER_INPUT_STR.c_str()) || !strcmp(argv[i], TSV_INPUT_STR.c_str())))
@@ -79,7 +81,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			ofname = argv[i];
@@ -89,7 +91,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			_dtaFilterBase = argv[i];
@@ -99,7 +101,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
@@ -114,7 +116,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1") || !strcmp(argv[i], "2")))
@@ -129,7 +131,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			_fastaFile = utils::absPath(argv[i]);
@@ -139,7 +141,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
         {
             if(!utils::isArg(argv[++i]))
             {
-                usage();
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
                 return false;
             }
             if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
@@ -159,7 +161,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
@@ -174,7 +176,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			//TODO: Maybe add option to search for multiple losses
@@ -184,7 +186,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
         if(!strcmp(argv[i], "-g") || !strcmp(argv[i], "--groupMod"))
         {
             if(!utils::isArg(argv[++i])) {
-                usage();
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
                 return false;
             }
             if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
@@ -199,7 +201,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			matchTolerance = std::stod(argv[i]);
@@ -209,7 +211,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			_matchType = strToMatchType(std::string(argv[i]));
@@ -231,7 +233,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			_ambigiousResidues = std::string(argv[i]);
@@ -241,7 +243,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			minFragCharge = std::stoi(argv[i]);
@@ -251,7 +253,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			maxFragCharge = std::stoi(argv[i]);
@@ -260,7 +262,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		if(!strcmp(argv[i], "-minMZ"))
 		{
 			if(!utils::isArg(argv[++i])){
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			minMZ = std::stod(argv[i]);
@@ -271,7 +273,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			maxMZ = std::stod(argv[i]);
@@ -282,7 +284,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			minLabelIntensity = std::stoi(argv[i]);
@@ -292,7 +294,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
         {
             if(!utils::isArg(argv[++i]))
             {
-                usage();
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
                 return false;
             }
             _minNlLabelIntensity = std::stod(argv[i]);
@@ -302,7 +304,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			minIntensity = std::stod(argv[i]);
@@ -313,7 +315,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			plotHeight = std::stod(argv[i]);
@@ -323,7 +325,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			plotWidth = std::stod(argv[i]);
@@ -333,7 +335,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			if(!(!strcmp(argv[i], "intensity") || !strcmp(argv[i], "mz")))
@@ -348,7 +350,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
@@ -363,7 +365,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			if(!utils::isArg(argv[++i]))
 			{
-				usage();
+				usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
 				return false;
 			}
 			_numThread = std::stoi(argv[i]);
@@ -385,6 +387,9 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			printGitVersion(std::cout);
 			return false;
 		}
+        if(!strcmp(argv[i], "-f")){
+            force = true;
+        }
 		else if(utils::isFlag(argv[i])){
 			std::cerr << argv[i] << " is an invalid argument." << NEW_LINE;
 			usage();
@@ -407,7 +412,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 	if(_wd[_wd.length() - 1] != '/')
 		_wd += "/";
 	if(_inputMode == DTAFILTER_INPUT_STR){
-		if(!getFlist()){
+		if(!getFlist(force)){
 			std::cerr << "Could not find DTAFilter-files!" << NEW_LINE;
 			return false;
 		}
@@ -421,7 +426,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
  If _inDirs is empty, current working directory is used.
  \return true if > 1 filter file was found, else false
  */
-bool IonFinder::Params::getFlist()
+bool IonFinder::Params::getFlist(bool force)
 {
 	if(_inDirs.empty()){
 		_inDirs.push_back(_wd);
@@ -434,7 +439,10 @@ bool IonFinder::Params::getFlist()
 			_filterFiles[utils::baseName(_inDir)] = fname;
 		}
 		else{
-			std::cerr << "Warning: No filter file found in: " << _inDir << NEW_LINE;
+		    if(force) std::cerr << "WARN: ";
+            else std::cerr << "ERROR: ";
+			std::cerr << "No filter file found in: " << _inDir << NEW_LINE;
+			if(force) return false;
 		}
 	}
     return !_filterFiles.empty();

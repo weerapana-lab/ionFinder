@@ -19,7 +19,6 @@
 
 namespace base{
 	
-	//std::string const PROG_WD = PROG_WD_DIR;
 	std::string const PROG_DB = PROG_SHARE_DIR;
 	std::string const PROG_MAN = PROG_MAN_DIR;
 	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
@@ -80,7 +79,7 @@ namespace base{
 		bool verbose;
 		
 		bool writeSmod(std::string wd) const;
-		void usage(std::ostream& out = std::cerr) const;
+		void usage(std::string message = "", std::ostream& out = std::cerr) const;
 		void printGitVersion(std::ostream& out = std::cout) const;
 		void displayHelp() const;
 		static MatchType strToMatchType(std::string);
