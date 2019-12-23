@@ -6,6 +6,7 @@ set(ION_FINDER_TARGET ionFinder)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+include(tsv_constants) #defines tsv file column headers for help file.
 
 set(CMAKE_CXX_STANDARD 11)
 
