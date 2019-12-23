@@ -147,7 +147,7 @@ def main():
         s = s.replace(_mod_temp, '{}*'.format(args.mod_residue))
         seq_str_list.append(s)
 
-    dat[SEQUENCE] = pd._Series(seq_str_list)
+    dat[SEQUENCE] = pd.Series(seq_str_list)
     dat[FULL_SEQUENCE] = pd.Series(seq_str_list)
 
     keep_cols = ["experiment_name",
