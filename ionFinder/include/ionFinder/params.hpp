@@ -29,6 +29,7 @@ namespace IonFinder{
 	std::string const PEPTIDE_CIT_STATS_OFNAME = "peptide_cit_stats.tsv";
 	std::string const DTAFILTER_INPUT_STR = "dtafilter";
 	std::string const TSV_INPUT_STR = "tsv";
+	std::string const ARG_REQUIRED_STR = "Additional argument required for: ";
 
     //!default residues which are isobaric with a modification
     std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
@@ -86,7 +87,7 @@ namespace IonFinder{
 		//!Should unique peptide be printed?
 		bool _printPeptideUID;
 		
-		bool getFlist();
+		bool getFlist(bool force);
 		unsigned int computeThreads() const;
 
 	public:

@@ -61,8 +61,9 @@ bool base::ParamsBase::writeSmod(std::string wd) const
  Prints contents of ParamsBase::_usageFile to \p out
  \param out ostream to print to.
  */
-void base::ParamsBase::usage(std::ostream& out) const
+void base::ParamsBase::usage(std::string message, std::ostream& out) const
 {
+    std::cerr << message << NEW_LINE;
 	std::ifstream inF(_usageFile);
 	if(!inF) std::cerr << "Could not open usage file at:\n\t" << _usageFile << NEW_LINE;
 	std::string line;

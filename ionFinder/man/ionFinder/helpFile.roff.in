@@ -2,8 +2,9 @@
 .SH NAME
 \fB@ION_FINDER_TARGET@\fR - perform high a throughput search for fragment ions in ms2 spectra.
 .SH SYNOPSIS
-.B @ION_FINDER_TARGET@
-[options] [input_dir ...]
+
+\fB@ION_FINDER_TARGET@\fR [options] [input_dir ...]
+\fB@ION_FINDER_TARGET@\fR [options] --inputMode tsv <input_file_path>
 
 .SH DESCRIPTION
 \fB@ION_FINDER_TARGET@\fR Reads peptides from one or more DTASelect-filter files, calculates theoretical B and Y peptide fragments, and searches parent MS-2 scans for theoretical fragments. If no argument is specified for \fIinput_dir\fR, the current working directory is used. 
