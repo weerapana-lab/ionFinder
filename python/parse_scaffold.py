@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import argparse
 
+from modules.tsv_constants import *
 
 class AminoAcid(object):
     __slots__ = ['aa', 'mod']
@@ -111,11 +112,11 @@ def main():
 
     # extract scan column
     #dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
-    dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search('_(\d+)$', x).group(1))
+    dat[SCAN_NUM] = dat['spectrum_name'].apply(lambda x: re.search('_(\d+)$', x).group(1))
 
     # extract precursorFile column
     #dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
-    dat['precursorFile'] = dat['ms/ms_sample_name']
+    dat[PRECURSOR_FILE] = dat['ms/ms_sample_name']
 
     seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
 
@@ -124,9 +125,9 @@ def main():
     matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
     dat = dat[[bool(x) for x in matches]]
     matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
-    dat['parentProtein'] = pd.Series(list(map(lambda x: x.group(3), matches)))
-    dat['parentID'] = pd.Series(list(map(lambda x: x.group(2), matches)))
-    dat['parentDescription'] = pd.Series(list(map(lambda x: x.group(4), matches)))
+    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(3), matches)))
+    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(2), matches)))
+    dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), matches)))
 
     # add static modifications
     for i, value in dat['fixed_modifications_identified_by_spectrum'].iteritems():
@@ -146,27 +147,27 @@ def main():
         s = s.replace(_mod_temp, '{}*'.format(args.mod_residue))
         seq_str_list.append(s)
 
-    dat['sequence'] = pd.Series(seq_str_list)
-    dat['fullSequence'] = pd.Series(seq_str_list)
+    dat[SEQUENCE] = pd._Series(seq_str_list)
+    dat[FULL_SEQUENCE] = pd.Series(seq_str_list)
 
     keep_cols = ["experiment_name",
-                 'precursorFile',
-                 "parentID",
-                 'parentProtein',
-                 'parentDescription',
-                 'fullSequence',
-                 'sequence',
-                 'scanNum',
+                 PRECURSOR_FILE,
+                 PARENT_ID,
+                 PARENT_PROTEIN,
+                 PARENT_DESCRIPTION,
+                 FULL_SEQUENCE,
+                 SEQUENCE,
+                 SCAN_NUM,
                  'exclusive',
                  'observed_m/z',
                  "spectrum_charge"]
 
     dat = dat[keep_cols]
 
-    dat.rename({'experiment_name': 'sampleName',
-                'exclusive': 'unique',
-                'observed_m/z': 'precursorMZ',
-                'spectrum_charge': 'charge'},
+    dat.rename({'experiment_name': SAMPLE_NAME,
+                'exclusive': UNIQUE,
+                'observed_m/z': PRECURSOR_MZ,
+                'spectrum_charge': CHARGE},
                axis='columns', inplace=True)
 
     dat.to_csv(ofname, sep='\t', index=False)

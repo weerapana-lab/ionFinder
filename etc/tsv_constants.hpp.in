@@ -1,0 +1,27 @@
+// This file was created automatically by CMake.
+
+#ifndef tsv_constants
+#define tsv_constants
+
+#include <string>
+
+namespace IonFinder { 
+    // metadata tags
+	const std::string SAMPLE_NAME = "@SAMPLE_NAME@"; 
+	const std::string PARENT_ID = "@PARENT_ID@";
+	const std::string PARENT_PROTEIN = "@PARENT_PROTEIN@";
+	const std::string PARENT_DESCRIPTION = "@PARENT_DESCRIPTION@";
+	const std::string MATCH_DIRECTION = "@MATCH_DIRECTION@";
+	const std::string SEQUENCE = "@SEQUENCE@";
+	const std::string FULL_SEQUENCE = "@FULL_SEQUENCE@";
+	const std::string UNIQUE = "@UNIQUE@";
+	const std::string CHARGE = "@CHARGE@";
+	const std::string XCORR = "@XCORR@";
+	const std::string SCAN_NUM = "@SCAN_NUM@";
+	const std::string PRECURSOR_MZ = "@PRECURSOR_MZ@";
+	const std::string PRECURSOR_SCAN = "@PRECURSOR_SCAN@";
+	const std::string PRECURSOR_FILE = "@PRECURSOR_FILE@";
+}
+
+#endif
+

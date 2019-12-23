@@ -60,23 +60,26 @@ target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
 set(SRC_ETC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../etc)
 set(SRC_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts)
 set(.SPEC_CONSTANTS_NAME spectrum_constants)
+macro(add_auto_header name target_name)
 add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/${name}.hpp
         DEPENDS
-            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.config
-            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.hpp.in
-        COMMENT "Writing custom ${.SPEC_CONSTANTS_NAME} header..."
+            ${SRC_ETC_DIR}/${name}.config
+            ${SRC_ETC_DIR}/${name}.hpp.in
+        COMMENT "Writing custom ${name} header..."
         COMMAND
             ${SRC_SCRIPTS_DIR}/configure_file
-            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.config
-            ${SRC_ETC_DIR}/${.SPEC_CONSTANTS_NAME}.hpp.in
-            ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
+            ${SRC_ETC_DIR}/${name}.config
+            ${SRC_ETC_DIR}/${name}.hpp.in
+            ${CMAKE_CURRENT_BINARY_DIR}/include/${name}.hpp
         )
-add_custom_target(SpectrumConstantsHpp ALL
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/include/${.SPEC_CONSTANTS_NAME}.hpp
+add_custom_target(${target_name} ALL
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/include/${name}.hpp
         )
-add_dependencies(${ION_FINDER_TARGET} SpectrumConstantsHpp)
-
+add_dependencies(${ION_FINDER_TARGET} ${target_name})
+endmacro()
+add_auto_header(spectrum_constants SpectrumConstantsHpp)
+add_auto_header(tsv_constants TSVConstantsHpp)
 
 #add thread library
 find_package(Threads)
