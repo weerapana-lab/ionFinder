@@ -6,6 +6,7 @@
 #include <string>
 
 namespace IonFinder { 
+
     // metadata tags
 	const std::string SAMPLE_NAME = "@SAMPLE_NAME@"; 
 	const std::string PARENT_ID = "@PARENT_ID@";

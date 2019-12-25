@@ -111,30 +111,30 @@ def main():
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
 
     # extract scan column
-    #dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
-    dat[SCAN_NUM] = dat['spectrum_name'].apply(lambda x: re.search('_(\d+)$', x).group(1))
+    #dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
+    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search('_(\d+)$', x).group(1))
 
     # extract precursorFile column
-    #dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
-    dat[PRECURSOR_FILE] = dat['ms/ms_sample_name']
+    #dat[PRECURSOR_FILE] = dat[SPECTRUM_NAME].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
+    dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME]
 
-    seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
+    seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
 
     # parse protein id and name
     uniprot_id_re = '^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS='
-    matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
+    matches = [re.search(uniprot_id_re, s) for s in dat[PROTEIN_NAME].values.tolist()]
     dat = dat[[bool(x) for x in matches]]
-    matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
+    matches = [re.search(uniprot_id_re, s) for s in dat[PROTEIN_NAME].values.tolist()]
     dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(3), matches)))
     dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(2), matches)))
     dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), matches)))
 
     # add static modifications
-    for i, value in dat['fixed_modifications_identified_by_spectrum'].iteritems():
+    for i, value in dat[FIXED_MODIFICATIONS].iteritems():
         extractModifications(seq_list[i], value)
 
     # add dynamic modifications
-    for i, value in dat['variable_modifications_identified_by_spectrum'].iteritems():
+    for i, value in dat[VARIABLE_MODIFICATIONS].iteritems():
         extractModifications(seq_list[i], value)
 
     # get seq as string and change R(+0.98) to R*
@@ -150,7 +150,7 @@ def main():
     dat[SEQUENCE] = pd.Series(seq_str_list)
     dat[FULL_SEQUENCE] = pd.Series(seq_str_list)
 
-    keep_cols = ["experiment_name",
+    keep_cols = [EXPERIMENT_NAME,
                  PRECURSOR_FILE,
                  PARENT_ID,
                  PARENT_PROTEIN,
@@ -158,16 +158,16 @@ def main():
                  FULL_SEQUENCE,
                  SEQUENCE,
                  SCAN_NUM,
-                 'exclusive',
-                 'observed_m/z',
-                 "spectrum_charge"]
+                 EXCLUSIVE,
+                 OBSERVED_M_Z,
+                 SPECTRUM_CHARGE]
 
     dat = dat[keep_cols]
 
-    dat.rename({'experiment_name': SAMPLE_NAME,
-                'exclusive': UNIQUE,
-                'observed_m/z': PRECURSOR_MZ,
-                'spectrum_charge': CHARGE},
+    dat.rename({EXPERIMENT_NAME: SAMPLE_NAME,
+                EXCLUSIVE: UNIQUE,
+                OBSERVED_M_Z: PRECURSOR_MZ,
+                SPECTRUM_CHARGE: CHARGE},
                axis='columns', inplace=True)
 
     dat.to_csv(ofname, sep='\t', index=False)

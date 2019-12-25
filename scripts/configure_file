@@ -44,7 +44,7 @@ def read_source(fname):
 def substutute_variabies(variables, template_path, output_path,
                          sub_re=r'@(\w+)@'):
     """
-    Substutute tags matching `sub_re` in `template_path` with the 
+    Substitute tags matching `sub_re` in `template_path` with the 
     key value pairs in `variables` and write to `output_path`.
     
     Parameters
