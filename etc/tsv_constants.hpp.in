@@ -1,4 +1,4 @@
-// This file was created automatically by CMake.
+// @CMAKE_FILE_WARNING@ 
 
 #ifndef tsv_constants
 #define tsv_constants

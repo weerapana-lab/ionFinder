@@ -1,3 +1,4 @@
+# This file was generated automatically by scripts/configure_file
 
 # metadate tags
 BEGIN_METADATA = '<metadata>'

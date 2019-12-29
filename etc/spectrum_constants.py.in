@@ -1,3 +1,4 @@
+# @CONFIGURE_FILE_WARNING@
 
 # metadate tags
 BEGIN_METADATA = '@BEGIN_METADATA@'

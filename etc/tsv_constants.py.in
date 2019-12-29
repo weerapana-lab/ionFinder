@@ -1,4 +1,4 @@
-# This file was created automatically by CMake.
+# @CONFIGURE_FILE_WARNING@
 
 # .tsv file headers
 SAMPLE_NAME = "@SAMPLE_NAME@"

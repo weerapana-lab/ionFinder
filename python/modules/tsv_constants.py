@@ -1,4 +1,4 @@
-# This file was created automatically by CMake.
+# This file was generated automatically by scripts/configure_file
 
 # .tsv file headers
 SAMPLE_NAME = "sampleName"
