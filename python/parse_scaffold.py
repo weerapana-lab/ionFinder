@@ -1,4 +1,5 @@
 
+import sys
 import os
 import re
 import pandas as pd
@@ -32,6 +33,38 @@ def strToAminoAcids(seq):
 
     # add c term
     ret.append(AminoAcid('', float()))
+
+    return ret
+
+
+def parse_spectrum_report(fname):
+    '''
+    Parse scaffold spectrun report to a tsv file readable by pandas
+    and return a processed pd.DataFrame.
+
+    Parameters
+    ----------
+    fname: str
+        Path to file to process.
+    '''
+
+    with open(fname, 'r') as inF:
+        s = inF.read()
+
+    begin = s.find(RAW_SPECTRUM_NAME)
+    begin = s.rfind('\n', 0, begin)
+    s = s[begin:].strip()
+
+    end = s.find(END_OF_FILE)
+    s = s[:end].strip()
+
+    if sys.version_info[0] < 3:
+        from StringIO import StringIO
+    else:
+        from io import StringIO
+
+    with StringIO(s) as inF:
+        ret = pd.read_csv(inF, sep = '\t')
 
     return ret
 
@@ -103,20 +136,20 @@ def main():
     else:
         if args.ofname == '':
             s = os.path.splitext(os.path.basename(args.input_file))
-            ofname = '{}_parsed{}'.format(s[0], s[1])
+            ofname = '{}_parsed.tsv'.format(s[0])
         else: ofname = args.ofname
 
     # read and format properly
-    dat = pd.read_csv(args.input_file, sep='\t')
+    dat = parse_spectrum_report(args.input_file)        
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
 
     # extract scan column
-    #dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
-    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search('_(\d+)$', x).group(1))
+    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
+    #dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search('_(\d+)$', x).group(1))
 
     # extract precursorFile column
-    #dat[PRECURSOR_FILE] = dat[SPECTRUM_NAME].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
-    dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME]
+    dat[PRECURSOR_FILE] = dat[SPECTRUM_NAME].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
+    #dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME]
 
     seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
 
