@@ -8,6 +8,76 @@ import argparse
 
 from modules.tsv_constants import *
 
+SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME:',scan_([0-9]+),type',
+                      MS_MS_SAMPLE_NAME:'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
+                  'Mascot':{SPECTRUM_NAME:'\d+-\d+_(\d+)$',
+                      MS_MS_SAMPLE_NAME:'([\w\- ]+)'}}
+
+def parse_spectrum_report(fname):
+    '''
+    Parse scaffold spectrun report to a tsv file readable by pandas
+    and return a processed pd.DataFrame.
+
+    Parameters
+    ----------
+    fname: str
+        Path to file to process.
+    '''
+
+    with open(fname, 'r') as inF:
+        s = inF.read()
+
+    i = s.find(RAW_SPECTRUM_NAME)
+    if i == -1:
+        raise RuntimeError('Could not find "{}" column!'.format(RAW_SPECTRUM_NAME))
+    i = s.rfind('\n', 0, i)
+    begin = i if i != -1 else 0
+    s = s[begin:].strip()
+
+    i = s.find(END_OF_FILE)
+    end = i if i != -1 else len(s)
+    s = s[:end].strip()
+
+    if sys.version_info[0] < 3:
+        from StringIO import StringIO
+    else:
+        from io import StringIO
+
+    with StringIO(s) as inF:
+        ret = pd.read_csv(inF, sep = '\t')
+
+    return ret
+
+def detect_search_engine(dat):
+    '''
+    Detect the search engnie used to in the scaffold file.
+
+    Each regex in SEARCH_ENGINES are tested on the appropiate columns
+    in dat. The key of the first sucessful match is returned.
+
+    Parameters
+    ----------
+    dat: pd.DataFrame
+        Initalized DataFrame from input_file.
+    '''
+
+    ret_key = str()
+    for k1, v1 in SEARCH_ENGINES.items():
+        sys.stdout.write('Trying to match regex for {}...'.format(k1))
+        try:
+            for k2, v2 in v1.items():
+                dat[k2].apply(lambda x:re.search(v2, x).group(1))
+            sys.stdout.write(' Matched!\n')
+            ret_key = k1
+        except AttributeError as e:
+            sys.stdout.write(' No match\n')
+            continue
+    if not ret_key:
+        raise RuntimeError('Can not parse input_file!')
+    return ret_key
+            
+
+
 class AminoAcid(object):
     __slots__ = ['aa', 'mod']
 
@@ -33,38 +103,6 @@ def strToAminoAcids(seq):
 
     # add c term
     ret.append(AminoAcid('', float()))
-
-    return ret
-
-
-def parse_spectrum_report(fname):
-    '''
-    Parse scaffold spectrun report to a tsv file readable by pandas
-    and return a processed pd.DataFrame.
-
-    Parameters
-    ----------
-    fname: str
-        Path to file to process.
-    '''
-
-    with open(fname, 'r') as inF:
-        s = inF.read()
-
-    begin = s.find(RAW_SPECTRUM_NAME)
-    begin = s.rfind('\n', 0, begin)
-    s = s[begin:].strip()
-
-    end = s.find(END_OF_FILE)
-    s = s[:end].strip()
-
-    if sys.version_info[0] < 3:
-        from StringIO import StringIO
-    else:
-        from io import StringIO
-
-    with StringIO(s) as inF:
-        ret = pd.read_csv(inF, sep = '\t')
 
     return ret
 
@@ -144,12 +182,11 @@ def main():
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
 
     # extract scan column
-    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
-    #dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search('_(\d+)$', x).group(1))
+    engine = detect_search_engine(dat)
+    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][SPECTRUM_NAME], x).group(1))
 
     # extract precursorFile column
-    dat[PRECURSOR_FILE] = dat[SPECTRUM_NAME].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
-    #dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME]
+    dat[PRECURSOR_FILE] = dat[SPECTRUM_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][MS_MS_SAMPLE_NAME], x).group(1) + '.ms2')
 
     seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
 
