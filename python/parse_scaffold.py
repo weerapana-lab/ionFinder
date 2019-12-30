@@ -63,7 +63,7 @@ def detect_search_engine(dat):
 
     ret_key = str()
     for k1, v1 in SEARCH_ENGINES.items():
-        sys.stdout.write('Trying to match regex for {}...'.format(k1))
+        sys.stdout.write('\tTrying to match regex for {}...'.format(k1))
         try:
             for k2, v2 in v1.items():
                 dat[k2].apply(lambda x:re.search(v2, x).group(1))
@@ -178,8 +178,10 @@ def main():
         else: ofname = args.ofname
 
     # read and format properly
-    dat = parse_spectrum_report(args.input_file)        
+    sys.stdout.write('Reading {}...'.format(args.input_file))
+    dat = parse_spectrum_report(args.input_file) 
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
+    sys.stdout.write(' Done!\n')
 
     # extract scan column
     engine = detect_search_engine(dat)
@@ -240,7 +242,9 @@ def main():
                 SPECTRUM_CHARGE: CHARGE},
                axis='columns', inplace=True)
 
+    sys.stdout.write('Writing {}...'.format(ofname))
     dat.to_csv(ofname, sep='\t', index=False)
+    sys.stdout.write(' Done!\n')
 
 
 if __name__ == '__main__':
