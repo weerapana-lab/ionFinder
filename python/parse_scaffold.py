@@ -1,9 +1,81 @@
 
+import sys
 import os
 import re
 import pandas as pd
 import numpy as np
 import argparse
+
+from modules.tsv_constants import *
+
+SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME:',scan_([0-9]+),type',
+                      MS_MS_SAMPLE_NAME:'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
+                  'Mascot':{SPECTRUM_NAME:'\d+-\d+_(\d+)$',
+                      MS_MS_SAMPLE_NAME:'([\w\- ]+)'}}
+
+def parse_spectrum_report(fname):
+    '''
+    Parse scaffold spectrun report to a tsv file readable by pandas
+    and return a processed pd.DataFrame.
+
+    Parameters
+    ----------
+    fname: str
+        Path to file to process.
+    '''
+
+    with open(fname, 'r') as inF:
+        s = inF.read()
+
+    i = s.find(RAW_SPECTRUM_NAME)
+    if i == -1:
+        raise RuntimeError('Could not find "{}" column!'.format(RAW_SPECTRUM_NAME))
+    i = s.rfind('\n', 0, i)
+    begin = i if i != -1 else 0
+    s = s[begin:].strip()
+
+    i = s.find(END_OF_FILE)
+    end = i if i != -1 else len(s)
+    s = s[:end].strip()
+
+    if sys.version_info[0] < 3:
+        from StringIO import StringIO
+    else:
+        from io import StringIO
+
+    with StringIO(s) as inF:
+        ret = pd.read_csv(inF, sep = '\t')
+
+    return ret
+
+def detect_search_engine(dat):
+    '''
+    Detect the search engnie used to in the scaffold file.
+
+    Each regex in SEARCH_ENGINES are tested on the appropiate columns
+    in dat. The key of the first sucessful match is returned.
+
+    Parameters
+    ----------
+    dat: pd.DataFrame
+        Initalized DataFrame from input_file.
+    '''
+
+    ret_key = str()
+    for k1, v1 in SEARCH_ENGINES.items():
+        sys.stdout.write('\tTrying to match regex for {}...'.format(k1))
+        try:
+            for k2, v2 in v1.items():
+                dat[k2].apply(lambda x:re.search(v2, x).group(1))
+            sys.stdout.write(' Matched!\n')
+            ret_key = k1
+        except AttributeError as e:
+            sys.stdout.write(' No match\n')
+            continue
+    if not ret_key:
+        raise RuntimeError('Can not parse input_file!')
+    return ret_key
+            
 
 
 class AminoAcid(object):
@@ -102,38 +174,39 @@ def main():
     else:
         if args.ofname == '':
             s = os.path.splitext(os.path.basename(args.input_file))
-            ofname = '{}_parsed{}'.format(s[0], s[1])
+            ofname = '{}_parsed.tsv'.format(s[0])
         else: ofname = args.ofname
 
     # read and format properly
-    dat = pd.read_csv(args.input_file, sep='\t')
+    sys.stdout.write('Reading {}...'.format(args.input_file))
+    dat = parse_spectrum_report(args.input_file) 
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
+    sys.stdout.write(' Done!\n')
 
     # extract scan column
-    #dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search(',scan_([0-9]+),type', x).group(1))
-    dat['scanNum'] = dat['spectrum_name'].apply(lambda x: re.search('_(\d+)$', x).group(1))
+    engine = detect_search_engine(dat)
+    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][SPECTRUM_NAME], x).group(1))
 
     # extract precursorFile column
-    #dat['precursorFile'] = dat['spectrum_name'].apply(lambda x: re.search('^(\w+),', x).group(1) + '.ms2')
-    dat['precursorFile'] = dat['ms/ms_sample_name']
+    dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][MS_MS_SAMPLE_NAME], x).group(1) + '.ms2')
 
-    seq_list = dat['peptide_sequence'].apply(str.upper).apply(strToAminoAcids).tolist()
+    seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
 
     # parse protein id and name
     uniprot_id_re = '^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS='
-    matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
+    matches = [re.search(uniprot_id_re, s) for s in dat[PROTEIN_NAME].values.tolist()]
     dat = dat[[bool(x) for x in matches]]
-    matches = [re.search(uniprot_id_re, s) for s in dat['protein_name'].values.tolist()]
-    dat['parentProtein'] = pd.Series(list(map(lambda x: x.group(3), matches)))
-    dat['parentID'] = pd.Series(list(map(lambda x: x.group(2), matches)))
-    dat['parentDescription'] = pd.Series(list(map(lambda x: x.group(4), matches)))
+    matches = [re.search(uniprot_id_re, s) for s in dat[PROTEIN_NAME].values.tolist()]
+    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(3), matches)))
+    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(2), matches)))
+    dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), matches)))
 
     # add static modifications
-    for i, value in dat['fixed_modifications_identified_by_spectrum'].iteritems():
+    for i, value in dat[FIXED_MODIFICATIONS].iteritems():
         extractModifications(seq_list[i], value)
 
     # add dynamic modifications
-    for i, value in dat['variable_modifications_identified_by_spectrum'].iteritems():
+    for i, value in dat[VARIABLE_MODIFICATIONS].iteritems():
         extractModifications(seq_list[i], value)
 
     # get seq as string and change R(+0.98) to R*
@@ -146,30 +219,32 @@ def main():
         s = s.replace(_mod_temp, '{}*'.format(args.mod_residue))
         seq_str_list.append(s)
 
-    dat['sequence'] = pd.Series(seq_str_list)
-    dat['fullSequence'] = pd.Series(seq_str_list)
+    dat[SEQUENCE] = pd.Series(seq_str_list)
+    dat[FULL_SEQUENCE] = pd.Series(seq_str_list)
 
-    keep_cols = ["experiment_name",
-                 'precursorFile',
-                 "parentID",
-                 'parentProtein',
-                 'parentDescription',
-                 'fullSequence',
-                 'sequence',
-                 'scanNum',
-                 'exclusive',
-                 'observed_m/z',
-                 "spectrum_charge"]
+    keep_cols = [EXPERIMENT_NAME,
+                 PRECURSOR_FILE,
+                 PARENT_ID,
+                 PARENT_PROTEIN,
+                 PARENT_DESCRIPTION,
+                 FULL_SEQUENCE,
+                 SEQUENCE,
+                 SCAN_NUM,
+                 EXCLUSIVE,
+                 OBSERVED_M_Z,
+                 SPECTRUM_CHARGE]
 
     dat = dat[keep_cols]
 
-    dat.rename({'experiment_name': 'sampleName',
-                'exclusive': 'unique',
-                'observed_m/z': 'precursorMZ',
-                'spectrum_charge': 'charge'},
+    dat.rename({EXPERIMENT_NAME: SAMPLE_NAME,
+                EXCLUSIVE: UNIQUE,
+                OBSERVED_M_Z: PRECURSOR_MZ,
+                SPECTRUM_CHARGE: CHARGE},
                axis='columns', inplace=True)
 
+    sys.stdout.write('Writing {}...'.format(ofname))
     dat.to_csv(ofname, sep='\t', index=False)
+    sys.stdout.write(' Done!\n')
 
 
 if __name__ == '__main__':

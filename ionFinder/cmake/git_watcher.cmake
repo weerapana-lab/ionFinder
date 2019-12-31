@@ -22,7 +22,7 @@
 #
 #   GIT_WORKING_DIR (OPTIONAL)
 #   -- The directory from which git commands will be run.
-#      Defaults to the directory with the top level CMakeLists.txt.
+#      Defaults to the directory with the top level tsv_constants.cmake.
 #
 #   GIT_EXECUTABLE (OPTIONAL)
 #   -- The path to the git executable. It'll automatically be set if the

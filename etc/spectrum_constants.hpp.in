@@ -1,4 +1,4 @@
-// This file was created automatically by CMake.
+// @CMAKE_FILE_WARNING@ 
 
 #ifndef spectrum_constants_hpp
 #define spectrum_constants_hpp

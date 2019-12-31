@@ -11,7 +11,7 @@ import parent_parser
 RSCRIPT_PATH = '../ionFinder/rscripts/makeMs2.R'
 RSCRIPT = 'Rscript'
 
-def getFileLists(nThread, spectraDir, inputFiles = None):
+def getFileLists(nThread, spectraDir, inputFiles=None):
     """
     Get input file names and split into a list for each subprocess.
 
@@ -58,27 +58,27 @@ def getFileLists(nThread, spectraDir, inputFiles = None):
     return ret, nFiles
 
 
-def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round, inputFiles,
-                      verbose = False, mzLab = 1, simpleSeq = 0):
+def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round_to, inputFiles,
+                      verbose=False, mzLab=1, simpleSeq=0):
 
-    files, nFiles = getFileLists(nThread, spectraDir, inputFiles)
+    files, nFiles=getFileLists(nThread, spectraDir, inputFiles)
 
     if nFiles == 0:
         raise RuntimeError('No .spectra files found in {}'.format(spectraDir))
 
-    rscriptCommand = "{} {}".format(RSCRIPT, make_ms2_r_path)
+    rscriptCommand="{} {}".format(RSCRIPT, make_ms2_r_path)
 
     #spawn subprocesses
     procecies = list()
     for item in files:
         command = '{} -mzLab {} -simpleSeq {} -round {} {}'.format(rscriptCommand,
-                                                                   mzLab, simpleSeq, round,
-                                                                   ' '.join(item))
+                                                                 mzLab, simpleSeq, round_to,
+                                                                 ' '.join(item))
         if verbose:
             sys.stdout.write('{}\n'.format(command))
 
-        procecies.append(sp.Popen([command], stdout = sp.PIPE, stderr = sp.PIPE,
-                                  cwd = spectraDir,
+        procecies.append(sp.Popen([command], stdout=sp.PIPE, stderr=sp.PIPE,
+                                  cwd=spectraDir,
                                   shell=True))
 
     #join processes and get output
@@ -97,14 +97,14 @@ def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round, inputFiles,
 
 def main(make_ms2_r_path):
     parser = argparse.ArgumentParser('run_make_ms2',
-                                     parents=[parent_parser.parent_parser],
+                                     parents=[parent_parser.PARENT_PARSER],
                                      description='Run rscripts/makeMS2.R and manage parallelism.')
 
-    parser.add_argument('input_files', nargs = '*',
-                        help = '')
+    parser.add_argument('input_files', nargs='*',
+                        help='')
 
     args = parser.parse_args()
-    
+
     # get wd
     wd = args.dir
     if wd is None:
@@ -115,8 +115,8 @@ def main(make_ms2_r_path):
     if nThread is None:
         nThread = cpu_count()
 
-    _make_ms2_parallel(nThread, wd, make_ms2_r_path, args.round, args.input_files, verbose = args.verbose,
-                      mzLab=args.mzLab, simpleSeq=args.simpleSeq)
+    _make_ms2_parallel(nThread, wd, make_ms2_r_path, args.round_to, args.input_files, verbose=args.verbose,
+                       mzLab=args.mzLab, simpleSeq=args.simpleSeq)
 
 
 if __name__ == '__main__':

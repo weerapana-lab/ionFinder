@@ -391,14 +391,22 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 		
 	//read ms2 files
 	ms2Map.clear();
+	bool allSucess = true;
 	for(auto & it : fileNamesList)
 	{
 		ms2Map[it] = ms2::Ms2File();
 		if(!ms2Map[it].read(it)){
-			std::cerr << "Error reading ms2 files!" << NEW_LINE;
-			return false;
+			std::cerr << "\n\tFailed to read: " << it << NEW_LINE;
+			std::cerr << "\t\tNo file found at: " << utils::absPath(it) << NEW_LINE;
+			allSucess = false;
 		}
 	}
+
+	if(!allSucess){
+		std::cerr << "Error reading ms2 files!" << NEW_LINE;
+		return false;
+	}
+
 	return true;
 }
 
