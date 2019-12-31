@@ -32,7 +32,7 @@ INCLUDE_ARROW = 'includeArrow'
 ARROW_BEG_X = 'arrowBegX'
 ARROW_BEG_Y = 'arrowBegY'
 ARROW_END_X = 'arrowEndX'
-ARROW_END_X = 'arrowEndX'
+ARROW_END_Y = 'arrowEndY'
 
 
 
