@@ -17,6 +17,7 @@ PRECURSOR_CHARGE = 'precursorCharge'
 PLOT_HEIGHT = 'plotHeight'
 PLOT_WIDTH = 'plotWidth'
 PRECURSOR_INT = 'precursorInt'
+PRECURSOR_SCAN = 'precursorScan'
 
 # column heders
 MZ = 'mz'

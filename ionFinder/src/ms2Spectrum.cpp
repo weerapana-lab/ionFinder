@@ -23,7 +23,7 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
         << ms2::PLOT_WIDTH << OUT_DELIM << plotWidth << NEW_LINE
         << ms2::PRECURSOR_INT << OUT_DELIM << std::scientific << _precursor.getIntensity() << NEW_LINE;
     out.unsetf(std::ios::scientific);
-    out << "precursorScan" << OUT_DELIM << _precursor.getScan() << NEW_LINE
+    out << ms2::PRECURSOR_SCAN << OUT_DELIM << _precursor.getScan() << NEW_LINE
         << ms2::END_METADATA <<NEW_LINE << ms2::BEGIN_SPECTRUM << NEW_LINE;
 }
 

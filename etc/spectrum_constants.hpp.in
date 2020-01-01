@@ -23,6 +23,7 @@ namespace ms2 {
     const std::string PLOT_HEIGHT = "@PLOT_HEIGHT@";
     const std::string PLOT_WIDTH = "@PLOT_WIDTH@";
     const std::string PRECURSOR_INT = "@PRECURSOR_INT@";
+	const std::string PRECURSOR_SCAN = "@PRECURSOR_SCAN@";
 
     // column heders
     const std::string MZ = "@MZ@";

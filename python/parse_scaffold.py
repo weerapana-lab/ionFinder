@@ -6,6 +6,11 @@ import pandas as pd
 import numpy as np
 import argparse
 
+if sys.version_info[0] < 3:
+    from StringIO import StringIO
+else:
+    from io import StringIO
+
 from modules.tsv_constants import *
 
 SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME:',scan_([0-9]+),type',
@@ -37,11 +42,6 @@ def parse_spectrum_report(fname):
     i = s.find(END_OF_FILE)
     end = i if i != -1 else len(s)
     s = s[:end].strip()
-
-    if sys.version_info[0] < 3:
-        from StringIO import StringIO
-    else:
-        from io import StringIO
 
     with StringIO(s) as inF:
         ret = pd.read_csv(inF, sep = '\t')
