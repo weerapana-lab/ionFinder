@@ -6,7 +6,7 @@ import sys
 import os
 import re
 
-import parent_parser
+from modules import parent_parser
 
 RSCRIPT_PATH = '../ionFinder/rscripts/makeMs2.R'
 RSCRIPT = 'Rscript'
