@@ -106,11 +106,11 @@ def main():
 
     #submit jobs
     for i, item in enumerate(spectraFiles):
-        makeMs2_args = '-v -mzLab {} ' \
-                       '-simpleSeq {} ' \
-                       '-round {} {}'.format(args.mzLab,
+        makeMs2_args = '-v --mzLab {} ' \
+                       '--simpleSeq {} ' \
+                       '--round_to {} {}'.format(args.mzLab,
                                              args.simpleSeq,
-                                             args.round,
+                                             args.round_to,
                                              ' '.join(item))
 
         pbsName = makePBS(args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir)

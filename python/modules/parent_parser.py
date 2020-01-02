@@ -3,14 +3,14 @@ import argparse
 
 PARENT_PARSER = argparse.ArgumentParser(add_help=False)
 
-PARENT_PARSER.add_argument('-mzLab', choices=[0, 1], default=1, type=int,
+PARENT_PARSER.add_argument('--mzLab', choices=[0, 1], default=1, type=int,
                            help='Choose whether to include MZ labels in spectrum. Default is 1.')
 
-PARENT_PARSER.add_argument('-simpleSeq', choices=[0, 1], default=0, type=int,
+PARENT_PARSER.add_argument('--simpleSeq', choices=[0, 1], default=0, type=int,
                            help='Choose whether to write simplified peptide sequence on plot. '
                            '0 is the default.')
 
-PARENT_PARSER.add_argument('-round_to', type=int, default=2,
+PARENT_PARSER.add_argument('--round_to', type=int, default=2,
                            help='Specify number of decimal places in ion labels in plot.'
                                   'Default is 2.')
 
