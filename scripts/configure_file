@@ -37,7 +37,7 @@ def read_source(fname):
         if not m:
             raise SyntaxError("Could not parse line: {}".format(line))
         ret[m.group(1)] = m.group(2) if m.group(3) is None else m.group(3)
-    
+
     return ret
 
 
@@ -45,9 +45,9 @@ def substutute_variabies(variables, template_path, output_path,
                          warn_level=1,
                          sub_re=r'@(\w+)@'):
     """
-    Substitute tags matching `sub_re` in `template_path` with the 
+    Substitute tags matching `sub_re` in `template_path` with the
     key value pairs in `variables` and write to `output_path`.
-    
+
     Parameters
     ----------
     variables : dict
@@ -58,13 +58,13 @@ def substutute_variabies(variables, template_path, output_path,
         Regex should match all tags. Capturing group should extract
         the variable key to match in `variables`
     """
-    
+
     def error_message(s1, s2):
         return '{}: {} not found in input.\n'.format(s1, s2)
 
     with open(template_path, 'r') as inF:
         template_lines = inF.readlines()
-    
+
     output_lines = list()
     for line in template_lines:
         m = re.search(sub_re, line)
@@ -80,7 +80,7 @@ def substutute_variabies(variables, template_path, output_path,
                 elif warn_level == 2:
                     raise RuntimeError(error_message('ERROR', m.group(1)))
         output_lines.append(line)
-            
+
     with open(output_path, 'w') as outF:
         for line in output_lines:
             outF.write(line)
@@ -89,7 +89,7 @@ def substutute_variabies(variables, template_path, output_path,
 def main():
     parser = argparse.ArgumentParser(prog='configure_file',
             description='Substutute variables in config file a la cmake configure_file function.')
-    
+
     parser.add_argument('-w', '--warn_level', choices = [0,1,2], default = 1, type = int,
             help = 'Set behavior when tag is not found in source. 1 is the default.')
 
@@ -98,7 +98,7 @@ def main():
     parser.add_argument('output', help='Destination file.')
 
     args = parser.parse_args()
-    
+
     sys.stdout.write('Reading variables from {}...'.format(args.source))
     variables = read_source(args.source)
     sys.stdout.write('\tDone!\n')
