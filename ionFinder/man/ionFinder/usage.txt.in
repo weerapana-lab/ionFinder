@@ -1,2 +1,2 @@
 usage: @ION_FINDER_TARGET@ [options] [input_dir ...]
-usage: @ION_FINDER_TARGET@ [options] --inputMode tsv <input_file_path>
+usage: @ION_FINDER_TARGET@ [options] --inputMode tsv <input_file_path> [...]

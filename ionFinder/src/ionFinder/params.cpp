@@ -38,7 +38,6 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
     _wd = utils::pwd();
 	assert(utils::dirExists(_wd));
 	
-	//TODO: add all options to getArgs
 	for(int i = 1; i < argc; i++)
 	{
 		if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help"))
@@ -417,6 +416,12 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			return false;
 		}
 	}
+	else if(_inputMode == TSV_INPUT_STR) {
+	    if(_inDirs.size() == 0) {
+            std::cerr << "ERROR: Input file name is required when using tsv input mode!\n";
+            return false;
+        }
+    }
 	
 	return true;
 }//end of getArgs
