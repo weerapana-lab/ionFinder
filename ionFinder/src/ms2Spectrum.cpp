@@ -66,6 +66,10 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
     out.precision(5); //set out to print 5 floating point decimal places
     for(const auto & ion : ions)
     {
+        // if(utils::strContains('*', ion.getFormatedLabel())) {
+        //     std::cout << ion.getFormatedLabel() << NEW_LINE;
+        // }
+
         out << std::fixed << ion.getMZ() << OUT_DELIM
             << ion.getIntensity() << OUT_DELIM
             << ion.getLabel() << OUT_DELIM
