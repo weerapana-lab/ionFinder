@@ -104,13 +104,12 @@ Rcpp::List getSpectrum(std::string fname)
 
         utils::split(line, IN_DELIM, elems);
         utils::trimAll(elems);
-        if(elems[0] == "mz") //if header line, continue
-        {
+        if(elems[0] == "mz"){ //if header line, continue
           continue;
         }
         else {
           if(elems.size() != 14)
-            throw std::runtime_error("elems.size() != 13");
+            throw std::runtime_error("elems.size() != 15");
 
           mz.push_back(std::stod(elems[0]));
           intensity.push_back(std::stod(elems[1]));
@@ -140,20 +139,21 @@ Rcpp::List getSpectrum(std::string fname)
     Rcpp::Named("precursorCharge") = precursorCharge,
     Rcpp::Named("plotWidth") = plotWidth,
     Rcpp::Named("plotHeight") = plotHeight)),
-    Rcpp::Named("spectrum") = Rcpp::DataFrame::create(Rcpp::Named("mz") = mz,
-                           Rcpp::Named("intensity") = intensity,
-                           Rcpp::Named("label") = label,
-                           Rcpp::Named("includeLabel") = includeLabel,
-                           Rcpp::Named("ionType") = ionType,
-                           Rcpp::Named("ionNum") = ionNum,
-                           Rcpp::Named("formatedLabel") = formatedLabel,
-                           Rcpp::Named("labelX") = labelX,
-                           Rcpp::Named("labelY") = labelY,
-                           Rcpp::Named("includeArrow") = includeArrow,
-                           Rcpp::Named("arrowBegX") = arrowBegX,
-                           Rcpp::Named("arrowBegY") = arrowBegY,
-                           Rcpp::Named("arrowEndX") = arrowEndX,
-                           Rcpp::Named("arrowEndY") = arrowEndY));
+    Rcpp::Named("spectrum") = Rcpp::DataFrame::create(Rcpp::_["stringsAsFactors"] = false,
+                                                      Rcpp::Named("mz") = mz,
+                                                      Rcpp::Named("intensity") = intensity,
+                                                      Rcpp::Named("label") = label,
+                                                      Rcpp::Named("includeLabel") = includeLabel,
+                                                      Rcpp::Named("ionType") = ionType,
+                                                      Rcpp::Named("ionNum") = ionNum,
+                                                      Rcpp::Named("formatedLabel") = formatedLabel,
+                                                      Rcpp::Named("labelX") = labelX,
+                                                      Rcpp::Named("labelY") = labelY,
+                                                      Rcpp::Named("includeArrow") = includeArrow,
+                                                      Rcpp::Named("arrowBegX") = arrowBegX,
+                                                      Rcpp::Named("arrowBegY") = arrowBegY,
+                                                      Rcpp::Named("arrowEndX") = arrowEndX,
+                                                      Rcpp::Named("arrowEndY") = arrowEndY));
 }
 
 

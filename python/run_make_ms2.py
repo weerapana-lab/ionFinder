@@ -6,7 +6,7 @@ import subprocess
 from math import ceil
 
 import make_ms2
-import parent_parser
+from modules import parent_parser
 
 PYTHON_PBS_VERSION = 'python/2.7.10'
 R_PBS_VERSION = 'R/3.5.0.gnu'
@@ -35,7 +35,7 @@ def getPlurality(num):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog = 'run_make_ms2', parents=[parent_parser.parent_parser],
+    parser = argparse.ArgumentParser(prog = 'run_make_ms2', parents=[parent_parser.PARENT_PARSER],
                                      description = 'Run rscripts/makeMS2.R and manage parallelism. '
                                                    'Program will search current working directory for .spectrum files'
                                                    ' for input.')
@@ -106,11 +106,11 @@ def main():
 
     #submit jobs
     for i, item in enumerate(spectraFiles):
-        makeMs2_args = '-v -mzLab {} ' \
-                       '-simpleSeq {} ' \
-                       '-round {} {}'.format(args.mzLab,
+        makeMs2_args = '-v --mzLab {} ' \
+                       '--simpleSeq {} ' \
+                       '--round_to {} {}'.format(args.mzLab,
                                              args.simpleSeq,
-                                             args.round,
+                                             args.round_to,
                                              ' '.join(item))
 
         pbsName = makePBS(args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir)

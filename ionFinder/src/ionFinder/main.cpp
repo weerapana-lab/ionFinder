@@ -31,13 +31,15 @@ int main(int argc, const char** argv)
 	else{
 		assert(pars.getInputMode() == IonFinder::TSV_INPUT_STR);
 		std::cout << "\nReading input .tsv files...";
-		if(!IonFinder::readInputTsv(*pars.getInputDirs().begin(), scans,
-									!pars.getIncludeReverse(), pars.getModFilter()))
+		for(auto file: pars.getInputDirs())
 		{
-			std::cerr << "Failed to read input .tsv files!" << NEW_LINE;
-			return -1;
-		}
-		else std::cout << "Done!\n";
+            if(!IonFinder::readInputTsv(file,scans,
+                                         !pars.getIncludeReverse(), pars.getModFilter())) {
+                std::cerr << "Failed to read input .tsv files!" << NEW_LINE;
+                return -1;
+            }
+        }
+		std::cout << "Done!\n";
 	}
 	
 	//calculate and find fragments
