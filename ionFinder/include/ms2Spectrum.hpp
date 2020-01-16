@@ -30,11 +30,11 @@
 
 namespace ms2{
 	
-	std::string const SPECTRUM_COL_HEADERS [] = {MZ, INTENSITY, LABEL, INCLUDE_LABEL,
+	std::string const SPECTRUM_COL_HEADERS [] = {MZ, INTENSITY, LABEL, COLOR, INCLUDE_LABEL,
 		ION_TYPE, ION_NUM, FORMATED_LABEL, LABEL_X, LABEL_Y, INCLUDE_ARROW, ARROW_BEG_X,
-		ARROW_BEG_Y, ARROW_END_X, ARROW_END_X};
+		ARROW_BEG_Y, ARROW_END_X, ARROW_END_Y};
 	size_t const NUM_SPECTRUM_COL_HEADERS_SHORT = 2;
-	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 14;
+	size_t const NUM_SPECTRUM_COL_HEADERS_LONG = 15;
 	std::string const NA_STR = "NA";
 	
 	double const POINT_PADDING = 1;
@@ -88,7 +88,7 @@ namespace ms2{
 		std::string formatedLabel;
 		//!Is the ion one of the top n most intense ions in the Spectrum?
 		bool topAbundant;
-		std::string ionType;
+		PeptideNamespace::IonType ionType;
 		int ionNum;
 
 		//! Initialize DataPoint stats with default values.
@@ -97,7 +97,7 @@ namespace ms2{
 			labeledIon = false;
 			topAbundant = false;
 			formatedLabel = NA_STR;
-			ionType = "blank";
+			ionType = PeptideNamespace::IonType::BLANK;
 			ionNum = 0;
 		}
 	public:
@@ -126,8 +126,8 @@ namespace ms2{
 		void setForceLabel(bool boo){
 			label.forceLabel = boo;
 		}
-		void setIonType(std::string str){
-			ionType = str;
+		void setIonType(PeptideNamespace::IonType id){
+			ionType = id;
 		}
 		void setIonNum(int num){
 			ionNum = num;
@@ -148,12 +148,13 @@ namespace ms2{
 		std::string getFormatedLabel() const{
 			return formatedLabel;
 		}
-		std::string getIonType() const{
+		PeptideNamespace::IonType getIonType() const{
 			return ionType;
 		}
 		int getIonNum() const{
 			return ionNum;
 		}
+		std::string getLableColor() const;
 		
 		//for utils::insertSorted()
 		inline bool insertCompare(const DataPoint& comp) const{

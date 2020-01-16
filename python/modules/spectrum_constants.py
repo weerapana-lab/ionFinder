@@ -23,6 +23,7 @@ PRECURSOR_SCAN = 'precursorScan'
 MZ = 'mz'
 INTENSITY = 'intensity'
 LABEL = 'label'
+COLOR = 'color'
 INCLUDE_LABEL = 'includeLabel'
 ION_TYPE = 'ionType'
 ION_NUM = 'ionNum'
@@ -35,5 +36,12 @@ ARROW_BEG_Y = 'arrowBegY'
 ARROW_END_X = 'arrowEndX'
 ARROW_END_Y = 'arrowEndY'
 
-
+# label colors
+Y_COLOR = 'red'
+B_COLOR = 'blue'
+Y_NL_COLOR = 'orange'
+B_NL_COLOR = 'green'
+BLANK_COLOR = 'grey'
+M_NL_COLOR = 'orange'
+M_COLOR = 'grey'
 

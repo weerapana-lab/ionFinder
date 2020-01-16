@@ -8,6 +8,35 @@
 
 #include <ms2Spectrum.hpp>
 
+std::string ms2::DataPoint::getLableColor() const
+{
+    switch(ionType) {
+        case PeptideNamespace::IonType::BLANK :
+            return BLANK_COLOR;
+            break;
+        case PeptideNamespace::IonType::B :
+            return B_COLOR;
+            break;
+        case PeptideNamespace::IonType::Y :
+            return Y_COLOR;
+            break;
+        case PeptideNamespace::IonType::M :
+            return M_COLOR;
+            break;
+        case PeptideNamespace::IonType::B_NL :
+            return B_NL_COLOR;
+            break;
+        case PeptideNamespace::IonType::Y_NL :
+            return Y_NL_COLOR;
+            break;
+        case PeptideNamespace::IonType::M_NL :
+            return M_NL_COLOR;
+            break;
+        default:
+            throw std::runtime_error("Not a valid option!");
+    }
+}
+
 void ms2::Spectrum::writeMetaData(std::ostream& out) const
 {
     assert(out);
@@ -73,8 +102,9 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
         out << std::fixed << ion.getMZ() << OUT_DELIM
             << ion.getIntensity() << OUT_DELIM
             << ion.getLabel() << OUT_DELIM
+            << ion.getLableColor() << OUT_DELIM
             << ion.label.getIncludeLabel() << OUT_DELIM
-            << ion.getIonType() << OUT_DELIM
+            << PeptideNamespace::ionTypeToStr(ion.getIonType()) << OUT_DELIM
             << ion.getIonNum() << OUT_DELIM
             << ion.getFormatedLabel() << OUT_DELIM
             << ion.label.labelLoc.getX() << OUT_DELIM
@@ -336,7 +366,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
                 (*label)->setFormatedLabel(peptide.getFormatedLabel(i));
                 (*label)->setLabeledIon(true);
                 (*label)->label.setIncludeLabel(true);
-                (*label)->setIonType(peptide.getFragment(i).ionTypeToStr());
+                (*label)->setIonType(peptide.getFragment(i).getIonType());
                 (*label)->setIonNum(peptide.getFragment(i).getNum());
                 labledCount++;
             }

@@ -1,11 +1,11 @@
-// @CMAKE_FILE_WARNING@ 
+// @CMAKE_FILE_WARNING@
 
 #ifndef spectrum_constants_hpp
 #define spectrum_constants_hpp
 
 #include <string>
 
-namespace ms2 { 
+namespace ms2 {
     // metadata tags
     const std::string BEGIN_METADATA = "@BEGIN_METADATA@";
     const std::string END_METADATA = "@END_METADATA@";
@@ -29,6 +29,7 @@ namespace ms2 {
     const std::string MZ = "@MZ@";
     const std::string INTENSITY = "@INTENSITY@";
     const std::string LABEL = "@LABEL@";
+	const std::string COLOR = "@COLOR@";
     const std::string INCLUDE_LABEL = "@INCLUDE_LABEL@";
     const std::string ION_TYPE = "@ION_TYPE@";
     const std::string ION_NUM = "@ION_NUM@";
@@ -40,6 +41,15 @@ namespace ms2 {
     const std::string ARROW_BEG_Y = "@ARROW_BEG_Y@";
     const std::string ARROW_END_X = "@ARROW_END_X@";
     const std::string ARROW_END_Y = "@ARROW_END_Y@";
+
+	// label colors
+	const std::string Y_COLOR = "@Y_COLOR@";
+	const std::string B_COLOR = "@B_COLOR@";
+	const std::string Y_NL_COLOR = "@Y_NL_COLOR@";
+	const std::string B_NL_COLOR = "@B_NL_COLOR@";
+	const std::string BLANK_COLOR = "@BLANK_COLOR@";
+	const std::string M_NL_COLOR = "@M_NL_COLOR@";
+	const std::string M_COLOR = "@M_COLOR@";
 }
 
 #endif

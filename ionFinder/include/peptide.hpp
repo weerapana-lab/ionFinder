@@ -35,6 +35,12 @@ namespace PeptideNamespace{
     const double H_MASS = 1.00732;
     //const double H_MASS = 1.00783;
 
+    //!Enumerated fragment ion classifications
+    enum class IonType{BLANK, B, Y, M, B_NL, Y_NL, M_NL};
+    std::string ionTypeToStr(const IonType&);
+    IonType strToIonType(const std::string&);
+    IonType strToIonType(char);
+
     typedef std::vector<AminoAcid> PepIonVecType;
     typedef PepIonVecType::const_iterator PepIonIt;
 
@@ -154,9 +160,6 @@ namespace PeptideNamespace{
 
     //!Used to represent b and y peptide ions
     class FragmentIon : public Ion{
-    public:
-        enum class IonType{B, Y, M, B_NL, Y_NL, M_NL};
-
     protected:
         char _b_y;
         int _num;
@@ -194,7 +197,7 @@ namespace PeptideNamespace{
             _num = 0;
             _mod = "";
             _found = false;
-            _ionType = IonType::B;
+            _ionType = IonType::BLANK;
             _nlMass = 0.0;
             _numNl = 0;
             _sequence = "";
@@ -260,10 +263,6 @@ namespace PeptideNamespace{
         }
         bool getIncludeLabel() const{
             return _includeLabel;
-        }
-        static IonType strToIonType(std::string);
-        static IonType strToIonType(char c){
-            return strToIonType(std::string(1, c));
         }
         std::string ionTypeToStr() const;
         std::string getNLStr() const;

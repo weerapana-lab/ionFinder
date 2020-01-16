@@ -18,13 +18,17 @@ PeptideNamespace::Ion::Ion(const PeptideNamespace::Ion & rhs) : PeptideNamespace
     charge = rhs.charge;
 }
 
+PeptideNamespace::IonType PeptideNamespace::strToIonType(char c){
+    return PeptideNamespace::strToIonType(std::string(1, c));
+}
+
 /**
  \brief Convert string to IonType <br>
  Accepted options are "b", "y", "m", "M", "^y-", "^b-", and "^M-".
  All others will cause an error.
  \return IonType
  */
-PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonType(std::string s)
+PeptideNamespace::IonType PeptideNamespace::strToIonType(const std::string& s)
 {
 	if(s == "b")
 		return IonType::B;
@@ -38,7 +42,7 @@ PeptideNamespace::FragmentIon::IonType PeptideNamespace::FragmentIon::strToIonTy
 		return IonType::Y_NL;
 	else if(utils::startsWith(s, "m-") || utils::startsWith(s, "M-"))
 		return IonType::M_NL;
-	else throw std::runtime_error("Unknown IonType!");
+	else throw std::runtime_error(s + " is an unknown IonType!");
 }
 
 /**
@@ -78,21 +82,22 @@ void PeptideNamespace::FragmentIon::_initFragSpan(const std::string& sequence)
 	//std::cout << _sequence << std::endl;
 }
 
-std::string PeptideNamespace::FragmentIon::ionTypeToStr() const
+std::string PeptideNamespace::ionTypeToStr(const PeptideNamespace::IonType& ionType)
 {
-	switch(_ionType){
+	switch(ionType){
 		case IonType::B : return "b";
 			break;
 		case IonType::Y : return "y";
 			break;
 		case IonType::M : return "M";
 			break;
-		case IonType::B_NL : return "b_nl"; // + getNLStr();
+		case IonType::B_NL : return "b_nl";
 			break;
-		case IonType::Y_NL : return "y_nl"; // + getNLStr();
+		case IonType::Y_NL : return "y_nl";
 			break;
 		case IonType::M_NL : return "M_nl";
 			break;
+	    case IonType::BLANK : return "blank";
 		default:
 			throw std::runtime_error("Not a valid option!");
 	}
@@ -291,13 +296,13 @@ PeptideNamespace::FragmentIon PeptideNamespace::FragmentIon::makeNLFrag(double l
 	PeptideNamespace::FragmentIon ret = FragmentIon(*this);
 	
 	//get new fragment type
-	PeptideNamespace::FragmentIon::IonType ionType;
+	PeptideNamespace::IonType ionType;
 	if(getBY() == 'b')
-		ionType = PeptideNamespace::FragmentIon::IonType::B_NL;
+		ionType = PeptideNamespace::IonType::B_NL;
 	else if(getBY() == 'y')
-		ionType = PeptideNamespace::FragmentIon::IonType::Y_NL;
+		ionType = PeptideNamespace::IonType::Y_NL;
 	else if(getBY() == 'M' || getBY() == 'm')
-		ionType = PeptideNamespace::FragmentIon::IonType::M_NL;
+		ionType = PeptideNamespace::IonType::M_NL;
 	else throw std::runtime_error("Unknown ion type!");
 	ret.setIonType(ionType);
 	
