@@ -22,10 +22,6 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 endif()
 
-#file(GLOB COMMON_SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-#file(GLOB ION_FINDER_SRC ${PROJECT_SOURCE_DIR}/src/ionFinder/*.cpp)
-#set(ION_FINDER_SRC "${ION_FINDER_SRC} ${COMMON_SOURCE_FILES}")
-
 set(PROG_WD_DIR "${PROJECT_SOURCE_DIR}" CACHE STRING "Path to program source parent directory.")
 set(PROG_SHARE_DIR "${PROJECT_SOURCE_DIR}/share" CACHE STRING "Path directory with aa masses and default smod file.")
 set(GIT_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_info.h.in)
@@ -58,6 +54,10 @@ target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
 target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
 
 #add auto generated headers
+find_package(Python REQUIRED)
+if(PYTHON_VERSION VERSION_LESS 2.7.0)
+       message(FATAL_ERROR "python >= 2.7 is required!")
+endif()
 set(SRC_ETC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../etc)
 set(SRC_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts)
 set(.SPEC_CONSTANTS_NAME spectrum_constants)
@@ -195,9 +195,11 @@ endif()
 option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
 if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     find_program(BASH bash DOC "Path to bash interpreter.")
-    execute_process(COMMAND which python OUTPUT_VARIABLE FOUND_PYTHON_EXE_PATH)
-    string(REGEX REPLACE "\n$" "" FOUND_PYTHON_EXE_PATH "${FOUND_PYTHON_EXE_PATH}")
-    set(PYTHON_PATH ${FOUND_PYTHON_EXE_PATH} CACHE STRING "Path to python interpreter to use.")
+
+    # Add required python modules here for now
+    #find_python_module(matplotlib REQUIRED)
+    find_python_module(pandas REQUIRED)
+
     set(RUN_MAKE_MS2_SCR_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/run_make_ms2.py
             CACHE STRING "Path to run_make_ms2.py")
     set(MAKE_MS2_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/make_ms2.py
@@ -212,7 +214,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             COMMENT "Adding make_ms2 executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_PATH}
+                --pythonExe ${PYTHON_EXECUTABLE}
                 --mainArgs ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
                 ${MAKE_MS2_SRC_PATH}
             )
@@ -225,7 +227,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             COMMENT "Adding run_make_ms2 executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_PATH}
+                --pythonExe ${PYTHON_EXECUTABLE}
                 ${RUN_MAKE_MS2_SCR_PATH}
             )
     add_custom_target(run_make_ms2 ALL
@@ -237,9 +239,9 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             DEPENDS ${PARSE_SCAFFOLD_PATH}
             COMMENT "Adding parse_scaffold executable."
             COMMAND
-            ${BASH} ${PYTHON_BUILD_SCRIPT}
-            --pythonExe ${PYTHON_PATH}
-            ${PARSE_SCAFFOLD_PATH}
+                ${BASH} ${PYTHON_BUILD_SCRIPT}
+                --pythonExe ${PYTHON_EXECUTABLE}
+                ${PARSE_SCAFFOLD_PATH}
             )
     add_custom_target(parse_scaffold ALL
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
