@@ -18,6 +18,7 @@ find_path(UTILS_INCLUDE_DIR
         PATHS ${FIND_UTILS_PATHS})
 
 find_library(UTILS_LIB
-        NAMES utils
-        HINTS ${FIND_UTILS_PATHS})
+        NAMES utils libutils.a libutils
+        PATHS ${FIND_UTILS_PATHS}
+        DOC "Path to utils library.")
 
