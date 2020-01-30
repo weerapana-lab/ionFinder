@@ -3,10 +3,10 @@
 
 include(FindPackageHandleStandardArgs)
 
-find_program(PYTHON_EXECUTABLE python DOC "Path to python interpreter.")
-find_package_handle_standard_args(PYTHON_EXECUTABLE DEFAULT_MSG PYTHON_EXECUTABLE)
+find_program(PYTHON_EXE python DOC "Path to python interpreter.")
+find_package_handle_standard_args(PYTHON_EXE DEFAULT_MSG PYTHON_EXE)
 
-execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print('%d.%d' % (sys.version_info[0], sys.version_info[1]))" OUTPUT_VARIABLE PYTHON_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${PYTHON_EXE} -c "import sys; print('%d.%d' % (sys.version_info[0], sys.version_info[1]))" OUTPUT_VARIABLE PYTHON_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(PYTHON_VERSION "${PYTHON_VERSION}" CACHE STRING "Python version")
 
 # This function checks for python packages that should be installed before you
@@ -19,7 +19,7 @@ function(find_python_module module)
         endif()
         # A module's location is usually a directory, but for binary modules
         # it's a .so file.
-    execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c" 
+    execute_process(COMMAND "${PYTHON_EXE}" "-c" 
             "import re, ${module}; print(re.compile('/__init__.py.*').sub('',${module}.__file__))"
             RESULT_VARIABLE _${module}_status 
             OUTPUT_VARIABLE _${module}_location

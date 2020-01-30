@@ -214,7 +214,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             COMMENT "Adding make_ms2 executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXECUTABLE}
+                --pythonExe ${PYTHON_EXE}
                 --mainArgs ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
                 ${MAKE_MS2_SRC_PATH}
             )
@@ -227,7 +227,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             COMMENT "Adding run_make_ms2 executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXECUTABLE}
+                --pythonExe ${PYTHON_EXE}
                 ${RUN_MAKE_MS2_SCR_PATH}
             )
     add_custom_target(run_make_ms2 ALL
@@ -240,7 +240,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             COMMENT "Adding parse_scaffold executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXECUTABLE}
+                --pythonExe ${PYTHON_EXE}
                 ${PARSE_SCAFFOLD_PATH}
             )
     add_custom_target(parse_scaffold ALL
