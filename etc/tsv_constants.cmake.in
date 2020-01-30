@@ -1,4 +1,4 @@
-# This file was created automatically by scripts/configure_file
+# @CONFIGURE_FILE_WARNING@
 # Do not edit by hand!
 
 # .tsv file headers 
@@ -7,6 +7,7 @@ set(TSV_PARENT_ID "@PARENT_ID@")
 set(TSV_PARENT_PROTEIN "@PARENT_PROTEIN@")
 set(TSV_PARENT_DESCRIPTION "@PARENT_DESCRIPTION@")
 set(TSV_MATCH_DIRECTION "@MATCH_DIRECTION@")
+set(TSV_FORMULA "@FORMULA@")
 set(TSV_SEQUENCE "@SEQUENCE@")
 set(TSV_FULL_SEQUENCE "@FULL_SEQUENCE@")
 set(TSV_UNIQUE "@UNIQUE@")
