@@ -178,7 +178,7 @@ def check_modifications(fixed_list, variable_list, verbose=False):
     return all_good
 
 
-def extractModifications(seq, mods):
+def extractModifications(seq, mods, calc_formula=False):
     '''
     Extract modifications from modifications description and populate
     to a list of AminoAcid objects.
@@ -212,7 +212,8 @@ def extractModifications(seq, mods):
             sys.stderr('ERROR: Could not parse modifications from string: {}\n'.format(x))
             return MolecularFormula()
 
-        ret.add_mod(mod.group(3).lower(), mod.group(1).upper())
+        if calc_formula:
+            ret.add_mod(mod.group(3).lower(), mod.group(1).upper())
 
         modMass = float(mod.group(4))
         if mod.group(1) == 'n-term':
@@ -245,12 +246,15 @@ def main():
     parser.add_argument('--inplace', default=False, action='store_true',
                         help='Should input_file be overwritten? Overrides ofname.')
     parser.add_argument('-o', '--ofname', help='Name of output file.', default = '')
+    parser.add_argument('-f', '--calc_formula', default=0, choices=[0,1], type=int,
+                        help='Should molecular formula of peptides be calculated? 0 is the default.')
 
     #arguments to customize mod residue
     parser.add_argument('--mod_residue', default='R',
                         help = "Residue to put '*' on")
     parser.add_argument('--mod_mass', default = 0.98, type=float,
                         help='Mass of modification.')
+
     parser.add_argument('--verbose', default=False, action='store_true',
                         help='Produce verbose output?')
 
@@ -271,12 +275,13 @@ def main():
     sys.stdout.write(' Done!\n')
 
     # Check that all modifications are valid
-    sys.stdout.write('Iterating through modifications to make sure their composition is known...')
-    if not check_modifications(dat[FIXED_MODIFICATIONS].to_list(),
-                               dat[VARIABLE_MODIFICATIONS].to_list(),
-                               verbose = args.verbose):
-        return -1
-    sys.stdout.write('Success!\n')
+    if args.calc_formula:
+        sys.stdout.write('Iterating through modifications to make sure their composition is known...')
+        if not check_modifications(dat[FIXED_MODIFICATIONS].to_list(),
+                                   dat[VARIABLE_MODIFICATIONS].to_list(),
+                                   verbose = args.verbose):
+            return -1
+        sys.stdout.write('Success!\n')
 
     # extract scan column
     engine = detect_search_engine(dat)
@@ -297,13 +302,13 @@ def main():
     dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), matches)))
 
     # add static modifications
-    formulas = [MolecularFormula(x.upper()) for x in dat[PEPTIDE_SEQUENCE]]
+    formulas = [MolecularFormula() if not args.calc_formula else MolecularFormula(x.upper()) for x in dat[PEPTIDE_SEQUENCE]]
     for i, value in dat[FIXED_MODIFICATIONS].iteritems():
-        formulas[i] += extractModifications(seq_list[i], value)
+        formulas[i] += extractModifications(seq_list[i], value, calc_formula=args.calc_formula)
 
     # add dynamic modifications
     for i, value in dat[VARIABLE_MODIFICATIONS].iteritems():
-        formulas[i] += extractModifications(seq_list[i], value)
+        formulas[i] += extractModifications(seq_list[i], value, calc_formula=args.calc_formula)
 
     # add formula column
     dat[FORMULA] = pd.Series([str(x) for x in formulas])
