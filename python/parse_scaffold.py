@@ -2,9 +2,9 @@
 import sys
 import os
 import re
+import argparse
 import pandas as pd
 import numpy as np
-import argparse
 
 if sys.version_info[0] < 3:
     from StringIO import StringIO
@@ -12,11 +12,15 @@ else:
     from io import StringIO
 
 from modules.tsv_constants import *
+from modules.molecular_formula import MolecularFormula
+from modules import atom_table
 
 SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME:',scan_([0-9]+),type',
                       MS_MS_SAMPLE_NAME:'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
                   'Mascot':{SPECTRUM_NAME:'\d+-\d+_(\d+)$',
-                      MS_MS_SAMPLE_NAME:'([\w\- ]+)'}}
+                      MS_MS_SAMPLE_NAME:'^(?:[\w \-]+:\s*)?([\w\- ]+)$'}}
+
+MODIFICATION_REGEX = r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$'
 
 def parse_spectrum_report(fname):
     '''
@@ -61,6 +65,7 @@ def detect_search_engine(dat):
         Initalized DataFrame from input_file.
     '''
 
+    sys.stdout.write('\nAtempting to find the appropiate regex for search engine...\n')
     ret_key = str()
     for k1, v1 in SEARCH_ENGINES.items():
         sys.stdout.write('\tTrying to match regex for {}...'.format(k1))
@@ -75,7 +80,7 @@ def detect_search_engine(dat):
     if not ret_key:
         raise RuntimeError('Can not parse input_file!')
     return ret_key
-            
+
 
 
 class AminoAcid(object):
@@ -106,6 +111,72 @@ def strToAminoAcids(seq):
 
     return ret
 
+def get_unique_modifications(mods):
+    '''
+    Get a set of unique peptide modifications and the residues they occur on.
+
+    Parameters
+    ----------
+    mods: Iterable
+        Iterable object with all modifications observed in data set.
+
+    Returns
+    -------
+    mods_set: list
+        List of tuples (modification, residue)
+    '''
+
+    ret = set()
+    for line in mods:
+        if line is np.nan:
+            continue
+
+        for x in list(map(str.strip, line.split(','))):
+            mod = re.search(MODIFICATION_REGEX, x)
+            if mod:
+                ret.add((mod.group(3).lower(), mod.group(1).upper()))
+            else:
+                ret.add(None)
+                sys.stderr.write('ERROR: Could not parse modification.\n\t{}\n'.format(x))
+
+    return list(ret)
+
+
+def check_modifications(fixed_list, variable_list, verbose=False):
+
+    def print_found_mods(lst, name):
+        sys.stdout.write('{} modifications:\n'.format(name))
+        for mod in lst:
+            known_mod = mod[0] in atom_table.MODIFICATIONS.keys()
+            if known_mod:
+                known_residue = mod[1] in atom_table.MODIFICATIONS[mod[0]].keys()
+            else:
+                known_residue = False
+            sys.stdout.write('\t{}: {} on {}'.format('Found' if known_mod and known_residue else 'NOT FOUND',
+                                                   mod[0], mod[1]))
+            if not known_mod:
+                sys.stdout.write(' -> Unknown modification\n')
+            elif not known_residue and known_mod:
+                sys.stdout.write(' -> Known modification, but not for residue: {}\n'.format(mod[1]))
+            else:
+                sys.stdout.write('\n')
+
+    var_mod_check = get_unique_modifications(variable_list)
+    fixed_mod_check = get_unique_modifications(fixed_list)
+
+    all_good = True
+    for mod in var_mod_check + fixed_mod_check:
+        if mod is not None and not (mod[0] in atom_table.MODIFICATIONS.keys() and mod[1] in atom_table.MODIFICATIONS[mod[0]]):
+            all_good = False
+            break
+
+    if not all_good or verbose:
+        sys.stdout.write('\n')
+        print_found_mods(var_mod_check, 'variable')
+        print_found_mods(fixed_mod_check, 'fixed')
+
+    return all_good
+
 
 def extractModifications(seq, mods):
     '''
@@ -118,18 +189,30 @@ def extractModifications(seq, mods):
         List of AminoAcid objects
     mod: str
         Description of modifications on peptide
+
+    Returns
+    -------
+    formula: MolecularFormula
+        Combined formula of modifications.
     '''
 
+    ret = MolecularFormula()
+
     if mods is np.nan:
-        return
+        return ret
 
     # extract modified residue, number, and mod mass from mod
     # and put into a list with an element for each mod
     for x in list(map(str.strip, mods.split(','))):
-        mod = re.search('^([nc]-term|([a-zA-Z])([0-9]+)):.+\(([+-][0-9.]+)\)$', x)
-        if not mod or len(mod.groups()) != 4:
-            print('Warning: Error parsing modifications from string: {}'.format(x))
-            continue
+        mod = re.search(MODIFICATION_REGEX, x)
+
+        try:
+            float(mod.group(4))
+        except (ValueError, AttributeError):
+            sys.stderr('ERROR: Could not parse modifications from string: {}\n'.format(x))
+            return MolecularFormula()
+
+        ret.add_mod(mod.group(3).lower(), mod.group(1).upper())
 
         modMass = float(mod.group(4))
         if mod.group(1) == 'n-term':
@@ -137,8 +220,8 @@ def extractModifications(seq, mods):
         elif mod.group(1) == 'c-term':
             mod[-1].mod += modMass
         else:
-            residue = mod.group(2).upper()
-            num = int(mod.group(3))
+            residue = mod.group(1).upper()
+            num = int(mod.group(2))
             # sanity check
             if seq[num].aa.upper() != residue:
                 raise RuntimeError('mods do not correspond to sequence.')
@@ -146,6 +229,8 @@ def extractModifications(seq, mods):
             # add modMass to seq[num].mods
             # this will not cause an off by 1 error because seq[0] is the n terminal modification
             seq[num].mod += modMass
+
+    return ret
 
 
 def main():
@@ -155,7 +240,7 @@ def main():
                                      epilog="parse_scaffold was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
 
-    parser.add_argument('input_file', help = 'Name of file to parse. Should be a tab delimited text file.')
+    parser.add_argument('input_file', help = 'Name of file to parse. Should be a Scaffold spectrum report.')
 
     parser.add_argument('--inplace', default=False, action='store_true',
                         help='Should input_file be overwritten? Overrides ofname.')
@@ -166,6 +251,8 @@ def main():
                         help = "Residue to put '*' on")
     parser.add_argument('--mod_mass', default = 0.98, type=float,
                         help='Mass of modification.')
+    parser.add_argument('--verbose', default=False, action='store_true',
+                        help='Produce verbose output?')
 
     args = parser.parse_args()
 
@@ -178,10 +265,18 @@ def main():
         else: ofname = args.ofname
 
     # read and format properly
-    sys.stdout.write('Reading {}...'.format(args.input_file))
-    dat = parse_spectrum_report(args.input_file) 
+    sys.stdout.write('\nparse_scaffold\n\nReading {}...'.format(args.input_file))
+    dat = parse_spectrum_report(args.input_file)
     dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
     sys.stdout.write(' Done!\n')
+
+    # Check that all modifications are valid
+    sys.stdout.write('Iterating through modifications to make sure their composition is known...')
+    if not check_modifications(dat[FIXED_MODIFICATIONS].to_list(),
+                               dat[VARIABLE_MODIFICATIONS].to_list(),
+                               verbose = args.verbose):
+        return -1
+    sys.stdout.write('Success!\n')
 
     # extract scan column
     engine = detect_search_engine(dat)
@@ -202,12 +297,16 @@ def main():
     dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), matches)))
 
     # add static modifications
+    formulas = [MolecularFormula(x.upper()) for x in dat[PEPTIDE_SEQUENCE]]
     for i, value in dat[FIXED_MODIFICATIONS].iteritems():
-        extractModifications(seq_list[i], value)
+        formulas[i] += extractModifications(seq_list[i], value)
 
     # add dynamic modifications
     for i, value in dat[VARIABLE_MODIFICATIONS].iteritems():
-        extractModifications(seq_list[i], value)
+        formulas[i] += extractModifications(seq_list[i], value)
+
+    # add formula column
+    dat[FORMULA] = pd.Series([str(x) for x in formulas])
 
     # get seq as string and change R(+0.98) to R*
     seq_str_list = list()
@@ -229,6 +328,7 @@ def main():
                  PARENT_DESCRIPTION,
                  FULL_SEQUENCE,
                  SEQUENCE,
+                 FORMULA,
                  SCAN_NUM,
                  EXCLUSIVE,
                  OBSERVED_M_Z,
