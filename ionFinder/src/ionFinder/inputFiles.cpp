@@ -104,6 +104,8 @@ bool IonFinder::readInputTsv(std::string ifname,
 			temp.setParentDescription(tsv.getValStr(i, IonFinder::PARENT_DESCRIPTION));
 		if(foundOptionalCols[IonFinder::MATCH_DIRECTION])
 			temp.setMatchDirection(Dtafilter::Scan::strToMatchDirection(tsv.getValStr(i, IonFinder::MATCH_DIRECTION)));
+        if(foundOptionalCols[IonFinder::FORMULA])
+            temp.setFormula(tsv.getValStr(i, IonFinder::FORMULA));
 		if(foundOptionalCols[IonFinder::FULL_SEQUENCE])
 			temp.setFullSequence(tsv.getValStr(i, IonFinder::FULL_SEQUENCE));
 		if(foundOptionalCols[IonFinder::UNIQUE])

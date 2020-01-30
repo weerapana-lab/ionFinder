@@ -183,7 +183,7 @@ Use DTAFilter-file(s) as input.
 .in +0.75i
 Supply peptide list as .tsv formatted file. Required columns are: "@TSV_SAMPLE_NAME@", "@TSV_SEQUENCE@", "@TSV_PRECURSOR_FILE@", "@TSV_SCAN_NUM@".
 
-Optional columns are: "@TSV_PARENT_ID@", "@TSV_PARENT_PROTEIN@", "@TSV_PARENT_DESCRIPTION@", "@TSV_MATCH_DIRECTION@", "@TSV_FULL_SEQUENCE@", "@TSV_UNIQUE@", "@TSV_CHARGE@", "@TSV_XCORR@", "@TSV_PRECURSOR_MZ@", "@TSV_PRECURSOR_SCAN@".
+Optional columns are: "@FORMULA@", "@TSV_PARENT_ID@", "@TSV_PARENT_PROTEIN@", "@TSV_PARENT_DESCRIPTION@", "@TSV_MATCH_DIRECTION@", "@TSV_FULL_SEQUENCE@", "@TSV_UNIQUE@", "@TSV_CHARGE@", "@TSV_XCORR@", "@TSV_PRECURSOR_MZ@", "@TSV_PRECURSOR_SCAN@".
 .in
 .TP
 \fB-d, --dir\fR \fI<path>\fR

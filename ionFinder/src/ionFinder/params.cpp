@@ -419,6 +419,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 	else if(_inputMode == TSV_INPUT_STR) {
 	    if(_inDirs.size() == 0) {
             std::cerr << "ERROR: Input file name is required when using tsv input mode!\n";
+            usage();
             return false;
         }
     }

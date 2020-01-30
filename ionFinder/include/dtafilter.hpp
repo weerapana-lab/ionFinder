@@ -34,6 +34,7 @@ namespace Dtafilter{
 		static MatchDirection strToMatchDirection(std::string);
 		
 	private:
+	    std::string _formula;
 		std::string _parentProtein;
 		std::string _parentID;
 		std::string _parentDescription;
@@ -45,6 +46,7 @@ namespace Dtafilter{
 		
 	public:
 		Scan() : scanData::Scan(){
+		    _formula = "";
 			_parentProtein = "";
 			_parentID = "";
 			_parentDescription = "";
@@ -54,6 +56,9 @@ namespace Dtafilter{
 		
 		//modifiers
 		void operator = (const Scan&);
+        void setFormula(std::string s){
+            _formula = s;
+        }
 		void setParentProtein(std::string s){
 			_parentProtein = s;
 		}
@@ -74,6 +79,9 @@ namespace Dtafilter{
 		}
 		
 		//properties
+        std::string getFormula() const{
+            return _formula;
+        }
 		std::string getParentProtein() const{
 			return _parentProtein;
 		}
