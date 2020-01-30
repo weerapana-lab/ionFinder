@@ -68,7 +68,8 @@ std::string scanData::removeStaticMod(std::string s, bool lowercase)
 			if(lowercase)
 				ret[ret.length() - 1] = std::tolower(ret.back());
 		}
-		ret += s[i];
+		if(i < s.length())
+            ret += s[i];
 	}
 	
 	return ret;
