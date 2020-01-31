@@ -31,6 +31,7 @@ Rcpp::List getSpectrum(std::string fname)
   Rcpp::NumericVector mz;
   Rcpp::NumericVector intensity;
   Rcpp::CharacterVector label;
+  Rcpp::CharacterVector color;
   Rcpp::LogicalVector includeLabel;
   Rcpp::CharacterVector ionType;
   Rcpp::CharacterVector ionNum;
@@ -108,23 +109,24 @@ Rcpp::List getSpectrum(std::string fname)
           continue;
         }
         else {
-          if(elems.size() != 14)
-            throw std::runtime_error("elems.size() != 15");
+          if(elems.size() != 15)
+            throw std::runtime_error("elems.size() != 15. Size is " + std::to_string(elems.size()));
 
           mz.push_back(std::stod(elems[0]));
           intensity.push_back(std::stod(elems[1]));
           label.push_back(elems[2]);
-          includeLabel.push_back(std::stoi(elems[3]));
-          ionType.push_back(elems[4]);
-          ionNum.push_back(elems[5]);
-          formatedLabel.push_back(elems[6]);
-          labelX.push_back(std::stod(elems[7]));
-          labelY.push_back(std::stod(elems[8]));
-          includeArrow.push_back(std::stoi(elems[9]));
-          arrowBegX.push_back(std::stod(elems[10]));
-          arrowBegY.push_back(std::stod(elems[11]));
-          arrowEndX.push_back(std::stod(elems[12]));
-          arrowEndY.push_back(std::stod(elems[13]));
+		  color.push_back(elems[3]);
+          includeLabel.push_back(std::stoi(elems[4]));
+          ionType.push_back(elems[5]);
+          ionNum.push_back(elems[6]);
+          formatedLabel.push_back(elems[7]);
+          labelX.push_back(std::stod(elems[8]));
+          labelY.push_back(std::stod(elems[9]));
+          includeArrow.push_back(std::stoi(elems[10]));
+          arrowBegX.push_back(std::stod(elems[11]));
+          arrowBegY.push_back(std::stod(elems[12]));
+          arrowEndX.push_back(std::stod(elems[13]));
+          arrowEndY.push_back(std::stod(elems[14]));
         }
       }
     }
