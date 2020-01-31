@@ -112,7 +112,7 @@ class MolecularFormula(object):
         except KeyError:
             raise KeyError('Unknown modification: {}, for residue: {}'.format(name, residue))
 
-        self.formula += temp_mod
+        self.formula.update(temp_mod)
 
 
     def __iadd__(self, rhs):
