@@ -58,3 +58,25 @@ MODIFICATIONS = {
         }
 
 
+def calc_mass(formula, mono_avg=1):
+    '''
+    Calculate mass of molecular formula.
+    
+    Parameters
+    ----------
+    formula: Counter
+        Formula to calculate mass of.
+    mono_avg: int
+        One of (0, 1). 0 for average, 1 for monoisotopic.
+
+    Returns
+    -------
+    mass: float
+        mass of formula.
+    '''
+
+    mass = 0
+    for atom, count in formula.items():
+        mass += (_ATOM_MASSES[atom][mono_avg] * count)
+    return mass
+

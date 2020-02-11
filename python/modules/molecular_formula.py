@@ -128,3 +128,20 @@ class MolecularFormula(object):
         return self
 
 
+    def calc_mass(self, **kwargs):
+        '''
+        Calculate monoisotopic or avg mass.
+
+        Paramaters
+        ----------
+        mono_avg: int
+            One of (0, 1). 0 for average, 1 for monoisotopic.
+
+        Returns
+        -------
+        mass: float
+            mass of formula.
+        '''
+
+        return atom_table.calc_mass(self.formula, **kwargs)
+
