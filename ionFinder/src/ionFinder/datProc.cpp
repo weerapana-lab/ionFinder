@@ -106,8 +106,7 @@ bool IonFinder::PeptideStats::containsAmbResidues(const std::string& ambResidues
  \param ambResidues ambiguous residues to search for.
  */
 void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
-                                     unsigned long modLoc,
-									 const std::string& ambResidues)
+                                     size_t modLoc, const std::string& ambResidues)
 {
 	//first check that seq is found in *this sequence
 	assert(utils::strContains(seq.getSequence(), sequence));
@@ -178,10 +177,15 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
 	for(auto it = peptides.begin(); it != peptides.end(); ++it)
 	{
 		std::vector<IonFinder::PeptideStats> this_stats;
-	    for(auto mod_it = it->getModLocs().begin(); mod_it != it->getModLocs().end(); ++mod_it)
+
+	    std::vector<size_t> modLocsTemp;
+	    if(it->isModified())
+	        modLocsTemp = it->getModLocs();
+	    else modLocsTemp.push_back(std::string::npos);
+
+        for(auto mod_it = modLocsTemp.begin(); mod_it != modLocsTemp.end(); ++mod_it)
 		{
             //initialize new pepStat object
-            //IonFinder::PeptideStats pepStat(*it); //init pepStat
             this_stats.emplace_back(*it);
             this_stats.back()._scan = &scans[it - peptides.begin()]; //add pointer to scan
             size_t nFragments = it->getNumFragments();
@@ -195,14 +199,14 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
             }//end of for i
             this_stats.back().calcContainsCit();
 
-            if (addModResidues) {
-                    bool found; //set to true if peptide and prot sequences are found in FastaFile
-                    std::string modTemp = seqFile.getModifiedResidue(this_stats.back()._scan->getParentID(),
-                                                                     this_stats.back().sequence, int(*mod_it),
-                                                                     pars.getVerbose(), found);
-                    this_stats.back().addMod(modTemp);
-                    if (!found)
-                        nSeqNotFound++;
+            if(addModResidues && *mod_it != std::string::npos) {
+                bool found; //set to true if peptide and prot sequences are found in FastaFile
+                std::string modTemp = seqFile.getModifiedResidue(this_stats.back()._scan->getParentID(),
+                                                                 this_stats.back().sequence, int(*mod_it),
+                                                                 pars.getVerbose(), found);
+                this_stats.back().addMod(modTemp);
+                if (!found)
+                    nSeqNotFound++;
             }
         }//end for mod_it
 

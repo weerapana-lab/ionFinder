@@ -183,7 +183,7 @@ namespace IonFinder{
 
 		//modifiers
 		PeptideStats& operator = (const PeptideStats&);
-		void addSeq(const PeptideNamespace::FragmentIon&, unsigned long modLoc, const std::string&);
+		void addSeq(const PeptideNamespace::FragmentIon&, size_t modLoc, const std::string&);
 		static std::string ionTypeToStr(const IonType&);
 		static std::string containsCitToStr(const ContainsCitType&);
 		void consolidate(const PeptideStats&);

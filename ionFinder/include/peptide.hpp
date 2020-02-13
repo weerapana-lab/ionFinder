@@ -409,6 +409,10 @@ namespace PeptideNamespace{
         int getNumMod() const{
             return nMod;
         }
+        //!return true if nMod > 0
+        bool isModified() const {
+            return nMod > 0;
+        }
         const std::vector<size_t>& getModLocs() const{
             return modLocs;
         }
