@@ -65,6 +65,8 @@ namespace IonFinder{
 		bool _printSpectraFiles;
 		//!Should NL ions be search for?
 		bool _calcNL;
+		//! Should c terminal modifications be incluced?
+		bool _includeCTermMod;
 		
 		//! was a input directory specified
 		bool _inDirSpecified;
@@ -100,6 +102,7 @@ namespace IonFinder{
 			_modFilter = 1;
 			_printSpectraFiles = false;
 			_calcNL = false;
+			_includeCTermMod = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
@@ -140,6 +143,9 @@ namespace IonFinder{
 		std::string getAmbigiousResidues() const{
 			return _ambigiousResidues;
 		}
+		bool getIncludeCTermMod() const {
+            return _includeCTermMod;
+        }
 		std::string makeOfname() const{
 			if(_inDirSpecified)
 				return _wd + "/" + ofname;

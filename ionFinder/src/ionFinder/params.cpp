@@ -224,10 +224,21 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		{
 			_neutralLossMass = CIT_NL_MASS;
 			_ambigiousResidues = CIT_AMB_RESIDUES;
+			_includeCTermMod = false;
 			_calcNL = true;
 			ofname = PEPTIDE_CIT_STATS_OFNAME;
 			continue;
 		}
+        if(!strcmp(argv[i], "--cTermMod"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            _includeCTermMod = std::stoi(argv[i]);
+            continue;
+        }
 		if(!strcmp(argv[i], "--isoAA"))
 		{
 			if(!utils::isArg(argv[++i]))

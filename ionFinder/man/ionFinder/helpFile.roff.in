@@ -4,6 +4,7 @@
 .SH SYNOPSIS
 
 \fB@ION_FINDER_TARGET@\fR [options] [input_dir ...]
+
 \fB@ION_FINDER_TARGET@\fR [options] --inputMode tsv <input_file_path> [...]
 
 .SH DESCRIPTION
@@ -39,7 +40,7 @@ Interpret \fB--matchTolerance\fR as ppm.
 Search ms2s with default settings for citrulline. Specifically \fB--citStats\fR sets the following flags:
 .TP
 .in +0.75i
-\fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ
+\fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ \fB--cTermMod\fR 0
 
 Later specifications of the previous flags will override those set by \fB--citStats\fR.
 .in
@@ -49,6 +50,21 @@ Specify amino acids whose mass is ambiguous with the amino acids with the dynami
 .TP
 \fB--lossMass\fR \fI<mass>\fR
 Specify mass of neutral loss to search for. 
+.TP
+\fB--cTermMod\fR \fI<0/1>\fR
+Specify whether to allow c terminally modified peptidees. Default is \fB1\fR.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Do not allow c terminally modified peptidees.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Allow c terminally modified peptidees.
+.in
 .TP
 \fB--calcNL\fR \fI<0/1>\fR
 Specify whether neutral loss fragment ions should be search for. If this option is set to \fB1\fR without any argument for \fB--lossMass\fR given, it is ignored.  Default is \fB0\fR.

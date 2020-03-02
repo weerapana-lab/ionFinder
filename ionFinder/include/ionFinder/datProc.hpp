@@ -141,7 +141,7 @@ namespace IonFinder{
 		
 		void initStats();
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
-		void calcContainsCit();
+		void calcContainsCit(bool includeCTermMod);
 		void addMod(std::string mod);
 	
 	public:		

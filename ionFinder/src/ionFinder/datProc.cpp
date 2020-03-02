@@ -197,7 +197,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
                     this_stats.back().addSeq(it->getFragment(i), *mod_it, pars.getAmbigiousResidues());
                 } //end of if
             }//end of for i
-            this_stats.back().calcContainsCit();
+            this_stats.back().calcContainsCit(pars.getIncludeCTermMod());
 
             if(addModResidues && *mod_it != std::string::npos) {
                 bool found; //set to true if peptide and prot sequences are found in FastaFile
@@ -520,7 +520,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 	*success = true;
 }
 
-void IonFinder::PeptideStats::calcContainsCit()
+void IonFinder::PeptideStats::calcContainsCit(bool includeCTermMod)
 {
 	containsCit = ContainsCitType::FALSE;
 	
@@ -530,7 +530,8 @@ void IonFinder::PeptideStats::calcContainsCit()
 	//Is cit modification on the c terminus?
 	//modLocs.back() works because modLocs are added in the order
 	//they appear in the sequence
-	if(modLocs.back() == sequence.length() - 1) return;
+	if(!includeCTermMod)
+        if(modLocs.back() == sequence.length() - 1) return;
 	
 	//is there more than 1 determining NLs?
 	if(ionTypesCount[IonType::DET_NL_FRAG].size() > 1){
