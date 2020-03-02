@@ -21,6 +21,7 @@ SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME:',scan_([0-9]+),type',
                       MS_MS_SAMPLE_NAME:'^(?:[\w \-]+:\s*)?([\w\- ]+)$'}}
 
 MODIFICATION_REGEX = r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$'
+UNIPROT_ID_RE = r'^(sp|tr)\|([A-Za-z0-9-]+)\|([A-Za-z0-9]+)(?:_\w+ (.+) OS=)?'
 
 def parse_spectrum_report(fname):
     '''
@@ -49,6 +50,8 @@ def parse_spectrum_report(fname):
 
     with StringIO(s) as inF:
         ret = pd.read_csv(inF, sep = '\t')
+
+    ret.columns = [x.replace(' ', '_').lower() for x in ret.columns.tolist()]
 
     return ret
 
@@ -271,7 +274,6 @@ def main():
     # read and format properly
     sys.stdout.write('\nparse_scaffold\n\nReading {}...'.format(args.input_file))
     dat = parse_spectrum_report(args.input_file)
-    dat.columns = [x.replace(' ', '_').lower() for x in dat.columns.tolist()]
     sys.stdout.write(' Done!\n')
 
     # Check that all modifications are valid
@@ -290,24 +292,31 @@ def main():
     # extract precursorFile column
     dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][MS_MS_SAMPLE_NAME], x).group(1) + '.ms2')
 
-    seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
-
     # parse protein id and name
-    uniprot_id_re = '^(sp|tr)\|([A-Z0-9-]+)\|([A-Za-z0-9]+)_\w+ (.+) OS='
-    matches = [re.search(uniprot_id_re, s) for s in dat[PROTEIN_NAME].values.tolist()]
-    dat = dat[[bool(x) for x in matches]]
-    matches = [re.search(uniprot_id_re, s) for s in dat[PROTEIN_NAME].values.tolist()]
-    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(3), matches)))
-    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(2), matches)))
-    dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), matches)))
+    matches = [re.search(UNIPROT_ID_RE, s) for s in dat[PROTEIN_NAME].values.tolist()]
+    good_matches = [m for m in matches if bool(m)]
+    if len(dat.index) != len([m for m in matches if m]):
+        sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) - len(good_matches)))
+        if args.verbose:
+            sys.stderr.write('Bad acession(s):\n')
+            bad_acessions = set(dat[[not bool(m) for m in matches]][PROTEIN_NAME].values.tolist())
+            for acession in bad_acessions:
+                sys.stderr.write('\t{}\n'.format(acession))
+        dat = dat[[bool(x) for x in matches]]
+        dat.reset_index()
+
+    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(3), good_matches)))
+    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
+    dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), good_matches)))
 
     # add static modifications
+    seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
     formulas = [MolecularFormula() if not args.calc_formula else MolecularFormula(x.upper()) for x in dat[PEPTIDE_SEQUENCE]]
-    for i, value in dat[FIXED_MODIFICATIONS].iteritems():
+    for i, value in enumerate(dat[FIXED_MODIFICATIONS]):
         formulas[i] += extractModifications(seq_list[i], value, calc_formula=args.calc_formula)
 
     # add dynamic modifications
-    for i, value in dat[VARIABLE_MODIFICATIONS].iteritems():
+    for i, value in enumerate(dat[VARIABLE_MODIFICATIONS]):
         formulas[i] += extractModifications(seq_list[i], value, calc_formula=args.calc_formula)
 
     # add formula column
