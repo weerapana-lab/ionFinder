@@ -6,7 +6,7 @@ python_script_path=""
 PYTHON_MAIN_ARGS=""
 
 function usage {
-    echo -e  "usage: addPythonFiles.sh [--pythonExe <path>] [--mainArgs <args>] <python_script_path>"
+    echo -e  "usage: addPythonFiles [--pythonExe <path>] [--mainArgs <args>] <python_script_path>"
     exit
 }
 

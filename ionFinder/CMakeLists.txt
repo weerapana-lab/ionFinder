@@ -193,6 +193,7 @@ if(BUILD_MAN_PDF MATCHES ON)
 endif()
 
 option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
+option(COPY_PYTHON_TO_BUILD "Copy python files to build directory?" ON)
 if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     find_program(BASH bash DOC "Path to bash interpreter.")
 
@@ -200,17 +201,42 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     #find_python_module(matplotlib REQUIRED)
     find_python_module(pandas REQUIRED)
 
-    set(RUN_MAKE_MS2_SCR_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/run_make_ms2.py
+    if(COPY_PYTHON_TO_BUILD MATCHES ON)
+        macro(copy_files GLOBPAT DESTINATION TARGET_NAME)
+            file(GLOB_RECURSE COPY_FILES
+                    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+                    ${GLOBPAT})
+            add_custom_target(${TARGET_NAME} ALL
+                    COMMENT "Copying files: ${GLOBPAT}")
+
+            foreach(FILENAME ${COPY_FILES})
+                set(SRC "${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}")
+                set(DST "${DESTINATION}/${FILENAME}")
+
+                add_custom_command(
+                        TARGET ${TARGET_NAME}
+                        COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
+                )
+            endforeach(FILENAME)
+        endmacro(copy_files)
+
+        set(PYTHON_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/python)
+        copy_files(${CMAKE_CURRENT_SOURCE_DIR}/../python/*.py ${PYTHON_SRC_DIR} python_copy)
+    else()
+        set(PYTHON_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../python)
+    endif()
+
+    set(RUN_MAKE_MS2_SCR_PATH ${PYTHON_SRC_DIR}/run_make_ms2.py
             CACHE STRING "Path to run_make_ms2.py")
-    set(MAKE_MS2_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/make_ms2.py
+    set(MAKE_MS2_SRC_PATH ${PYTHON_SRC_DIR}/make_ms2.py
             CACHE STRING "Path to make_ms2.py")
-    set(PARSE_SCAFFOLD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../python/parse_scaffold.py
+    set(PARSE_SCAFFOLD_PATH ${PYTHON_SRC_DIR}/parse_scaffold.py
             CACHE STRING "Path to parse_scaffold.py")
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")
 
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
-            DEPENDS ${MAKE_MS2_SRC_PATH}
+            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${MAKE_MS2_SRC_PATH}
             COMMENT "Adding make_ms2 executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
@@ -223,7 +249,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             )
 
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
-            DEPENDS ${RUN_MAKE_MS2_SCR_PATH}
+            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${RUN_MAKE_MS2_SCR_PATH}
             COMMENT "Adding run_make_ms2 executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
@@ -236,7 +262,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
 
     add_custom_command(
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
-            DEPENDS ${PARSE_SCAFFOLD_PATH}
+            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_SCAFFOLD_PATH}
             COMMENT "Adding parse_scaffold executable."
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
