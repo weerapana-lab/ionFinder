@@ -6,7 +6,13 @@ scriptName <- sub(fileArgName, "", argv[grep(fileArgName, argv)])
 progWD <- sub("rscripts/makeMs2.R", "", scriptName)
 
 library(ggplot2)
-library(ms2Spectrum, lib.loc = paste0(progWD, 'lib'))
+tryCatch(
+    expr = {library(ms2Spectrum, lib.loc = paste0(progWD, 'lib'))},
+    error = function(e){
+        print(e)
+        print(paste('No library found at:', paste0(progWD, 'lib')))
+    }
+)
 library(tools)
 
 if(argv[1] == "RStudio")
