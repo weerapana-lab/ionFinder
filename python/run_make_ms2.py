@@ -8,22 +8,21 @@ from math import ceil
 import make_ms2
 from modules import parent_parser
 
-PYTHON_PBS_VERSION = 'python/2.7.10'
-R_PBS_VERSION = 'R/3.5.0.gnu'
-PBS_MODULE_LOAD_COMMAND = 'module load'
 MAKE_MS2_PY_PATH = 'make_ms2'
 
+PBS_COUNT = 0
+
 def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
-    pbsName = '{}/make_ms2.pbs'.format(wd)
+    global PBS_COUNT
+    PBS_COUNT += 1
+    pbsName = '{}/make_ms2_{}.pbs'.format(wd, PBS_COUNT)
     outF = open(pbsName, 'w')
 
     outF.write("#!/bin/tcsh\n")
     outF.write('#PBS -l mem={}gb,nodes=1:ppn={},walltime={}\n\n'.format(mem, ppn, walltime))
-    outF.write('{} {}\n'.format(PBS_MODULE_LOAD_COMMAND, R_PBS_VERSION))
-    outF.write('{} {}\n\n'.format(PBS_MODULE_LOAD_COMMAND, PYTHON_PBS_VERSION))
     outF.write('cd {}\n'.format(wd))
     outF.write('{}/{} -t {} {}\n'.format(progDir, MAKE_MS2_PY_PATH,
-                                       nThread, makeMs2_args))
+                                         nThread, makeMs2_args))
 
     return pbsName
 

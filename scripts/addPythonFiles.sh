@@ -36,7 +36,7 @@ while ! [[ -z "$1" ]] ; do
 		"--mainArgs" | "-a")
 			shift
 			isArg "$1"
-			PYTHON_MAIN_ARGS=$(absPath "$1") ;;
+			PYTHON_MAIN_ARGS="$1";;
 		"-h")
 			usage ;;
 		*)
@@ -61,12 +61,12 @@ dirname=$(absPath $(dirname "$python_script_path"))
 echo "Adding "$ofname
 echo "#!"$PYTHON_EXE > $ofname
 echo -e "\nimport sys" >> $ofname
-echo "sys.path.insert(0,\"$dirname\")" >> $ofname
+echo "sys.path.insert(0, '$dirname')" >> $ofname
 echo "import $moduleName" >> $ofname
 if [[ -z "$PYTHON_MAIN_ARGS" ]] ; then		
 	echo -e "\n$moduleName.main()" >> $ofname
 else
-	echo -e "\n$moduleName.main(\"$PYTHON_MAIN_ARGS\")" >> $ofname
+	echo -e "\n$moduleName.main('$PYTHON_MAIN_ARGS')" >> $ofname
 fi
 
 chmod +x $ofname

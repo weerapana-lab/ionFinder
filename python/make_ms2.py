@@ -9,7 +9,7 @@ import re
 from modules import parent_parser
 
 RSCRIPT_PATH = '../ionFinder/rscripts/makeMs2.R'
-RSCRIPT = 'Rscript'
+RSCRIPT_EXE = 'Rscript'
 
 def getFileLists(nThread, spectraDir, inputFiles=None):
     """
@@ -58,7 +58,7 @@ def getFileLists(nThread, spectraDir, inputFiles=None):
     return ret, nFiles
 
 
-def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round_to, inputFiles,
+def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, rscript_exe, round_to, inputFiles,
                       verbose=False, mzLab=1, simpleSeq=0):
 
     files, nFiles=getFileLists(nThread, spectraDir, inputFiles)
@@ -66,7 +66,7 @@ def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round_to, inputFile
     if nFiles == 0:
         raise RuntimeError('No .spectra files found in {}'.format(spectraDir))
 
-    rscriptCommand="{} {}".format(RSCRIPT, make_ms2_r_path)
+    rscriptCommand="{} {}".format(rscript_exe, make_ms2_r_path)
 
     #spawn subprocesses
     procecies = list()
@@ -95,7 +95,7 @@ def _make_ms2_parallel(nThread, spectraDir, make_ms2_r_path, round_to, inputFile
             print(o)
 
 
-def main(make_ms2_r_path):
+def main(make_ms2_r_path, rscript_exe):
     parser = argparse.ArgumentParser('run_make_ms2',
                                      parents=[parent_parser.PARENT_PARSER],
                                      description='Run rscripts/makeMS2.R and manage parallelism.')
@@ -115,9 +115,9 @@ def main(make_ms2_r_path):
     if nThread is None:
         nThread = cpu_count()
 
-    _make_ms2_parallel(nThread, wd, make_ms2_r_path, args.round_to, args.input_files, verbose=args.verbose,
+    _make_ms2_parallel(nThread, wd, make_ms2_r_path, rscript_exe, args.round_to, args.input_files, verbose=args.verbose,
                        mzLab=args.mzLab, simpleSeq=args.simpleSeq)
 
 
 if __name__ == '__main__':
-    main(RSCRIPT_PATH)
+    main(RSCRIPT_PATH, RSCRIPT_EXE)

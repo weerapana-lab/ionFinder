@@ -22,6 +22,9 @@ ionFinder/.idea/*
 *.pbs
 *symbols.rds
 build/*
+python/modules/spectrum_constants.py
+python/modules/tsv_constants.py
+
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

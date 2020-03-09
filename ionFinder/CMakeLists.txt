@@ -61,26 +61,27 @@ endif()
 set(SRC_ETC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../etc)
 set(SRC_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts)
 set(.SPEC_CONSTANTS_NAME spectrum_constants)
-macro(add_auto_header name target_name)
+macro(add_configure_file name target_name output_dir extension)
 add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/${name}.hpp
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${output_dir}/${name}.${extension}
         DEPENDS
             ${SRC_ETC_DIR}/${name}.config
-            ${SRC_ETC_DIR}/${name}.hpp.in
-        COMMENT "Writing custom ${name} header..."
+            ${SRC_ETC_DIR}/${name}.${extension}.in
+        COMMENT "Configuring ${name}..."
         COMMAND
             ${SRC_SCRIPTS_DIR}/configure_file
             ${SRC_ETC_DIR}/${name}.config
-            ${SRC_ETC_DIR}/${name}.hpp.in
-            ${CMAKE_CURRENT_BINARY_DIR}/include/${name}.hpp
+            ${SRC_ETC_DIR}/${name}.${extension}.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${output_dir}/${name}.${extension}
         )
 add_custom_target(${target_name} ALL
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/include/${name}.hpp
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${output_dir}/${name}.${extension} 
         )
-add_dependencies(${ION_FINDER_TARGET} ${target_name})
 endmacro()
-add_auto_header(spectrum_constants SpectrumConstantsHpp)
-add_auto_header(tsv_constants TSVConstantsHpp)
+add_configure_file(spectrum_constants SpectrumConstantsHpp "include" "hpp")
+add_dependencies(${ION_FINDER_TARGET} SpectrumConstantsHpp)
+add_configure_file(tsv_constants TSVConstantsHpp "include" "hpp")
+add_dependencies(${ION_FINDER_TARGET} TSVConstantsHpp)
 
 #add thread library
 find_package(Threads)
@@ -196,6 +197,7 @@ option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of 
 option(COPY_PYTHON_TO_BUILD "Copy python files to build directory?" ON)
 if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     find_program(BASH bash DOC "Path to bash interpreter.")
+    find_program(RSCRIPT Rscript Doc "Path to Rscript command.")
 
     # Add required python modules here for now
     #find_python_module(matplotlib REQUIRED)
@@ -206,6 +208,8 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             file(GLOB_RECURSE COPY_FILES
                     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
                     ${GLOBPAT})
+            # auto generated files
+            list(FILTER COPY_FILES EXCLUDE REGEX "_constants\.py$")
             add_custom_target(${TARGET_NAME} ALL
                     COMMENT "Copying files: ${GLOBPAT}")
 
@@ -222,6 +226,8 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
 
         set(PYTHON_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/python)
         copy_files(${CMAKE_CURRENT_SOURCE_DIR}/../python/*.py ${PYTHON_SRC_DIR} python_copy)
+        add_configure_file(spectrum_constants SpectrumConstantsPy "python/modules" "py")
+        add_configure_file(tsv_constants TSVConstantsPy "python/modules" "py")
     else()
         set(PYTHON_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../python)
     endif()
@@ -235,13 +241,17 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")
 
+    string(CONCAT MAKE_MS2_MAIN_ARGS
+        ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
+        "', '" ${RSCRIPT})
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${MAKE_MS2_SRC_PATH}
             COMMENT "Adding make_ms2 executable."
+            VERBATIM
             COMMAND
                 ${BASH} ${PYTHON_BUILD_SCRIPT}
                 --pythonExe ${PYTHON_EXE}
-                --mainArgs ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
+                --mainArgs ${MAKE_MS2_MAIN_ARGS}
                 ${MAKE_MS2_SRC_PATH}
             )
     add_custom_target(make_ms2 ALL
