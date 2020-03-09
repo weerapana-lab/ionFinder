@@ -15,10 +15,10 @@ from modules.tsv_constants import *
 from modules.molecular_formula import MolecularFormula
 from modules import atom_table
 
-SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME:',scan_([0-9]+),type',
-                      MS_MS_SAMPLE_NAME:'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
-                  'Mascot':{SPECTRUM_NAME:'\d+-\d+_(\d+)$',
-                      MS_MS_SAMPLE_NAME:'^(?:[\w \-]+:\s*)?([\w\- ]+)$'}}
+SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME: r',scan_([0-9]+),type',
+                      MS_MS_SAMPLE_NAME: r'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
+                  'Mascot':{SPECTRUM_NAME: r'\d+-\d+_(\d+)$',
+                      MS_MS_SAMPLE_NAME: r'^(?:[\w \-]+:\s*)?([\w\- ]+)$'}}
 
 MODIFICATION_REGEX = r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$'
 UNIPROT_ID_RE = r'^(sp|tr)\|([A-Za-z0-9-]+)\|([A-Za-z0-9]+)(?:_\w+ (.+) OS=)?'
