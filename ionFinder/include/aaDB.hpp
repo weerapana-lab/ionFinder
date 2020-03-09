@@ -35,7 +35,7 @@ namespace aaDB{
 		AminoAcid(){
 			symbol = ""; mass = 0; modification = 0;
 		}
-		AminoAcid(std::string);
+		AminoAcid(std::string line);
 		AminoAcid(std::string _symbol, double _mass, double _modification = 0){
 			symbol = _symbol;
 			mass = _mass;
@@ -72,7 +72,7 @@ namespace aaDB{
 		aminoAcidsDBType aminoAcidsDB;
 		
 		//modifiers
-		bool readInAADB(std::string);
+		void initAADB();
 		bool readInModDB(std::string, aminoAcidsDBType&);
 		void addStaticMod(const aminoAcidsDBType&, bool);
 		
@@ -82,8 +82,8 @@ namespace aaDB{
 		~AADB(){}
 		
 		//modifiers
-		bool initialize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings = true);
-		bool initialize(std::string aaDBLoc, const aminoAcidsDBType&, bool showWarnings = true);
+		bool initialize(std::string modDBLoc, bool showWarnings = true);
+		bool initialize(const aminoAcidsDBType&, bool showWarnings = true);
 		
 		//properties
 		double calcMW(std::string sequence, bool addNTerm = true, bool addCTerm = true) const;
