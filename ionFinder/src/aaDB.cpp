@@ -10,37 +10,45 @@
 
 aaDB::AminoAcid::AminoAcid(std::string line)
 {
-	size_t endOfLine = line.find(";");
-	line = line.substr(0, endOfLine);
-	line = utils::trim(line);
-	
-	std::vector<std::string> elems;
-	utils::split(line, '\t', elems);
-	
-	symbol = elems[0];
-	mass = std::stod(elems[1]);
-	modification = 0;
+    size_t endOfLine = line.find(";");
+    line = line.substr(0, endOfLine);
+    line = utils::trim(line);
+
+    std::vector<std::string> elems;
+    utils::split(line, '\t', elems);
+
+    symbol = elems[0];
+    mass = std::stod(elems[1]);
+    modification = 0;
 }
 
-bool aaDB::AADB::readInAADB(std::string _aaDBLoc)
+void aaDB::AADB::initAADB()
 {
-	std::ifstream inF(_aaDBLoc);
-	if(!inF){
-		std::cerr << "Could not open file: " << _aaDBLoc << NEW_LINE;
-		return false;
-	}
-	
-	std::string line;
-	while(utils::safeGetline(inF, line)){
-		line = utils::trim(line);
-		if(utils::isCommentLine(line) || line.empty())
-			continue;
-		aaDB::AminoAcid temp(line);
-		aminoAcidsDB[temp.getSymbol()] = temp;
-	}
-	
-	
-	return true;
+    aminoAcidsDB["C_term"]= aaDB::AminoAcid("C_term", 17.00325);
+    aminoAcidsDB["N_term"] = aaDB::AminoAcid("N_term", 1.00732);
+    aminoAcidsDB["A"] = aaDB::AminoAcid("A", 71.03712);
+    aminoAcidsDB["C"] = aaDB::AminoAcid("C", 103.00918);
+    aminoAcidsDB["D"] = aaDB::AminoAcid("D", 115.02694);
+    aminoAcidsDB["E"] = aaDB::AminoAcid("E", 129.0426);
+    aminoAcidsDB["F"] = aaDB::AminoAcid("F", 147.06841);
+    aminoAcidsDB["G"] = aaDB::AminoAcid("G", 57.02146);
+    aminoAcidsDB["H"] = aaDB::AminoAcid("H", 137.05891);
+    aminoAcidsDB["I"] = aaDB::AminoAcid("I", 113.08407);
+    aminoAcidsDB["K"] = aaDB::AminoAcid("K", 128.09496);
+    aminoAcidsDB["L"] = aaDB::AminoAcid("L", 113.08406);
+    aminoAcidsDB["M"] = aaDB::AminoAcid("M", 131.04049);
+    aminoAcidsDB["N"] = aaDB::AminoAcid("N", 114.04293);
+    aminoAcidsDB["O"] = aaDB::AminoAcid("O", 114.07931);
+    aminoAcidsDB["P"] = aaDB::AminoAcid("P", 97.05276);
+    aminoAcidsDB["Q"] = aaDB::AminoAcid("Q", 128.05858);
+    aminoAcidsDB["R"] = aaDB::AminoAcid("R", 156.10111);
+    aminoAcidsDB["S"] = aaDB::AminoAcid("S", 87.03203);
+    aminoAcidsDB["T"] = aaDB::AminoAcid("T", 101.04768);
+    aminoAcidsDB["V"] = aaDB::AminoAcid("V", 99.06841);
+    aminoAcidsDB["W"] = aaDB::AminoAcid("W", 186.07931);
+    aminoAcidsDB["Y"] = aaDB::AminoAcid("Y", 163.06333);
+    aminoAcidsDB["U"] = aaDB::AminoAcid("U", 150.95309);
+    aminoAcidsDB["*"] = aaDB::AminoAcid("*", 0);
 }
 
 bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
@@ -88,28 +96,24 @@ void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showW
 	}//end for
 }//end function
 
-bool aaDB::AADB::initialize(std::string aaDBLoc, std::string modDBLoc, bool showWarnings)
+bool aaDB::AADB::initialize(std::string modDBLoc, bool showWarnings)
 {
 	//read in files containing aa masses and modifications
 	aaDB::aminoAcidsDBType modsTemp;
-	if(!readInModDB(modDBLoc, modsTemp) || !readInAADB(aaDBLoc))
+	if(!readInModDB(modDBLoc, modsTemp))
 		return false;
-	
+    initAADB();
+
 	//add static mods to aadb
 	addStaticMod(modsTemp, showWarnings);
 	
 	return true;
 }
 
-bool aaDB::AADB::initialize(std::string aaDBLoc, const aaDB::aminoAcidsDBType& mods, bool showWarnings)
+bool aaDB::AADB::initialize(const aaDB::aminoAcidsDBType& mods, bool showWarnings)
 {
-	//read in files containing aa masses and modifications
-	if(!readInAADB(aaDBLoc))
-		return false;
-	
-	//add static mods to aadb
-	addStaticMod(mods, showWarnings);
-	
+    initAADB(); // init aaDB
+    addStaticMod(mods, showWarnings); //add static mods to aadb
 	return true;
 }
 

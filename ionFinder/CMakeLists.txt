@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(ionFinder VERSION 0.1.2)
+project(ionFinder VERSION 0.1.3)
 
 SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
@@ -23,7 +23,7 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 set(PROG_WD_DIR "${PROJECT_SOURCE_DIR}" CACHE STRING "Path to program source parent directory.")
-set(PROG_SHARE_DIR "${PROJECT_SOURCE_DIR}/share" CACHE STRING "Path directory with aa masses and default smod file.")
+set(PROG_SHARE_DIR "${CMAKE_CURRENT_BINARY_DIR}/share" CACHE STRING "Path directory with aa masses and default smod file.")
 set(GIT_PRE_CONFIGURE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_info.h.in)
 set(GIT_POST_CONFIGURE_FILE ${CMAKE_CURRENT_BINARY_DIR}/include/git_info.h)
 
@@ -86,6 +86,11 @@ add_dependencies(${ION_FINDER_TARGET} TSVConstantsHpp)
 #add thread library
 find_package(Threads)
 target_link_libraries(${ION_FINDER_TARGET} ${CMAKE_THREAD_LIBS_INIT})
+
+#configure share dir
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/staticModifications.txt
+        ${PROG_SHARE_DIR}/staticModifications.txt COPYONLY)
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/share/staticModifications.txt DESTINATION ${PROG_SHARE_DIR})
 
 #set up cmake generated headers
 set(PROG_MAN_DIR ${CMAKE_CURRENT_BINARY_DIR}/man)

@@ -4,7 +4,6 @@
 #ifndef config_hpp
 #define config_hpp
 
-#define PROG_WD_DIR "@PROG_WD_DIR@"
 #define PROG_SHARE_DIR "@PROG_SHARE_DIR@"
 #define PROG_MAN_DIR "@PROG_MAN_DIR@"
 

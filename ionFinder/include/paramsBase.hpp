@@ -21,7 +21,6 @@ namespace base{
 	
 	std::string const PROG_DB = PROG_SHARE_DIR;
 	std::string const PROG_MAN = PROG_MAN_DIR;
-	std::string const PROG_AA_MASS_LOCATION = PROG_DB + "/aaMasses.txt";
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
 	double const DEFAULT_MATCH_TOLERANCE = 0.5;
 	double const DEFAULT_PLOT_HEIGHT = 4;
@@ -89,7 +88,6 @@ namespace base{
 			//file locations
 			_wd = "";
 			_smodFile = PROG_DEFAULT_SMOD_FILE;
-			_aaMassFile = PROG_AA_MASS_LOCATION;
 			_usageFile = usageFile;
 			_helpFile = helpFile;
 			ofname = "";
