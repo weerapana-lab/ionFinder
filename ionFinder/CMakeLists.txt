@@ -197,11 +197,11 @@ option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of 
 option(COPY_PYTHON_TO_BUILD "Copy python files to build directory?" ON)
 if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     find_program(BASH bash DOC "Path to bash interpreter.")
-    find_program(RSCRIPT Rscript Doc "Path to Rscript command.")
 
     # Add required python modules here for now
     #find_python_module(matplotlib REQUIRED)
     find_python_module(pandas REQUIRED)
+    find_program(RSCRIPT Rscript Doc "Path to Rscript command.")
 
     if(COPY_PYTHON_TO_BUILD MATCHES ON)
         macro(copy_files GLOBPAT DESTINATION TARGET_NAME)
@@ -225,6 +225,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
         endmacro(copy_files)
 
         set(PYTHON_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/python)
+		file(MAKE_DIRECTORY ${PYTHON_SRC_DIR}/modules)
         copy_files(${CMAKE_CURRENT_SOURCE_DIR}/../python/*.py ${PYTHON_SRC_DIR} python_copy)
         add_configure_file(spectrum_constants SpectrumConstantsPy "python/modules" "py")
         add_configure_file(tsv_constants TSVConstantsPy "python/modules" "py")
