@@ -90,7 +90,6 @@ target_link_libraries(${ION_FINDER_TARGET} ${CMAKE_THREAD_LIBS_INIT})
 #configure share dir
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/share/staticModifications.txt
         ${PROG_SHARE_DIR}/staticModifications.txt COPYONLY)
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/share/staticModifications.txt DESTINATION ${PROG_SHARE_DIR})
 
 #set up cmake generated headers
 set(PROG_MAN_DIR ${CMAKE_CURRENT_BINARY_DIR}/man)

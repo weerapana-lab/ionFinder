@@ -449,7 +449,7 @@ bool IonFinder::Params::getFlist(bool force)
 		_inDirs.push_back(_wd);
 		_wd = utils::parentDir(_wd);
 	}
-	for(auto & _inDir : _inDirs)
+	for(auto& _inDir : _inDirs)
 	{
 		std::string fname = (_inDirSpecified ? (_wd + _inDir) : _inDir) + ("/" + _dtaFilterBase);
 		if(utils::fileExists(fname)){

@@ -124,7 +124,8 @@ class MolecularFormula(object):
         rhs: MolecularFormula
             Another formula to add.
         '''
-        self.formula += rhs.formula
+
+        self.formula.update(rhs.formula)
         return self
 
 

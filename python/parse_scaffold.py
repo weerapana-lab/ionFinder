@@ -17,11 +17,12 @@ from modules import atom_table
 
 SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME: r',scan_([0-9]+),type',
                       MS_MS_SAMPLE_NAME: r'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
-                  'Mascot':{SPECTRUM_NAME: r'\d+-\d+_(\d+)$',
+                  'MaxQuant':{SPECTRUM_NAME: r'\d+-\d+_(\d+)$',
                       MS_MS_SAMPLE_NAME: r'^(?:[\w \-]+:\s*)?([\w\- ]+)$'}}
 
 MODIFICATION_REGEX = r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$'
-UNIPROT_ID_RE = r'^(sp|tr)\|([A-Za-z0-9-]+)\|([A-Za-z0-9]+)(?:_\w+ (.+) OS=)?'
+DESCRIPTION_REGEX = r'^(?:\w+\|[A-Za-z0-9\-]+\|[A-Za-z0-9_]+\s)?([\w\-/, \\;.\[\]\{\}()]+)(?:OS=.*)$'
+ACCESSION_REGEX = r'^\w+\|([A-Za-z0-9-]+)\|([A-Za-z0-9]+)_'
 
 def parse_spectrum_report(fname):
     '''
@@ -293,25 +294,29 @@ def main():
     dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][MS_MS_SAMPLE_NAME], x).group(1) + '.ms2')
 
     # parse protein id and name
-    matches = [re.search(UNIPROT_ID_RE, s) for s in dat[PROTEIN_NAME].values.tolist()]
+    # At some point should use re.findall
+    matches = [re.search(ACCESSION_REGEX, s) for s in dat[PROTEIN_ACCESSION_NUMBERS].values.tolist()]
     good_matches = [m for m in matches if bool(m)]
     if len(dat.index) != len([m for m in matches if m]):
-        sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) - len(good_matches)))
+        sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) -
+            len(good_matches)))
         if args.verbose:
             sys.stderr.write('Bad acession(s):\n')
-            bad_acessions = set(dat[[not bool(m) for m in matches]][PROTEIN_NAME].values.tolist())
+            bad_acessions = set(dat[[not bool(m) for m in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
             for acession in bad_acessions:
                 sys.stderr.write('\t{}\n'.format(acession))
         dat = dat[[bool(x) for x in matches]]
         dat.reset_index()
 
-    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(3), good_matches)))
-    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
-    dat[PARENT_DESCRIPTION] = pd.Series(list(map(lambda x: x.group(4), good_matches)))
+    #matches = [re.search(ACCESSION_REGEX, s) for s in dat[PROTEIN_ACCESSION_NUMBERS].str.tolist()]
+    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(1), good_matches)))
+    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
+    dat[PARENT_DESCRIPTION] = dat[PROTEIN_NAME].str.extract(DESCRIPTION_REGEX)
 
     # add static modifications
     seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
-    formulas = [MolecularFormula() if not args.calc_formula else MolecularFormula(x.upper()) for x in dat[PEPTIDE_SEQUENCE]]
+    formulas = [MolecularFormula() if not args.calc_formula else MolecularFormula(x.upper())
+            for x in dat[PEPTIDE_SEQUENCE]]
     for i, value in enumerate(dat[FIXED_MODIFICATIONS]):
         formulas[i] += extractModifications(seq_list[i], value, calc_formula=args.calc_formula)
 
