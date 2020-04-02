@@ -230,9 +230,10 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
 
         set(PYTHON_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/python)
 		file(MAKE_DIRECTORY ${PYTHON_SRC_DIR}/modules)
+		file(MAKE_DIRECTORY ${PYTHON_SRC_DIR}/parsers/modules)
         copy_files(${CMAKE_CURRENT_SOURCE_DIR}/../python/*.py ${PYTHON_SRC_DIR} python_copy)
         add_configure_file(spectrum_constants SpectrumConstantsPy "python/modules" "py")
-        add_configure_file(tsv_constants TSVConstantsPy "python/modules" "py")
+        add_configure_file(tsv_constants TSVConstantsPy "python/parsers/modules" "py")
     else()
         set(PYTHON_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../python)
     endif()
@@ -241,7 +242,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             CACHE STRING "Path to run_make_ms2.py")
     set(MAKE_MS2_SRC_PATH ${PYTHON_SRC_DIR}/make_ms2.py
             CACHE STRING "Path to make_ms2.py")
-    set(PARSE_SCAFFOLD_PATH ${PYTHON_SRC_DIR}/parse_scaffold.py
+    set(PARSE_SCAFFOLD_PATH ${PYTHON_SRC_DIR}/parsers/parse_scaffold.py
             CACHE STRING "Path to parse_scaffold.py")
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")

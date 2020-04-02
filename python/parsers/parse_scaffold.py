@@ -11,6 +11,7 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
 
+from modules.parent_parser import PARENT_PARSER
 from modules.tsv_constants import *
 from modules.molecular_formula import MolecularFormula
 from modules import atom_table
@@ -241,26 +242,12 @@ def extractModifications(seq, mods, calc_formula=False):
 def main():
 
     parser = argparse.ArgumentParser(prog='parse_scaffold',
+                                     parents=[PARENT_PARSER],
                                      description='Convert Scaffold output to proper input for ionFinder tsv input.',
                                      epilog="parse_scaffold was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
 
-    parser.add_argument('input_file', help = 'Name of file to parse. Should be a Scaffold spectrum report.')
-
-    parser.add_argument('--inplace', default=False, action='store_true',
-                        help='Should input_file be overwritten? Overrides ofname.')
-    parser.add_argument('-o', '--ofname', help='Name of output file.', default = '')
-    parser.add_argument('-f', '--calc_formula', default=0, choices=[0,1], type=int,
-                        help='Should molecular formula of peptides be calculated? 0 is the default.')
-
-    #arguments to customize mod residue
-    parser.add_argument('--mod_residue', default='R',
-                        help = "Residue to put '*' on")
-    parser.add_argument('--mod_mass', default = 0.98, type=float,
-                        help='Mass of modification.')
-
-    parser.add_argument('--verbose', default=False, action='store_true',
-                        help='Produce verbose output?')
+    parser.add_argument('input_file', help='Name of file to parse. Should be a Scaffold spectrum report.')
 
     args = parser.parse_args()
 
