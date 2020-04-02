@@ -4,7 +4,7 @@ import os
 import re
 import argparse
 import pandas as pd
-import numpy as np
+from numpy import nan
 
 if sys.version_info[0] < 3:
     from StringIO import StringIO
@@ -16,6 +16,7 @@ from modules.tsv_constants import *
 from modules.scaffold_constants import *
 from modules.molecular_formula import MolecularFormula
 from modules import atom_table
+from modules import utils
 
 SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME: r',scan_([0-9]+),type',
                       MS_MS_SAMPLE_NAME: r'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
@@ -88,102 +89,6 @@ def detect_search_engine(dat):
     return ret_key
 
 
-
-class AminoAcid(object):
-    __slots__ = ['aa', 'mod']
-
-    def __init__(self, aa, mod):
-        self.aa = aa
-        self.mod = mod
-
-    def __str__(self):
-        if self.mod == 0:
-            return self.aa
-        else:
-            return '{}({:+})'.format(self.aa, self.mod)
-
-
-def strToAminoAcids(seq):
-    ret = list()
-
-    # add n term
-    ret.append(AminoAcid('', float()))
-
-    for c in seq:
-        ret.append(AminoAcid(c, float()))
-
-    # add c term
-    ret.append(AminoAcid('', float()))
-
-    return ret
-
-def get_unique_modifications(mods):
-    '''
-    Get a set of unique peptide modifications and the residues they occur on.
-
-    Parameters
-    ----------
-    mods: Iterable
-        Iterable object with all modifications observed in data set.
-
-    Returns
-    -------
-    mods_set: list
-        List of tuples (modification, residue)
-    '''
-
-    ret = set()
-    for line in mods:
-        if line is np.nan:
-            continue
-
-        for x in list(map(str.strip, line.split(','))):
-            mod = re.search(MODIFICATION_REGEX, x)
-            if mod:
-                ret.add((mod.group(3).lower(), mod.group(1).upper()))
-            else:
-                ret.add(None)
-                sys.stderr.write('ERROR: Could not parse modification.\n\t{}\n'.format(x))
-
-    return list(ret)
-
-
-def check_modifications(fixed_list, variable_list, verbose=False):
-
-    def print_found_mods(lst, name):
-        sys.stdout.write('{} modifications:\n'.format(name))
-        for mod in lst:
-            known_mod = mod[0] in atom_table.MODIFICATIONS.keys()
-            if known_mod:
-                known_residue = mod[1] in atom_table.MODIFICATIONS[mod[0]].keys()
-            else:
-                known_residue = False
-            sys.stdout.write('\t{}: {} on {}'.format('Found' if known_mod and known_residue else 'NOT FOUND',
-                                                   mod[0], mod[1]))
-            if not known_mod:
-                sys.stdout.write(' -> Unknown modification\n')
-            elif not known_residue and known_mod:
-                sys.stdout.write(' -> Known modification, but not for residue: {}\n'.format(mod[1]))
-            else:
-                sys.stdout.write('\n')
-
-    var_mod_check = get_unique_modifications(variable_list)
-    fixed_mod_check = get_unique_modifications(fixed_list)
-
-    all_good = True
-    for mod in var_mod_check + fixed_mod_check:
-        if mod is not None and not (mod[0] in atom_table.MODIFICATIONS.keys() and mod[1] in atom_table.MODIFICATIONS[mod[0]]):
-            all_good = False
-            break
-
-    if not all_good or verbose:
-        sys.stdout.write('\n')
-        print_found_mods(var_mod_check, 'variable')
-        print_found_mods(fixed_mod_check, 'fixed')
-
-    return all_good
-
-
 def extractModifications(seq, mods, calc_formula=False):
     '''
     Extract modifications from modifications description and populate
@@ -204,7 +109,7 @@ def extractModifications(seq, mods, calc_formula=False):
 
     ret = MolecularFormula()
 
-    if mods is np.nan:
+    if mods is nan:
         return ret
 
     # extract modified residue, number, and mod mass from mod
@@ -268,9 +173,13 @@ def main():
     # Check that all modifications are valid
     if args.calc_formula:
         sys.stdout.write('Iterating through modifications to make sure their composition is known...')
-        if not check_modifications(dat[FIXED_MODIFICATIONS].to_list(),
-                                   dat[VARIABLE_MODIFICATIONS].to_list(),
-                                   verbose = args.verbose):
+        fixed_good = utils.check_modifications(dat[FIXED_MODIFICATIONS].to_list(),
+                                              'fixed', MODIFICATION_REGEX,
+                                              verbose=args.verbose)
+        variable_good = utils.check_modifications(dat[VARIABLE_MODIFICATIONS].to_list(),
+                                             'variable', MODIFICATION_REGEX,
+                                             verbose=args.verbose)
+        if not fixed_good and not variable_good:
             return -1
         sys.stdout.write('Success!\n')
 
@@ -302,7 +211,7 @@ def main():
     dat[PARENT_DESCRIPTION] = dat[PROTEIN_NAME].str.extract(DESCRIPTION_REGEX)
 
     # add static modifications
-    seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(strToAminoAcids).tolist()
+    seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(utils.strToAminoAcids).tolist()
     formulas = [MolecularFormula() if not args.calc_formula else MolecularFormula(x.upper())
             for x in dat[PEPTIDE_SEQUENCE]]
     for i, value in enumerate(dat[FIXED_MODIFICATIONS]):
