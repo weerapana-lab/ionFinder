@@ -34,38 +34,23 @@ def strToAminoAcids(seq):
     return ret
 
 
-def get_unique_modifications(mods, modification_regex):
+def check_modifications(mod_list, name, verbose=False):
     '''
-    Get a set of unique peptide modifications and the residues they occur on.
+    Check whether modifications in mod_list exist in atom_table.MODIFICATIONS.
 
-    Parameters
+    Paramaters
     ----------
-    mods: Iterable
-        Iterable object with all modifications observed in data set.
+    mod_list: list of tuples
+        List of tuples of modifications where the first elment in each tuple
+        is the modification name, and the second element is the residue.
+    name: str
+        'fixed' or 'variable'
 
     Returns
     -------
-    mods_set: list
-        List of tuples (modification, residue)
+    all_good: bool
+        True if all modifications are known.
     '''
-
-    ret = set()
-    for line in mods:
-        if line is nan:
-            continue
-
-        for x in list(map(str.strip, line.split(','))):
-            mod = re.search(modification_regex, x)
-            if mod:
-                ret.add((mod.group(3).lower(), mod.group(1).upper()))
-            else:
-                ret.add(None)
-                sys.stderr.write('ERROR: Could not parse modification.\n\t{}\n'.format(x))
-
-    return list(ret)
-
-
-def check_modifications(mod_list, name, modification_regex, verbose=False):
 
     def print_found_mods(lst, name):
         sys.stdout.write('{} modifications:\n'.format(name))
@@ -84,10 +69,8 @@ def check_modifications(mod_list, name, modification_regex, verbose=False):
             else:
                 sys.stdout.write('\n')
 
-    mod_check = get_unique_modifications(mod_list, modification_regex)
-
     all_good = True
-    for mod in mod_check:
+    for mod in mod_list:
         if mod is not None and not (mod[0] in MODIFICATIONS.keys()
                 and mod[1] in MODIFICATIONS[mod[0]]):
             all_good = False
@@ -95,7 +78,7 @@ def check_modifications(mod_list, name, modification_regex, verbose=False):
 
     if not all_good or verbose:
         sys.stdout.write('\n')
-        print_found_mods(mod_check, name)
+        print_found_mods(mod_list, name)
 
     return all_good
 

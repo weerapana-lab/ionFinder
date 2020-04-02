@@ -89,6 +89,37 @@ def detect_search_engine(dat):
     return ret_key
 
 
+def get_unique_modifications(mods):
+    '''
+    Get a set of unique peptide modifications and the residues they occur on.
+
+    Parameters
+    ----------
+    mods: Iterable
+        Iterable object with all modifications observed in data set.
+
+    Returns
+    -------
+    mods_set: list
+        List of tuples (modification, residue)
+    '''
+
+    ret = set()
+    for line in mods:
+        if line is nan:
+            continue
+
+        for x in list(map(str.strip, line.split(','))):
+            mod = re.search(MODIFICATION_REGEX, x)
+            if mod:
+                ret.add((mod.group(3).lower(), mod.group(1).upper()))
+            else:
+                ret.add(None)
+                sys.stderr.write('ERROR: Could not parse modification.\n\t{}\n'.format(x))
+
+    return list(ret)
+
+
 def extractModifications(seq, mods, calc_formula=False):
     '''
     Extract modifications from modifications description and populate
@@ -153,6 +184,10 @@ def main():
                                      epilog="parse_scaffold was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
 
+    parser.add_argument('-f', '--calc_formula', default=0, choices=[0, 1], type=int,
+                        help='Should molecular formula of peptides be calculated? 0 is the default.')
+    parser.add_argument('--mod_mass', default=0.98, type=float,
+                        help='Mass of modification.')
     parser.add_argument('input_file', help='Name of file to parse. Should be a Scaffold spectrum report.')
 
     args = parser.parse_args()
@@ -166,19 +201,17 @@ def main():
         else: ofname = args.ofname
 
     # read and format properly
-    sys.stdout.write('\nparse_scaffold\n\nReading {}...'.format(args.input_file))
+    sys.stdout.write('\n{}\n\nReading {}...'.format(parser.prog, args.input_file))
     dat = parse_spectrum_report(args.input_file)
     sys.stdout.write(' Done!\n')
 
     # Check that all modifications are valid
     if args.calc_formula:
         sys.stdout.write('Iterating through modifications to make sure their composition is known...')
-        fixed_good = utils.check_modifications(dat[FIXED_MODIFICATIONS].to_list(),
-                                              'fixed', MODIFICATION_REGEX,
-                                              verbose=args.verbose)
-        variable_good = utils.check_modifications(dat[VARIABLE_MODIFICATIONS].to_list(),
-                                             'variable', MODIFICATION_REGEX,
-                                             verbose=args.verbose)
+        fixed_good = utils.check_modifications(get_unique_modifications(dat[FIXED_MODIFICATIONS].to_list()),
+                                              'fixed', verbose=args.verbose)
+        variable_good = utils.check_modifications(get_unique_modifications(dat[VARIABLE_MODIFICATIONS].to_list()),
+                                             'variable', verbose=args.verbose)
         if not fixed_good and not variable_good:
             return -1
         sys.stdout.write('Success!\n')
