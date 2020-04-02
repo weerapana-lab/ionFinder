@@ -13,6 +13,7 @@ else:
 
 from modules.parent_parser import PARENT_PARSER
 from modules.tsv_constants import *
+from modules.scaffold_constants import *
 from modules.molecular_formula import MolecularFormula
 from modules import atom_table
 
