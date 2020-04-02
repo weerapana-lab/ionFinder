@@ -112,8 +112,8 @@ bool IonFinder::readInputTsv(std::string ifname,
 			temp.setUnique(tsv.getValBool(i, IonFinder::UNIQUE));
 		if(foundOptionalCols[IonFinder::CHARGE])
 			temp.getPrecursor().setCharge(tsv.getValInt(i, IonFinder::CHARGE));
-		if(foundOptionalCols[IonFinder::XCORR])
-			temp.setXcorr(tsv.getValStr(i, IonFinder::XCORR));
+		if(foundOptionalCols[IonFinder::SCORE])
+			temp.setXcorr(tsv.getValStr(i, IonFinder::SCORE));
 		if(foundOptionalCols[IonFinder::PRECURSOR_MZ])
 			temp.getPrecursor().setMZ(tsv.getValStr(i, IonFinder::PRECURSOR_MZ));
 		if(foundOptionalCols[IonFinder::PRECURSOR_SCAN])
