@@ -236,7 +236,7 @@ def main():
             for acession in bad_acessions:
                 sys.stderr.write('\t{}\n'.format(acession))
         dat = dat[[bool(x) for x in matches]]
-        dat.reset_index()
+        dat = dat.reset_index()
 
     #matches = [re.search(ACCESSION_REGEX, s) for s in dat[PROTEIN_ACCESSION_NUMBERS].str.tolist()]
     dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(1), good_matches)))
