@@ -6,11 +6,13 @@ import argparse
 import pandas as pd
 
 from modules.parent_parser import PARENT_PARSER
-from modules.tsv_constants import *
-from modules.maxquant_constants import *
+from modules import tsv_constants
+from modules import maxquant_constants
 from modules.molecular_formula import MolecularFormula
 from modules import atom_table
+from modules import utils
 
+MODIFICATION_REGEX = r'([A-Z_])\((.*?)(\(.*?\))?\)'
 
 def get_unique_modifications(modified_sequences):
     '''
@@ -29,62 +31,157 @@ def get_unique_modifications(modified_sequences):
 
     ret = set()
     for seq in modified_sequences:
-        for match in re.findall(r'([A-Z_])\((.*?)(\(.*?\))?\)', seq):
-            ret.add((('N-TERM' if match[0] == '_' else match[0]), match[1].strip().lower()))
+        for match in re.findall(MODIFICATION_REGEX, seq):
+            ret.add((match[1].strip().lower(), ('N-TERM' if match[0] == '_' else match[0])))
     return list(ret)
 
+def extractModifications(modified_sequences):
+    '''
+    Extract and parse modifications from peptide sequences.
 
-# def main():
-# 
-#     parser = argparse.ArgumentParser(prog='parse_maxquant',
-#                                      parents=[PARENT_PARSER],
-#                                      description='Convert MaxQuant output to proper input for ionFinder tsv input.',
-#                                      epilog="parse_maxquant was written by Aaron Maurais.\n"
-#                                             "Email questions or bugs to aaron.maurais@bc.edu")
-# 
-#     parser.add_argument('-f', '--fixedMod', default='C:carbamidomethyl',
-#                         help='Specify fixed modification(s) if there are multiple modifications, '
-#                               'they should be comma separated. default is "C:carbamidomethyl"')
-# 
-#     parser.add_argument('input_file', help='Name of file to parse. Should be a MaxQuant evidence.txt file.')
-# 
-#     args = parser.parse_args()
-# 
-#     if args.inplace:
-#         ofname = args.input_file
-#     else:
-#         if args.ofname == '':
-#             s = os.path.splitext(os.path.basename(args.input_file))
-#             ofname = '{}_parsed.tsv'.format(s[0])
-#         else: ofname = args.ofname
+    Parameters
+    ----------
+    modified_sequences: list
+        A list of peptide sequences with modification.
 
-class args:
-    input_file = '/Volumes/Data/msData/ionFinder/parse_maxquant_files/evidence.tsv'
-    fixedMod = 'C:carbamidomethyl'
+    Returns
+    -------
+    amino_acids: list, formulas: list
+        A list of lists of AminoAcid(s), and a list of MolecularFormula(s).
+    '''
 
-class parser:
-    prog = 'test'
+    formulas = list()
+    amino_acids = list()
+    for s in modified_sequences:
+        seq_no_mod = ''
+        matches = list(re.finditer(MODIFICATION_REGEX, s))
+        indecies = [True for _ in range(len(s))]
+        modification_indecies = list()
+        for m in matches:
+            modification_indecies.append(m.start())
+            for i in range(len(indecies)):
+                if i in range(m.start() + 1, m.end()):
+                    indecies[i] = False
 
-# read and format properly
-sys.stdout.write('\n{}\n\nReading {}...'.format(parser.prog, args.input_file))
-dat = pd.read_csv(args.input_file, sep='\t')
-dat.columns = [c.lower().replace(' ', '_').replace('/', '') for c in dat.columns]
-sys.stdout.write(' Done!\n')
+        new_modification_indecies = list()
+        for i, (char, boo) in enumerate(zip(s, indecies)):
+            if boo:
+                if char != '_':
+                    seq_no_mod += char
+                if i in modification_indecies:
+                    new_modification_indecies.append(len(seq_no_mod))
 
-# parse fixed modifications
-fixed_modifications = list()
-for mod in re.split('\s?,\s?', args.fixedMod):
-    match = re.search(r'^([A-Z]):(.+)$', mod.strip())
-    if match is None:
-        raise RuntimeError('Could not parse fixed modification: {}'.format(mod))
-    fixed_modifications.append((match.group(1), match.group(2)))
-fixed_modifications = set(fixed_modifications)
+        amino_acids.append(utils.strToAminoAcids(seq_no_mod))
+        formulas.append(MolecularFormula(seq_no_mod))
 
-# Check that modifications are valid
-variable_modifications = get_unique_modifications(dat[dat[MODIFICATIONS] != 'Unmodified'][MODIFIED_SEQUENCE].to_list())
-    
+        for i, site in enumerate(new_modification_indecies):
+            name = matches[i].group(2).lower().strip()
+            residue = matches[i].group(1)
+            if residue == '_':
+                if site == 0:
+                    residue = 'N-TERM'
+                else: # May have to also add c-term at some point but I am too lazy to do it now.
+                    raise ValueError('Invalid char in sequence: {}'.format(seq_no_mod))
+            mod_temp = atom_table.get_mod(name, residue)
+            formulas[-1].add_mod(name, residue)
+            amino_acids[-1][site].mod += atom_table.calc_mass(mod_temp)
 
-# if __name__ == '__main__':
-#     main()
+    return amino_acids, formulas
+
+
+def main():
+
+    parser = argparse.ArgumentParser(prog='parse_maxquant',
+                                     parents=[PARENT_PARSER],
+                                     description='Convert MaxQuant output to proper input for ionFinder tsv input.',
+                                     epilog="parse_maxquant was written by Aaron Maurais.\n"
+                                            "Email questions or bugs to aaron.maurais@bc.edu")
+
+    parser.add_argument('-f', '--fixedMod', default='C:carbamidomethyl',
+                        help='Specify fixed modification(s) if there are multiple modifications, '
+                              'they should be comma separated. Default is "C:carbamidomethyl"')
+
+    parser.add_argument('input_file', help='Name of file to parse. Should be a MaxQuant evidence.txt file.')
+
+    args = parser.parse_args()
+
+    if args.inplace:
+        ofname = args.input_file
+    else:
+        if args.ofname == '':
+            s = os.path.splitext(os.path.basename(args.input_file))
+            ofname = '{}_parsed.tsv'.format(s[0])
+        else: ofname = args.ofname
+
+    # read and format properly
+    sys.stdout.write('\n{}\n\nReading {}...'.format(parser.prog, args.input_file))
+    dat = pd.read_csv(args.input_file, sep='\t')
+    dat.columns = [c.lower().replace(' ', '_').replace('/', '') for c in dat.columns]
+    dat = dat[dat[maxquant_constants.MSMS_SCAN_NUMBER].isna().apply(lambda x: not x)]
+    dat = dat[dat[maxquant_constants.GENE_NAMES].isna().apply(lambda x: not x)]
+    dat = dat.reset_index()
+    sys.stdout.write(' Done!\n')
+
+    # parse fixed modifications
+    fixed_modifications = list()
+    for mod in re.split('\s?,\s?', args.fixedMod):
+        match = re.search(r'^([A-Z]):(.+)$', mod.strip())
+        if match is None:
+            raise RuntimeError('Could not parse fixed modification: {}'.format(mod))
+        fixed_modifications.append((match.group(2), match.group(1)))
+    fixed_modifications = list(set(fixed_modifications))
+
+    # Check that modifications are valid
+    variable_modifications = get_unique_modifications(dat[dat[maxquant_constants.MODIFICATIONS] !=
+        'Unmodified'][maxquant_constants.MODIFIED_SEQUENCE].to_list())
+    sys.stdout.write('Iterating through modifications to make sure their composition is known...')
+    fixed_good = utils.check_modifications(fixed_modifications,
+                                          'fixed', verbose=args.verbose)
+    variable_good = utils.check_modifications(variable_modifications,
+                                         'variable', verbose=args.verbose)
+    if not fixed_good and not variable_good:
+        return -1
+    sys.stdout.write('Success!\n')
+
+    # add columns to ret
+    ret = pd.DataFrame()
+    ret[tsv_constants.SAMPLE_NAME] = dat[maxquant_constants.EXPERIMENT]
+    ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.ms2'.format(x))
+    ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS].apply(lambda x: [i for i in x.split(';')][0])
+    ret[tsv_constants.PARENT_PROTEIN] = dat[maxquant_constants.GENE_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+    ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+
+    # parse sequences
+    seq_list, formulas = extractModifications(dat[maxquant_constants.MODIFIED_SEQUENCE].to_list())
+
+    # add formula column
+    ret[tsv_constants.FORMULA] = pd.Series([str(x) for x in formulas])
+
+    # get seq as string and change R(+0.98) to R*
+    seq_str_list = list()
+    for seq in seq_list:
+        s = str()
+        for a in seq:
+            s += str(a)
+        s = re.sub(r'{}\([\-\+\d\.]+\)'.format(args.mod_residue), '{}*'.format(args.mod_residue), s)
+        seq_str_list.append(s)
+
+    ret[tsv_constants.SEQUENCE] = pd.Series(seq_str_list)
+    ret[tsv_constants.FULL_SEQUENCE] = pd.Series(seq_str_list)
+
+    # add other columns
+    ret[tsv_constants.SCAN_NUM] = dat[maxquant_constants.MSMS_SCAN_NUMBER].apply(lambda x: int(x))
+    ret[tsv_constants.UNIQUE] = dat[maxquant_constants.PROTEINS].apply(lambda x: len(x.split(';')) == 1)
+    ret[tsv_constants.PRECURSOR_MZ] = dat[maxquant_constants.MZ]
+    ret[tsv_constants.CHARGE] = dat[maxquant_constants.CHARGE]
+    ret[tsv_constants.SCORE] = dat[maxquant_constants.SCORE]
+
+    sys.stdout.write('Writing {}...'.format(ofname))
+    ret.to_csv(ofname, sep='\t', index=False)
+    sys.stdout.write(' Done!\n')
+
+
+if __name__ == '__main__':
+    main()
 
 

@@ -14,7 +14,6 @@ class MolecularFormula(object):
         self.seq = seq
         self.formula = self._seq_to_counter(seq, n_term=n_term, c_term=c_term)
 
-
     def __str__(self):
         ret = ''
 
@@ -104,14 +103,10 @@ class MolecularFormula(object):
 
         Raises
         ------
-
+            KeyError if modification is not known.
         '''
 
-        try:
-            temp_mod = atom_table.MODIFICATIONS[name.lower()][residue.upper()]
-        except KeyError:
-            raise KeyError('Unknown modification: {}, for residue: {}'.format(name, residue))
-
+        temp_mod = atom_table.get_mod(name, residue)
         self.formula.update(temp_mod)
 
 

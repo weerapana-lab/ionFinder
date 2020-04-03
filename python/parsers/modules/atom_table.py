@@ -57,11 +57,32 @@ MODIFICATIONS = {
         'iodoacetamide derivative': {'C': Counter({'C': 2, 'H': 3, 'O': 1, 'N': 1, 'S': 0})}
         }
 
+def get_mod(name, residue):
+    '''
+    Get a copy of the Counter for a modification.
+
+    Paramaters
+    ----------
+    name: str
+        Name of modification.
+    residue: str
+        Single letter aa code on which modification occured.
+
+    Raises
+    ------
+        KeyError if modification is not known.
+    '''
+    try:
+        temp_mod = MODIFICATIONS[name.lower()][residue.upper()].copy()
+    except KeyError:
+        raise KeyError('Unknown modification: {}, for residue: {}'.format(name, residue))
+    return temp_mod
+
 
 def calc_mass(formula, mono_avg=1):
     '''
     Calculate mass of molecular formula.
-    
+
     Parameters
     ----------
     formula: Counter

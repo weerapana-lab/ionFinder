@@ -186,8 +186,6 @@ def main():
 
     parser.add_argument('-f', '--calc_formula', default=0, choices=[0, 1], type=int,
                         help='Should molecular formula of peptides be calculated? 0 is the default.')
-    parser.add_argument('--mod_mass', default=0.98, type=float,
-                        help='Mass of modification.')
     parser.add_argument('input_file', help='Name of file to parse. Should be a Scaffold spectrum report.')
 
     args = parser.parse_args()
@@ -246,7 +244,7 @@ def main():
     # add static modifications
     seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(utils.strToAminoAcids).tolist()
     formulas = [MolecularFormula() if not args.calc_formula else MolecularFormula(x.upper())
-            for x in dat[PEPTIDE_SEQUENCE]]
+                for x in dat[PEPTIDE_SEQUENCE]]
     for i, value in enumerate(dat[FIXED_MODIFICATIONS]):
         formulas[i] += extractModifications(seq_list[i], value, calc_formula=args.calc_formula)
 
@@ -263,8 +261,7 @@ def main():
         s = str()
         for a in seq:
             s += str(a)
-        _mod_temp = '{0}({1:+})'.format(args.mod_residue, args.mod_mass)
-        s = s.replace(_mod_temp, '{}*'.format(args.mod_residue))
+        s = re.sub(r'{}\([\-\+\d\.]+\)'.format(args.mod_residue), '{}*'.format(args.mod_residue), s)
         seq_str_list.append(s)
 
     dat[SEQUENCE] = pd.Series(seq_str_list)

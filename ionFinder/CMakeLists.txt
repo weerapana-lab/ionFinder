@@ -75,7 +75,7 @@ add_custom_command(
             ${CMAKE_CURRENT_BINARY_DIR}/${output_dir}/${name}.${extension}
         )
 add_custom_target(${target_name} ALL
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${output_dir}/${name}.${extension} 
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${output_dir}/${name}.${extension}
         )
 endmacro()
 add_configure_file(spectrum_constants SpectrumConstantsHpp "include" "hpp")
@@ -246,6 +246,8 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             CACHE STRING "Path to make_ms2.py")
     set(PARSE_SCAFFOLD_PATH ${PYTHON_SRC_DIR}/parsers/parse_scaffold.py
             CACHE STRING "Path to parse_scaffold.py")
+    set(PARSE_MAXQUANT_PATH ${PYTHON_SRC_DIR}/parsers/parse_maxquant.py
+            CACHE STRING "Path to parse_scaffold.py")
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
             CACHE STRING "Path to make_ms2.py")
 
@@ -289,5 +291,18 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
             )
     add_custom_target(parse_scaffold ALL
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
+            )
+
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_maxquant
+            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_MAXQUANT_PATH}
+            COMMENT "Adding parse_maxquant executable."
+            COMMAND
+                ${BASH} ${PYTHON_BUILD_SCRIPT}
+                --pythonExe ${PYTHON_EXE}
+                ${PARSE_MAXQUANT_PATH}
+            )
+    add_custom_target(parse_maxquant ALL
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_maxquant
             )
 endif()

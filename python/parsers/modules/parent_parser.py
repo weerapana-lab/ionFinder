@@ -11,4 +11,5 @@ PARENT_PARSER.add_argument('--verbose', default=False, action='store_true',
 
 # arguments to customize mod residue
 PARENT_PARSER.add_argument('--mod_residue', default='R',
-                           help="Residue to put '*' on")
+                           help="Residue to put '*' on. Default is 'R'.")
+

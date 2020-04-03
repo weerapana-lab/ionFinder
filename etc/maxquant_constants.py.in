@@ -1,6 +1,6 @@
 # @CONFIGURE_FILE_WARNING@
 
-# maxquant file headers 
+# maxquant file headers
 SCORE = '@SCORE@'
 MSMS_SCAN_NUMBER = '@MSMS_SCAN_NUMBER@'
 MZ = '@MZ@'
