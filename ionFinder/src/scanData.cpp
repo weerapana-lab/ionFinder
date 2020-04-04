@@ -28,6 +28,11 @@ void scanData::Scan::clear()
 	_precursor.clear();
 }
 
+//! Check whether _sequence contains any element in MOD_CHAR
+bool scanData::Scan::checkIsModified() const {
+    return utils::strContains(scanData::MOD_CHAR, _sequence);
+}
+
 std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
 {
 	fs = fs.substr(fs.find(".") + 1);

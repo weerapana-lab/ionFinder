@@ -92,6 +92,7 @@ bool IonFinder::readInputTsv(std::string ifname,
 		//required columns
 		temp.setScanNum(tsv.getValSize(i, IonFinder::SCAN_NUM));
 		temp.setSequence(tsv.getValStr(i, IonFinder::SEQUENCE));
+        temp.setIsModified(temp.checkIsModified());
 		temp.getPrecursor().setFile(tsv.getValStr(i, IonFinder::PRECURSOR_FILE));
 		temp.setSampleName(tsv.getValStr(i, IonFinder::SAMPLE_NAME));
 

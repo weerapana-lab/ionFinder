@@ -158,6 +158,9 @@ namespace scanData{
 		void setSequence(std::string seq){
 			_sequence = seq;
 		}
+		void setIsModified(bool rhs) {
+            _modified = rhs;
+        }
 		void setFullSequence(std::string s, bool resetSequence = false){
 			_fullSequence = s;
 			if(resetSequence)
@@ -192,6 +195,7 @@ namespace scanData{
 		int getSpectralCounts() const{
 			return _spectralCounts;
 		}
+		bool checkIsModified() const;
 		//!Does the peptide contain a dynamic modification?
 		bool isModified() const{
 			return _modified;
