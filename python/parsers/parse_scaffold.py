@@ -63,16 +63,16 @@ def detect_search_engine(dat):
     '''
     Detect the search engnie used to in the scaffold file.
 
-    Each regex in SEARCH_ENGINES are tested on the appropiate columns
-    in dat. The key of the first sucessful match is returned.
+    Each regex in SEARCH_ENGINES are tested on the appropriate columns
+    in dat. The key of the first successful match is returned.
 
     Parameters
     ----------
     dat: pd.DataFrame
-        Initalized DataFrame from input_file.
+        Initialized DataFrame from input_file.
     '''
 
-    sys.stdout.write('\nAtempting to find the appropiate regex for search engine...\n')
+    sys.stdout.write('\nAtempting to find the appropriate regex for search engine...\n')
     ret_key = str()
     for k1, v1 in SEARCH_ENGINES.items():
         sys.stdout.write('\tTrying to match regex for {}...'.format(k1))

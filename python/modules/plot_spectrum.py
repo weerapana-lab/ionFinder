@@ -52,15 +52,15 @@ class MS2_spectrum(object):
         '''
         Read .spectrum file into MS2_spectrum object.
 
-        Paramaters
+        Parameters
         ----------
         fname : str
             Path to file to read.
 
         Returns
         -------
-            sucess : bool
-                True if sucessful, False of not.
+            success : bool
+                True if successful, False of not.
         '''
 
         if self.fname == '':
@@ -100,12 +100,12 @@ class MS2_spectrum(object):
                                                                                          elems[1]))
 
         # Check that all values were found.
-        sucess = True
+        success = True
         for k, v in self.metadata.items():
             if v is None:
                 sys.stderr.write('Did not find metadata value: {}'.format(k))
-                sucess = False
-        if not sucess:
+                success = False
+        if not success:
             return False
 
         #Parse spectrum

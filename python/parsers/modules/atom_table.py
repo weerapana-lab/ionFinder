@@ -61,12 +61,12 @@ def get_mod(name, residue):
     '''
     Get a copy of the Counter for a modification.
 
-    Paramaters
+    Parameters
     ----------
     name: str
         Name of modification.
     residue: str
-        Single letter aa code on which modification occured.
+        Single letter aa code on which modification occurred.
 
     Raises
     ------

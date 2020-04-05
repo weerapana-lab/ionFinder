@@ -45,7 +45,7 @@ class MolecularFormula(object):
         '''
         Convert `seq` to formula.
 
-        Paramaters
+        Parameters
         ----------
         seq: str
             Amino acid sequence as string.
@@ -80,7 +80,7 @@ class MolecularFormula(object):
         '''
         Reset peptide sequence and formula.
 
-        Paramaters
+        Parameters
         ----------
         seq: str
             Peptide sequence to add.
@@ -94,12 +94,12 @@ class MolecularFormula(object):
         '''
         Add residue modificaton to formula.
 
-        Paramaters
+        Parameters
         ----------
         name: str
             Name of modification.
         residue: str
-            Single letter aa code on which modification occured.
+            Single letter aa code on which modification occurred.
 
         Raises
         ------
@@ -114,7 +114,7 @@ class MolecularFormula(object):
         '''
         Add another MolecularFormula. seq member is unmodified.
 
-        Paramaters
+        Parameters
         ----------
         rhs: MolecularFormula
             Another formula to add.
@@ -128,7 +128,7 @@ class MolecularFormula(object):
         '''
         Calculate monoisotopic or avg mass.
 
-        Paramaters
+        Parameters
         ----------
         mono_avg: int
             One of (0, 1). 0 for average, 1 for monoisotopic.

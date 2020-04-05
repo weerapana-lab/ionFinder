@@ -38,10 +38,10 @@ def check_modifications(mod_list, name, verbose=False):
     '''
     Check whether modifications in mod_list exist in atom_table.MODIFICATIONS.
 
-    Paramaters
+    Parameters
     ----------
     mod_list: list of tuples
-        List of tuples of modifications where the first elment in each tuple
+        List of tuples of modifications where the first element in each tuple
         is the modification name, and the second element is the residue.
     name: str
         'fixed' or 'variable'
