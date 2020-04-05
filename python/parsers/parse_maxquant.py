@@ -97,6 +97,12 @@ def main():
                                      epilog="parse_maxquant was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
 
+    parser.add_argument('-g', '--groupMethod', choices=[0, 1, 2], default=1,
+                        help='How many spectra per peptide? 0: include all scans, '
+                             '1: Only show the best spectra per sequence, file and charge state, '
+                             '2: Group by charg; show the best spectra, per sequence, and file. '
+                             'Default is 1.')
+
     parser.add_argument('-f', '--fixedMod', default='C:carbamidomethyl',
                         help='Specify fixed modification(s) if there are multiple modifications, '
                               'they should be comma separated. Default is "C:carbamidomethyl"')
@@ -175,6 +181,18 @@ def main():
     ret[tsv_constants.PRECURSOR_MZ] = dat[maxquant_constants.MZ]
     ret[tsv_constants.CHARGE] = dat[maxquant_constants.CHARGE]
     ret[tsv_constants.SCORE] = dat[maxquant_constants.SCORE]
+
+    # group ret by user specified method
+    if args.groupMethod != 0:
+        group_cols = [tsv_constants.PRECURSOR_FILE, tsv_constants.SEQUENCE]
+        group_method = 'Grouping by {}, {}'.format(tsv_constants.PRECURSOR_FILE, tsv_constants.SEQUENCE)
+        if args.groupMethod == 2:
+            group_cols.append(tsv_constants.CHARGE)
+            group_method += ', and {}'.format(tsv_constants.CHARGE)
+        sys.stdout.write('{}.\n'.format(group_method))
+        idx = ret.groupby(group_cols, sort=False)[tsv_constants.SCORE].transform(max) == ret[tsv_constants.SCORE]
+        ret = ret[idx]
+        ret = ret.drop_duplicates(subset=group_cols, keep='first')
 
     sys.stdout.write('Writing {}...'.format(ofname))
     ret.to_csv(ofname, sep='\t', index=False)
