@@ -101,7 +101,7 @@ def main():
                         help='Specify fixed modification(s) if there are multiple modifications, '
                               'they should be comma separated. Default is "C:carbamidomethyl"')
 
-    parser.add_argument('input_file', help='Name of file to parse. Should be a MaxQuant evidence.txt file.')
+    parser.add_argument('input_file', help='Name of file to parse. Should be a MaxQuant msms.txt file.')
 
     args = parser.parse_args()
 
