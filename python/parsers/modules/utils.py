@@ -16,7 +16,7 @@ class AminoAcid(object):
         if self.mod == 0:
             return self.aa
         else:
-            return '{}({:+})'.format(self.aa, self.mod)
+            return '{}({:.4f})'.format(self.aa, self.mod)
 
 
 def strToAminoAcids(seq):
