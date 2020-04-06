@@ -47,6 +47,7 @@ MODIFICATIONS = {
         'acetyl': {'N-TERM': Counter({'C': 2, 'H': 2, 'O': 1, 'N': 0, 'S': 0})},
         'acetylation of the protein n-terminus': {'N-TERM': Counter({'C': 2, 'H': 2, 'O': 1, 'N': 0, 'S': 0})},
         'citrullination': {'R': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
+        'desthiocit1': {'R': Counter({'C': 32, 'H': 44, 'N': 6, 'O': 9})},
         'deamidated': {'N': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0}),
                        'Q': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
         'deamidation': {'N': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0}),
