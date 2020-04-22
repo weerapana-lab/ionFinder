@@ -35,6 +35,7 @@ def get_unique_modifications(modified_sequences):
             ret.add((match[1].strip().lower(), ('N-TERM' if match[0] == '_' else match[0])))
     return list(ret)
 
+
 def extractModifications(modified_sequences):
     '''
     Extract and parse modifications from peptide sequences.

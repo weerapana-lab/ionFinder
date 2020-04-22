@@ -21,7 +21,7 @@ from modules import utils
 SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME: r',scan_([0-9]+),type',
                       MS_MS_SAMPLE_NAME: r'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
                   'MaxQuant':{SPECTRUM_NAME: r'\d+-\d+_(\d+)$',
-                      MS_MS_SAMPLE_NAME: r'^(?:[\w \-]+:\s*)?([\w\- ]+)$'}}
+                      MS_MS_SAMPLE_NAME: r'^(?:[\w \+\-]+:\s*)?([\w\+\- ]+)$'}}
 
 MODIFICATION_REGEX = r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$'
 DESCRIPTION_REGEX = r'^(?:\w+\|[A-Za-z0-9\-]+\|[A-Za-z0-9_]+\s)?([\w\-/, \\;.\[\]\{\}()]+)(?:OS=.*)$'
