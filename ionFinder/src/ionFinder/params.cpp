@@ -56,7 +56,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			wdSpecified = true;
 			if(!utils::dirExists(_wd))
 			{
-				std::cerr << "Specified direectory does not exist." << NEW_LINE;
+				std::cerr << "Specified directory does not exist." << NEW_LINE;
 				return false;
 			}
 			continue;
@@ -310,7 +310,17 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             _minNlLabelIntensity = std::stod(argv[i]);
             continue;
         }
-        if(!strcmp(argv[i], "--labelDecoyNL"))
+        if(!strcmp(argv[i], "-n") || !strcmp(argv[i], "--artifactNLIntPerc"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            _artifactNLIntFrac = std::stod(argv[i]) / 100; // Convert from percentage to fraction here.
+            continue;
+        }
+        if(!strcmp(argv[i], "--labelArtifactNL"))
         {
             if(!utils::isArg(argv[++i]))
             {
@@ -319,10 +329,10 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             }
             if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
             {
-                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "labelDecoyNL" << NEW_LINE;
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "labelArtifactNL" << NEW_LINE;
                 return false;
             }
-            _labelDecoyNL = std::stoi(argv[i]);
+            _labelArtifactNL = std::stoi(argv[i]);
             continue;
         }
 		if(!strcmp(argv[i], "-minInt"))

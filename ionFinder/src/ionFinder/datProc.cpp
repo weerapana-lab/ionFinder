@@ -461,7 +461,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		
 		//add neutral loss fragments to current peptide
 		if(pars.getCalcNL()){
-			peptides.back().addNeutralLoss(pars.getNeutralLossMass(), pars.getLabelDecoyNL());
+			peptides.back().addNeutralLoss(pars.getNeutralLossMass(), pars.getLabelArtifactNL());
 		}
 		
 		//load spectrum

@@ -151,6 +151,9 @@ Maximum ion MZ to be considered from \fI.ms2\fR files. By default all identified
 \fB-minInt \fI<relative_intensity>\fR
 Minimum relative intensity to include from \fI.ms2\fR files.  Ion intensities are normalized to 100 before labeling, so \fB-minInt\fR should be supplied as a relative intensity. If this option is set, an intensity filter will be applied to spectra before annotation. By default, all ion intensities are included.
 .TP
+\fB-n, --decoyNLIntPerc\fR \fI<percentage>\fR
+Percentage of ion intensity allowed for decoy NL ions. The intensity cuttoff for neutral loss ions ions is dynamically set for each spectrum such that the total ion intensities for all neutral loss ions is no more than \fIn\fR percent from decoy neutral loss ions. Argument should be supplied as a percentage. Default is 5.0 percent.
+.TP
 \fB-minLabInt \fI<relative_intensity>\fR
 Minimum relative intensity to include from \fI.ms2\fR files. If this option is set, only ion with relative intensities above \fI<relative_intensity>\fR will be labeled. By default, all ions are considered in labeling regardless of intensity.
 .TP

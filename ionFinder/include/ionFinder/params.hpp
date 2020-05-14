@@ -74,8 +74,11 @@ namespace IonFinder{
 		//!Intensity cutoff for NL ions.
 		double _minNlLabelIntensity;
 
-		//!Label decoy NL ions in .spectrum?
-		bool _labelDecoyNL;
+		//!Label artifact NL ions in .spectrum?
+		bool _labelArtifactNL;
+
+		//! Fraction of ion intensity allowed for artifact NL ions.
+		double _artifactNLIntFrac;
 
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
@@ -105,6 +108,7 @@ namespace IonFinder{
 			_modFilter = 1;
 			_printSpectraFiles = false;
 			_calcNL = false;
+            _artifactNLIntFrac = 0.05;
 			_includeCTermMod = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
@@ -113,7 +117,7 @@ namespace IonFinder{
 			_numThread = 1;
 			_inDirSpecified = false;
             _minNlLabelIntensity = 0;
-            _labelDecoyNL = true;
+            _labelArtifactNL = true;
 			_groupMod = 1;
 			_printPeptideUID = false;
 		}
@@ -173,8 +177,11 @@ namespace IonFinder{
 		double getNlIntCo() const{
 		    return _minNlLabelIntensity;
 		}
-		bool getLabelDecoyNL() const {
-		    return _labelDecoyNL;
+		bool getLabelArtifactNL() const {
+		    return _labelArtifactNL;
+        }
+        double getArtifactNLIntFrac() const {
+		    return _artifactNLIntFrac;
         }
 		int getGroupMod() const{
 		    return _groupMod;
