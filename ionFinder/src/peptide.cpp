@@ -274,6 +274,12 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
 	}*/
 }
 
+/**
+ * Count the number of modifications in the range between \p beg and \p end.
+ * @param beg Beginning index.
+ * @param end Ending index.
+ * @return Number of modifications in range.
+ */
 size_t PeptideNamespace::Peptide::nModsInSpan(size_t beg, size_t end) const
 {
 	size_t ret = 0;

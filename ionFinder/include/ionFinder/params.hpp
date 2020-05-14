@@ -71,8 +71,11 @@ namespace IonFinder{
 		//! was a input directory specified
 		bool _inDirSpecified;
 
-		//!Intensity cutoff for
+		//!Intensity cutoff for NL ions.
 		double _minNlLabelIntensity;
+
+		//!Label decoy NL ions in .spectrum?
+		bool _labelDecoyNL;
 
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
@@ -110,6 +113,7 @@ namespace IonFinder{
 			_numThread = 1;
 			_inDirSpecified = false;
             _minNlLabelIntensity = 0;
+            _labelDecoyNL = true;
 			_groupMod = 1;
 			_printPeptideUID = false;
 		}
@@ -169,6 +173,9 @@ namespace IonFinder{
 		double getNlIntCo() const{
 		    return _minNlLabelIntensity;
 		}
+		bool getLabelDecoyNL() const {
+		    return _labelDecoyNL;
+        }
 		int getGroupMod() const{
 		    return _groupMod;
 		}

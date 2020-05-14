@@ -310,6 +310,21 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             _minNlLabelIntensity = std::stod(argv[i]);
             continue;
         }
+        if(!strcmp(argv[i], "--labelDecoyNL"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+            {
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "labelDecoyNL" << NEW_LINE;
+                return false;
+            }
+            _labelDecoyNL = std::stoi(argv[i]);
+            continue;
+        }
 		if(!strcmp(argv[i], "-minInt"))
 		{
 			if(!utils::isArg(argv[++i]))
@@ -356,7 +371,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			multipleMatchCompare = std::string(argv[i]);
 			continue;
 		}
-		if(!strcmp(argv[i], "--incAllIons"))
+		if(!strcmp(argv[i], "--incallions"))
 		{
 			if(!utils::isArg(argv[++i]))
 			{

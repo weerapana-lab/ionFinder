@@ -182,6 +182,21 @@ Specify ms2 plot height in inches to calculate label positions for in \fI.spectr
 .TP
 \fB-w, --plotWidth\fR \fI<height>\fR
 Specify ms2 plot width in inches to calculate label positions for in \fI.spectrum\fR output files. Default is \fB12\fR inches.
+.TP
+\fB--labelDecoyNL \fI<filter>\fR
+Specify whether to include decoy neutral loss ions in ms2 plots. \fB1\fR is the default.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Do not include decoy NL ions.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Include all theoretical NL ions.
+.in
 
 .SS INPUT / OUTPUT OPTIONS
 .TP
