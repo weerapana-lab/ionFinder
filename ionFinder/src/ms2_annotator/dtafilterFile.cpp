@@ -64,7 +64,7 @@ bool Ms2_annotator::DtaFilterFile::getScan(const std::string& _seq,
 		}
 		std::cout << i << ")" << outDelim << "Annotate all." << NEW_LINE << "Enter choice: ";
 		
-		annotate = utils::getInt(0, int(scansTemp.size()));
+		annotate = utils::readInt(0, int(scansTemp.size()));
 		if(annotate == scansTemp.size())
 			annotateAll = true;
 	}
