@@ -62,6 +62,10 @@ int main(int argc, const char** argv)
 	if(!IonFinder::analyzeSequences(scans, peptides, peptideStats, pars))
 		std::cout << NEW_LINE;
 	std::cout << "Done!\n";
+
+	assert(IonFinder::printFragmentIntensities(peptideStats,
+	        "/Volumes/Data/msData/ms2_anotator/citFinder/pad_nl2/fragment_intensities_" +
+	        std::to_string(int(pars.getArtifactNLIntFrac() * 100)) + ".tsv"));
 	
 	//write data
 	if(!IonFinder::printPeptideStats(peptideStats, pars))

@@ -73,9 +73,7 @@ namespace ms2{
 			return mz;
 		}
 		
-		//void write(std::ofstream&) const;
 	protected:
-		
 		double intensity;
 		double mz;
 	};

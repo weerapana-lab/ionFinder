@@ -46,7 +46,7 @@ std::string scanData::Scan::makeSequenceFromFullSequence(std::string fs) const
  \param s peptide sequence
  \param lowercase Should modified residue be transformed to lowercase?
  
- \return \s with static modifications removed.
+ \return \p with static modifications removed.
  */
 std::string scanData::removeStaticMod(std::string s, bool lowercase)
 {
@@ -86,7 +86,7 @@ std::string scanData::removeStaticMod(std::string s, bool lowercase)
  \param s peptide sequence
  \param lowercase Should modified residue be transformed to lowercase?
  
- \return \s with dynamic modifications removed.
+ \return \p with dynamic modifications removed.
  */
 std::string scanData::removeDynamicMod(std::string s, bool lowercase)
 {

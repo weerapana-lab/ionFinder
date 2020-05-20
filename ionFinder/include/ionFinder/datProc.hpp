@@ -19,6 +19,8 @@
 #include <atomic>
 #include <stdexcept>
 #include <set>
+#include <cmath>
+#include <limits>
 
 #include <ionFinder/ionFinder.hpp>
 #include <ionFinder/params.hpp>
@@ -74,12 +76,35 @@ namespace IonFinder{
 						  const std::vector<PeptideNamespace::Peptide>&,
 						  std::vector<PeptideStats>&,
 						  const IonFinder::Params&);
+
+	bool printFragmentIntensities(const std::vector<PeptideStats>&, std::string, std::string = "");
 	
 	bool printPeptideStats(const std::vector<PeptideStats>&,
 						   const IonFinder::Params&);
 	
 	bool allignSeq(const std::string& ref, const std::string& query, size_t& beg, size_t& end);
 
+	class FragmentIon{
+	private:
+	    std::string _ionStr;
+	    double _intensity;
+	public:
+	    FragmentIon() { _ionStr = ""; _intensity = 0.0; }
+	    FragmentIon(std::string ionStr, double intensity) {
+	        _ionStr = ionStr; _intensity = intensity;
+        }
+
+	    //! less than for std::set
+	    bool operator < (const FragmentIon& rhs) const {
+            return _ionStr < rhs._ionStr;
+        }
+	    std::string getIonStr() const {
+            return _ionStr;
+        }
+        double getIntensity() const {
+            return _intensity;
+        }
+    };
 
 	class PeptideStats{
 	public:
@@ -110,7 +135,7 @@ namespace IonFinder{
 		enum class ContainsCitType {FALSE = 0, AMBIGUOUS = 1, LIKELY = 2, TRUE = 3};
 	private:
 		
-		typedef std::set<std::string> IonStrings;
+		typedef std::set<IonFinder::FragmentIon> IonStrings;
 		typedef std::map<IonType, IonStrings> IonTypesCountType;
 		IonTypesCountType ionTypesCount;
 		
@@ -141,6 +166,8 @@ namespace IonFinder{
 		
 		void initStats();
 		bool containsAmbResidues(const std::string& ambResidues, std::string fragSeq) const;
+		void removeBelowIntensity(double intensity);
+        void removeBelowIntensity(IonType ionType, double intensity);
 		void calcContainsCit(bool includeCTermMod);
 		void addMod(std::string mod);
 	
@@ -180,6 +207,12 @@ namespace IonFinder{
 		bool canConsolidate(const PeptideStats& rhs) const {
 		    return _id == rhs._id;
 		}
+		double totalFragmentIntensity() const;
+        double totalFragmentIntensity(double min, double max = std::numeric_limits<double>::max()) const;
+		double fragmentIntensity(IonType) const;
+        double fragmentIntensity(IonType, double min, double max = std::numeric_limits<double>::max()) const;
+        double calcIntCO(double fractionArtifact) const;
+        void printFragmentStats(std::ostream& out) const;
 
 		//modifiers
 		PeptideStats& operator = (const PeptideStats&);
