@@ -70,7 +70,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], DTAFILTER_INPUT_STR.c_str()) || !strcmp(argv[i], TSV_INPUT_STR.c_str())))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "inputMode" << std::endl;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << std::endl;
 				return false;
 			}
 			_inputMode = argv[i];
@@ -105,7 +105,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "includeReverse" << std::endl;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << std::endl;
 				return false;
 			}
 			_includeReverse = std::stoi(argv[i]);
@@ -120,7 +120,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1") || !strcmp(argv[i], "2")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "modFilter" << std::endl;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << std::endl;
 				return false;
 			}
 			_modFilter = std::stoi(argv[i]);
@@ -145,7 +145,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             }
             if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
             {
-                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "peptideUID" << std::endl;
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << std::endl;
                 return false;
             }
             _printPeptideUID = std::stoi(argv[i]);
@@ -165,7 +165,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "calcNL" << NEW_LINE;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
 				return false;
 			}
 			_calcNL = std::stoi(argv[i]);
@@ -190,7 +190,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             }
             if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
             {
-                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "--groupMod" << NEW_LINE;
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
                 return false;
             }
             _groupMod = std::stoi(argv[i]);
@@ -320,6 +320,19 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             _artifactNLIntFrac = std::stod(argv[i]) / 100; // Convert from percentage to fraction here.
             continue;
         }
+        if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--artifactNLIntMode"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            if(!(!strcmp(argv[i], "all") || !strcmp(argv[i], "nl")))
+            {
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
+                return false;
+            }
+        }
         if(!strcmp(argv[i], "--labelArtifactNL"))
         {
             if(!utils::isArg(argv[++i]))
@@ -329,7 +342,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             }
             if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
             {
-                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "labelArtifactNL" << NEW_LINE;
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
                 return false;
             }
             _labelArtifactNL = std::stoi(argv[i]);
@@ -375,7 +388,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], "intensity") || !strcmp(argv[i], "mz")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "mmComp" << NEW_LINE;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
 				return false;
 			}
 			multipleMatchCompare = std::string(argv[i]);
@@ -390,7 +403,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			}
 			if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
 			{
-				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << "incAllIons" << NEW_LINE;
+				std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
 				return false;
 			}
 			includeAllIons = std::stoi(argv[i]);

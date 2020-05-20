@@ -244,9 +244,10 @@ void IonFinder::PeptideStats::printFragmentStats(std::ostream& out) const
  * Calculate intensity cuttoff to achieve a less than \p fractionArtifact of
  * total ion intensity from artifact neutral loss ions.
  * \param fractionArtifact Fraction of ion intensity which should be from artifact ions.
+ * \param all Include all ion types in denominator or just NL ions?
  * \return
  */
-double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
+double IonFinder::PeptideStats::calcIntCO(double fractionArtifact, bool all) const
 {
     double current_fractionArtifact;
 
@@ -263,6 +264,10 @@ double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
         double denominator = numerator +
                              fragmentIntensity(IonType::DET_NL_FRAG, cuttoff) +
                              fragmentIntensity(IonType::AMB_NL_FRAG, cuttoff);
+        if(all){
+            numerator += fragmentIntensity(IonType::DET_FRAG, cuttoff) +
+                         fragmentIntensity(IonType::AMB_FRAG, cuttoff);
+        }
         current_fractionArtifact = numerator / denominator;
 
         if(isnan(current_fractionArtifact) ||
@@ -327,10 +332,18 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
             //     std::cout << "Found" << std::endl;
 
             // Filter to remove Artifact ions
-            double int_co = this_stats.back().calcIntCO(pars.getArtifactNLIntFrac());
-            this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::AMB_NL_FRAG, int_co);
-            this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::DET_NL_FRAG, int_co);
-            this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::ART_NL_FRAG, int_co);
+            double int_co = this_stats.back().calcIntCO(pars.getArtifactNLIntFrac(),pars.getArtifactNLIntMode() == "all");
+            if(pars.getArtifactNLIntMode() == "nl") {
+                this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::AMB_NL_FRAG, int_co);
+                this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::DET_NL_FRAG, int_co);
+                this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::ART_NL_FRAG, int_co);
+            }
+            else if(pars.getArtifactNLIntMode() == "all") {
+                this_stats.back().removeBelowIntensity(int_co);
+            }
+            else {
+                throw std::runtime_error("Unknown ArtifactNLIntMode!");
+            }
 
             this_stats.back().calcContainsCit(pars.getIncludeCTermMod());
 
@@ -346,8 +359,8 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
         }//end for mod_it
 
         assert(pars.getGroupMod() == 0 || pars.getGroupMod() == 1);
-        if(pars.getGroupMod() == 0) {
-
+        if(pars.getGroupMod() == 0)
+        {
             PeptideStats::ContainsCitType cc = PeptideStats::ContainsCitType::TRUE;
             for (const auto &s:this_stats) {
                 cc = std::min(cc, s.containsCit);

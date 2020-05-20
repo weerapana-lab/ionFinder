@@ -211,7 +211,7 @@ namespace IonFinder{
         double totalFragmentIntensity(double min, double max = std::numeric_limits<double>::max()) const;
 		double fragmentIntensity(IonType) const;
         double fragmentIntensity(IonType, double min, double max = std::numeric_limits<double>::max()) const;
-        double calcIntCO(double fractionArtifact) const;
+        double calcIntCO(double fractionArtifact, bool all = false) const;
         void printFragmentStats(std::ostream& out) const;
 
 		//modifiers

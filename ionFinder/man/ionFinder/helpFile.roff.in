@@ -154,6 +154,21 @@ Minimum relative intensity to include from \fI.ms2\fR files.  Ion intensities ar
 \fB-n, --artifactNLIntPerc\fR \fI<percentage>\fR
 Percentage of ion intensity allowed for artifact NL ions. The intensity cuttoff for neutral loss ions ions is dynamically set for each spectrum such that the total ion intensities for all neutral loss ions is no more than \fIn\fR percent from artifact neutral loss ions. Argument should be supplied as a percentage. Default is 5.0 percent.
 .TP
+\fB-a --artifactNLIntMode\fR \fI<mode>
+Specify how the artifact NL intensity percentage is calculated. Default is \fBall\fR.
+.TP
+.in +0.75i
+\fBall\fR
+.in +0.75i
+Artifact NL intensity percentage is expressed as the fraction of the sum of all ion intensities.
+.in
+.TP
+.in +0.75i
+\fBnl\fR
+.in +0.75i
+Artifact NL intensity percentage is expressed as the fraction of the sum of neutral loss ion intensities.
+.in
+.TP
 \fB-minLabInt \fI<relative_intensity>\fR
 Minimum relative intensity to include from \fI.ms2\fR files. If this option is set, only ion with relative intensities above \fI<relative_intensity>\fR will be labeled. By default, all ions are considered in labeling regardless of intensity.
 .TP
