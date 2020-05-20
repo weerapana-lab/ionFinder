@@ -105,7 +105,7 @@ The ion with the closest mz to the predicted mz for the fragment will be used.
 .SS PEPTIDE FILTERING OPTIONS
 .TP
 \fB-rev \fI<0/1>\fR
-Specify whether to include decoy matches in spectrum output file. \fB1\fR is the default.
+Specify whether to include artifact matches in spectrum output file. \fB1\fR is the default.
 .TP
 .in +0.75i
 \fB0\fR
@@ -151,8 +151,8 @@ Maximum ion MZ to be considered from \fI.ms2\fR files. By default all identified
 \fB-minInt \fI<relative_intensity>\fR
 Minimum relative intensity to include from \fI.ms2\fR files.  Ion intensities are normalized to 100 before labeling, so \fB-minInt\fR should be supplied as a relative intensity. If this option is set, an intensity filter will be applied to spectra before annotation. By default, all ion intensities are included.
 .TP
-\fB-n, --decoyNLIntPerc\fR \fI<percentage>\fR
-Percentage of ion intensity allowed for decoy NL ions. The intensity cuttoff for neutral loss ions ions is dynamically set for each spectrum such that the total ion intensities for all neutral loss ions is no more than \fIn\fR percent from decoy neutral loss ions. Argument should be supplied as a percentage. Default is 5.0 percent.
+\fB-n, --artifactNLIntPerc\fR \fI<percentage>\fR
+Percentage of ion intensity allowed for artifact NL ions. The intensity cuttoff for neutral loss ions ions is dynamically set for each spectrum such that the total ion intensities for all neutral loss ions is no more than \fIn\fR percent from artifact neutral loss ions. Argument should be supplied as a percentage. Default is 5.0 percent.
 .TP
 \fB-minLabInt \fI<relative_intensity>\fR
 Minimum relative intensity to include from \fI.ms2\fR files. If this option is set, only ion with relative intensities above \fI<relative_intensity>\fR will be labeled. By default, all ions are considered in labeling regardless of intensity.
@@ -186,13 +186,13 @@ Specify ms2 plot height in inches to calculate label positions for in \fI.spectr
 \fB-w, --plotWidth\fR \fI<height>\fR
 Specify ms2 plot width in inches to calculate label positions for in \fI.spectrum\fR output files. Default is \fB12\fR inches.
 .TP
-\fB--labelDecoyNL \fI<filter>\fR
-Specify whether to include decoy neutral loss ions in ms2 plots. \fB1\fR is the default.
+\fB--labelArtifactNL \fI<filter>\fR
+Specify whether to include artifact neutral loss ions in ms2 plots. \fB1\fR is the default.
 .TP
 .in +0.75i
 \fB0\fR
 .in +0.75i
-Do not include decoy NL ions.
+Do not include artifact NL ions.
 .in
 .TP
 .in +0.75i
