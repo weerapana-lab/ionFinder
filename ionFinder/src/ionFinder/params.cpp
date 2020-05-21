@@ -332,6 +332,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
                 std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
                 return false;
             }
+            _artifactNLIntMode = std::string(argv[i]);
             continue;
         }
         if(!strcmp(argv[i], "--labelArtifactNL"))

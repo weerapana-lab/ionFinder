@@ -241,40 +241,41 @@ void IonFinder::PeptideStats::printFragmentStats(std::ostream& out) const
 }
 
 /**
- * Calculate intensity cuttoff to achieve a less than \p fractionArtifact of
+ * Calculate intensity cutoff to achieve a less than \p fractionArtifact of
  * total ion intensity from artifact neutral loss ions.
  * \param fractionArtifact Fraction of ion intensity which should be from artifact ions.
  * \param all Include all ion types in denominator or just NL ions?
- * \return
+ * \return Intensity cutoff.
  */
 double IonFinder::PeptideStats::calcIntCO(double fractionArtifact, bool all) const
 {
-    double current_fractionArtifact;
-
     std::vector<double> art_ints;
     art_ints.push_back(0);
     for(auto it : ionTypesCount.at(IonType::ART_NL_FRAG))
         art_ints.push_back(it.getIntensity());
     std::sort(art_ints.begin(), art_ints.end());
 
-    for(auto cuttoff : art_ints)
+    double current_fractionArtifact;
+    double numerator, denominator;
+    for(auto cutoff : art_ints)
     {
         //first calculate the fraction of ion intensity which comes from artifact ions
-        double numerator = fragmentIntensity(IonType::ART_NL_FRAG, cuttoff);
-        double denominator = numerator +
-                             fragmentIntensity(IonType::DET_NL_FRAG, cuttoff) +
-                             fragmentIntensity(IonType::AMB_NL_FRAG, cuttoff);
+        numerator = fragmentIntensity(IonType::ART_NL_FRAG, cutoff);
+        denominator = numerator +
+                             fragmentIntensity(IonType::DET_NL_FRAG, cutoff) +
+                             fragmentIntensity(IonType::AMB_NL_FRAG, cutoff);
         if(all){
-            numerator += fragmentIntensity(IonType::DET_FRAG, cuttoff) +
-                         fragmentIntensity(IonType::AMB_FRAG, cuttoff);
+            denominator += fragmentIntensity(IonType::DET_FRAG, cutoff) +
+                         fragmentIntensity(IonType::AMB_FRAG, cutoff);
         }
         current_fractionArtifact = numerator / denominator;
 
         if(isnan(current_fractionArtifact) ||
-           current_fractionArtifact <= fractionArtifact)
-            return cuttoff;
+           current_fractionArtifact <= fractionArtifact ||
+           utils::almostEqual(current_fractionArtifact, fractionArtifact))
+            return cutoff;
     }
-    // std::cerr << "WARN: Returning maximum cuttoff intensity!" << NEW_LINE;
+    // std::cerr << "WARN: Returning maximum cutoff intensity!" << NEW_LINE;
     assert(false);
     return std::numeric_limits<double>::max();
 }
@@ -328,7 +329,7 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
             }//end of for i
 
             // if(it->getFullSequence() == "LEYQWTNNIGDAHTIGTR*PDNGMLSLGVSYR")
-            // if(this_stats.back()._scan->getScanNum() == 21065)
+            // if(this_stats.back()._scan->getScanNum() == 23248)
             //     std::cout << "Found" << std::endl;
 
             // Filter to remove Artifact ions

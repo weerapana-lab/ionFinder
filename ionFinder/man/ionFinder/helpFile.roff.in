@@ -152,7 +152,7 @@ Maximum ion MZ to be considered from \fI.ms2\fR files. By default all identified
 Minimum relative intensity to include from \fI.ms2\fR files.  Ion intensities are normalized to 100 before labeling, so \fB-minInt\fR should be supplied as a relative intensity. If this option is set, an intensity filter will be applied to spectra before annotation. By default, all ion intensities are included.
 .TP
 \fB-n, --artifactNLIntPerc\fR \fI<percentage>\fR
-Percentage of ion intensity allowed for artifact NL ions. The intensity cuttoff for neutral loss ions ions is dynamically set for each spectrum such that the total ion intensities for all neutral loss ions is no more than \fIn\fR percent from artifact neutral loss ions. Argument should be supplied as a percentage. Default is 5.0 percent.
+Percentage of ion intensity allowed for artifact NL ions. The intensity cutoff for neutral loss ions ions is dynamically set for each spectrum such that the total ion intensities for all neutral loss ions is no more than \fIn\fR percent from artifact neutral loss ions. Argument should be supplied as a percentage. Default is 5.0 percent.
 .TP
 \fB-a --artifactNLIntMode\fR \fI<mode>
 Specify how the artifact NL intensity percentage is calculated. Default is \fBall\fR.
