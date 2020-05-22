@@ -63,9 +63,11 @@ int main(int argc, const char** argv)
 		std::cout << NEW_LINE;
 	std::cout << "Done!\n";
 
+	/*
 	assert(IonFinder::printFragmentIntensities(peptideStats,
 	        "fragment_intensities_" +
 	        std::to_string(int(pars.getArtifactNLIntFrac() * 100)) + ".tsv"));
+    */
 	
 	//write data
 	if(!IonFinder::printPeptideStats(peptideStats, pars))

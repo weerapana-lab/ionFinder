@@ -240,7 +240,7 @@ namespace ms2{
 		    double den = getMaxIntensity() / max;
 			for(auto & ion : ions)
 				ion.normalizeIntensity(den);
-			
+
 			updateDynamicMetadata();
 		}
 		double getMaxIntensity() const{

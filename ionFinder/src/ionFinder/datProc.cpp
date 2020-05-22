@@ -657,7 +657,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
         scans[i].getPrecursor().setIntensity(spectrum.getPrecursor().getIntensity());
 
         //label spectrum
-        spectrum.normalizeIonInts(spectrum.getMaxIntensity() / 100);
+        spectrum.normalizeIonInts(100);
         //remove ions below specified intensity
         if(pars.getMinIntensitySpecified())
             spectrum.removeIntensityBelow(pars.getMinIntensity());
