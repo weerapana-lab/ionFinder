@@ -22,7 +22,7 @@ namespace base{
 	std::string const PROG_DB = PROG_SHARE_DIR;
 	std::string const PROG_MAN = PROG_MAN_DIR;
 	std::string const PROG_DEFAULT_SMOD_FILE = PROG_DB + "/staticModifications.txt";
-	double const DEFAULT_MATCH_TOLERANCE = 0.5;
+	double const DEFAULT_MATCH_TOLERANCE = 10;
 	double const DEFAULT_PLOT_HEIGHT = 4;
 	double const DEFAULT_PLOT_WIDTH = 12;
 	
@@ -95,7 +95,7 @@ namespace base{
 			minFragCharge = 1;
 			maxFragCharge = 1;
 			matchTolerance = DEFAULT_MATCH_TOLERANCE;
-			_matchType = MatchType::TH;
+			_matchType = MatchType::PPM;
 			minLabelIntensity = 0;
 			multipleMatchCompare = "intensity";
 			

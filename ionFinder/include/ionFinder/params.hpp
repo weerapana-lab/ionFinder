@@ -111,7 +111,7 @@ namespace IonFinder{
 			_modFilter = 1;
 			_printSpectraFiles = false;
 			_calcNL = false;
-            _artifactNLIntFrac = 0.05;
+            _artifactNLIntFrac = 0.01;
             _artifactNLIntMode = "all";
 			_includeCTermMod = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
