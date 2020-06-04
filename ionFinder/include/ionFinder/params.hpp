@@ -121,7 +121,7 @@ namespace IonFinder{
 			_numThread = 1;
 			_inDirSpecified = false;
             _minNlLabelIntensity = 0;
-            _labelArtifactNL = true;
+            _labelArtifactNL = false;
 			_groupMod = 1;
 			_printPeptideUID = false;
 		}

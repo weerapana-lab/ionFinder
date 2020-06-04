@@ -105,7 +105,7 @@ The ion with the closest mz to the predicted mz for the fragment will be used.
 .SS PEPTIDE FILTERING OPTIONS
 .TP
 \fB-rev \fI<0/1>\fR
-Specify whether to include artifact matches in spectrum output file. \fB1\fR is the default.
+Specify whether to include reverse matches in spectrum output file. \fB0\fR is the default.
 .TP
 .in +0.75i
 \fB0\fR
@@ -202,7 +202,7 @@ Specify ms2 plot height in inches to calculate label positions for in \fI.spectr
 Specify ms2 plot width in inches to calculate label positions for in \fI.spectrum\fR output files. Default is \fB12\fR inches.
 .TP
 \fB--labelArtifactNL \fI<filter>\fR
-Specify whether to include artifact neutral loss ions in ms2 plots. \fB1\fR is the default.
+Specify whether to include artifact neutral loss ions in ms2 plots. \fB0\fR is the default.
 .TP
 .in +0.75i
 \fB0\fR
