@@ -434,7 +434,7 @@ void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
 	
 	//Check that first char is now a letter
 	if(!isalpha(sequence[0]))
-		throw std::runtime_error("Invalid peptide sequence!");
+		throw std::runtime_error("Invalid peptide sequence: " + sequence);
 	
 	for(size_t i = 0; i < sequence.length(); i++)
 	{
@@ -513,6 +513,9 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 										   const aaDB::AADB& aadb,
 										   bool _calcFragments)
 {
+    if(sequence.empty())
+        throw std::runtime_error("Attempting to initialize peptide with an empty sequence!");
+
 	if(aadb.empty())
 		throw std::runtime_error("Attempting to initialize Peptide with an empty AADB!");
 	
