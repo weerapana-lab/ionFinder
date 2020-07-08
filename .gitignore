@@ -21,6 +21,7 @@ ionFinder/.idea/*
 *.pbs.*
 *.pbs
 *symbols.rds
+*.swp
 build/*
 python/parsers/modules/tsv_constants.py
 python/parsers/modules/scaffold_constants.py
