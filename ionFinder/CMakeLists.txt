@@ -3,7 +3,7 @@ project(ionFinder VERSION 0.2.1)
 
 SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(tsv_constants) #defines tsv file column headers for help file.
@@ -163,9 +163,9 @@ if(BUILD_MAN_PDF MATCHES ON)
         find_package(ps2pdf REQUIRED)
         if(${GROFF_FOUND} AND ${PS2PDF_FOUND})
             set(BUILD_MAN_PDF_IN ${CMAKE_CURRENT_SOURCE_DIR}/man/updateMan.in)
-            set(BUILD_MAN_PDF_OUT ${CMAKE_BINARY_DIR}/doc/update_${target}_help.sh)
+			set(BUILD_MAN_PDF_OUT ${CMAKE_CURRENT_BINARY_DIR}/doc/update_${target}_help.sh)
             set(TARGET_MAN_PDF_IN ${PROG_MAN_DIR}/${target}/helpFile.roff)
-            set(TARGET_MAN_PDF_OUT ${CMAKE_BINARY_DIR}/doc/${target}_helpFile.pdf)
+			set(TARGET_MAN_PDF_OUT ${CMAKE_CURRENT_BINARY_DIR}/doc/${target}_helpFile.pdf)
 
             file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
@@ -254,7 +254,7 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     string(CONCAT MAKE_MS2_MAIN_ARGS
         ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
         "', '" ${RSCRIPT})
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
+	add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/make_ms2
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${MAKE_MS2_SRC_PATH}
             COMMENT "Adding make_ms2 executable."
             VERBATIM
@@ -265,10 +265,10 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${MAKE_MS2_SRC_PATH}
             )
     add_custom_target(make_ms2 ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
+			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/make_ms2
             )
 
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
+		add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/run_make_ms2
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${RUN_MAKE_MS2_SCR_PATH}
             COMMENT "Adding run_make_ms2 executable."
             COMMAND
@@ -277,11 +277,11 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${RUN_MAKE_MS2_SCR_PATH}
             )
     add_custom_target(run_make_ms2 ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
+			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/run_make_ms2
             )
 
     add_custom_command(
-            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
+			OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_scaffold
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_SCAFFOLD_PATH}
             COMMENT "Adding parse_scaffold executable."
             COMMAND
@@ -290,11 +290,11 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${PARSE_SCAFFOLD_PATH}
             )
     add_custom_target(parse_scaffold ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
+			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_scaffold
             )
 
     add_custom_command(
-            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_maxquant
+			OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_maxquant
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_MAXQUANT_PATH}
             COMMENT "Adding parse_maxquant executable."
             COMMAND
@@ -303,6 +303,6 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${PARSE_MAXQUANT_PATH}
             )
     add_custom_target(parse_maxquant ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_maxquant
+			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_maxquant
             )
 endif()
