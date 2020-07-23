@@ -92,6 +92,9 @@ namespace IonFinder{
 		//! How to deal with peptides with multiple modifications
 		int _groupMod;
 
+		//! Should peptide fragment ion intensities be included in tsv output?
+        bool _printIonIntensity;
+
 		//!Should unique peptide be printed?
 		bool _printPeptideUID;
 		
@@ -119,6 +122,7 @@ namespace IonFinder{
             _minNlLabelIntensity = 0;
             _labelArtifactNL = false;
 			_groupMod = 1;
+			_printIonIntensity = false;
 			_printPeptideUID = false;
 		}
 		
@@ -185,6 +189,9 @@ namespace IonFinder{
         }
 		int getGroupMod() const{
 		    return _groupMod;
+		}
+		bool getPrintIonIntensity() const {
+		    return _printIonIntensity;
 		}
 		bool getPrintPeptideUID() const {
             return _printPeptideUID;

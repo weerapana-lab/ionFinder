@@ -234,6 +234,21 @@ Set default name of DTASelect-filter files.  By default, \fI<name>\fR is \fIDTAS
 \fB--fastaFile\fR \fI<path>\fR
 Specify .fasta formatted file to lookup numbers of modified residues in \fIpeptide_cit_stats.tsv\fR.
 .TP
+\fB-I, --printInt\fI<0/1>\fR
+Should peptide fragment ion intensities be included in tsv output? \fB0\fR is the default.
+.TP
+.in +0.75i
+\fB0\fR
+.in +0.75i
+Do not include fragment intensity columns.
+.in
+.TP
+.in +0.75i
+\fB1\fR
+.in +0.75i
+Include fragment intensity columns.
+.in
+.TP
 \fB-u, --peptideUID \fI<0/1>\fR
 Specify whether to include the "peptide_unique_ID" column in the output file. \fB0\fR is the default.
 .TP

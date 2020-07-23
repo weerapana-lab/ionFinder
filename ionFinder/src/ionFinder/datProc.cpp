@@ -798,11 +798,13 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	}
     statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
 
-	// add intensity headers
-	for(auto& _pepStat: _pepStats)
-	    statNames.push_back("int_" + PeptideStats::ionTypeToStr(_pepStat));
-    for(auto& _pepStat: _pepStats)
-        statNames.push_back("totalInt_" + PeptideStats::ionTypeToStr(_pepStat));
+	if(pars.getPrintIonIntensity()) {
+        // add intensity headers
+        for (auto &_pepStat: _pepStats)
+            statNames.push_back("int_" + PeptideStats::ionTypeToStr(_pepStat));
+        for (auto &_pepStat: _pepStats)
+            statNames.push_back("totalInt_" + PeptideStats::ionTypeToStr(_pepStat));
+    }
 
 	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence formula parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
 	std::vector<std::string> oHeaders;
@@ -873,22 +875,23 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
             }
         }
 
-		// list individual ion intensities
-        for(auto & _pepStat : _pepStats){
-            outF << OUT_DELIM;
-            for(auto it = stat.ionTypesCount.at(_pepStat).begin();
-                it != stat.ionTypesCount.at(_pepStat).end();
-                ++it)
-            {
-                if(it == stat.ionTypesCount.at(_pepStat).begin())
-                    outF << it->getIntensity();
-                else outF << stat._fragDelim << it->getIntensity();
+		if(pars.getPrintIonIntensity()) {
+            // list individual ion intensities
+            for (auto &_pepStat : _pepStats) {
+                outF << OUT_DELIM;
+                for (auto it = stat.ionTypesCount.at(_pepStat).begin();
+                     it != stat.ionTypesCount.at(_pepStat).end();
+                     ++it) {
+                    if (it == stat.ionTypesCount.at(_pepStat).begin())
+                        outF << it->getIntensity();
+                    else outF << stat._fragDelim << it->getIntensity();
+                }
             }
-        }
 
-        // total intensities
-        for(auto & _pepStat : _pepStats)
-            outF << OUT_DELIM << stat.fragmentIntensity(_pepStat);
+            // total intensities
+            for (auto &_pepStat : _pepStats)
+                outF << OUT_DELIM << stat.fragmentIntensity(_pepStat);
+        }
 
 		outF << NEW_LINE;
 	}

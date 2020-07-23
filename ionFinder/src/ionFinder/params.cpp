@@ -151,6 +151,21 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             _printPeptideUID = std::stoi(argv[i]);
             continue;
         }
+        if(!strcmp(argv[i], "-I") || !strcmp(argv[i], "--printInt"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+            {
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << std::endl;
+                return false;
+            }
+            _printIonIntensity = std::stoi(argv[i]);
+            continue;
+        }
 		if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--printSpectra"))
 		{
 			_printSpectraFiles = true;
