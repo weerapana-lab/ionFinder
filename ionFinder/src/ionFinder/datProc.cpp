@@ -792,12 +792,18 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	int statLen = 0;
 	for(auto & _pepStat : _pepStats){
 		statNames.push_back("n" +
-							std::string(1, (char)std::toupper(ION_TYPES_STR[utils::as_integer(_pepStat)][0])) +
-							ION_TYPES_STR[utils::as_integer(_pepStat)].substr(1));
-		statLen++;
+							std::string(1, (char)std::toupper(PeptideStats::ionTypeToStr(_pepStat)[0])) +
+							PeptideStats::ionTypeToStr(_pepStat).substr(1));
+        statLen++;
 	}
-	statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
-	
+    statNames.insert(statNames.end(), ION_TYPES_STR, ION_TYPES_STR + statLen);
+
+	// add intensity headers
+	for(auto& _pepStat: _pepStats)
+	    statNames.push_back("int_" + PeptideStats::ionTypeToStr(_pepStat));
+    for(auto& _pepStat: _pepStats)
+        statNames.push_back("totalInt_" + PeptideStats::ionTypeToStr(_pepStat));
+
 	std::string otherHeaders = "protein_ID parent_protein protein_description full_sequence sequence formula parent_mz is_modified modified_residue charge unique xCorr spectral_counts scan precursor_scan precursor_rt parent_file sample_name";
 	std::vector<std::string> oHeaders;
 	utils::split(otherHeaders, ' ', oHeaders);
@@ -849,10 +855,12 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		else{
 			outF << (stat.ionTypesCount.at(itcType::DET_FRAG).size() > 0);
 		}
-		
+
+		// ion counts
 		for(auto & _pepStat : _pepStats)
 			outF << OUT_DELIM << stat.ionTypesCount.at(_pepStat).size();
 
+		// list individual ions
 		for(auto & _pepStat : _pepStats){
 		    outF << OUT_DELIM;
             for(auto it = stat.ionTypesCount.at(_pepStat).begin();
@@ -864,6 +872,24 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
                 else outF << stat._fragDelim << it->getIonStr();
             }
         }
+
+		// list individual ion intensities
+        for(auto & _pepStat : _pepStats){
+            outF << OUT_DELIM;
+            for(auto it = stat.ionTypesCount.at(_pepStat).begin();
+                it != stat.ionTypesCount.at(_pepStat).end();
+                ++it)
+            {
+                if(it == stat.ionTypesCount.at(_pepStat).begin())
+                    outF << it->getIntensity();
+                else outF << stat._fragDelim << it->getIntensity();
+            }
+        }
+
+        // total intensities
+        for(auto & _pepStat : _pepStats)
+            outF << OUT_DELIM << stat.fragmentIntensity(_pepStat);
+
 		outF << NEW_LINE;
 	}
 	return true;
