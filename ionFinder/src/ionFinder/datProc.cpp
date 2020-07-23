@@ -111,12 +111,8 @@ double IonFinder::PeptideStats::fragmentIntensity(IonType ionType) const
  * Get total intensities for all classified fragment ions.
  * \return Sum of intensities.
  */
-double IonFinder::PeptideStats::totalFragmentIntensity() const
-{
-    double sum = 0.0;
-    for(auto it = ionTypesCount.begin(); it != ionTypesCount.end(); ++it)
-        sum += fragmentIntensity(it->first);
-    return sum;
+double IonFinder::PeptideStats::totalFragmentIntensity() const {
+    return totalFragmentIntensity(0);
 }
 
 /**
@@ -146,8 +142,9 @@ double IonFinder::PeptideStats::fragmentIntensity(IonType ionType, double min, d
 double IonFinder::PeptideStats::totalFragmentIntensity(double min, double max) const
 {
     double sum = 0.0;
-    for(auto it = ionTypesCount.begin(); it != ionTypesCount.end(); ++it)
-        sum += fragmentIntensity(it->first, min, max);
+    for(auto it = IonType::First; it != IonType::Last; ++it)
+        if(it != IonType::FRAG)
+            sum += fragmentIntensity(it, min, max);
     return sum;
 }
 
@@ -244,11 +241,11 @@ void IonFinder::PeptideStats::printFragmentStats(std::ostream& out) const
  * Calculate intensity cutoff to achieve a less than \p fractionArtifact of
  * total ion intensity from artifact neutral loss ions.
  * \param fractionArtifact Fraction of ion intensity which should be from artifact ions.
- * \param all Include all ion types in denominator or just NL ions?
  * \return Intensity cutoff.
  */
-double IonFinder::PeptideStats::calcIntCO(double fractionArtifact, bool all) const
+double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
 {
+    bool all = true;
     std::vector<double> art_ints;
     art_ints.push_back(0);
     for(auto it : ionTypesCount.at(IonType::ART_NL_FRAG))
@@ -261,13 +258,7 @@ double IonFinder::PeptideStats::calcIntCO(double fractionArtifact, bool all) con
     {
         //first calculate the fraction of ion intensity which comes from artifact ions
         numerator = fragmentIntensity(IonType::ART_NL_FRAG, cutoff);
-        denominator = numerator +
-                             fragmentIntensity(IonType::DET_NL_FRAG, cutoff) +
-                             fragmentIntensity(IonType::AMB_NL_FRAG, cutoff);
-        if(all){
-            denominator += fragmentIntensity(IonType::DET_FRAG, cutoff) +
-                         fragmentIntensity(IonType::AMB_FRAG, cutoff);
-        }
+        denominator = totalFragmentIntensity(cutoff);
         current_fractionArtifact = numerator / denominator;
 
         if(isnan(current_fractionArtifact) ||
@@ -333,18 +324,8 @@ bool IonFinder::analyzeSequences(std::vector<Dtafilter::Scan>& scans,
             //     std::cout << "Found" << std::endl;
 
             // Filter to remove Artifact ions
-            double int_co = this_stats.back().calcIntCO(pars.getArtifactNLIntFrac(),pars.getArtifactNLIntMode() == "all");
-            if(pars.getArtifactNLIntMode() == "nl") {
-                this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::AMB_NL_FRAG, int_co);
-                this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::DET_NL_FRAG, int_co);
-                this_stats.back().removeBelowIntensity(IonFinder::PeptideStats::IonType::ART_NL_FRAG, int_co);
-            }
-            else if(pars.getArtifactNLIntMode() == "all") {
-                this_stats.back().removeBelowIntensity(int_co);
-            }
-            else {
-                throw std::runtime_error("Unknown ArtifactNLIntMode!");
-            }
+            double int_co = this_stats.back().calcIntCO(pars.getArtifactNLIntFrac());
+            this_stats.back().removeBelowIntensity(int_co);
 
             this_stats.back().calcContainsCit(pars.getIncludeCTermMod());
 

@@ -320,21 +320,6 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             _artifactNLIntFrac = std::stod(argv[i]) / 100; // Convert from percentage to fraction here.
             continue;
         }
-        if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--artifactNLIntMode"))
-        {
-            if(!utils::isArg(argv[++i]))
-            {
-                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
-                return false;
-            }
-            if(!(!strcmp(argv[i], "all") || !strcmp(argv[i], "nl")))
-            {
-                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
-                return false;
-            }
-            _artifactNLIntMode = std::string(argv[i]);
-            continue;
-        }
         if(!strcmp(argv[i], "--labelArtifactNL"))
         {
             if(!utils::isArg(argv[++i]))

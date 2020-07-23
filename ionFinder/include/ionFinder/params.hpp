@@ -80,9 +80,6 @@ namespace IonFinder{
 		//! Fraction of ion intensity allowed for artifact NL ions.
 		double _artifactNLIntFrac;
 
-		//! How should the artifact NL fraction be calculated?
-		std::string _artifactNLIntMode;
-
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
 		
@@ -112,7 +109,6 @@ namespace IonFinder{
 			_printSpectraFiles = false;
 			_calcNL = false;
             _artifactNLIntFrac = 0.01;
-            _artifactNLIntMode = "all";
 			_includeCTermMod = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
@@ -186,9 +182,6 @@ namespace IonFinder{
         }
         double getArtifactNLIntFrac() const {
 		    return _artifactNLIntFrac;
-        }
-        std::string getArtifactNLIntMode() const {
-		    return _artifactNLIntMode;
         }
 		int getGroupMod() const{
 		    return _groupMod;
