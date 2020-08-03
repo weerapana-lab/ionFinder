@@ -5,6 +5,7 @@ SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
+include(FindPkgConfig)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(tsv_constants) #defines tsv file column headers for help file.
 
@@ -48,10 +49,11 @@ target_include_directories(${ION_FINDER_TARGET}
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 #add utils library
-include(FindPkgConfig)
-find_package(utils REQUIRED)
+if(NOT DEFINED UTILS_INCLUDE_DIR OR NOT DEFINED UTILS_LIBRARY)
+	find_package(utils REQUIRED)
+endif()
 target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
-target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
+target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIBRARY})
 
 #add auto generated headers
 find_package(Python REQUIRED)
