@@ -3,7 +3,11 @@ set(FIND_UTILS_PATHS
         ${PROJECT_SOURCE_DIR}/../utils
         ${PROJECT_SOURCE_DIR}/../build/utils
         ${PROJECT_SOURCE_DIR}/../utils_build
-        ${PROJECT_SOURCE_DIR}/../lib
+		${CMAKE_CURRENT_SOURCE_DIR}/../lib
+		${CMAKE_CURRENT_SOURCE_DIR}/../utils
+		${CMAKE_CURRENT_SOURCE_DIR}/../utils/lib
+		${CMAKE_CURRENT_SOURCE_DIR}/lib
+		${CMAKE_CURRENT_SOURCE_DIR}/utils
         /usr/local
         /usr/local/lib)
 
@@ -18,7 +22,7 @@ find_path(UTILS_INCLUDE_DIR
         PATHS ${FIND_UTILS_PATHS})
 
 find_library(UTILS_LIB
-        NAMES utils libutils.a libutils
+		NAMES utils libutils.a libutils ${CMAKE_STATIC_LIBRARY_PREFIX}utils${CMAKE_STATIC_LIBRARY_SUFFIX}
         PATHS ${FIND_UTILS_PATHS}
         DOC "Path to utils library.")
 
