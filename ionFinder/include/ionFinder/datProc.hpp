@@ -39,8 +39,8 @@ namespace IonFinder{
 	
 	const std::string FRAG_DELIM = ";";
 	int const N_ION_TYPES = 6;
-	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambFrag",
-		 "detNLFrag", "ambNLFrag", "artNLFrag"};
+	const std::string ION_TYPES_STR [] = {"frag", "det", "amb",
+		 "detNL", "ambNL", "artNL"};
 	const std::string CONTAINS_CIT_STR [] {"false", "ambiguous", "likely", "true"};
 	
 	//!Progress bar sleep time in seconds
@@ -119,15 +119,15 @@ namespace IonFinder{
 			//!All fragments identified
 			FRAG,
 			//!B or Y fragments with modification not containing amb residue
-			DET_FRAG,
+			DET,
 			//!B or Y ions not containing modification or ambiguous residue
-			AMB_FRAG,
+			AMB,
 			//!Modification determining NL fragments
-			DET_NL_FRAG,
+			DET_NL,
             //!Ambiguous NL fragment
-            AMB_NL_FRAG,
+            AMB_NL,
 			//!NL fragments not containing modification
-			ART_NL_FRAG,
+			ART_NL,
 			Last,
 			First = FRAG
 		};

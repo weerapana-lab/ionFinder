@@ -172,30 +172,30 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
         if(seq.isNL()){
             //check multiple of neutral loss
             if(seq.getNumNl() == seq.getNumMod()){ //if equal to number of modifications, determining NL
-                ionTypesCount[IonType::DET_NL_FRAG].insert(ionStr);
+                ionTypesCount[IonType::DET_NL].insert(ionStr);
             }
             else{ //if not equal, ambiguous NL fragment
                 //std::cout << seq.getLabel() << NEW_LINE;
-                ionTypesCount[IonType::AMB_NL_FRAG].insert(ionStr);
+                ionTypesCount[IonType::AMB_NL].insert(ionStr);
             }
         }
         else{
             if(containsAmbResidues(ambResidues, seq.getSequence())){ //is ambModFrag
-                ionTypesCount[IonType::AMB_FRAG].insert(ionStr);
+                ionTypesCount[IonType::AMB].insert(ionStr);
             }
             else{ //is detFrag
-                ionTypesCount[IonType::DET_FRAG].insert(ionStr);
+                ionTypesCount[IonType::DET].insert(ionStr);
             }
         }
     }
     else{
         if(seq.isNL()){ //is artifact NL frag
             if(seq.isModified() && (seq.getNumNl() <= seq.getNumMod()))
-                ionTypesCount[IonType::AMB_NL_FRAG].insert(ionStr);
-            else ionTypesCount[IonType::ART_NL_FRAG].insert(ionStr);
+                ionTypesCount[IonType::AMB_NL].insert(ionStr);
+            else ionTypesCount[IonType::ART_NL].insert(ionStr);
         }
         else{ //is amg frag
-            ionTypesCount[IonType::AMB_FRAG].insert(ionStr);
+            ionTypesCount[IonType::AMB].insert(ionStr);
         }//end of else
     }//end of else
 }//end of fxn
@@ -245,10 +245,13 @@ void IonFinder::PeptideStats::printFragmentStats(std::ostream& out) const
  */
 double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
 {
+    if(ionTypesCount.at(IonType::ART_NL).size() > 1)
+        std::cout << "Found!\n";
+
     bool all = true;
     std::vector<double> art_ints;
     art_ints.push_back(0);
-    for(auto it : ionTypesCount.at(IonType::ART_NL_FRAG))
+    for(auto it : ionTypesCount.at(IonType::ART_NL))
         art_ints.push_back(it.getIntensity());
     std::sort(art_ints.begin(), art_ints.end());
 
@@ -257,7 +260,7 @@ double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
     for(auto cutoff : art_ints)
     {
         //first calculate the fraction of ion intensity which comes from artifact ions
-        numerator = fragmentIntensity(IonType::ART_NL_FRAG, cutoff);
+        numerator = fragmentIntensity(IonType::ART_NL, cutoff);
         denominator = totalFragmentIntensity(cutoff);
         current_fractionArtifact = numerator / denominator;
 
@@ -690,21 +693,21 @@ void IonFinder::PeptideStats::calcContainsCit(bool includeCTermMod)
         if(modLocs.back() == sequence.length() - 1) return;
 	
 	//is there more than 1 determining NLs?
-	if(ionTypesCount[IonType::DET_NL_FRAG].size() > 1){
+	if(ionTypesCount[IonType::DET_NL].size() > 1){
 		containsCit = ContainsCitType::TRUE;
 		return;
 	}
 	
 	//are there 1 or more determining NLs or determining frags?
-	if(ionTypesCount[IonType::DET_NL_FRAG].size() >= 1 ||
-	   ionTypesCount[IonType::DET_FRAG].size() >= 1){
+	if(ionTypesCount[IonType::DET_NL].size() >= 1 ||
+       ionTypesCount[IonType::DET].size() >= 1){
 		containsCit = ContainsCitType::LIKELY;
 		return;
 	}
 	
 	//are there 1 more ambiguous fragments?
-	if(ionTypesCount[IonType::AMB_FRAG].size() >= 1 ||
-	    ionTypesCount[IonType::AMB_NL_FRAG].size()>= 1){
+	if(ionTypesCount[IonType::AMB].size() >= 1 ||
+       ionTypesCount[IonType::AMB_NL].size() >= 1){
 		containsCit = ContainsCitType::AMBIGUOUS;
 		return;
 	}
@@ -721,15 +724,15 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 	switch(it){
 		case IonType::FRAG: return ION_TYPES_STR[0];
 			break;
-		case IonType::DET_FRAG: return ION_TYPES_STR[1];
+		case IonType::DET: return ION_TYPES_STR[1];
 			break;
-		case IonType::AMB_FRAG: return ION_TYPES_STR[2];
+		case IonType::AMB: return ION_TYPES_STR[2];
 			break;
-        case IonType::DET_NL_FRAG: return ION_TYPES_STR[3];
+        case IonType::DET_NL: return ION_TYPES_STR[3];
             break;
-        case IonType::AMB_NL_FRAG: return ION_TYPES_STR[4];
+        case IonType::AMB_NL: return ION_TYPES_STR[4];
             break;
-		case IonType::ART_NL_FRAG: return ION_TYPES_STR[5];
+		case IonType::ART_NL: return ION_TYPES_STR[5];
 			break;
 		case IonType::Last: return "Last";
 			break;
@@ -779,13 +782,13 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	std::vector<itcType> _pepStats; //used to store relevant peptide stats based on params
 	//defaults
 	_pepStats.push_back(itcType::FRAG);
-	_pepStats.push_back(itcType::DET_FRAG);
-	_pepStats.push_back(itcType::AMB_FRAG);
+	_pepStats.push_back(itcType::DET);
+	_pepStats.push_back(itcType::AMB);
 	//conditional stats
 	if(pars.getCalcNL()){
-		_pepStats.push_back(itcType::DET_NL_FRAG);
-		_pepStats.push_back(itcType::AMB_NL_FRAG);
-		_pepStats.push_back(itcType::ART_NL_FRAG);
+		_pepStats.push_back(itcType::DET_NL);
+		_pepStats.push_back(itcType::AMB_NL);
+		_pepStats.push_back(itcType::ART_NL);
 	}
 	
 	//append peptide stats names to headers
@@ -855,7 +858,7 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 		if(pars.getCalcNL())
 			 outF << PeptideStats::containsCitToStr(stat.containsCit);
 		else{
-			outF << (stat.ionTypesCount.at(itcType::DET_FRAG).size() > 0);
+			outF << (stat.ionTypesCount.at(itcType::DET).size() > 0);
 		}
 
 		// ion counts
