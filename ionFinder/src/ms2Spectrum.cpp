@@ -27,6 +27,28 @@
 
 #include <ms2Spectrum.hpp>
 
+ms2::DataPoint& ms2::DataPoint::operator = (const ms2::DataPoint& rhs)
+{
+    labeledIon = rhs.labeledIon;
+    label = rhs.label;
+    formatedLabel = rhs.formatedLabel;
+    topAbundant = rhs.topAbundant;
+    ionType = rhs.ionType;
+    ionNum = rhs.ionNum;
+    utils::ScanIon::operator=(rhs);
+    return *this;
+}
+
+ms2::DataPoint::DataPoint(const ms2::DataPoint& rhs) : utils::ScanIon(rhs)
+{
+    labeledIon = rhs.labeledIon;
+    label = rhs.label;
+    formatedLabel = rhs.formatedLabel;
+    topAbundant = rhs.topAbundant;
+    ionType = rhs.ionType;
+    ionNum = rhs.ionNum;
+}
+
 std::string ms2::DataPoint::getLableColor() const
 {
     switch(ionType) {
@@ -89,7 +111,7 @@ void ms2::Spectrum::printSpectrum(std::ostream& out, bool includeMetaData) const
     }
     out << NEW_LINE;
 
-    for(const auto & ion : ions)
+    for(const auto & ion : labeledIons)
         out << ion.getMZ() << OUT_DELIM << ion.getIntensity() <<NEW_LINE;
 
     if(includeMetaData)
@@ -112,7 +134,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 
     std::streamsize ss = std::cout.precision();
     out.precision(5); //set out to print 5 floating point decimal places
-    for(const auto & ion : ions)
+    for(const auto & ion : labeledIons)
     {
         // if(utils::strContains('*', ion.getFormatedLabel())) {
         //     std::cout << ion.getFormatedLabel() << NEW_LINE;
@@ -144,7 +166,8 @@ void ms2::Spectrum::clear()
 {
     scanData::Scan::clear();
     _precursor.clear();
-    ions.clear();
+    labeledIons.clear();
+    utils::Scan::clear();
 }
 
 /**
@@ -159,7 +182,7 @@ void ms2::Spectrum::setLabelTop(size_t labelTop)
     typedef std::list<ms2::DataPoint*> listType;
     listType pointList;
 
-    for(auto & ion : ions)
+    for(auto & ion : labeledIons)
         pointList.push_back(&ion);
 
     if(pointList.size() > labelTop)
@@ -183,13 +206,13 @@ void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
 {
     //sort ions by mz
     if(_sort)
-        sort(ions.begin(), ions.end(), DataPoint::MZComparison());
+        sort(labeledIons.begin(), labeledIons.end(), DataPoint::MZComparison());
 
-    auto begin = ions.begin();
-    auto end = ions.end();
+    auto begin = labeledIons.begin();
+    auto end = labeledIons.end();
 
     //find min mz
-    for(auto it = ions.begin(); it != ions.end(); ++it)
+    for(auto it = labeledIons.begin(); it != labeledIons.end(); ++it)
     {
         if(it->getMZ() <= minMZ)
         {
@@ -199,7 +222,7 @@ void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
         else break;
     }
     //find max mz
-    for(auto it = begin; it != ions.end(); ++it)
+    for(auto it = begin; it != labeledIons.end(); ++it)
     {
         if(it->getMZ() < maxMZ)
         {
@@ -209,16 +232,16 @@ void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
         else break;
     }
 
-    ions = ionVecType(begin, end);
+    labeledIons = ionVecType(begin, end);
     updateRanges();
 }
 
 void ms2::Spectrum::removeUnlabeledIons()
 {
-    for(auto it = ions.begin(); it != ions.end();)
+    for(auto it = labeledIons.begin(); it != labeledIons.end();)
     {
         if(!it->getForceLabel())
-            ions.erase(it);
+            labeledIons.erase(it);
         else ++it;
     }
     updateRanges();
@@ -230,14 +253,23 @@ void ms2::Spectrum::removeUnlabeledIons()
  */
 void ms2::Spectrum::removeIntensityBelow(double min_int)
 {
-    for(auto it = ions.begin(); it != ions.end();)
+    for(auto it = labeledIons.begin(); it != labeledIons.end();)
     {
         if(it->getIntensity() < min_int)
-            ions.erase(it);
+            labeledIons.erase(it);
         else ++it;
     }
 
     updateRanges();
+}
+
+//! Copy ions from utils::Scan::_ions to labeledIons
+void ms2::Spectrum::initLabeledIons()
+{
+    labeledIons.clear();
+    for(auto ion : _ions) {
+        labeledIons.emplace_back(ion.getMZ(), ion.getIntensity());
+    }
 }
 
 /**
@@ -251,6 +283,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
                                   const base::ParamsBase& pars,
                                   bool removeUnlabeledFrags, size_t labelTop)
 {
+    initLabeledIons();
     plotWidth = pars.getPlotWidth();
     plotHeight = pars.getPlotHeight();
     size_t len = peptide.getNumFragments();
@@ -264,8 +297,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
     listType rangeList;
     listType::iterator label;
 
-    setLabelTop(labelTop); //determine which ions are abundant enough to considered in labeling
-    std::sort(ions.begin(), ions.end(), DataPoint::MZComparison()); //sort ions by mz
+    setLabelTop(labelTop); //determine which labeledIons are abundant enough to considered in labeling
+    std::sort(labeledIons.begin(), labeledIons.end(), DataPoint::MZComparison()); //sort labeledIons by mz
     if(pars.getMZSpecified()) //set user specified mz range if specified
     {
         setMZRange(pars.getMinMZSpecified() ? pars.getMinMZ() : getMaxMZ(),
@@ -282,12 +315,12 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 
         //first get lowest value in range
         _labelTolerance = pars.getMatchTolerance(tempMZ);
-        auto lowerBound = std::lower_bound(ions.begin(), ions.end(),
-                (tempMZ - (_labelTolerance)),
-                DataPoint::MZComparison());
+        auto lowerBound = std::lower_bound(labeledIons.begin(), labeledIons.end(),
+                                           (tempMZ - (_labelTolerance)),
+                                           DataPoint::MZComparison());
 
-        //ittreate throughout all ions above in range
-        for(auto it = lowerBound; it != ions.end(); ++it)
+        //ittreate throughout all labeledIons above in range
+        for(auto it = lowerBound; it != labeledIons.end(); ++it)
         {
             if(it->getMZ() > (tempMZ + _labelTolerance))
                 break;
@@ -376,7 +409,7 @@ void ms2::Spectrum::makePoints(labels::Labels& labs, double maxPerc,
                                double offset_x, double offset_y,
                                double x_padding, double y_padding)
 {
-    for(auto & ion : ions)
+    for(auto & ion : labeledIons)
     {
         if(ion.getIntensity() >= maxPerc || ion.getLabeledIon())
         {

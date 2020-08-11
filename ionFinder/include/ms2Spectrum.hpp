@@ -94,8 +94,10 @@ namespace ms2{
 		DataPoint(double _mz, double _int) : Ion(_mz, _int){
 			initStats();
 		}
+		DataPoint(const DataPoint&);
 		~DataPoint () = default;
-		
+        DataPoint& operator = (const DataPoint&);
+
 		void setLabeledIon(bool _lab){
 			labeledIon = _lab;
 			label.forceLabel = labeledIon;
@@ -165,8 +167,7 @@ namespace ms2{
 		};
 	};
 	
-    class Spectrum : public scanData::Scan, public utils::Scan{
-		friend class Ms2File;
+    class Spectrum : scanData::Scan, public utils::Scan{
 	private:
 		typedef std::vector<ms2::DataPoint> ionVecType;
 		typedef ionVecType::const_iterator ionsTypeConstIt;
@@ -183,11 +184,12 @@ namespace ms2{
 		double ionPercent;
 		double spScore;
 		
-		ionVecType ions;
+		ionVecType labeledIons;
 		
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
 		void removeUnlabeledIons();
+		void initLabeledIons();
 
 	public:
 		Spectrum() : scanData::Scan(), utils::Scan()
@@ -212,7 +214,7 @@ namespace ms2{
 		{
 			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
 		    utils::ScanIntensity den = getMaxInt() / max;
-			for(auto & ion : ions)
+			for(auto & ion : labeledIons)
 				ion.setIntensity(ion.getIntensity() / den);
 
 			updateRanges();

@@ -258,14 +258,14 @@ void IonFinder::PeptideStats::printFragmentStats(std::ostream& out) const
 
 /**
  * Calculate intensity cutoff to achieve a less than \p fractionArtifact of
- * total ion intensity from artifact neutral loss ions.
- * \param fractionArtifact Fraction of ion intensity which should be from artifact ions.
+ * total ion intensity from artifact neutral loss labeledIons.
+ * \param fractionArtifact Fraction of ion intensity which should be from artifact labeledIons.
  * \return Intensity cutoff.
  */
 double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
 {
-    if(ionTypesCount.at(IonType::ART_NL).size() > 1)
-        std::cout << "Found!\n";
+    // if(ionTypesCount.at(IonType::ART_NL).size() > 1)
+    //     std::cout << "Found!\n";
 
     bool all = true;
     std::vector<double> art_ints;
