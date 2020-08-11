@@ -576,7 +576,7 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
 	bool allSucess = true;
 	for(auto & it : fileNamesList)
 	{
-		ms2Map[it] = ms2::Ms2File();
+		ms2Map[it] = utils::Ms2File();
 		if(!ms2Map[it].read(it)){
 			std::cerr << "\n\tFailed to read: " << it << NEW_LINE;
 			std::cerr << "\t\tNo file found at: " << utils::absPath(it) << NEW_LINE;

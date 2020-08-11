@@ -3,7 +3,7 @@ project(ionFinder VERSION 0.2.1)
 
 SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(FindPkgConfig)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -39,7 +39,6 @@ add_executable(${ION_FINDER_TARGET}
         src/paramsBase.cpp
         src/peptide.cpp
         src/ms2Spectrum.cpp
-        src/ms2.cpp
         src/ionFinder/datProc.cpp
         src/ionFinder/inputFiles.cpp
         src/ionFinder/params.cpp)
@@ -242,6 +241,11 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
         set(PYTHON_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../python)
     endif()
 
+	message("${PYTHON_RUNTIME_OUTPUT_DIR}")
+	if(NOT DEFINED PYTHON_RUNTIME_OUTPUT_DIR)
+		set(PYTHON_RUNTIME_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin)
+		message("${PYTHON_RUNTIME_OUTPUT_DIR}")
+	endif()
     set(RUN_MAKE_MS2_SCR_PATH ${PYTHON_SRC_DIR}/run_make_ms2.py
             CACHE STRING "Path to run_make_ms2.py")
     set(MAKE_MS2_SRC_PATH ${PYTHON_SRC_DIR}/make_ms2.py
@@ -251,12 +255,12 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
     set(PARSE_MAXQUANT_PATH ${PYTHON_SRC_DIR}/parsers/parse_maxquant.py
             CACHE STRING "Path to parse_scaffold.py")
     set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
-            CACHE STRING "Path to make_ms2.py")
+			CACHE STRING "Path to addPythonFiles.sh")
 
     string(CONCAT MAKE_MS2_MAIN_ARGS
         ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
         "', '" ${RSCRIPT})
-	add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/make_ms2
+	add_custom_command(OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${MAKE_MS2_SRC_PATH}
             COMMENT "Adding make_ms2 executable."
             VERBATIM
@@ -267,10 +271,10 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${MAKE_MS2_SRC_PATH}
             )
     add_custom_target(make_ms2 ALL
-			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/make_ms2
+		DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2
             )
 
-		add_custom_command(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/run_make_ms2
+		add_custom_command(OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/run_make_ms2
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${RUN_MAKE_MS2_SCR_PATH}
             COMMENT "Adding run_make_ms2 executable."
             COMMAND
@@ -279,11 +283,11 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${RUN_MAKE_MS2_SCR_PATH}
             )
     add_custom_target(run_make_ms2 ALL
-			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/run_make_ms2
+		DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/run_make_ms2
             )
 
     add_custom_command(
-			OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_scaffold
+		OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_scaffold
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_SCAFFOLD_PATH}
             COMMENT "Adding parse_scaffold executable."
             COMMAND
@@ -292,11 +296,11 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${PARSE_SCAFFOLD_PATH}
             )
     add_custom_target(parse_scaffold ALL
-			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_scaffold
+		DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_scaffold
             )
 
     add_custom_command(
-			OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_maxquant
+		OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_maxquant
             DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_MAXQUANT_PATH}
             COMMENT "Adding parse_maxquant executable."
             COMMAND
@@ -305,6 +309,6 @@ if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
                 ${PARSE_MAXQUANT_PATH}
             )
     add_custom_target(parse_maxquant ALL
-			DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/parse_maxquant
+		DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_maxquant
             )
 endif()

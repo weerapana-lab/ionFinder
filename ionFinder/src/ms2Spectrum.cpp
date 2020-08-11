@@ -62,7 +62,7 @@ void ms2::Spectrum::writeMetaData(std::ostream& out) const
     out << ms2::BEGIN_METADATA << NEW_LINE
         << ms2::PRECURSOR_FILE << OUT_DELIM << _precursor.getFile() << NEW_LINE
         << ms2::OFNAME << OUT_DELIM << getOfNameBase(_parentMs2, _fullSequence) << NEW_LINE
-        << ms2::SCAN_NUMBER << OUT_DELIM << _scanNum << NEW_LINE
+        << ms2::SCAN_NUMBER << OUT_DELIM << getScanNum() << NEW_LINE
         << ms2::SEQUENCE << OUT_DELIM << _sequence << NEW_LINE
         << ms2::FULL_SEQUENCE << OUT_DELIM << scanData::removeStaticMod(_fullSequence) << NEW_LINE
         << ms2::RET_TIME << OUT_DELIM << _precursor.getIntensity() << NEW_LINE
@@ -143,42 +143,8 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 void ms2::Spectrum::clear()
 {
     scanData::Scan::clear();
-    _scanNum = 0;
     _precursor.clear();
-    maxInt = 0;
     ions.clear();
-    ions.shrink_to_fit();
-}
-
-//itterates through all ions and returns max intensity
-double ms2::Spectrum::calcMaxInt() const
-{
-    double ret = 0;
-    for(const auto & ion : ions)
-        if(ion.getIntensity() > ret)
-            ret = ion.getIntensity();
-
-    return ret;
-}
-
-//itterates through all ions and returns max intensity
-double ms2::Spectrum::calcMinInt() const
-{
-    double ret = maxInt;
-    for(const auto & ion : ions)
-        if(ion.getIntensity() < ret)
-            ret = ion.getIntensity();
-
-    return ret;
-}
-
-void ms2::Spectrum::updateDynamicMetadata()
-{
-    maxInt = calcMaxInt();
-    minInt = calcMinInt();
-    minMZ = ions.front().getMZ();
-    maxMZ = ions.back().getMZ();
-    mzRange = maxMZ - minMZ;
 }
 
 /**
@@ -244,7 +210,7 @@ void ms2::Spectrum::setMZRange(double minMZ, double maxMZ, bool _sort)
     }
 
     ions = ionVecType(begin, end);
-    updateDynamicMetadata();
+    updateRanges();
 }
 
 void ms2::Spectrum::removeUnlabeledIons()
@@ -255,8 +221,7 @@ void ms2::Spectrum::removeUnlabeledIons()
             ions.erase(it);
         else ++it;
     }
-
-    updateDynamicMetadata();
+    updateRanges();
 }
 
 /**
@@ -272,7 +237,7 @@ void ms2::Spectrum::removeIntensityBelow(double min_int)
         else ++it;
     }
 
-    updateDynamicMetadata();
+    updateRanges();
 }
 
 /**
@@ -303,8 +268,8 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
     std::sort(ions.begin(), ions.end(), DataPoint::MZComparison()); //sort ions by mz
     if(pars.getMZSpecified()) //set user specified mz range if specified
     {
-        setMZRange(pars.getMinMZSpecified() ? pars.getMinMZ() : minMZ,
-                   pars.getMaxMZSpecified() ? pars.getMaxMZ() : maxMZ,
+        setMZRange(pars.getMinMZSpecified() ? pars.getMinMZ() : getMaxMZ(),
+                   pars.getMaxMZSpecified() ? pars.getMaxMZ() : getMaxMZ(),
                    false);
     }
 
@@ -436,7 +401,7 @@ void ms2::Spectrum::makePoints(labels::Labels& labs, double maxPerc,
 
 void ms2::Spectrum::calcLabelPos()
 {
-    double const xPadding = mzRange / 22.31972;
+    double const xPadding = _mzRange / 22.31972;
     double const yPadding = 6;
 
     calcLabelPos(DEFAULT_MAX_PERC,
@@ -449,7 +414,7 @@ void ms2::Spectrum::calcLabelPos(double maxPerc,
                                  double x_padding, double y_padding)
 {
     //initialize points
-    labels::Labels labs(minMZ, maxMZ, minInt, maxInt);
+    labels::Labels labs(getMinMZ(), getMaxMZ(), _minInt, _maxInt);
 
     makePoints(labs, maxPerc, offset_x, offset_y, x_padding, y_padding);
     labs.spaceOutAlg2();

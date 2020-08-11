@@ -39,8 +39,8 @@
 #include <iomanip>
 #include <type_traits>
 
-
 #include <utils.hpp>
+#include <msScan.hpp>
 #include <peptide.hpp>
 #include <geometry.hpp>
 #include <calcLableLocs.hpp>
@@ -63,41 +63,11 @@ namespace ms2{
 	size_t const LABEL_TOP = 200;
 	
 	class Spectrum;
-	class Ion;
 	class DataPoint;
 	struct DataPointIntComparison;
 	struct DataPointMZComparison;
-	
-	class Ion{
-	public:
-		Ion(){
-			intensity = 0;
-			mz = 0;
-		}
-		Ion(double _mz, double _int){
-			mz = _mz;
-			intensity = _int;
-		}
-		~Ion() = default;
 
-        template<typename _Tp> void normalizeIntensity(_Tp den){
-			static_assert(std::is_arithmetic<_Tp>::value, "den must be arithmetic!");
-            intensity = intensity / den;
-		}
-		
-		double getIntensity() const{
-			return intensity;
-		}
-		double getMZ() const{
-			return mz;
-		}
-		
-	protected:
-		double intensity;
-		double mz;
-	};
-	
-	class DataPoint : public Ion{
+    class DataPoint : public utils::ScanIon{
 		friend class Spectrum;
 	private:
 		bool labeledIon;
@@ -175,7 +145,7 @@ namespace ms2{
 		
 		//for utils::insertSorted()
 		inline bool insertCompare(const DataPoint& comp) const{
-			return intensity > comp.intensity;
+			return _intensity > comp._intensity;
 		}
 		
 		struct MZComparison {
@@ -195,7 +165,7 @@ namespace ms2{
 		};
 	};
 	
-	class Spectrum : public scanData::Scan{
+    class Spectrum : public scanData::Scan, public utils::Scan{
 		friend class Ms2File;
 	private:
 		typedef std::vector<ms2::DataPoint> ionVecType;
@@ -204,13 +174,6 @@ namespace ms2{
 		
 		//!pretty parent file name with out extension for naming
 		std::string _parentMs2;
-		
-		//dynamic metadata
-		double maxInt;
-		double minInt;
-		double minMZ;
-		double maxMZ;
-		double mzRange;
 		
 		//static metadata
 		double plotHeight;
@@ -225,20 +188,12 @@ namespace ms2{
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
 		void removeUnlabeledIons();
-		double calcMaxInt() const;
-		double calcMinInt() const;
-		void updateDynamicMetadata();
-		
+
 	public:
-		Spectrum() : scanData::Scan()
+		Spectrum() : scanData::Scan(), utils::Scan()
 		{
-			maxInt = 0;
-			minInt = 0;
-			ionPercent = 0;
-			spScore = 0;
-			minMZ = 0;
-			maxMZ = 0;
-			mzRange = 0;
+            ionPercent = 0;
+            spScore = 0;
 			plotWidth = 0;
 			plotHeight = 0;
 		}
@@ -256,14 +211,11 @@ namespace ms2{
 		template<typename _Tp> void normalizeIonInts(_Tp max)
 		{
 			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
-		    double den = getMaxIntensity() / max;
+		    utils::ScanIntensity den = getMaxInt() / max;
 			for(auto & ion : ions)
-				ion.normalizeIntensity(den);
+				ion.setIntensity(ion.getIntensity() / den);
 
-			updateDynamicMetadata();
-		}
-		double getMaxIntensity() const{
-			return maxInt;
+			updateRanges();
 		}
 		void labelSpectrum(PeptideNamespace::Peptide& peptide,
 						   const base::ParamsBase& pars,
@@ -277,6 +229,12 @@ namespace ms2{
 		void writeMetaData(std::ostream&) const;
 		void printSpectrum(std::ostream&, bool) const;
 		void printLabeledSpectrum(std::ostream&, bool) const;
+        const utils::PrecursorScan& getPrecursor() const{
+            return utils::Scan::getPrecursor();
+        }
+        utils::PrecursorScan& getPrecursor(){
+            return utils::Scan::getPrecursor();
+        }
 	};
 }
 

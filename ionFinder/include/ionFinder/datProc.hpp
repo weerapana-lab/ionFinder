@@ -48,6 +48,7 @@
 #include <peptide.hpp>
 #include <ms2.hpp>
 #include <scanData.hpp>
+#include <ms2Spectrum.hpp>
 
 namespace IonFinder{
 	
@@ -68,7 +69,7 @@ namespace IonFinder{
 	int const MAX_PROGRESS_ITTERATIONS = 5;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
-	typedef std::map<std::string, ms2::Ms2File> Ms2Map;
+	typedef std::map<std::string, utils::Ms2File> Ms2Map;
 	
 	bool findFragmentsParallel(std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,

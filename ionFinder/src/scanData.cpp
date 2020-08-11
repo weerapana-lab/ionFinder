@@ -27,16 +27,6 @@
 
 #include <scanData.hpp>
 
-void scanData::PrecursorScan::clear()
-{
-    _mz.clear();
-    _scan.clear();
-    _rt = 0;
-    _file.clear();
-    _charge = 0;
-    _intensity = 0;
-}
-
 void scanData::Scan::clear()
 {
 	_scanNum = 0;

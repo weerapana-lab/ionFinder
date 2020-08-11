@@ -21,8 +21,8 @@ find_path(UTILS_INCLUDE_DIR
         PATH_SUFFIXES include
         PATHS ${FIND_UTILS_PATHS})
 
-find_library(UTILS_LIB
-		NAMES utils libutils.a libutils ${CMAKE_STATIC_LIBRARY_PREFIX}utils${CMAKE_STATIC_LIBRARY_SUFFIX}
-        PATHS ${FIND_UTILS_PATHS}
-        DOC "Path to utils library.")
+find_library(UTILS_LIBRARY
+	NAMES utils libutils.a libutils ${CMAKE_STATIC_LIBRARY_PREFIX}utils${CMAKE_STATIC_LIBRARY_SUFFIX}
+	PATHS ${FIND_UTILS_PATHS}
+	DOC "Path to utils library.")
 

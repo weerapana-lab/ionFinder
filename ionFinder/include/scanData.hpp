@@ -35,11 +35,11 @@
 #include <string>
 
 #include <utils.hpp>
+#include <msScan.hpp>
 
 namespace scanData{
 	
 	class Scan;
-	class PrecursorScan;
 
 	typedef std::vector<Scan> scansType;
 	std::string const OF_EXT = ".spectrum";
@@ -47,85 +47,6 @@ namespace scanData{
 	
 	std::string removeStaticMod(std::string s, bool lowercase = true);
 	std::string removeDynamicMod(std::string s, bool lowercase = true);
-
-    class PrecursorScan{
-    private:
-        std::string _mz;
-        std::string _scan;
-        double _rt;
-        std::string _file;
-        int _charge;
-        double _intensity;
-
-    public:
-        PrecursorScan(){
-            _mz = "";
-            _scan = "";
-            _rt = 0;
-            _file = "";
-            _charge = 0;
-            _intensity = 0;
-        }
-        PrecursorScan(const PrecursorScan& rhs){
-            _mz = rhs._mz;
-            _scan = rhs._scan;
-            _rt = rhs._rt;
-            _file = rhs._file;
-            _charge = rhs._charge;
-            _intensity = rhs._intensity;
-        }
-
-        PrecursorScan& operator = (const PrecursorScan& rhs){
-            _mz = rhs._mz;
-            _scan = rhs._scan;
-            _rt = rhs._rt;
-            _file = rhs._file;
-            _charge = rhs._charge;
-            _intensity = rhs._intensity;
-            return *this;
-        }
-
-        //modifiers
-        void setMZ(const std::string &mz){
-            _mz = mz;
-        }
-        void setScan(const std::string &scan){
-            _scan = scan;
-        }
-        void setRT(double rt){
-            _rt = rt;
-        }
-        void setFile(const std::string &file){
-            _file = file;
-        }
-        void setCharge(int charge){
-            _charge = charge;
-        }
-        void setIntensity(double intensity){
-            _intensity = intensity;
-        }
-        void clear();
-
-        //properties
-        const std::string &getMZ() const{
-            return _mz;
-        }
-        const std::string &getScan() const{
-            return _scan;
-        }
-        double getRT() const{
-            return _rt;
-        }
-        const std::string &getFile() const{
-            return _file;
-        }
-        double getIntensity() const{
-            return _intensity;
-        }
-        int getCharge() const{
-            return _charge;
-        }
-    };
 
 	class Scan{
 	protected:
@@ -136,7 +57,7 @@ namespace scanData{
 		bool _modified;
 		int _spectralCounts;
 
-        PrecursorScan _precursor;
+        utils::PrecursorScan _precursor;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
@@ -194,7 +115,7 @@ namespace scanData{
 		void setSpectralCounts(int sc){
 			_spectralCounts = sc;
 		}
-		void setPrecursor(const PrecursorScan& rhs){
+		void setPrecursor(const utils::PrecursorScan& rhs){
 		    _precursor = rhs;
 		}
 
@@ -221,10 +142,10 @@ namespace scanData{
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;
-        const PrecursorScan& getPrecursor() const{
+        const utils::PrecursorScan& getPrecursor() const{
             return _precursor;
         }
-        PrecursorScan& getPrecursor(){
+        utils::PrecursorScan& getPrecursor(){
             return _precursor;
         }
 	};
