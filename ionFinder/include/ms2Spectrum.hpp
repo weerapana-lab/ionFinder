@@ -67,9 +67,10 @@ namespace ms2{
 	struct DataPointIntComparison;
 	struct DataPointMZComparison;
 
-    class DataPoint : public utils::ScanIon{
+    class DataPoint {
 		friend class Spectrum;
 	private:
+        utils::ScanIon* _ion;
 		bool labeledIon;
 		geometry::DataLabel label;
 		std::string formatedLabel;
@@ -88,10 +89,12 @@ namespace ms2{
 			ionNum = 0;
 		}
 	public:
-		DataPoint() : Ion(){
+		DataPoint(){
+		    _ion = nullptr;
 			initStats();
 		}
-		DataPoint(double _mz, double _int) : Ion(_mz, _int){
+		DataPoint(utils::ScanIon* ion){
+		    _ion = ion;
 			initStats();
 		}
 		DataPoint(const DataPoint&);
@@ -121,6 +124,12 @@ namespace ms2{
 		void setIonNum(int num){
 			ionNum = num;
 		}
+		void setMZ(utils::ScanMZ mz) {
+            _ion->setMZ(mz);
+        }
+        void setIntensity(utils::ScanIntensity intensity) {
+            return _ion->setIntensity(intensity);
+        }
 		
 		std::string getLabel() const{
 			return label.getLabel();
@@ -143,38 +152,41 @@ namespace ms2{
 		int getIonNum() const{
 			return ionNum;
 		}
+		utils::ScanIntensity getIntensity() const {
+		    return _ion->getIntensity();
+        }
+        utils::ScanMZ getMZ() const {
+            return _ion->getMZ();
+        }
 		std::string getLableColor() const;
-		
-		//for utils::insertSorted()
-		inline bool insertCompare(const DataPoint& comp) const{
-			return _intensity > comp._intensity;
-		}
-		
-		struct MZComparison {
-			bool operator()(const DataPoint& lhs, const DataPoint& rhs) const{
-				return lhs.getMZ() < rhs.getMZ();
-			}
-			
-			bool operator()(const DataPoint& lhs, double rhs) const{
-				return lhs.getMZ() < rhs;
-			}
-		};
-		
-		struct IntComparison {
-			bool operator()(DataPoint *lhs, DataPoint *rhs) const{
-				return lhs->insertCompare(*rhs);
-			}
-		};
+
+        //for utils::insertSorted()
+        inline bool insertCompare(const DataPoint& comp) const{
+            return getIntensity() > comp.getIntensity();
+        }
+
+        struct MZComparison {
+            bool operator()(const DataPoint& lhs, const DataPoint& rhs) const{
+                return lhs.getMZ() < rhs.getMZ();
+            }
+
+            bool operator()(const DataPoint& lhs, utils::ScanMZ rhs) const{
+                return lhs.getMZ() < rhs;
+            }
+        };
+
+        struct IntComparison {
+            bool operator()(DataPoint *lhs, DataPoint *rhs) const{
+                return lhs->insertCompare(*rhs);
+            }
+        };
 	};
 	
-    class Spectrum : scanData::Scan, public utils::Scan{
+    class Spectrum : public utils::Scan{
 	private:
 		typedef std::vector<ms2::DataPoint> ionVecType;
 		typedef ionVecType::const_iterator ionsTypeConstIt;
 		typedef ionVecType::iterator ionsTypeIt;
-		
-		//!pretty parent file name with out extension for naming
-		std::string _parentMs2;
 		
 		//static metadata
 		double plotHeight;
@@ -183,8 +195,11 @@ namespace ms2{
 		//match stats
 		double ionPercent;
 		double spScore;
-		
-		ionVecType labeledIons;
+
+		//! Stores data about scan from input, not what was retrieved from the ms2 file.
+		scanData::Scan* _scanData;
+
+		ionVecType _dataPoints;
 		
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
@@ -192,17 +207,19 @@ namespace ms2{
 		void initLabeledIons();
 
 	public:
-		Spectrum() : scanData::Scan(), utils::Scan()
+		Spectrum() : utils::Scan()
 		{
             ionPercent = 0;
             spScore = 0;
 			plotWidth = 0;
 			plotHeight = 0;
+			_dataPoints = ionVecType();
+			_scanData = nullptr;
 		}
 		~Spectrum() = default;
 		
 		//modifiers
-		void clear() override;
+		void clear();
         void removeIntensityBelow(double minInt);
         void setMZRange(double minMZ, double maxMZ, bool _sort = true);
 
@@ -214,7 +231,7 @@ namespace ms2{
 		{
 			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
 		    utils::ScanIntensity den = getMaxInt() / max;
-			for(auto & ion : labeledIons)
+			for(auto & ion : _ions)
 				ion.setIntensity(ion.getIntensity() / den);
 
 			updateRanges();
@@ -227,14 +244,14 @@ namespace ms2{
 						  double offset_x, double offset_y,
 						  double padding_x, double padding_y);
 		void calcLabelPos();
+		void setScanData(scanData::Scan* scan) {
+            _scanData = scan;
+        }
 		
 		void writeMetaData(std::ostream&) const;
 		void printSpectrum(std::ostream&, bool) const;
 		void printLabeledSpectrum(std::ostream&, bool) const;
         const utils::PrecursorScan& getPrecursor() const{
-            return utils::Scan::getPrecursor();
-        }
-        utils::PrecursorScan& getPrecursor(){
             return utils::Scan::getPrecursor();
         }
 	};

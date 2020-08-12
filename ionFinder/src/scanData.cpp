@@ -155,7 +155,7 @@ std::string scanData::Scan::getOfNameBase(std::string parentFile, std::string se
 
 /**
  \brief Calls getOfNameBase and adds OF_EXT to end.
- 
+
  Only added for backwards compatibility.
  */
 std::string scanData::Scan::getOfname() const{
