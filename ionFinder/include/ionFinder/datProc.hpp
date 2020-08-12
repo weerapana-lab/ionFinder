@@ -37,7 +37,7 @@ namespace IonFinder{
 	class PeptideStats;
 	class PeptideFragmentsMap;
 	
-	const std::string FRAG_DELIM = "|";
+	const std::string FRAG_DELIM = ";";
 	int const N_ION_TYPES = 6;
 	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambFrag",
 		 "detNLFrag", "ambNLFrag", "artNLFrag"};
