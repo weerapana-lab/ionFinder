@@ -55,19 +55,6 @@ endif()
 target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
 target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIBRARY})
 
-#add mstoolkit library
-option(USE_MSTOOLKIT "Should ionFinder be linked with the mstools library?" ON)
-if(USE_MSTOOLKIT MATCHES ON)
-	add_compile_definitions(USE_MSTOOLKIT_LIB)
-	add_compile_definitions(_NOSQLITE _LARGEFILE_SOURCE _FILE_OFFSET_BITS=64 GCC HAVE_EXPAT_CONFIG_H)
-	if(NOT DEFINED MSTOOLKIT_INCLUDE_DIR OR NOT DEFINED MSTOOLKIT_LIBRARY)
-		find_package(mstoolkit REQUIRED)
-	endif()
-	target_include_directories(${ION_FINDER_TARGET} PUBLIC ${MSTOOLKIT_INCLUDE_DIR})
-	target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARY} ${EXPAT_LIBRARY})
-	target_link_libraries(${ION_FINDER_TARGET} ${MSTOOLKIT_LIBRARY})
-endif()
-
 #add auto generated headers
 find_package(Python REQUIRED)
 if(PYTHON_VERSION VERSION_LESS 2.7.0)

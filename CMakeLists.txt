@@ -5,7 +5,6 @@ project(ionFinder VERSION 0.2.1)
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 option(BUILD_UTILS "Enable building utils lib" ON)
-option(BUILD_MSTOOLKIT "Enable building mstoolkit lib" ON)
 option(BUILD_ION_FINDER "Enable building ionFinder" ON)
 
 macro(add_external_dependency name version cmake_prefix)
@@ -39,13 +38,6 @@ endmacro()
 
 if(BUILD_UTILS)
 	add_external_dependency(utils "1.3.0" UTILS)
-endif()
-
-if(BUILD_MSTOOLKIT)
-	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/mstoolkit/thirdparty")
-	include(zlib)
-	include(expat)
-	add_external_dependency(mstoolkit "rev83_ajm" MSTOOLKIT)
 endif()
 
 if(BUILD_ION_FINDER)

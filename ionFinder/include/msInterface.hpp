@@ -31,16 +31,11 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include <dtafilter.hpp>
 #include <msInterface/msScan.hpp>
-
-#ifdef USE_MSTOOLKIT_LIB
-    #include <MSToolkitTypes.h>
-    #include <MSReader.h>
-    #include <Spectrum.h>
-#endif
-    #include <msInterface/ms2File.hpp>
+#include <msInterface/ms2File.hpp>
 
 namespace ms2 {
     class MsInterface;
@@ -48,19 +43,10 @@ namespace ms2 {
 
     class MsInterface {
         typedef utils::Ms2File MsFile;
-        typedef std::map<std::string, utils::MsInterface*> Ms2Map;
+        typedef std::map<std::string, std::shared_ptr<utils::MsInterface> > Ms2Map;
         typedef std::vector<Dtafilter::Scan> InputScanList;
-        typedef std::map<std::string, std::map<size_t, utils::Scan> > ScanMap;
-        typedef std::map<std::string, std::vector<size_t> > ScanList;
-        enum class FileType {MS2, MZXML, MZML, UNKNOWN};
 
-#ifdef USE_MSTOOLKIT_LIB
-        ScanMap _scanList;
-
-        static void msToolkitSpectrumToScan(utils::Scan&, MSToolkit::Spectrum);
-#else
         Ms2Map _ms2Map;
-#endif
         bool readMs2s(Ms2Map&,
                   std::vector<Dtafilter::Scan>::const_iterator begin,
                   std::vector<Dtafilter::Scan>::const_iterator end);
@@ -68,12 +54,11 @@ namespace ms2 {
         static void getUniqueFileList(std::vector<std::string>& fnames,
                                       std::vector<Dtafilter::Scan>::const_iterator begin,
                                       std::vector<Dtafilter::Scan>::const_iterator end);
-        static void initScanMap(ScanMap& scanMap,
-                                std::vector<Dtafilter::Scan>::const_iterator begin,
-                                std::vector<Dtafilter::Scan>::const_iterator end);
-        static FileType getFileType(std::string fname);
     public:
-        MsInterface(){};
+        MsInterface(){
+            _ms2Map = Ms2Map();
+        }
+        ~MsInterface(){}
 
         bool read(InputScanList::const_iterator begin, InputScanList::const_iterator end);
         bool getScan(utils::Scan&, std::string fname, size_t scanNum);
