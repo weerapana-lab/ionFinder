@@ -35,7 +35,7 @@
 #include <string>
 
 #include <utils.hpp>
-#include <msScan.hpp>
+#include <msInterface/msScan.hpp>
 
 namespace scanData{
 	

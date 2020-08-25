@@ -264,8 +264,8 @@ void IonFinder::PeptideStats::printFragmentStats(std::ostream& out) const
  */
 double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
 {
-    // if(ionTypesCount.at(IonType::ART_NL).size() > 1)
-    //     std::cout << "Found!\n";
+    if(ionTypesCount.at(IonType::ART_NL).size() > 1)
+        std::cout << "Found!\n";
 
     bool all = true;
     std::vector<double> art_ints;
@@ -448,12 +448,6 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 	std::vector<std::thread> threads;
 	bool* sucsses = new bool[nThread];
 	
-	//read ms2s
-	std::cout << "Reading parent ms2 files...";
-	Ms2Map ms2Map;
-	if(!IonFinder::readMs2s(ms2Map, scans)) return false;
-	std::cout << "Done!\n";
-	
 	//split up input data for each thread
 	auto* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThread];
 	size_t begNum, endNum ;
@@ -467,7 +461,7 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 		assert(threadIndex < nThread);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
 		threads.emplace_back(IonFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
-									  ms2Map,
+									  //ms2Map,
 									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
 									  sucsses + threadIndex, std::ref(scansIndex));
 		threadIndex++;
@@ -545,51 +539,12 @@ bool IonFinder::findFragments(std::vector<Dtafilter::Scan>& scans,
 {
 	bool* success = new bool(false);
 	std::atomic<size_t> scansIndex;
-	IonFinder::Ms2Map ms2Map;
-	if(!readMs2s(ms2Map, scans)) return false;
-	IonFinder::findFragments_threadSafe(scans, 0, scans.size(), ms2Map, peptides, pars,
+	IonFinder::findFragments_threadSafe(scans, 0, scans.size(),peptides, pars,
 										success, scansIndex);
 	
 	bool ret = *success;
 	delete success;
 	return ret;
-}
-
-bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
-						 const std::vector<Dtafilter::Scan>& scans)
-{
-	std::string curWD;
-	
-	//first get unique names of ms2 files to read
-	size_t len = scans.size();
-	std::vector<std::string> fileNamesList;
-	for(size_t i = 0; i < len; i++){
-		if(std::find(fileNamesList.begin(),
-					 fileNamesList.end(),
-					 scans[i].getPrecursor().getFile()) == fileNamesList.end()){
-			fileNamesList.push_back(scans[i].getPrecursor().getFile());
-		}
-	}
-		
-	//read ms2 files
-	ms2Map.clear();
-	bool allSucess = true;
-	for(auto & it : fileNamesList)
-	{
-		ms2Map[it] = utils::Ms2File();
-		if(!ms2Map[it].read(it)){
-			std::cerr << "\n\tFailed to read: " << it << NEW_LINE;
-			std::cerr << "\t\tNo file found at: " << utils::absPath(it) << NEW_LINE;
-			allSucess = false;
-		}
-	}
-
-	if(!allSucess){
-		std::cerr << "Error reading ms2 files!" << NEW_LINE;
-		return false;
-	}
-
-	return true;
 }
 
 /**
@@ -604,7 +559,6 @@ bool IonFinder::readMs2s(IonFinder::Ms2Map& ms2Map,
  */
 void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 										 const size_t beg, const size_t end,
-										 const IonFinder::Ms2Map& ms2Map,
 										 std::vector<PeptideNamespace::Peptide>& peptides,
 										 const IonFinder::Params& pars,
 										 bool* success, std::atomic<size_t>& scansIndex)
@@ -615,7 +569,11 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 	std::string spFname;
 	aaDB::AADB aminoAcidMasses;
 	ms2::Spectrum spectrum;
-	
+
+	ms2::MsInterface msInterface;
+	if(!msInterface.read(scans.begin() + beg, scans.begin() + end))
+	    throw std::runtime_error("Error reading ms2 scans!");
+
 	for(size_t i = beg; i < end; i++)
 	{
 		//first get current wd name
@@ -641,16 +599,13 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		if(pars.getCalcNL()){
 			peptides.back().addNeutralLoss(pars.getNeutralLossMass(), pars.getLabelArtifactNL());
 		}
-		
-		//load spectrum
-		auto ms2FileIt = ms2Map.find(scans[i].getPrecursor().getFile());
-		if(ms2FileIt == ms2Map.end()){
-			throw std::out_of_range("\nKey error in Ms2Map!");
-		}
-		if(!ms2FileIt->second.getScan(scans[i].getScanNum(), spectrum)){
-			throw std::runtime_error("\nError reading scan!");
-			return;
-		}
+
+		if(!msInterface.getScan(spectrum,
+                                scans[i].getPrecursor().getFile(),
+                                scans[i].getScanNum()))
+            throw std::runtime_error("Failed to retrieve scan " +
+                                     std::to_string(scans[i].getScanNum()) + " from file " +
+                                     scans[i].getPrecursor().getFile());
 
         spectrum.setScanData(&scans[i]);
 

@@ -40,7 +40,7 @@
 #include <type_traits>
 
 #include <utils.hpp>
-#include <msScan.hpp>
+#include <msInterface/msScan.hpp>
 #include <peptide.hpp>
 #include <geometry.hpp>
 #include <calcLableLocs.hpp>

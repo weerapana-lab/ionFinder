@@ -1,3 +1,6 @@
 [submodule "utils"]
 	path = utils
 	url = https://github.com/ajmaurais/utils
+[submodule "mstoolkit"]
+	path = mstoolkit
+	url = https://github.com/ajmaurais/mstoolkit

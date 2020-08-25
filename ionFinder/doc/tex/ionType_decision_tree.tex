@@ -9,7 +9,7 @@
             base=bottom,
             child anchor=north,
             align=center,
-            s sep+=0.5cm,                      % or use: s sep +=1.5 cm ...
+            s sep+=0.0cm,                      % or use: s sep +=1.5 cm ...
     straight edge/.style={
         edge path={\noexpand\path[\forestoption{edge},thick,-{Latex}] 
         (!u.parent anchor) -- (.child anchor);}
@@ -33,17 +33,17 @@
 \begin{forest}
  [Citrullinated?, tikz={\draw[{Latex}-, thick] (.north) --++ (0,1);}
     [Neutral\\loss?
-        [NL multiple\\$>$ nCit
-            [Ambiguous NL fragment\\(AmbNL)]
+        [NL\\multiple\\$>$ nCit
+            [Ambiguous NL\\(AmbNL)]
             [Cit determining NL\\(DetNL)]
         ]
         [Contains\\N or Q?
             [Ambiguous ion\\(Amb)]
-            [Cit determining fragment\\(Det)]
+            [Cit determining\\(Det)]
         ]
     ]   
     [Neutral\\loss?
-        [Artifact NL fragment\\(ArtNL)]
+        [Artifact NL\\(ArtNL)]
         [Ambiguous ion\\(Amb)] 
     ]   
  ] 

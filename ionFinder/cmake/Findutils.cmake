@@ -1,8 +1,10 @@
 
 set(FIND_UTILS_PATHS
-        ${PROJECT_SOURCE_DIR}/../utils
-        ${PROJECT_SOURCE_DIR}/../build/utils
-        ${PROJECT_SOURCE_DIR}/../utils_build
+		${CMAKE_BINARY_DIR}/lib
+		${CMAKE_BINARY_DIR}/utils/lib
+		${CMAKE_CURRENT_BINARY_DIR}/../utils
+		${CMAKE_CURRENT_BINARY_DIR}/../build/utils
+		${CMAKE_CURRENT_BINARY_DIR}/../utils_build
 		${CMAKE_CURRENT_SOURCE_DIR}/../lib
 		${CMAKE_CURRENT_SOURCE_DIR}/../utils
 		${CMAKE_CURRENT_SOURCE_DIR}/../utils/lib
@@ -14,6 +16,9 @@ set(FIND_UTILS_PATHS
 find_path(UTILS_INCLUDE_DIR
             bufferFile.hpp
             fastaFile.hpp
+			msScan.hpp
+			exceptions.hpp
+			ms2.hpp
             molecularFormula.hpp
             peptideUtils.hpp
             tsvFile.hpp

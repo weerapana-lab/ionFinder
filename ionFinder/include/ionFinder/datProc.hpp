@@ -46,8 +46,8 @@
 #include <dtafilter.hpp>
 #include <fastaFile.hpp>
 #include <peptide.hpp>
-#include <ms2.hpp>
 #include <scanData.hpp>
+#include <msInterface.hpp>
 #include <ms2Spectrum.hpp>
 
 namespace IonFinder{
@@ -69,24 +69,20 @@ namespace IonFinder{
 	int const MAX_PROGRESS_ITTERATIONS = 5;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
-	typedef std::map<std::string, utils::Ms2File> Ms2Map;
-	
+
 	bool findFragmentsParallel(std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
 							   const IonFinder::Params&);
-	
-	void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
-								  size_t beg, size_t end,
-								  const Ms2Map& ms2Map,
-								  std::vector<PeptideNamespace::Peptide>& peptides,
-								  const IonFinder::Params& pars,
-								  bool* success, std::atomic<size_t>& scansIndex);
-	
+
+    void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
+                                  const size_t beg, const size_t end,
+                                  std::vector<PeptideNamespace::Peptide>& peptides,
+                                  const IonFinder::Params& pars,
+                                  bool* success, std::atomic<size_t>& scansIndex);
+
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
 							   unsigned int nThread,
 							   int sleepTime = PROGRESS_SLEEP_TIME);
-	
-	bool readMs2s(Ms2Map&, const std::vector<Dtafilter::Scan>&);
 	
 	bool findFragments(std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
