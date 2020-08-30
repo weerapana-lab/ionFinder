@@ -31,3 +31,8 @@ find_library(UTILS_LIBRARY
 	PATHS ${FIND_UTILS_PATHS}
 	DOC "Path to utils library.")
 
+find_library(ZLIB_LIBRARY
+		NAMES z libz libz.a ${CMAKE_STATIC_LIBRARY_PREFIX}z${CMAKE_STATIC_LIBRARY_SUFFIX}
+		PATHS ${FIND_MSTOOLKIT_PATHS}
+		DOC "Path to zlib library")
+

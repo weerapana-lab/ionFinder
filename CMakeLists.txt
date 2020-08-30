@@ -6,6 +6,7 @@ set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 option(BUILD_UTILS "Enable building utils lib" ON)
 option(BUILD_ION_FINDER "Enable building ionFinder" ON)
+option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
 
 macro(add_external_dependency name version cmake_prefix)
 	add_library(${name} INTERFACE)
@@ -37,11 +38,15 @@ macro(add_external_dependency name version cmake_prefix)
 endmacro()
 
 if(BUILD_UTILS)
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty")
+	include(zlib)
 	add_external_dependency(utils "1.3.0" UTILS)
 endif()
 
 if(BUILD_ION_FINDER)
-	set(PYTHON_RUNTIME_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin)
 	add_subdirectory("ionFinder")
 endif()
 
+if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
+	add_subdirectory("python")
+endif()
