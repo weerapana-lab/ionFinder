@@ -57,7 +57,7 @@ namespace scanData{
 		bool _modified;
 		int _spectralCounts;
 
-        utils::PrecursorScan _precursor;
+        utils::msInterface::PrecursorScan _precursor;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
@@ -115,7 +115,7 @@ namespace scanData{
 		void setSpectralCounts(int sc){
 			_spectralCounts = sc;
 		}
-		void setPrecursor(const utils::PrecursorScan& rhs){
+		void setPrecursor(const utils::msInterface::PrecursorScan& rhs){
 		    _precursor = rhs;
 		}
 
@@ -142,10 +142,10 @@ namespace scanData{
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;
-        const utils::PrecursorScan& getPrecursor() const{
+        const utils::msInterface::PrecursorScan& getPrecursor() const{
             return _precursor;
         }
-        utils::PrecursorScan& getPrecursor(){
+        utils::msInterface::PrecursorScan& getPrecursor(){
             return _precursor;
         }
 	};

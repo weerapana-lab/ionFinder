@@ -70,7 +70,7 @@ namespace ms2{
     class DataPoint {
 		friend class Spectrum;
 	private:
-        utils::ScanIon* _ion;
+        utils::msInterface::ScanIon* _ion;
 		bool labeledIon;
 		geometry::DataLabel label;
 		std::string formatedLabel;
@@ -93,7 +93,7 @@ namespace ms2{
 		    _ion = nullptr;
 			initStats();
 		}
-		DataPoint(utils::ScanIon* ion){
+		DataPoint(utils::msInterface::ScanIon* ion){
 		    _ion = ion;
 			initStats();
 		}
@@ -124,10 +124,10 @@ namespace ms2{
 		void setIonNum(int num){
 			ionNum = num;
 		}
-		void setMZ(utils::ScanMZ mz) {
+		void setMZ(utils::msInterface::ScanMZ mz) {
             _ion->setMZ(mz);
         }
-        void setIntensity(utils::ScanIntensity intensity) {
+        void setIntensity(utils::msInterface::ScanIntensity intensity) {
             return _ion->setIntensity(intensity);
         }
 		
@@ -152,10 +152,10 @@ namespace ms2{
 		int getIonNum() const{
 			return ionNum;
 		}
-		utils::ScanIntensity getIntensity() const {
+		utils::msInterface::ScanIntensity getIntensity() const {
 		    return _ion->getIntensity();
         }
-        utils::ScanMZ getMZ() const {
+        utils::msInterface::ScanMZ getMZ() const {
             return _ion->getMZ();
         }
 		std::string getLableColor() const;
@@ -170,7 +170,7 @@ namespace ms2{
                 return lhs.getMZ() < rhs.getMZ();
             }
 
-            bool operator()(const DataPoint& lhs, utils::ScanMZ rhs) const{
+            bool operator()(const DataPoint& lhs, utils::msInterface::ScanMZ rhs) const{
                 return lhs.getMZ() < rhs;
             }
         };
@@ -182,7 +182,7 @@ namespace ms2{
         };
 	};
 	
-    class Spectrum : public utils::Scan{
+    class Spectrum : public utils::msInterface::Scan{
 	private:
 		typedef std::vector<ms2::DataPoint> ionVecType;
 		typedef ionVecType::const_iterator ionsTypeConstIt;
@@ -207,7 +207,7 @@ namespace ms2{
 		void initLabeledIons();
 
 	public:
-		Spectrum() : utils::Scan()
+		Spectrum() : utils::msInterface::Scan()
 		{
             ionPercent = 0;
             spScore = 0;
@@ -230,7 +230,7 @@ namespace ms2{
 		template<typename _Tp> void normalizeIonInts(_Tp max)
 		{
 			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
-		    utils::ScanIntensity den = getMaxInt() / max;
+		    utils::msInterface::ScanIntensity den = getMaxInt() / max;
 			for(auto & ion : _ions)
 				ion.setIntensity(ion.getIntensity() / den);
 
@@ -251,8 +251,8 @@ namespace ms2{
 		void writeMetaData(std::ostream&) const;
 		void printSpectrum(std::ostream&, bool) const;
 		void printLabeledSpectrum(std::ostream&, bool) const;
-        const utils::PrecursorScan& getPrecursor() const{
-            return utils::Scan::getPrecursor();
+        const utils::msInterface::PrecursorScan& getPrecursor() const{
+            return utils::msInterface::Scan::getPrecursor();
         }
 	};
 }

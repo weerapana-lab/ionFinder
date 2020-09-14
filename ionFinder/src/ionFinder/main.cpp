@@ -34,7 +34,7 @@ int main(int argc, const char** argv)
 		return -1;
 	
 	pars.printVersion(std::cout);
-	
+
 	//read input files
 	std::vector<Dtafilter::Scan> scans;
 	if(pars.getInputMode() == IonFinder::DTAFILTER_INPUT_STR)

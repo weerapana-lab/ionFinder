@@ -34,34 +34,33 @@
 #include <memory>
 
 #include <dtafilter.hpp>
+#include <msInterface/msInterface.hpp>
 #include <msInterface/msScan.hpp>
 #include <msInterface/ms2File.hpp>
+#include <msInterface/mzXMLFile.hpp>
+#include <msInterface/mzMLFile.hpp>
 
 namespace ms2 {
     class MsInterface;
 
 
     class MsInterface {
-        typedef utils::Ms2File MsFile;
-        typedef std::map<std::string, std::shared_ptr<utils::MsInterface> > Ms2Map;
+        typedef utils::msInterface::Ms2File MsFile;
+        typedef std::map<std::string, std::shared_ptr<utils::msInterface::MsInterface> > Ms2Map;
         typedef std::vector<Dtafilter::Scan> InputScanList;
 
         Ms2Map _ms2Map;
-        bool readMs2s(Ms2Map&,
-                  std::vector<Dtafilter::Scan>::const_iterator begin,
-                  std::vector<Dtafilter::Scan>::const_iterator end);
-
-        static void getUniqueFileList(std::vector<std::string>& fnames,
-                                      std::vector<Dtafilter::Scan>::const_iterator begin,
-                                      std::vector<Dtafilter::Scan>::const_iterator end);
+        void getUniqueFileList(std::vector<std::string>& fnames,
+                               std::vector<Dtafilter::Scan>::const_iterator begin,
+                               std::vector<Dtafilter::Scan>::const_iterator end) const;
     public:
         MsInterface(){
             _ms2Map = Ms2Map();
         }
         ~MsInterface(){}
 
-        bool read(InputScanList::const_iterator begin, InputScanList::const_iterator end);
-        bool getScan(utils::Scan&, std::string fname, size_t scanNum);
+        bool read(InputScanList::const_iterator begin, InputScanList::const_iterator end, bool showProgress = true);
+        bool getScan(utils::msInterface::Scan&, std::string fname, size_t scanNum) const;
     };
 
 }

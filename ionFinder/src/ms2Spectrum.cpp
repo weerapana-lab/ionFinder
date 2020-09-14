@@ -167,7 +167,7 @@ void ms2::Spectrum::printLabeledSpectrum(std::ostream& out, bool includeMetaData
 void ms2::Spectrum::clear()
 {
     _dataPoints.clear();
-    utils::Scan::clear();
+    utils::msInterface::Scan::clear();
 }
 
 /**

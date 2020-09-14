@@ -66,7 +66,7 @@ namespace IonFinder{
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
 	//!Max iterations of progressbar loop with no progress before quitting
-	int const MAX_PROGRESS_ITTERATIONS = 5;
+	int const MAX_PROGRESS_ITTERATIONS = 60;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
 
@@ -76,12 +76,13 @@ namespace IonFinder{
 
     void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
                                   const size_t beg, const size_t end,
+                                  const ms2::MsInterface& msInterface,
                                   std::vector<PeptideNamespace::Peptide>& peptides,
                                   const IonFinder::Params& pars,
                                   bool* success, std::atomic<size_t>& scansIndex);
 
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
-							   unsigned int nThread,
+							   const std::string& message,
 							   int sleepTime = PROGRESS_SLEEP_TIME);
 	
 	bool findFragments(std::vector<Dtafilter::Scan>& scans,
