@@ -12,7 +12,8 @@ from modules.molecular_formula import MolecularFormula
 from modules import atom_table
 from modules import utils
 
-MODIFICATION_REGEX = r'([A-Z_])\((.*?)(\(.*?\))?\)'
+MODIFICATION_REGEX = re.compile(r'([A-Z_])\((.*?)(\(.*?\))?\)')
+
 
 def get_unique_modifications(modified_sequences):
     '''
@@ -31,7 +32,7 @@ def get_unique_modifications(modified_sequences):
 
     ret = set()
     for seq in modified_sequences:
-        for match in re.findall(MODIFICATION_REGEX, seq):
+        for match in MODIFICATION_REGEX.findall(seq):
             ret.add((match[1].strip().lower(), ('N-TERM' if match[0] == '_' else match[0])))
     return list(ret)
 
@@ -55,7 +56,7 @@ def extractModifications(modified_sequences):
     amino_acids = list()
     for s in modified_sequences:
         seq_no_mod = ''
-        matches = list(re.finditer(MODIFICATION_REGEX, s))
+        matches = list(MODIFICATION_REGEX.finditer(s))
         indecies = [True for _ in range(len(s))]
         modification_indecies = list()
         for m in matches:
@@ -122,10 +123,16 @@ def main():
 
     # read and format properly
     sys.stdout.write('\n{}\n\nReading {}...'.format(parser.prog, args.input_file))
-    dat = pd.read_csv(args.input_file, sep='\t')
+    dat = pd.read_csv(args.input_file, sep='\t', low_memory=False)
     dat.columns = [c.lower().replace(' ', '_').replace('/', '') for c in dat.columns]
     dat = dat[dat[maxquant_constants.MSMS_SCAN_NUMBER].isna().apply(lambda x: not x)]
-    dat = dat[dat[maxquant_constants.GENE_NAMES].isna().apply(lambda x: not x)]
+    if maxquant_constants.GENE_NAMES in dat.columns:
+        dat = dat[dat[maxquant_constants.GENE_NAMES].isna().apply(lambda x: not x)]
+    elif maxquant_constants.LEADING_PROTEINS in dat.columns:
+        dat = dat[dat[maxquant_constants.LEADING_PROTEINS].isna().apply(lambda x: not x)]
+    else:
+        raise RuntimeError('"{}" and "{}" columns not found.'.format(maxquant_constants.GENE_NAMES,
+                                                                     maxquant_constants.LEADING_PROTEINS))
     dat = dat.reset_index()
     sys.stdout.write(' Done!\n')
 
@@ -154,9 +161,13 @@ def main():
     ret = pd.DataFrame()
     ret[tsv_constants.SAMPLE_NAME] = dat[maxquant_constants.EXPERIMENT]
     ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.ms2'.format(x))
+
+    # get parent protein data
     ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS].apply(lambda x: [i for i in x.split(';')][0])
-    ret[tsv_constants.PARENT_PROTEIN] = dat[maxquant_constants.GENE_NAMES].apply(lambda x: [i for i in x.split(';')][0])
-    ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+    if maxquant_constants.GENE_NAMES in dat.columns:
+        ret[tsv_constants.PARENT_PROTEIN] = dat[maxquant_constants.GENE_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+    if maxquant_constants.PROTEIN_NAMES in dat.columns:
+        ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES].apply(lambda x: [i for i in x.split(';')][0])
 
     # parse sequences
     seq_list, formulas = extractModifications(dat[maxquant_constants.MODIFIED_SEQUENCE].to_list())
