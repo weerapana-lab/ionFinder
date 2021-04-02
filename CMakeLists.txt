@@ -8,7 +8,7 @@ option(BUILD_UTILS "Enable building utils lib" ON)
 option(BUILD_ION_FINDER "Enable building ionFinder" ON)
 option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
 
-macro(add_external_dependency name version cmake_prefix)
+macro(add_external_dependency name version cmake_prefix additional_cmake_args)
 	add_library(${name} INTERFACE)
 	set(${cmake_prefix}_VERSION ${version})
 
@@ -30,6 +30,7 @@ macro(add_external_dependency name version cmake_prefix)
 			"-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
 			"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
 			"-DCMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}"
+			"${additional_cmake_args}"
 		)
 
 	add_dependencies(${name} ${${cmake_prefix}_PREFIX})
@@ -38,9 +39,14 @@ macro(add_external_dependency name version cmake_prefix)
 endmacro()
 
 if(BUILD_UTILS)
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/cmake")
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty")
+	set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/utils")
+	set(ZLIB_VERSION "1.2.11")
+	set(ZLIB_URL ${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty/zlib1211.zip)
+	set(ZLIB_SRC_BASE "${CMAKE_CURRENT_BINARY_DIR}/zlib-${ZLIB_VERSION}")
 	include(zlib)
-	add_external_dependency(utils "1.3.0" UTILS)
+	add_external_dependency(utils "1.3.0" UTILS "-DZLIB_FOUND:BOOL=TRUE")
 endif()
 
 if(BUILD_ION_FINDER)
