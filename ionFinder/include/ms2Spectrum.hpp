@@ -64,8 +64,6 @@ namespace ms2{
 	
 	class Spectrum;
 	class DataPoint;
-	struct DataPointIntComparison;
-	struct DataPointMZComparison;
 
     class DataPoint {
 		friend class Spectrum;
@@ -249,7 +247,7 @@ namespace ms2{
         }
 		
 		void writeMetaData(std::ostream&) const;
-		void printSpectrum(std::ostream&, bool) const;
+		void printSpectrum(std::ostream&, bool includeMetadata = false) const;
 		void printLabeledSpectrum(std::ostream&, bool) const;
         const utils::msInterface::PrecursorScan& getPrecursor() const{
             return utils::msInterface::Scan::getPrecursor();

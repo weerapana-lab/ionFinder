@@ -59,13 +59,12 @@ namespace IonFinder{
 	
 	const std::string FRAG_DELIM = ";";
 	int const N_ION_TYPES = 6;
-	const std::string ION_TYPES_STR [] = {"frag", "det", "amb",
-		 "detNL", "ambNL", "artNL"};
+	const std::string ION_TYPES_STR [] = {"frag", "det", "amb", "detNL", "ambNL", "artNL"};
 	const std::string CONTAINS_CIT_STR [] {"false", "ambiguous", "likely", "true"};
 	
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
-	//!Max iterations of progressbar loop with no progress before quitting
+	//!Max iterations of progress bar loop with no progress before quitting
 	int const MAX_PROGRESS_ITTERATIONS = 60;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
@@ -73,6 +72,12 @@ namespace IonFinder{
 	bool findFragmentsParallel(std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
 							   const IonFinder::Params&);
+
+    void findFragments_(std::vector<Dtafilter::Scan>& scans,
+                        const size_t beg, const size_t end,
+                        std::vector<PeptideNamespace::Peptide>& peptides,
+                        const IonFinder::Params& pars,
+                        bool* success, std::atomic<size_t>& scansIndex);
 
     void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
                                   const size_t beg, const size_t end,

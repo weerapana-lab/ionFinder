@@ -39,7 +39,8 @@ bool ms2::MsInterface::read(InputScanList::const_iterator begin,
     _ms2Map.clear();
     bool allSucess = true;
     size_t len = fileNamesList.size();
-    std::cout << NEW_LINE << "Reading MS files..." << NEW_LINE;
+    if(showProgress)
+        std::cout << NEW_LINE << "Reading MS files..." << NEW_LINE;
     for(size_t i = 0; i < len; i++)
     {
         if(showProgress)

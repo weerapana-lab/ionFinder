@@ -31,7 +31,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <memory>
 
 #include <dtafilter.hpp>
 #include <msInterface/msInterface.hpp>
@@ -42,7 +41,6 @@
 
 namespace ms2 {
     class MsInterface;
-
 
     class MsInterface {
         typedef utils::msInterface::Ms2File MsFile;

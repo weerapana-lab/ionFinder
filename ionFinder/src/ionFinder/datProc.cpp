@@ -284,8 +284,7 @@ double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
         current_fractionArtifact = numerator / denominator;
 
         if(isnan(current_fractionArtifact) ||
-           current_fractionArtifact <= fractionArtifact ||
-           utils::almostEqual(current_fractionArtifact, fractionArtifact))
+           current_fractionArtifact <= fractionArtifact)
             return cutoff;
     }
     std::cerr << "WARN: Returning maximum cutoff intensity!" << NEW_LINE;
@@ -448,9 +447,9 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 	bool* sucsses = new bool[nThread];
 
     // read ms files
-    ms2::MsInterface msInterface;
-    msInterface.read(scans.begin(), scans.end());
-	
+    // ms2::MsInterface msInterface;
+    // msInterface.read(scans.begin(), scans.end());
+
 	//split up input data for each thread
 	auto* splitPeptides = new std::vector<PeptideNamespace::Peptide>[nThread];
 	size_t begNum, endNum ;
@@ -463,24 +462,27 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 		//spawn thread
 		assert(threadIndex < nThread);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
-		threads.emplace_back(IonFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
-									  msInterface,
-									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
-									  sucsses + threadIndex, std::ref(scansIndex));
+		threads.emplace_back(IonFinder::findFragments_, std::ref(scans), begNum, endNum,
+     							  std::ref(splitPeptides[threadIndex]), std::ref(pars),
+     							  sucsses + threadIndex, std::ref(scansIndex));
+		// threads.emplace_back(IonFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
+		// 							  msInterface,
+		// 							  std::ref(splitPeptides[threadIndex]), std::ref(pars),
+		// 							  sucsses + threadIndex, std::ref(scansIndex));
 		threadIndex++;
 	}
-	
+
 	//spawn progress function
     std::string progress_messge = "\nSearching ms2s for fragment ions using " + std::to_string(nThread) + " thread(s)...";
 	if(!pars.getVerbose())
 		threads.emplace_back(IonFinder::findFragmentsProgress, std::ref(scansIndex), nScans,
 									  std::ref(progress_messge), PROGRESS_SLEEP_TIME);
-	
+
 	//join threads
 	for(auto & thread : threads){
 		thread.join();
 	 }
-	
+
 	//concat split peptides into one vector
 	peptides.clear();
 	for(unsigned int i = 0; i < nThread; i++){
@@ -488,7 +490,7 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 			return false;
 		peptides.insert(peptides.end(), splitPeptides[i].begin(), splitPeptides[i].end());
 	}
-	
+
 	delete [] splitPeptides;
 	delete [] sucsses;
 	return true;
@@ -507,22 +509,22 @@ void IonFinder::findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t co
 	size_t lastIndex = scansIndex.load();
 	size_t curIndex = lastIndex;
 	int noChangeIterations = 0;
-	
+
 	std::cout << message << NEW_LINE;
 	while(scansIndex < count)
 	{
 		curIndex = scansIndex.load();
-		
+
 		if(lastIndex == curIndex)
 			noChangeIterations++;
 		else noChangeIterations = 0;
-		
+
 		if(noChangeIterations > IonFinder::MAX_PROGRESS_ITTERATIONS)
 			throw std::runtime_error("Thread timeout!");
-		
+
 		utils::printProgress(float(curIndex) / float(count));
 		std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
-		
+
 		lastIndex = curIndex;
 	}
 	utils::printProgress(float(scansIndex.load()) / float(count));
@@ -541,20 +543,31 @@ bool IonFinder::findFragments(std::vector<Dtafilter::Scan>& scans,
 							  std::vector<PeptideNamespace::Peptide>& peptides,
 							  IonFinder::Params& pars)
 {
-    // read ms files
-    ms2::MsInterface msInterface;
-    msInterface.read(scans.begin(), scans.end());
-
 	bool* success = new bool(false);
 	std::atomic<size_t> scansIndex;
-	IonFinder::findFragments_threadSafe(scans, 0, scans.size(),
-                                        msInterface,
-                                        peptides, pars,
-										success, scansIndex);
+	IonFinder::findFragments_(scans, 0, scans.size(),
+                              peptides, pars,
+							  success, scansIndex);
 
 	bool ret = *success;
 	delete success;
 	return ret;
+}
+
+
+void IonFinder::findFragments_(std::vector<Dtafilter::Scan>& scans,
+                               const size_t beg, const size_t end,
+                               std::vector<PeptideNamespace::Peptide>& peptides,
+                               const IonFinder::Params& pars,
+                               bool* success, std::atomic<size_t>& scansIndex)
+{
+    // read ms files
+    ms2::MsInterface msInterface;
+    msInterface.read(scans.begin() + beg, scans.begin() + end, false);
+
+    IonFinder::findFragments_threadSafe(scans, beg, end,
+                                        msInterface,
+                                        peptides, pars, success, scansIndex);
 }
 
 /**
@@ -623,12 +636,13 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
         scans[i].getPrecursor().setCharge(spectrum.getPrecursor().getCharge());
         scans[i].getPrecursor().setIntensity(spectrum.getPrecursor().getIntensity());
 
-        //label spectrum
-        spectrum.normalizeIonInts(100);
         //remove ions below specified intensity
+        spectrum.normalizeIonInts(100);
         if(pars.getMinIntensitySpecified())
             spectrum.removeIntensityBelow(pars.getMinIntensity());
 		// spectrum.labelSpectrum(peptides.back(), pars, true); //removes unlabeled ions from peptide
+
+		// label spectrum
         spectrum.labelSpectrum(peptides.back(), pars);
 
         //Filter ion intensities
@@ -646,7 +660,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 					throw std::runtime_error("\nFailed to make dir: " + dirNameTemp);
 				}
 
-			spectrum.normalizeIonInts(100);
+			//spectrum.normalizeIonInts(100);
 			spectrum.calcLabelPos();
 
 			std::string temp = dirNameTemp + "/" + utils::baseName(scans[i].getOfname());
