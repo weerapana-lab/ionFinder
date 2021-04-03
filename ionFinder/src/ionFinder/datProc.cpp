@@ -44,22 +44,7 @@ IonFinder::PeptideStats::PeptideStats(const IonFinder::PeptideStats& rhs) {
 }
 
 //!Copy assignment
-IonFinder::PeptideStats& IonFinder::PeptideStats::operator = (const IonFinder::PeptideStats& rhs)
-{
-    _fragDelim = rhs._fragDelim;
-    ionTypesCount = rhs.ionTypesCount;
-    containsCit = rhs.containsCit;
-    sequence = rhs.sequence;
-    modLocs = rhs.modLocs;
-    modResidues = rhs.modResidues;
-    _id = rhs._id;
-    charge = rhs.charge;
-    fullSequence = rhs.fullSequence;
-    mass = rhs.mass;
-    _scan = rhs._scan;
-
-    return *this;
-}
+IonFinder::PeptideStats& IonFinder::PeptideStats::operator = (const IonFinder::PeptideStats& rhs) = default;
 
 void IonFinder::PeptideStats::consolidate(const PeptideStats& rhs)
 {
@@ -195,7 +180,7 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
             }
             else{ //if not equal, ambiguous NL fragment
                 //std::cout << seq.getLabel() << NEW_LINE;
-                ionTypesCount[IonType::AMB_NL].insert(ionStr);
+                ionTypesCount[IonType::AMB].insert(ionStr);
             }
         }
         else{
@@ -210,7 +195,7 @@ void IonFinder::PeptideStats::addSeq(const PeptideNamespace::FragmentIon& seq,
     else{
         if(seq.isNL()){ //is artifact NL frag
             if(seq.isModified() && (seq.getNumNl() <= seq.getNumMod()))
-                ionTypesCount[IonType::AMB_NL].insert(ionStr);
+                ionTypesCount[IonType::AMB].insert(ionStr);
             else ionTypesCount[IonType::ART_NL].insert(ionStr);
         }
         else{ //is amg frag
@@ -689,22 +674,21 @@ void IonFinder::PeptideStats::calcContainsCit(bool includeCTermMod)
 	if(!includeCTermMod)
         if(modLocs.back() == sequence.length() - 1) return;
 	
-	//is there more than 1 determining NLs?
-	if(ionTypesCount[IonType::DET_NL].size() > 1){
+	//is there 2 or more determining NLs?
+	if(ionTypesCount[IonType::DET_NL].size() >= 2){
 		containsCit = ContainsCitType::TRUE;
 		return;
 	}
 	
 	//are there 1 or more determining NLs or determining frags?
-	if(ionTypesCount[IonType::DET_NL].size() >= 1 ||
-       ionTypesCount[IonType::DET].size() >= 1){
+	if(!ionTypesCount[IonType::DET_NL].empty() ||
+       !ionTypesCount[IonType::DET].empty()){
 		containsCit = ContainsCitType::LIKELY;
 		return;
 	}
 	
 	//are there 1 more ambiguous fragments?
-	if(ionTypesCount[IonType::AMB].size() >= 1 ||
-       ionTypesCount[IonType::AMB_NL].size() >= 1){
+	if(!ionTypesCount[IonType::AMB].empty()){
 		containsCit = ContainsCitType::AMBIGUOUS;
 		return;
 	}
@@ -727,9 +711,7 @@ std::string IonFinder::PeptideStats::ionTypeToStr(const IonType& it)
 			break;
         case IonType::DET_NL: return ION_TYPES_STR[3];
             break;
-        case IonType::AMB_NL: return ION_TYPES_STR[4];
-            break;
-		case IonType::ART_NL: return ION_TYPES_STR[5];
+		case IonType::ART_NL: return ION_TYPES_STR[4];
 			break;
 		case IonType::Last: return "Last";
 			break;
@@ -784,7 +766,6 @@ bool IonFinder::printPeptideStats(const std::vector<PeptideStats>& stats,
 	//conditional stats
 	if(pars.getCalcNL()){
 		_pepStats.push_back(itcType::DET_NL);
-		_pepStats.push_back(itcType::AMB_NL);
 		_pepStats.push_back(itcType::ART_NL);
 	}
 	

@@ -58,8 +58,8 @@ namespace IonFinder{
 	class PeptideFragmentsMap;
 	
 	const std::string FRAG_DELIM = ";";
-	int const N_ION_TYPES = 6;
-	const std::string ION_TYPES_STR [] = {"frag", "det", "amb", "detNL", "ambNL", "artNL"};
+	int const N_ION_TYPES = 5;
+	const std::string ION_TYPES_STR [] = {"frag", "det", "amb", "detNL", "artNL"};
 	const std::string CONTAINS_CIT_STR [] {"false", "ambiguous", "likely", "true"};
 	
 	//!Progress bar sleep time in seconds
@@ -146,8 +146,6 @@ namespace IonFinder{
 			AMB,
 			//!Modification determining NL fragments
 			DET_NL,
-            //!Ambiguous NL fragment
-            AMB_NL,
 			//!NL fragments not containing modification
 			ART_NL,
 			Last,
