@@ -47,8 +47,6 @@ if(BUILD_UTILS)
             "-DZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}"
 		)
 
-    message("!!! ${ZLIB_PREFIX} !!!")
-    # ExternalProject_Add_Step(${ZLIB_PREFIX} DEPENDERS utils)
     add_dependencies(${UTILS_PREFIX} ${ZLIB_PREFIX})
     add_dependencies(utils ${UTILS_PREFIX})
     set(UTILS_LIBRARY ${LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_STATIC_LIBRARY_PREFIX}utils${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -62,3 +60,4 @@ endif()
 if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
 	add_subdirectory("python")
 endif()
+
