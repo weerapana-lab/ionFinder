@@ -51,16 +51,17 @@ target_include_directories(${ION_FINDER_TARGET}
 
 
 # add zlib library
-set(ZLIB_ROOT "${CMAKE_BINARY_DIR}" CACHE STRING "Path to zlib installation")
-if(NOT ZLIB_FOUND)
-    message("!!! Searching for zlib in ionFinder !!!")
-    find_package(zlib REQUIRED)
+if(${ENABLE_ZLIB})
+	set(ZLIB_ROOT "${CMAKE_BINARY_DIR}" CACHE STRING "Path to zlib installation")
+	if(NOT ZLIB_FOUND)
+		find_package(zlib REQUIRED)
+	endif()
+	message("!!! ionFinder zlib paths !!!")
+	message("${ZLIB_INCLUDE_DIRS}")
+	message("${ZLIB_LIBRARIES}")
+	target_include_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_INCLUDE_DIRS})
+	target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
 endif()
-message("!!! ionFinder zlib paths !!!")
-message("${ZLIB_INCLUDE_DIRS}")
-message("${ZLIB_LIBRARIES}")
-target_include_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_INCLUDE_DIRS})
-target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
 
 #add utils library
 if(NOT DEFINED UTILS_INCLUDE_DIR OR NOT DEFINED UTILS_LIBRARY)
