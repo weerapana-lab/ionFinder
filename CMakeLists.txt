@@ -8,39 +8,6 @@ option(BUILD_UTILS "Enable building utils lib" ON)
 option(BUILD_ION_FINDER "Enable building ionFinder" ON)
 option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
 
-macro(add_external_dependency name version cmake_prefix additional_cmake_args)
-	add_library(${name} INTERFACE)
-	set(${cmake_prefix}_VERSION ${version})
-
-	include(ExternalProject)
-	include(GNUInstallDirs)
-
-	set(${cmake_prefix}_PREFIX "${name}-${${cmake_prefix}_VERSION}")
-
-	ExternalProject_Add(${${cmake_prefix}_PREFIX}
-		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${name}
-		BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${name}
-		CMAKE_ARGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"
-			"-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
-			"-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
-			"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-			"-DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}"
-			"-DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}"
-			"-DCMAKE_AR=${CMAKE_AR}"
-			"-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
-			"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
-			"-DCMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}"
-			"${additional_cmake_args}"
-            "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}"
-            "-DZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}"
-            "-DZLIB_LINK_DIRS=${ZLIB_LINK_DIRS}"
-		)
-
-	add_dependencies(${name} ${${cmake_prefix}_PREFIX})
-	set(${cmake_prefix}_LIBRARY ${LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_STATIC_LIBRARY_PREFIX}${name}${CMAKE_STATIC_LIBRARY_SUFFIX})
-	set(${cmake_prefix}_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${name}/include)
-endmacro()
-
 if(BUILD_UTILS)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/cmake")
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty")
@@ -54,8 +21,38 @@ if(BUILD_UTILS)
     message("${ZLIB_LIBRARIES}")
     message("${ZLIB_INCLUDE_DIRS}")
 
-    add_external_dependency(utils "1.3.0" UTILS "-DZLIB_FOUND:BOOL=TRUE")
-    add_dependencies(utils zlib)
+	add_library(utils INTERFACE)
+    set(UTILS_VERSION "1.3.0")
+
+	include(ExternalProject)
+	include(GNUInstallDirs)
+
+    set(UTILS_PREFIX "utils-${UTILS_VERSION}")
+
+    ExternalProject_Add(${UTILS_PREFIX}
+		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils
+		BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/utils
+		CMAKE_ARGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"
+			"-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
+			"-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
+			"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+			"-DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}"
+			"-DCMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}"
+			"-DCMAKE_AR=${CMAKE_AR}"
+			"-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
+			"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
+			"-DCMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}"
+			"-DZLIB_FOUND:BOOL=TRUE"
+            "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}"
+            "-DZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}"
+		)
+
+    message("!!! ${ZLIB_PREFIX} !!!")
+    # ExternalProject_Add_Step(${ZLIB_PREFIX} DEPENDERS utils)
+    add_dependencies(${UTILS_PREFIX} ${ZLIB_PREFIX})
+    add_dependencies(utils ${UTILS_PREFIX})
+    set(UTILS_LIBRARY ${LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_STATIC_LIBRARY_PREFIX}utils${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(UTILS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils/include)
 endif()
 
 if(BUILD_ION_FINDER)
