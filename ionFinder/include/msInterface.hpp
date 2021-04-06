@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include <dtafilter.hpp>
 #include <msInterface/msInterface.hpp>
