@@ -6,6 +6,7 @@ set(ION_FINDER_TARGET ionFinder)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(FindPkgConfig)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../utils/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(tsv_constants) #defines tsv file column headers for help file.
 
@@ -48,17 +49,23 @@ target_include_directories(${ION_FINDER_TARGET}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
 
+
+# add zlib library
+set(ZLIB_ROOT "${CMAKE_BINARY_DIR}" CACHE STRING "Path to zlib installation")
+if(NOT ZLIB_FOUND)
+    message("!!! Searching for zlib in ionFinder !!!")
+    find_package(zlib REQUIRED)
+endif()
+message("!!! ionFinder zlib paths !!!")
+message("${ZLIB_INCLUDE_DIRS}")
+message("${ZLIB_LIBRARIES}")
+target_include_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_INCLUDE_DIRS})
+target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
+
 #add utils library
 if(NOT DEFINED UTILS_INCLUDE_DIR OR NOT DEFINED UTILS_LIBRARY)
 	find_package(utils REQUIRED)
 endif()
-message("!!! ionFinder zlib paths !!!")
-message("${ZLIB_INCLUDE_DIRS}")
-message("${ZLIB_LINK_DIRS}")
-message("${ZLIB_LIBRARIES}")
-target_include_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_INCLUDE_DIRS})
-target_link_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_LINK_DIRS})
-target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
 target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
 target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIBRARY})
 
