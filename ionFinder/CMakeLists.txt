@@ -52,8 +52,14 @@ target_include_directories(${ION_FINDER_TARGET}
 if(NOT DEFINED UTILS_INCLUDE_DIR OR NOT DEFINED UTILS_LIBRARY)
 	find_package(utils REQUIRED)
 endif()
+message("!!! ionFinder zlib paths !!!")
+message("${ZLIB_INCLUDE_DIRS}")
+message("${ZLIB_LINK_DIRS}")
+message("${ZLIB_LIBRARIES}")
+target_include_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_INCLUDE_DIRS})
+target_link_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_LINK_DIRS})
+target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
 target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
-target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARY})
 target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIBRARY})
 
 #add auto generated headers

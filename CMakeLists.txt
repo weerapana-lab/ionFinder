@@ -31,6 +31,9 @@ macro(add_external_dependency name version cmake_prefix additional_cmake_args)
 			"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
 			"-DCMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}"
 			"${additional_cmake_args}"
+            "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}"
+            "-DZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}"
+            "-DZLIB_LINK_DIRS=${ZLIB_LINK_DIRS}"
 		)
 
 	add_dependencies(${name} ${${cmake_prefix}_PREFIX})
@@ -46,7 +49,13 @@ if(BUILD_UTILS)
 	set(ZLIB_URL ${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty/zlib1211.zip)
 	set(ZLIB_SRC_BASE "${CMAKE_CURRENT_BINARY_DIR}/zlib-${ZLIB_VERSION}")
 	include(zlib)
-	add_external_dependency(utils "1.3.0" UTILS "-DZLIB_FOUND:BOOL=TRUE")
+
+    message("!!! project zlib paths !!!")
+    message("${ZLIB_LIBRARIES}")
+    message("${ZLIB_INCLUDE_DIRS}")
+
+    add_external_dependency(utils "1.3.0" UTILS "-DZLIB_FOUND:BOOL=TRUE")
+    add_dependencies(utils zlib)
 endif()
 
 if(BUILD_ION_FINDER)
