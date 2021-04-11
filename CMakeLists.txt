@@ -4,45 +4,45 @@ project(ionFinder VERSION 0.2.1)
 
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
-option(BUILD_UTILS "Enable building utils lib" ON)
+option(BUILD_PEPTIDE_UTILS "Enable building peptideUtils lib" ON)
 option(BUILD_ION_FINDER "Enable building ionFinder" ON)
 option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
 
-if(BUILD_UTILS)
-	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/cmake")
-	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty")
+if(BUILD_PEPTIDE_UTILS)
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/cmake")
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/thirdparty")
 
 	option(ENABLE_ZLIB "Add support for zlib decompression" ON)
 
 	if(${ENABLE_ZLIB})
-		set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/utils")
+		set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/peptideUtils")
 		set(ZLIB_VERSION "1.2.11")
-		set(ZLIB_URL ${CMAKE_CURRENT_SOURCE_DIR}/utils/thirdparty/zlib1211.zip)
+		set(ZLIB_URL ${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/thirdparty/zlib1211.zip)
 		set(ZLIB_SRC_BASE "${CMAKE_CURRENT_BINARY_DIR}/zlib-${ZLIB_VERSION}")
 		include(zlib)
 
 		message("!!! project zlib paths !!!")
 		message("${ZLIB_LIBRARIES}")
 		message("${ZLIB_INCLUDE_DIRS}")
-		set(UTILS_CMAKE_ARGS "-DENABLE_ZLIB=ON"
+		set(PEPTIDE_UTILS_CMAKE_ARGS "-DENABLE_ZLIB=ON"
 							 "-DZLIB_FOUND:BOOL=TRUE"
 							 "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}"
 							 "-DZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}")
 	else()
-		set(UTILS_CMAKE_ARGS "-DENABLE_ZLIB=OFF")
+		set(PEPTIDE_UTILS_CMAKE_ARGS "-DENABLE_ZLIB=OFF")
 	endif()
 
-	add_library(utils INTERFACE)
-    set(UTILS_VERSION "1.3.0")
+	add_library(peptideUtils INTERFACE)
+	set(PEPTIDE_UTILS_VERSION "1.3.0")
 
 	include(ExternalProject)
 	include(GNUInstallDirs)
 
-    set(UTILS_PREFIX "utils-${UTILS_VERSION}")
+	set(PEPTIDE_UTILS_PREFIX "peptideUtils-${PEPTIDE_UTILS_VERSION}")
 
-    ExternalProject_Add(${UTILS_PREFIX}
-		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils
-		BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/utils
+	ExternalProject_Add(${PEPTIDE_UTILS_PREFIX}
+		SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils
+		BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/peptideUtils
 		CMAKE_ARGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"
 			"-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}"
 			"-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}"
@@ -53,15 +53,15 @@ if(BUILD_UTILS)
 			"-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
 			"-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
 			"-DCMAKE_FIND_ROOT_PATH=${CMAKE_FIND_ROOT_PATH}"
-			"${UTILS_CMAKE_ARGS}"
+			"${PEPTIDE_UTILS_CMAKE_ARGS}"
 		)
 
 	if(${ENABLE_ZLIB} AND NOT ${SYSTEM_ZLIB})
-		add_dependencies(${UTILS_PREFIX} ${ZLIB_PREFIX})
+		add_dependencies(${PEPTIDE_UTILS_PREFIX} ${ZLIB_PREFIX})
 	endif()
-    add_dependencies(utils ${UTILS_PREFIX})
-    set(UTILS_LIBRARY ${LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_STATIC_LIBRARY_PREFIX}utils${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(UTILS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/utils/include)
+	add_dependencies(peptideUtils ${PEPTIDE_UTILS_PREFIX})
+	set(PEPTIDE_UTILS_LIBRARY ${LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_STATIC_LIBRARY_PREFIX}peptideUtils${CMAKE_STATIC_LIBRARY_SUFFIX})
+	set(PEPTIDE_UTILS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/include)
 endif()
 
 if(BUILD_ION_FINDER)

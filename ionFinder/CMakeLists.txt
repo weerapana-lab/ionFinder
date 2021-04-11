@@ -6,7 +6,7 @@ set(ION_FINDER_TARGET ionFinder)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(FindPkgConfig)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../utils/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../peptideUtils/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(tsv_constants) #defines tsv file column headers for help file.
 
@@ -63,12 +63,12 @@ if(${ENABLE_ZLIB})
 	target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
 endif()
 
-#add utils library
-if(NOT DEFINED UTILS_INCLUDE_DIR OR NOT DEFINED UTILS_LIBRARY)
-	find_package(utils REQUIRED)
+#add peptideUtils library
+if(NOT DEFINED PEPTIDE_UTILS_INCLUDE_DIR OR NOT DEFINED PEPTIDE_UTILS_LIBRARY)
+	find_package(peptideUtils REQUIRED)
 endif()
-target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
-target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIBRARY})
+target_include_directories(${ION_FINDER_TARGET} PUBLIC ${PEPTIDE_UTILS_INCLUDE_DIR})
+target_link_libraries(${ION_FINDER_TARGET} ${PEPTIDE_UTILS_LIBRARY})
 
 #add auto generated headers
 find_package(Python REQUIRED)
