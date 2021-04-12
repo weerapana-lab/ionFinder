@@ -1,9 +1,28 @@
 //
-//  scanData.hpp
-//  ms2_anotator
+// scanData.hpp
+// ionFinder
+// -----------------------------------------------------------------------------
+// MIT License
+// Copyright 2020 Aaron Maurais
+// -----------------------------------------------------------------------------
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  Created by Aaron Maurais on 11/23/17.
-//  Copyright © 2017 Aaron Maurais. All rights reserved.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+// -----------------------------------------------------------------------------
 //
 
 #ifndef scanData_hpp
@@ -16,11 +35,11 @@
 #include <string>
 
 #include <utils.hpp>
+#include <msInterface/msScan.hpp>
 
 namespace scanData{
 	
 	class Scan;
-	class PrecursorScan;
 
 	typedef std::vector<Scan> scansType;
 	std::string const OF_EXT = ".spectrum";
@@ -28,85 +47,6 @@ namespace scanData{
 	
 	std::string removeStaticMod(std::string s, bool lowercase = true);
 	std::string removeDynamicMod(std::string s, bool lowercase = true);
-
-    class PrecursorScan{
-    private:
-        std::string _mz;
-        std::string _scan;
-        double _rt;
-        std::string _file;
-        int _charge;
-        double _intensity;
-
-    public:
-        PrecursorScan(){
-            _mz = "";
-            _scan = "";
-            _rt = 0;
-            _file = "";
-            _charge = 0;
-            _intensity = 0;
-        }
-        PrecursorScan(const PrecursorScan& rhs){
-            _mz = rhs._mz;
-            _scan = rhs._scan;
-            _rt = rhs._rt;
-            _file = rhs._file;
-            _charge = rhs._charge;
-            _intensity = rhs._intensity;
-        }
-
-        PrecursorScan& operator = (const PrecursorScan& rhs){
-            _mz = rhs._mz;
-            _scan = rhs._scan;
-            _rt = rhs._rt;
-            _file = rhs._file;
-            _charge = rhs._charge;
-            _intensity = rhs._intensity;
-            return *this;
-        }
-
-        //modifiers
-        void setMZ(const std::string &mz){
-            _mz = mz;
-        }
-        void setScan(const std::string &scan){
-            _scan = scan;
-        }
-        void setRT(double rt){
-            _rt = rt;
-        }
-        void setFile(const std::string &file){
-            _file = file;
-        }
-        void setCharge(int charge){
-            _charge = charge;
-        }
-        void setIntensity(double intensity){
-            _intensity = intensity;
-        }
-        void clear();
-
-        //properties
-        const std::string &getMZ() const{
-            return _mz;
-        }
-        const std::string &getScan() const{
-            return _scan;
-        }
-        double getRT() const{
-            return _rt;
-        }
-        const std::string &getFile() const{
-            return _file;
-        }
-        double getIntensity() const{
-            return _intensity;
-        }
-        int getCharge() const{
-            return _charge;
-        }
-    };
 
 	class Scan{
 	protected:
@@ -117,7 +57,7 @@ namespace scanData{
 		bool _modified;
 		int _spectralCounts;
 
-        PrecursorScan _precursor;
+        utils::msInterface::PrecursorScan _precursor;
 		
 		void initilizeFromLine(std::string);
 		std::string makeSequenceFromFullSequence(std::string) const;
@@ -175,7 +115,7 @@ namespace scanData{
 		void setSpectralCounts(int sc){
 			_spectralCounts = sc;
 		}
-		void setPrecursor(const PrecursorScan& rhs){
+		void setPrecursor(const utils::msInterface::PrecursorScan& rhs){
 		    _precursor = rhs;
 		}
 
@@ -202,10 +142,10 @@ namespace scanData{
 		}
 		std::string getOfNameBase(std::string, std::string) const;
 		std::string getOfname() const;
-        const PrecursorScan& getPrecursor() const{
+        const utils::msInterface::PrecursorScan& getPrecursor() const{
             return _precursor;
         }
-        PrecursorScan& getPrecursor(){
+        utils::msInterface::PrecursorScan& getPrecursor(){
             return _precursor;
         }
 	};

@@ -1,9 +1,28 @@
 //
-//  datProc.hpp
-//  ionFinder
+// datProc.hpp
+// ionFinder
+// -----------------------------------------------------------------------------
+// MIT License
+// Copyright 2020 Aaron Maurais
+// -----------------------------------------------------------------------------
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  Created by Aaron Maurais on 12/10/18.
-//  Copyright © 2018 Aaron Maurais. All rights reserved.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+// -----------------------------------------------------------------------------
 //
 
 #ifndef datProc_hpp
@@ -27,8 +46,9 @@
 #include <dtafilter.hpp>
 #include <fastaFile.hpp>
 #include <peptide.hpp>
-#include <ms2.hpp>
 #include <scanData.hpp>
+#include <msInterface.hpp>
+#include <ms2Spectrum.hpp>
 
 namespace IonFinder{
 	
@@ -38,35 +58,37 @@ namespace IonFinder{
 	class PeptideFragmentsMap;
 	
 	const std::string FRAG_DELIM = ";";
-	int const N_ION_TYPES = 6;
-	const std::string ION_TYPES_STR [] = {"frag", "detFrag", "ambFrag",
-		 "detNLFrag", "ambNLFrag", "artNLFrag"};
+	int const N_ION_TYPES = 5;
+	const std::string ION_TYPES_STR [] = {"frag", "det", "amb", "detNL", "artNL"};
 	const std::string CONTAINS_CIT_STR [] {"false", "ambiguous", "likely", "true"};
 	
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
-	//!Max iterations of progressbar loop with no progress before quitting
-	int const MAX_PROGRESS_ITTERATIONS = 5;
+	//!Max iterations of progress bar loop with no progress before quitting
+	int const MAX_PROGRESS_ITTERATIONS = 60;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
-	typedef std::map<std::string, ms2::Ms2File> Ms2Map;
-	
+
 	bool findFragmentsParallel(std::vector<Dtafilter::Scan>&,
 							   std::vector<PeptideNamespace::Peptide>&,
 							   const IonFinder::Params&);
-	
-	void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
-								  size_t beg, size_t end,
-								  const Ms2Map& ms2Map,
-								  std::vector<PeptideNamespace::Peptide>& peptides,
-								  const IonFinder::Params& pars,
-								  bool* success, std::atomic<size_t>& scansIndex);
-	
+
+    void findFragments_(std::vector<Dtafilter::Scan>& scans,
+                        const size_t beg, const size_t end,
+                        std::vector<PeptideNamespace::Peptide>& peptides,
+                        const IonFinder::Params& pars,
+                        bool* success, std::atomic<size_t>& scansIndex);
+
+    void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
+                                  const size_t beg, const size_t end,
+                                  const ms2::MsInterface& msInterface,
+                                  std::vector<PeptideNamespace::Peptide>& peptides,
+                                  const IonFinder::Params& pars,
+                                  bool* success, std::atomic<size_t>& scansIndex);
+
 	void findFragmentsProgress(std::atomic<size_t>& scansIndex, size_t count,
-							   unsigned int nThread,
+							   const std::string& message,
 							   int sleepTime = PROGRESS_SLEEP_TIME);
-	
-	bool readMs2s(Ms2Map&, const std::vector<Dtafilter::Scan>&);
 	
 	bool findFragments(std::vector<Dtafilter::Scan>& scans,
 					   std::vector<PeptideNamespace::Peptide>& peptides,
@@ -119,15 +141,13 @@ namespace IonFinder{
 			//!All fragments identified
 			FRAG,
 			//!B or Y fragments with modification not containing amb residue
-			DET_FRAG,
+			DET,
 			//!B or Y ions not containing modification or ambiguous residue
-			AMB_FRAG,
+			AMB,
 			//!Modification determining NL fragments
-			DET_NL_FRAG,
-            //!Ambiguous NL fragment
-            AMB_NL_FRAG,
+			DET_NL,
 			//!NL fragments not containing modification
-			ART_NL_FRAG,
+			ART_NL,
 			Last,
 			First = FRAG
 		};
@@ -211,7 +231,7 @@ namespace IonFinder{
         double totalFragmentIntensity(double min, double max = std::numeric_limits<double>::max()) const;
 		double fragmentIntensity(IonType) const;
         double fragmentIntensity(IonType, double min, double max = std::numeric_limits<double>::max()) const;
-        double calcIntCO(double fractionArtifact, bool all = false) const;
+        double calcIntCO(double fractionArtifact) const;
         void printFragmentStats(std::ostream& out) const;
 
 		//modifiers

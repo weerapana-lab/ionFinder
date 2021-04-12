@@ -47,6 +47,8 @@ MODIFICATIONS = {
         'acetyl': {'N-TERM': Counter({'C': 2, 'H': 2, 'O': 1, 'N': 0, 'S': 0})},
         'acetylation of the protein n-terminus': {'N-TERM': Counter({'C': 2, 'H': 2, 'O': 1, 'N': 0, 'S': 0})},
         'citrullination': {'R': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
+        'citrullinated': {'R': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
+        'ci': {'R': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
         'desthiocit1': {'R': Counter({'C': 32, 'H': 44, 'N': 6, 'O': 9})},
         'deamidated': {'N': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0}),
                        'Q': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
@@ -54,6 +56,7 @@ MODIFICATIONS = {
                        'Q': Counter({'C': 0, 'H': -1, 'O': 1, 'N': -1, 'S': 0})},
         'gln->pyro-glu': {'N-TERM': Counter({'C': 0, 'H': -2, 'O': -1, 'N': 0, 'S': 0})},
         'oxidation': {'M': Counter({'C': 0, 'H': 0, 'O': 1, 'N': 0, 'S': 0})},
+        'ox': {'M': Counter({'C': 0, 'H': 0, 'O': 1, 'N': 0, 'S': 0})},
         'carbamidomethyl': {'C': Counter({'C': 2, 'H': 3, 'O': 1, 'N': 1, 'S': 0})},
         'iodoacetamide derivative': {'C': Counter({'C': 2, 'H': 3, 'O': 1, 'N': 1, 'S': 0})}
         }

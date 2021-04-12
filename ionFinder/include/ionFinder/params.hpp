@@ -1,9 +1,28 @@
 //
-//  params.hpp
-//  ionFinder
+// params.hpp
+// ionFinder
+// -----------------------------------------------------------------------------
+// MIT License
+// Copyright 2020 Aaron Maurais
+// -----------------------------------------------------------------------------
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  Created by Aaron Maurais on 12/9/18.
-//  Copyright © 2018 Aaron Maurais. All rights reserved.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+// -----------------------------------------------------------------------------
 //
 
 #ifndef params_hpp
@@ -80,9 +99,6 @@ namespace IonFinder{
 		//! Fraction of ion intensity allowed for artifact NL ions.
 		double _artifactNLIntFrac;
 
-		//! How should the artifact NL fraction be calculated?
-		std::string _artifactNLIntMode;
-
 		//! names of folders to read
 		std::vector<std::string> _inDirs;
 		
@@ -94,6 +110,9 @@ namespace IonFinder{
 
 		//! How to deal with peptides with multiple modifications
 		int _groupMod;
+
+		//! Should peptide fragment ion intensities be included in tsv output?
+        bool _printIonIntensity;
 
 		//!Should unique peptide be printed?
 		bool _printPeptideUID;
@@ -112,7 +131,6 @@ namespace IonFinder{
 			_printSpectraFiles = false;
 			_calcNL = false;
             _artifactNLIntFrac = 0.01;
-            _artifactNLIntMode = "all";
 			_includeCTermMod = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
@@ -123,6 +141,7 @@ namespace IonFinder{
             _minNlLabelIntensity = 0;
             _labelArtifactNL = false;
 			_groupMod = 1;
+			_printIonIntensity = false;
 			_printPeptideUID = false;
 		}
 		
@@ -187,11 +206,11 @@ namespace IonFinder{
         double getArtifactNLIntFrac() const {
 		    return _artifactNLIntFrac;
         }
-        std::string getArtifactNLIntMode() const {
-		    return _artifactNLIntMode;
-        }
 		int getGroupMod() const{
 		    return _groupMod;
+		}
+		bool getPrintIonIntensity() const {
+		    return _printIonIntensity;
 		}
 		bool getPrintPeptideUID() const {
             return _printPeptideUID;

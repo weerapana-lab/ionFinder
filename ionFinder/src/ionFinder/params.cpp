@@ -1,9 +1,28 @@
 //
-//  params.cpp
-//  ionFinder
+// params.cpp
+// ionFinder
+// -----------------------------------------------------------------------------
+// MIT License
+// Copyright 2020 Aaron Maurais
+// -----------------------------------------------------------------------------
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  Created by Aaron Maurais on 12/9/18.
-//  Copyright © 2018 Aaron Maurais. All rights reserved.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+// -----------------------------------------------------------------------------
 //
 
 #include <ionFinder/params.hpp>
@@ -149,6 +168,21 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
                 return false;
             }
             _printPeptideUID = std::stoi(argv[i]);
+            continue;
+        }
+        if(!strcmp(argv[i], "-I") || !strcmp(argv[i], "--printInt"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            if(!(!strcmp(argv[i], "0") || !strcmp(argv[i], "1")))
+            {
+                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << std::endl;
+                return false;
+            }
+            _printIonIntensity = std::stoi(argv[i]);
             continue;
         }
 		if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--printSpectra"))
@@ -318,21 +352,6 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
                 return false;
             }
             _artifactNLIntFrac = std::stod(argv[i]) / 100; // Convert from percentage to fraction here.
-            continue;
-        }
-        if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--artifactNLIntMode"))
-        {
-            if(!utils::isArg(argv[++i]))
-            {
-                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
-                return false;
-            }
-            if(!(!strcmp(argv[i], "all") || !strcmp(argv[i], "nl")))
-            {
-                std::cerr << argv[i] << base::PARAM_ERROR_MESSAGE << argv[i-1] << NEW_LINE;
-                return false;
-            }
-            _artifactNLIntMode = std::string(argv[i]);
             continue;
         }
         if(!strcmp(argv[i], "--labelArtifactNL"))

@@ -5,6 +5,8 @@ SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+include(FindPkgConfig)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../peptideUtils/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(tsv_constants) #defines tsv file column headers for help file.
 
@@ -38,20 +40,35 @@ add_executable(${ION_FINDER_TARGET}
         src/paramsBase.cpp
         src/peptide.cpp
         src/ms2Spectrum.cpp
-        src/ms2.cpp
         src/ionFinder/datProc.cpp
         src/ionFinder/inputFiles.cpp
-        src/ionFinder/params.cpp)
+        src/ionFinder/params.cpp
+		src/msInterface.cpp)
 
 target_include_directories(${ION_FINDER_TARGET}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
 
-#add utils library
-include(FindPkgConfig)
-find_package(utils REQUIRED)
-target_include_directories(${ION_FINDER_TARGET} PUBLIC ${UTILS_INCLUDE_DIR})
-target_link_libraries(${ION_FINDER_TARGET} ${UTILS_LIB})
+
+# add zlib library
+if(${ENABLE_ZLIB})
+	set(ZLIB_ROOT "${CMAKE_BINARY_DIR}" CACHE STRING "Path to zlib installation")
+	if(NOT ZLIB_FOUND)
+		find_package(zlib REQUIRED)
+	endif()
+	message("!!! ionFinder zlib paths !!!")
+	message("${ZLIB_INCLUDE_DIRS}")
+	message("${ZLIB_LIBRARIES}")
+	target_include_directories(${ION_FINDER_TARGET} PUBLIC ${ZLIB_INCLUDE_DIRS})
+	target_link_libraries(${ION_FINDER_TARGET} ${ZLIB_LIBRARIES})
+endif()
+
+#add peptideUtils library
+if(NOT DEFINED PEPTIDE_UTILS_INCLUDE_DIR OR NOT DEFINED PEPTIDE_UTILS_LIBRARY)
+	find_package(peptideUtils REQUIRED)
+endif()
+target_include_directories(${ION_FINDER_TARGET} PUBLIC ${PEPTIDE_UTILS_INCLUDE_DIR})
+target_link_libraries(${ION_FINDER_TARGET} ${PEPTIDE_UTILS_LIBRARY})
 
 #add auto generated headers
 find_package(Python REQUIRED)
@@ -163,9 +180,9 @@ if(BUILD_MAN_PDF MATCHES ON)
         find_package(ps2pdf REQUIRED)
         if(${GROFF_FOUND} AND ${PS2PDF_FOUND})
             set(BUILD_MAN_PDF_IN ${CMAKE_CURRENT_SOURCE_DIR}/man/updateMan.in)
-            set(BUILD_MAN_PDF_OUT ${CMAKE_BINARY_DIR}/doc/update_${target}_help.sh)
+			set(BUILD_MAN_PDF_OUT ${CMAKE_CURRENT_BINARY_DIR}/doc/update_${target}_help.sh)
             set(TARGET_MAN_PDF_IN ${PROG_MAN_DIR}/${target}/helpFile.roff)
-            set(TARGET_MAN_PDF_OUT ${CMAKE_BINARY_DIR}/doc/${target}_helpFile.pdf)
+			set(TARGET_MAN_PDF_OUT ${CMAKE_CURRENT_BINARY_DIR}/doc/${target}_helpFile.pdf)
 
             file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
@@ -197,112 +214,3 @@ if(BUILD_MAN_PDF MATCHES ON)
     #build_man_page(ms2_annotator)
 endif()
 
-option(BUILD_VISUALIZATION_SCRIPTS "Build and configure scripts to make pdfs of ms2 spectra" ON)
-option(COPY_PYTHON_TO_BUILD "Copy python files to build directory?" ON)
-if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
-    find_program(BASH bash DOC "Path to bash interpreter.")
-
-    # Add required python modules here for now
-    #find_python_module(matplotlib REQUIRED)
-    find_python_module(pandas REQUIRED)
-    find_program(RSCRIPT Rscript Doc "Path to Rscript command.")
-
-    if(COPY_PYTHON_TO_BUILD MATCHES ON)
-        macro(copy_files GLOBPAT DESTINATION TARGET_NAME)
-            file(GLOB_RECURSE COPY_FILES
-                    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-                    ${GLOBPAT})
-            # auto generated files
-            list(FILTER COPY_FILES EXCLUDE REGEX "_constants\.py$")
-            add_custom_target(${TARGET_NAME} ALL
-                    COMMENT "Copying files: ${GLOBPAT}")
-
-            foreach(FILENAME ${COPY_FILES})
-                set(SRC "${CMAKE_CURRENT_SOURCE_DIR}/${FILENAME}")
-                set(DST "${DESTINATION}/${FILENAME}")
-
-                add_custom_command(
-                        TARGET ${TARGET_NAME}
-                        COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
-                )
-            endforeach(FILENAME)
-        endmacro(copy_files)
-
-        set(PYTHON_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/python)
-		file(MAKE_DIRECTORY ${PYTHON_SRC_DIR}/modules)
-		file(MAKE_DIRECTORY ${PYTHON_SRC_DIR}/parsers/modules)
-        copy_files(${CMAKE_CURRENT_SOURCE_DIR}/../python/*.py ${PYTHON_SRC_DIR} python_copy)
-        add_configure_file(spectrum_constants SpectrumConstantsPy "python/modules" "py")
-        add_configure_file(tsv_constants TSVConstantsPy "python/parsers/modules" "py")
-        add_configure_file(scaffold_constants ScaffoldConstantsPy "python/parsers/modules" "py")
-        add_configure_file(maxquant_constants MaxQuantConstantsPy "python/parsers/modules" "py")
-    else()
-        set(PYTHON_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../python)
-    endif()
-
-    set(RUN_MAKE_MS2_SCR_PATH ${PYTHON_SRC_DIR}/run_make_ms2.py
-            CACHE STRING "Path to run_make_ms2.py")
-    set(MAKE_MS2_SRC_PATH ${PYTHON_SRC_DIR}/make_ms2.py
-            CACHE STRING "Path to make_ms2.py")
-    set(PARSE_SCAFFOLD_PATH ${PYTHON_SRC_DIR}/parsers/parse_scaffold.py
-            CACHE STRING "Path to parse_scaffold.py")
-    set(PARSE_MAXQUANT_PATH ${PYTHON_SRC_DIR}/parsers/parse_maxquant.py
-            CACHE STRING "Path to parse_scaffold.py")
-    set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
-            CACHE STRING "Path to make_ms2.py")
-
-    string(CONCAT MAKE_MS2_MAIN_ARGS
-        ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
-        "', '" ${RSCRIPT})
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
-            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${MAKE_MS2_SRC_PATH}
-            COMMENT "Adding make_ms2 executable."
-            VERBATIM
-            COMMAND
-                ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXE}
-                --mainArgs ${MAKE_MS2_MAIN_ARGS}
-                ${MAKE_MS2_SRC_PATH}
-            )
-    add_custom_target(make_ms2 ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/make_ms2
-            )
-
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
-            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${RUN_MAKE_MS2_SCR_PATH}
-            COMMENT "Adding run_make_ms2 executable."
-            COMMAND
-                ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXE}
-                ${RUN_MAKE_MS2_SCR_PATH}
-            )
-    add_custom_target(run_make_ms2 ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/run_make_ms2
-            )
-
-    add_custom_command(
-            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
-            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_SCAFFOLD_PATH}
-            COMMENT "Adding parse_scaffold executable."
-            COMMAND
-                ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXE}
-                ${PARSE_SCAFFOLD_PATH}
-            )
-    add_custom_target(parse_scaffold ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_scaffold
-            )
-
-    add_custom_command(
-            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_maxquant
-            DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${PARSE_MAXQUANT_PATH}
-            COMMENT "Adding parse_maxquant executable."
-            COMMAND
-                ${BASH} ${PYTHON_BUILD_SCRIPT}
-                --pythonExe ${PYTHON_EXE}
-                ${PARSE_MAXQUANT_PATH}
-            )
-    add_custom_target(parse_maxquant ALL
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bin/parse_maxquant
-            )
-endif()

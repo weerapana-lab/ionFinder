@@ -18,14 +18,18 @@ from modules.molecular_formula import MolecularFormula
 from modules import atom_table
 from modules import utils
 
-SEARCH_ENGINES = {'Proteome Discover':{SPECTRUM_NAME: r',scan_([0-9]+),type',
-                      MS_MS_SAMPLE_NAME: r'^Experiment [\w\-: ]+ from ([\w\- ]+)'},
-                  'MaxQuant':{SPECTRUM_NAME: r'\d+-\d+_(\d+)$',
-                      MS_MS_SAMPLE_NAME: r'^(?:[\w \+\-]+:\s*)?([\w\+\- ]+)$'}}
+SEARCH_ENGINES = {'Proteome Discoverer':{'scan': (SPECTRUM_NAME, re.compile(r',scan_([0-9]+),type')),
+                                         'msms': (MS_MS_SAMPLE_NAME, re.compile(r'^Experiment [\w\-: ]+ from ([\w\- ]+)'))},
+                  'MaxQuant':{'scan': (SPECTRUM_NAME, re.compile(r'\d+-\d+_(\d+)$')),
+                              'msms': (MS_MS_SAMPLE_NAME, re.compile(r'^(?:[\w \+\-]+:\s*)?([\w\+\- ]+)$'))},
+                  'Mascot': {'scan': (SPECTRUM_NAME, re.compile(r'Scan (\w+)')),
+                             'msms': (SPECTRUM_NAME, re.compile(r'Scan \w+.*\\([A-Za-z0-9_\-\+ ]+\.raw)'))}}
 
-MODIFICATION_REGEX = r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$'
-DESCRIPTION_REGEX = r'^(?:\w+\|[A-Za-z0-9\-]+\|[A-Za-z0-9_]+\s)?([\w\-/, \\;.\[\]\{\}()]+)(?:OS=.*)$'
-ACCESSION_REGEX = r'^\w+\|([A-Za-z0-9-]+)\|([A-Za-z0-9]+)_'
+
+MODIFICATION_REGEX = re.compile(r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$')
+DESCRIPTION_REGEX = re.compile(r'^(?:\w+\|[A-Za-z0-9\-]+\|[A-Za-z0-9_]+\s)?([\w\-/, \\;.\[\]\{\}()]+)(?:OS=.*)$')
+ACCESSION_REGEX = re.compile(r'\w+\|([A-Za-z0-9-]+)\|([A-Za-z0-9]+)_')
+UNIPROT_ID_REGEX = re.compile(r'[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}')
 
 def parse_spectrum_report(fname):
     '''
@@ -53,7 +57,7 @@ def parse_spectrum_report(fname):
     s = s[:end].strip()
 
     with StringIO(s) as inF:
-        ret = pd.read_csv(inF, sep = '\t')
+        ret = pd.read_csv(inF, sep= '\t', low_memory=False)
 
     ret.columns = [x.replace(' ', '_').lower() for x in ret.columns.tolist()]
 
@@ -74,13 +78,13 @@ def detect_search_engine(dat):
 
     sys.stdout.write('\nAtempting to find the appropriate regex for search engine...\n')
     ret_key = str()
-    for k1, v1 in SEARCH_ENGINES.items():
-        sys.stdout.write('\tTrying to match regex for {}...'.format(k1))
+    for engine, values in SEARCH_ENGINES.items():
+        sys.stdout.write('\tTrying to match regex for {}...'.format(engine))
         try:
-            for k2, v2 in v1.items():
-                dat[k2].apply(lambda x:re.search(v2, x).group(1))
+            for value in values.values():
+                dat[value[0]].apply(lambda x: value[1].search(x).group(1))
             sys.stdout.write(' Matched!\n')
-            ret_key = k1
+            ret_key = engine
         except AttributeError as e:
             sys.stdout.write(' No match\n')
             continue
@@ -110,7 +114,7 @@ def get_unique_modifications(mods):
             continue
 
         for x in list(map(str.strip, line.split(','))):
-            mod = re.search(MODIFICATION_REGEX, x)
+            mod = MODIFICATION_REGEX.search(x)
             if mod:
                 ret.add((mod.group(3).lower(), mod.group(1).upper()))
             else:
@@ -146,7 +150,7 @@ def extractModifications(seq, mods, calc_formula=False):
     # extract modified residue, number, and mod mass from mod
     # and put into a list with an element for each mod
     for x in list(map(str.strip, mods.split(','))):
-        mod = re.search(MODIFICATION_REGEX, x)
+        mod = MODIFICATION_REGEX.search(x)
 
         try:
             float(mod.group(4))
@@ -177,12 +181,14 @@ def extractModifications(seq, mods, calc_formula=False):
 
 
 def main():
-
     parser = argparse.ArgumentParser(prog='parse_scaffold',
                                      parents=[PARENT_PARSER],
                                      description='Convert Scaffold output to proper input for ionFinder tsv input.',
                                      epilog="parse_scaffold was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
+
+    parser.add_argument('-i', '--bad_id_filter', default=1, choices=[0, 1], type=int,
+                        help='Should entries with unparsable protein acessions be removed? 1 is the default.')
 
     parser.add_argument('-f', '--calc_formula', default=0, choices=[0, 1], type=int,
                         help='Should molecular formula of peptides be calculated? 0 is the default.')
@@ -211,34 +217,55 @@ def main():
         variable_good = utils.check_modifications(get_unique_modifications(dat[VARIABLE_MODIFICATIONS].to_list()),
                                              'variable', verbose=args.verbose)
         if not fixed_good and not variable_good:
-            return -1
+            sys.exit(-1)
         sys.stdout.write('Success!\n')
 
     # extract scan column
     engine = detect_search_engine(dat)
-    dat[SCAN_NUM] = dat[SPECTRUM_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][SPECTRUM_NAME], x).group(1))
+    dat[SCAN_NUM] = dat[SEARCH_ENGINES[engine]['scan'][0]].apply(lambda x: SEARCH_ENGINES[engine]['scan'][1].search(x).group(1))
 
     # extract precursorFile column
-    dat[PRECURSOR_FILE] = dat[MS_MS_SAMPLE_NAME].apply(lambda x: re.search(SEARCH_ENGINES[engine][MS_MS_SAMPLE_NAME], x).group(1) + '.ms2')
+    dat[PRECURSOR_FILE] = dat[SEARCH_ENGINES[engine]['msms'][0]].apply(lambda x: SEARCH_ENGINES[engine]['msms'][1].search(x).group(1))
 
     # parse protein id and name
     # At some point should use re.findall
-    matches = [re.search(ACCESSION_REGEX, s) for s in dat[PROTEIN_ACCESSION_NUMBERS].values.tolist()]
-    good_matches = [m for m in matches if bool(m)]
-    if len(dat.index) != len([m for m in matches if m]):
+    matches = [(ACCESSION_REGEX.search(s), s) for s in dat[PROTEIN_ACCESSION_NUMBERS].values.tolist()]
+    good_matches = [m for m, _ in matches if bool(m)]
+    if len(dat.index) != len([m for m, _ in matches if m]):
         sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) -
             len(good_matches)))
         if args.verbose:
             sys.stderr.write('Bad acession(s):\n')
-            bad_acessions = set(dat[[not bool(m) for m in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
+            bad_acessions = set(dat[[not bool(m) for m, _ in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
             for acession in bad_acessions:
                 sys.stderr.write('\t{}\n'.format(acession))
-        dat = dat[[bool(x) for x in matches]]
-        dat = dat.reset_index()
+        if args.bad_id_filter:
+            nBefore = len(dat.index)
+            dat = dat[[bool(x) for x, _ in matches]]
+            dat = dat.reset_index()
+            nAfter = len(dat.index)
+            sys.stderr.write('Removed {} unparsable entries.\n'.format(nBefore - nAfter))
 
-    #matches = [re.search(ACCESSION_REGEX, s) for s in dat[PROTEIN_ACCESSION_NUMBERS].str.tolist()]
-    dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(1), good_matches)))
-    dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
+    if args.bad_id_filter:
+        dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(1), good_matches)))
+        dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
+    else:
+        ids = list()
+        proteins = list()
+        for match, string in matches:
+            if match:
+                ids.append(match.group(1))
+                proteins.append(match.group(2))
+            else:
+                match = UNIPROT_ID_REGEX.search(string)
+                if match:
+                    ids.append(match.group(1))
+                else:
+                    ids.append(string)
+                proteins.append(string)
+        dat[PARENT_ID] = pd.Series(ids)
+        dat[PARENT_PROTEIN] = pd.Series(ids)
+
     dat[PARENT_DESCRIPTION] = dat[PROTEIN_NAME].str.extract(DESCRIPTION_REGEX)
 
     # add static modifications
