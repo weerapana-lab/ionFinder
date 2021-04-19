@@ -65,7 +65,7 @@ namespace IonFinder{
 	//!Progress bar sleep time in seconds
 	int const PROGRESS_SLEEP_TIME = 1;
 	//!Max iterations of progress bar loop with no progress before quitting
-	int const MAX_PROGRESS_ITTERATIONS = 60;
+	int const MAX_PROGRESS_ITTERATIONS = 600;
 	//!Progress bar width in chars
 	int const PROGRESS_BAR_WIDTH = 60;
 

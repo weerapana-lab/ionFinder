@@ -59,36 +59,41 @@ Rcpp::List getSpectrum(std::string fname)
         if(line == END_METADATA)
           break;
 
-        if(utils::isCommentLine(line))
+        if(utils::isCommentLine(line) || utils::trim(line).empty())
           continue;
 
         utils::split(line, IN_DELIM, elems);
         utils::trimAll(elems);
-        if(elems.size() < 2)
-          throw std::runtime_error("bad metadata!");
-        if(elems[0] == "scanNumber"){
-          scanNum = elems[1];
+        std::string key = elems[0];
+        std::string value = "";
+        if(elems.size() > 1) value = elems[1];
+        if(key == "scanNumber"){
+          scanNum = value;
         }
-        else if(elems[0] == "precursorFile"){
-          parentFile = elems[1];
+        else if(key == "precursorFile"){
+          parentFile = value;
         }
-        else if(elems[0] == "ofname"){
-          ofname = elems[1];
+        else if(key == "ofname"){
+          if(value.empty()) throw std::runtime_error("No value for required metadata entry 'ofname'");
+          ofname = value;
         }
-        else if(elems[0] == "sequence"){
-          sequence = elems[1];
+        else if(key == "sequence"){
+          sequence = value;
         }
-        else if(elems[0] == "fullSequence"){
-          fullSequence = elems[1];
+        else if(key == "fullSequence"){
+          if(value.empty()) throw std::runtime_error("No value for required metadata entry 'fullSequence'");
+          fullSequence = value;
         }
-        else if(elems[0] == "precursorCharge"){
-          precursorCharge = elems[1];
+        else if(key == "precursorCharge"){
+          precursorCharge = value;
         }
-        else if(elems[0] == "plotHeight"){
-          plotHeight = std::stod(elems[1]);
+        else if(key == "plotHeight"){
+          if(value.empty()) throw std::runtime_error("No value for required metadata entry 'plotHeight'");
+          plotHeight = std::stod(value);
         }
-        else if(elems[0] == "plotWidth"){
-          plotWidth = std::stod(elems[1]);
+        else if(key == "plotWidth"){
+          if(value.empty()) throw std::runtime_error("No value for required metadata entry 'plotWidth'");
+          plotWidth = std::stod(value);
         }
       }
     }

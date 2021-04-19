@@ -16,13 +16,12 @@ def makePBS(mem, ppn, walltime, nThread, makeMs2_args, wd, progDir):
     global PBS_COUNT
     PBS_COUNT += 1
     pbsName = '{}/make_ms2_{}.pbs'.format(wd, PBS_COUNT)
-    outF = open(pbsName, 'w')
-
-    outF.write("#!/bin/tcsh\n")
-    outF.write('#PBS -l mem={}gb,nodes=1:ppn={},walltime={}\n\n'.format(mem, ppn, walltime))
-    outF.write('cd {}\n'.format(wd))
-    outF.write('{}/{} -t {} {}\n'.format(progDir, MAKE_MS2_PY_PATH,
-                                         nThread, makeMs2_args))
+    with open(pbsName, 'w') as outF:
+        outF.write("#!/bin/tcsh\n")
+        outF.write('#PBS -l mem={}gb,nodes=1:ppn={},walltime={}\n\n'.format(mem, ppn, walltime))
+        outF.write('cd {}\n'.format(wd))
+        outF.write('{}/{} -t {} {}\n'.format(progDir, MAKE_MS2_PY_PATH,
+                                             nThread, makeMs2_args))
 
     return pbsName
 
@@ -43,17 +42,8 @@ def main():
                         help = 'Should jobs be submitted? If this flag is not supplied, program will be a dry run. '
                                'Required system resources will be printed but jobs will not be submitted.')
 
-    #parser.add_argument('--dry_run', choices = [0, 1], type = int, default = 0,
-    #                    help = 'Prints summary of system resources needed, but does not submit jobs.'
-    #                           'Overides -g command. Default is 0.')
-
-    #parser.add_argument('-j', '--jobMode', choices = ['pbs', 'inplace'], default = 'pbs',
-    #                    help = 'Choose how to run jobs. pbs will create and submit <NJOB> PBS jobs. '
-    #                           'inplace will run in the current terminal.')
-
     parser.add_argument('-n', '--nJob', type=int, default = 1,
-                        help='Specify number of jobs to split into.'
-                             ' --jobMode pbs must specified for this argument to be used.')
+                        help='Specify number of jobs to split into.')
 
     parser.add_argument('-m', '--mem', default=1, type = int,
                         help = 'Amount of memory to allocate per PBS job in gb. Default is 1.')
