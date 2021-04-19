@@ -45,7 +45,9 @@ def parse_spectrum_report(fname):
     with open(fname, 'r') as inF:
         s = inF.read()
 
-    i = s.find(RAW_SPECTRUM_NAME)
+    spectrum_start_re = '{}|{}'.format(RAW_SPECTRUM_NAME, RAW_SPECTRUM_NAME.lower().replace(' ', '_'))
+    i = re.search(spectrum_start_re, s)
+    i = -1 if i is None else i.start()
     if i == -1:
         raise RuntimeError('Could not find "{}" column!'.format(RAW_SPECTRUM_NAME))
     i = s.rfind('\n', 0, i)
