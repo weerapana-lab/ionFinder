@@ -51,6 +51,7 @@ target_include_directories(${ION_FINDER_TARGET}
 
 
 # add zlib library
+option(ENABLE_ZLIB "Link to zlib?" ON)
 if(${ENABLE_ZLIB})
 	set(ZLIB_ROOT "${CMAKE_BINARY_DIR}" CACHE STRING "Path to zlib installation")
 	if(NOT ZLIB_FOUND)
