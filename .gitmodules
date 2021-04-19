@@ -1,0 +1,3 @@
+[submodule "peptideUtils"]
+	path = peptideUtils
+	url = https://github.com/ajmaurais/peptideUtils
