@@ -13,16 +13,21 @@ set(FIND_PEPTIDE_UTILS_PATHS
         /usr/local
         /usr/local/lib)
 
-find_path(UTILS_INCLUDE_DIR
-            bufferFile.hpp
-            fastaFile.hpp
-			msScan.hpp
-			exceptions.hpp
-			ms2.hpp
-            molecularFormula.hpp
-            peptideUtils.hpp
-            tsvFile.hpp
-            peptideUtils.hpp
+find_path(PEPTIDE_UTILS_INCLUDE_DIR
+		  sequenceUtils.hpp
+		  molecularFormula.hpp
+		  fastaFile.hpp
+		  bufferFile.hpp
+		  msInterface/mzXMLFile.hpp
+		  msInterface/msInterface.hpp
+		  msInterface/mzMLFile.hpp
+		  msInterface/internal/xml_utils.hpp
+		  msInterface/internal/base64_utils.hpp
+		  msInterface/msScan.hpp
+		  msInterface/ms2File.hpp
+		  exceptions.hpp
+		  utils.hpp
+		  tsvFile.hpp
         PATH_SUFFIXES include
 		PATHS ${FIND_PEPTIDE_UTILS_PATHS})
 
