@@ -21,9 +21,8 @@ if(BUILD_PEPTIDE_UTILS)
 		set(ZLIB_SRC_BASE "${CMAKE_CURRENT_BINARY_DIR}/zlib-${ZLIB_VERSION}")
 		include(zlib)
 
-		message("!!! project zlib paths !!!")
-		message("${ZLIB_LIBRARIES}")
-		message("${ZLIB_INCLUDE_DIRS}")
+        message("-- Project zlib shared lib ${ZLIB_LIBRARIES}")
+        message("-- Project zlib include dir ${ZLIB_INCLUDE_DIRS}")
 		set(PEPTIDE_UTILS_CMAKE_ARGS "-DENABLE_ZLIB=ON"
 							 "-DZLIB_FOUND:BOOL=TRUE"
 							 "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}"
