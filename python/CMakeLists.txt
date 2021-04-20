@@ -67,6 +67,7 @@ add_custom_command(OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2
 		COMMAND
 			${BASH} ${PYTHON_BUILD_SCRIPT}
 			--pythonExe ${PYTHON_EXE}
+			--binDir ${PYTHON_RUNTIME_OUTPUT_DIR}
 			--mainArgs ${MAKE_MS2_MAIN_ARGS}
 			${MAKE_MS2_SRC_PATH}
 		)
@@ -80,6 +81,7 @@ add_custom_target(make_ms2 ALL
 		COMMAND
 			${BASH} ${PYTHON_BUILD_SCRIPT}
 			--pythonExe ${PYTHON_EXE}
+			--binDir ${PYTHON_RUNTIME_OUTPUT_DIR}
 			${RUN_MAKE_MS2_SCR_PATH}
 		)
 add_custom_target(run_make_ms2 ALL
@@ -93,6 +95,7 @@ add_custom_command(
 		COMMAND
 			${BASH} ${PYTHON_BUILD_SCRIPT}
 			--pythonExe ${PYTHON_EXE}
+			--binDir ${PYTHON_RUNTIME_OUTPUT_DIR}
 			${PARSE_SCAFFOLD_PATH}
 		)
 add_custom_target(parse_scaffold ALL
@@ -106,6 +109,7 @@ add_custom_command(
 		COMMAND
 			${BASH} ${PYTHON_BUILD_SCRIPT}
 			--pythonExe ${PYTHON_EXE}
+			--binDir ${PYTHON_RUNTIME_OUTPUT_DIR}
 			${PARSE_MAXQUANT_PATH}
 		)
 add_custom_target(parse_maxquant ALL

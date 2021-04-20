@@ -6,7 +6,7 @@ python_script_path=""
 PYTHON_MAIN_ARGS=""
 
 function usage {
-    echo -e  "usage: addPythonFiles [--pythonExe <path>] [--mainArgs <args>] <python_script_path>"
+    echo -e  "usage: addPythonFiles [--binDir <path>] [--pythonExe <path>] [--mainArgs <args>] <python_script_path>"
     exit
 }
 
@@ -37,6 +37,10 @@ while ! [[ -z "$1" ]] ; do
 			shift
 			isArg "$1"
 			PYTHON_MAIN_ARGS="$1";;
+		"--binDir")
+			shift
+			isArg "$1"
+			BIN_DIR="$1";;
 		"-h")
 			usage ;;
 		*)

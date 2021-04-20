@@ -69,6 +69,7 @@ if(BUILD_ION_FINDER)
 endif()
 
 if(BUILD_VISUALIZATION_SCRIPTS MATCHES ON)
+	set(PYTHON_RUNTIME_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
 	add_subdirectory("python")
 endif()
 
