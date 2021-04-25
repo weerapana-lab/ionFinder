@@ -65,6 +65,7 @@ def parse_spectrum_report(fname):
 
     return ret
 
+
 def detect_search_engine(dat):
     '''
     Detect the search engnie used to in the scaffold file.
@@ -211,9 +212,30 @@ def main():
     dat = parse_spectrum_report(args.input_file)
     sys.stdout.write(' Done!\n')
 
+    # Check which columns exist
+    required_cols = [PEPTIDE_SEQUENCE, SPECTRUM_NAME, EXPERIMENT_NAME, FIXED_MODIFICATIONS, VARIABLE_MODIFICATIONS]
+    optional_cols = [MS_MS_SAMPLE_NAME, PROTEIN_NAME, PROTEIN_ACCESSION_NUMBERS,
+                     OBSERVED_M_Z, EXCLUSIVE, SPECTRUM_CHARGE] 
+    found_cols = list()
+    sys.stdout.write('\nSearching for required columns.\n')
+    for col in required_cols:
+        if col in dat.columns:
+            sys.stdout.write('\tFound "{}" column\n'.format(col))
+            found_cols.append(col)
+        else:
+            sys.stderr.write('\tERROR: Could not find required column: "{}"\n\tExiting...\n'.format(col))
+            sys.exit(-1)
+    for col in optional_cols:
+        if col in dat.columns:
+            sys.stdout.write('\tFound "{}" column\n'.format(col))
+            found_cols.append(col)
+        else:
+            sys.stderr.write('\tWARN: Could not find optional column: "{}"\n'.format(col))
+    sys.stdout.write('Done!\n')
+
     # Check that all modifications are valid
     if args.calc_formula:
-        sys.stdout.write('Iterating through modifications to make sure their composition is known...')
+        sys.stdout.write('\nIterating through modifications to make sure their composition is known...')
         fixed_good = utils.check_modifications(get_unique_modifications(dat[FIXED_MODIFICATIONS].to_list()),
                                               'fixed', verbose=args.verbose)
         variable_good = utils.check_modifications(get_unique_modifications(dat[VARIABLE_MODIFICATIONS].to_list()),
@@ -231,44 +253,46 @@ def main():
 
     # parse protein id and name
     # At some point should use re.findall
-    matches = [(ACCESSION_REGEX.search(s), s) for s in dat[PROTEIN_ACCESSION_NUMBERS].values.tolist()]
-    good_matches = [m for m, _ in matches if bool(m)]
-    if len(dat.index) != len([m for m, _ in matches if m]):
-        sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) -
-            len(good_matches)))
-        if args.verbose:
-            sys.stderr.write('Bad acession(s):\n')
-            bad_acessions = set(dat[[not bool(m) for m, _ in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
-            for acession in bad_acessions:
-                sys.stderr.write('\t{}\n'.format(acession))
-        if args.bad_id_filter:
-            nBefore = len(dat.index)
-            dat = dat[[bool(x) for x, _ in matches]]
-            dat = dat.reset_index()
-            nAfter = len(dat.index)
-            sys.stderr.write('Removed {} unparsable entries.\n'.format(nBefore - nAfter))
+    if PROTEIN_ACCESSION_NUMBERS in found_cols:
+        matches = [(ACCESSION_REGEX.search(s), s) for s in dat[PROTEIN_ACCESSION_NUMBERS].values.tolist()]
+        good_matches = [m for m, _ in matches if bool(m)]
+        if len(dat.index) != len([m for m, _ in matches if m]):
+            sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) -
+                len(good_matches)))
+            if args.verbose:
+                sys.stderr.write('Bad acession(s):\n')
+                bad_acessions = set(dat[[not bool(m) for m, _ in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
+                for acession in bad_acessions:
+                    sys.stderr.write('\t{}\n'.format(acession))
+            if args.bad_id_filter:
+                nBefore = len(dat.index)
+                dat = dat[[bool(x) for x, _ in matches]]
+                dat = dat.reset_index()
+                nAfter = len(dat.index)
+                sys.stderr.write('Removed {} unparsable entries.\n'.format(nBefore - nAfter))
 
-    if args.bad_id_filter:
-        dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(1), good_matches)))
-        dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
-    else:
-        ids = list()
-        proteins = list()
-        for match, string in matches:
-            if match:
-                ids.append(match.group(1))
-                proteins.append(match.group(2))
-            else:
-                match = UNIPROT_ID_REGEX.search(string)
+        if args.bad_id_filter:
+            dat[PARENT_ID] = pd.Series(list(map(lambda x: x.group(1), good_matches)))
+            dat[PARENT_PROTEIN] = pd.Series(list(map(lambda x: x.group(2), good_matches)))
+        else:
+            ids = list()
+            proteins = list()
+            for match, string in matches:
                 if match:
                     ids.append(match.group(1))
+                    proteins.append(match.group(2))
                 else:
-                    ids.append(string)
-                proteins.append(string)
-        dat[PARENT_ID] = pd.Series(ids)
-        dat[PARENT_PROTEIN] = pd.Series(ids)
+                    match = UNIPROT_ID_REGEX.search(string)
+                    if match:
+                        ids.append(match.group(1))
+                    else:
+                        ids.append(string)
+                    proteins.append(string)
+            dat[PARENT_ID] = pd.Series(ids)
+            dat[PARENT_PROTEIN] = pd.Series(ids)
 
-    dat[PARENT_DESCRIPTION] = dat[PROTEIN_NAME].str.extract(DESCRIPTION_REGEX)
+    if PROTEIN_NAME in found_cols:
+        dat[PARENT_DESCRIPTION] = dat[PROTEIN_NAME].str.extract(DESCRIPTION_REGEX)
 
     # add static modifications
     seq_list = dat[PEPTIDE_SEQUENCE].apply(str.upper).apply(utils.strToAminoAcids).tolist()
@@ -308,8 +332,8 @@ def main():
                  EXCLUSIVE,
                  OBSERVED_M_Z,
                  SPECTRUM_CHARGE]
-
-    dat = dat[keep_cols]
+    select_cols = [x for x in keep_cols if x in dat.columns]
+    dat = dat[select_cols]
 
     dat.rename({EXPERIMENT_NAME: SAMPLE_NAME,
                 EXCLUSIVE: UNIQUE,
@@ -317,7 +341,7 @@ def main():
                 SPECTRUM_CHARGE: CHARGE},
                axis='columns', inplace=True)
 
-    sys.stdout.write('Writing {}...'.format(ofname))
+    sys.stdout.write('\nWriting {}...'.format(ofname))
     dat.to_csv(ofname, sep='\t', index=False)
     sys.stdout.write(' Done!\n')
 
