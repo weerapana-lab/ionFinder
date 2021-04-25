@@ -216,6 +216,16 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			_neutralLossMass = std::stod(argv[i]);
 			continue;
 		}
+        if(!strcmp(argv[i], "--modMass"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            _modMass = std::stod(argv[i]);
+            continue;
+        }
         if(!strcmp(argv[i], "-g") || !strcmp(argv[i], "--groupMod"))
         {
             if(!utils::isArg(argv[++i])) {
@@ -256,6 +266,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "--citStats"))
 		{
+		    _modMass = CIT_MOD_MASS;
 			_neutralLossMass = CIT_NL_MASS;
 			_ambigiousResidues = CIT_AMB_RESIDUES;
 			_includeCTermMod = false;
@@ -415,7 +426,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			multipleMatchCompare = std::string(argv[i]);
 			continue;
 		}
-		if(!strcmp(argv[i], "--incallions"))
+		if(!strcmp(argv[i], "--incAllIons"))
 		{
 			if(!utils::isArg(argv[++i]))
 			{
@@ -430,6 +441,23 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 			includeAllIons = std::stoi(argv[i]);
 			continue;
 		}
+        if(!strcmp(argv[i], "--printSmod"))
+        {
+            if(!writeSmod(_wd))
+                std::cerr << "Could not write new smod file!" << NEW_LINE;
+            return false;
+        }
+        if(!strcmp(argv[i], "--smod"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage();
+                return false;
+            }
+            _smodFile = utils::absPath(argv[i]);
+            smodSpecified = true;
+            continue;
+        }
 		if(!strcmp(argv[i], "--nThread"))
 		{
 			if(!utils::isArg(argv[++i]))

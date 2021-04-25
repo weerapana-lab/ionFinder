@@ -34,16 +34,16 @@
 #include <algorithm>
 #include <string>
 
+#include <constants.hpp>
 #include <utils.hpp>
 #include <msInterface/msScan.hpp>
 
 namespace scanData{
-	
 	class Scan;
 
 	typedef std::vector<Scan> scansType;
 	std::string const OF_EXT = ".spectrum";
-	const char MOD_CHAR = '*';
+	const char MOD_CHAR = constants::MOD_CHAR;
 	
 	std::string removeStaticMod(std::string s, bool lowercase = true);
 	std::string removeDynamicMod(std::string s, bool lowercase = true);

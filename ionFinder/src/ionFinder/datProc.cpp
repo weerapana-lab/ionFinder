@@ -577,22 +577,26 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 	std::string curWD;
 	std::string spFname;
 	aaDB::AADB aminoAcidMasses;
+	bool aaDBInit = false;
 	ms2::Spectrum spectrum;
 
 	for(size_t i = beg; i < end; i++)
 	{
-		//first get current wd name
-		curWD = utils::dirName(scans[i].getPrecursor().getFile());
-		spFname = curWD + "/sequest.params";
-		
-		if(curSample != scans[i].getSampleName())
+		if((pars.getInputMode() == DTAFILTER_INPUT_STR && curSample != scans[i].getSampleName()) || !aaDBInit)
 		{
 			//re-init Peptide::AminoAcidMasses for each sample
 			curWD = utils::dirName(scans[i].getPrecursor().getFile());
 			spFname = curWD + "/sequest.params";
 			
 			//read sequest params file and init aadb
-			PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
+			aminoAcidMasses.clear();
+			if(pars.getInputMode() == DTAFILTER_INPUT_STR)
+                PeptideNamespace::initAminoAcidsMasses(pars, spFname, aminoAcidMasses);
+			else {
+                PeptideNamespace::initAminoAcidsMasses(pars, aminoAcidMasses);
+                if(!pars.getSmodFileSpecified() && pars.getModMass() != 0)
+                    aminoAcidMasses.addMod(aaDB::AminoAcid(std::string(1, constants::MOD_CHAR), pars.getModMass()));
+            }
 		}//end if
 		curSample = scans[i].getSampleName();
 		

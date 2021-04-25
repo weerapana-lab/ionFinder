@@ -40,10 +40,13 @@ Interpret \fB--matchTolerance\fR as ppm.
 Search ms2s with default settings for citrulline. Specifically \fB--citStats\fR sets the following flags:
 .TP
 .in +0.75i
-\fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ \fB--cTermMod\fR 0
+\fb--modMass 0.984\fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ \fB--cTermMod\fR 0
 
 Later specifications of the previous flags will override those set by \fB--citStats\fR.
 .in
+.TP
+\fB--modMass\fR \fI<mass>\fR
+Specify mass of '*' on modified peptides.
 .TP
 \fB--isoAA\fR \fI<amino_acids>\fR
 Specify amino acids whose mass is ambiguous with the amino acids with the dynamic modification.  \fI<amino_acids>\fR should be single letter amino acid codes with no space between them.

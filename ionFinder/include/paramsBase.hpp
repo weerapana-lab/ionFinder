@@ -54,11 +54,10 @@ namespace base{
 	class ParamsBase{
 	protected:
 		std::string _wd;
-		std::string _aaMassFile;
 		std::string _smodFile;
 		std::string _usageFile;
 		std::string _helpFile;
-		bool wdSpecified{};
+		bool wdSpecified;
 		std::string sequestParamsFname;
 		std::string ofname;
 		
@@ -88,7 +87,7 @@ namespace base{
 		double plotWidth;
 		double plotHeight;
 		
-		bool smodSpecified{};
+		bool smodSpecified;
 		bool seqParSpecified;
 		bool minMzSpecified;
 		bool maxMzSpecified;
@@ -110,6 +109,8 @@ namespace base{
 			_usageFile = usageFile;
 			_helpFile = helpFile;
 			ofname = "";
+			wdSpecified = false;
+			smodSpecified = false;
 			
 			minFragCharge = 1;
 			maxFragCharge = 1;
@@ -147,10 +148,10 @@ namespace base{
 		std::string getSmodFileLoc() const{
 			return _smodFile;
 		}
-		std::string getAAMassFileLoc() const{
-			return _aaMassFile;
+		bool getSmodFileSpecified() const{
+		    return smodSpecified;
 		}
-		
+
 		bool getWDSpecified() const{
 			return wdSpecified;
 		}

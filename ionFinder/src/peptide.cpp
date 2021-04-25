@@ -506,26 +506,17 @@ void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars,
 	if(!spFile.read())
 		throw std::runtime_error("Could not read sequest params file!");
 	
-	if(!aadb.initialize(spFile.getAAMap()))
-		throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
+	aadb.initialize(spFile.getAAMap());
 }
 
 void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars, aaDB::AADB& aadb)
 {
-	if(pars.getSeqParSpecified())
-	{
-		seqpar::SequestParamsFile spFile(pars.getSeqParFname());
-		
-		if(!spFile.read())
-			throw std::runtime_error("Could not read sequest params file!");
-		
-		if(!aadb.initialize(spFile.getAAMap()))
-			throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
-	}
-	else {
-		if(!aadb.initialize(pars.getSmodFileLoc()))
-			throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
-	}
+    if(pars.getSmodFileSpecified()) {
+        if (!aadb.initialize(pars.getSmodFileLoc()))
+            throw std::runtime_error("Error initalzing peptide::Peptide::aminoAcidMasses");
+    } else {
+        aadb.initialize();
+    }
 }
 
 void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,

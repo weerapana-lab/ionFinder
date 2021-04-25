@@ -63,14 +63,10 @@ namespace aaDB{
 		~AminoAcid() {};
 		
 		//modifiers
-		void operator += (double mod){
+		void addMod(double mod){
 			modification += mod;
 		}
-		void operator = (const AminoAcid& _add){
-			symbol = _add.symbol;
-			mass = _add.mass;
-			modification = _add.modification;
-		}
+		AminoAcid& operator = (const AminoAcid& _add)= default;
 		void setMass(double _mass){
 			mass = _mass;
 		}
@@ -93,7 +89,7 @@ namespace aaDB{
 		//modifiers
 		void initAADB();
 		bool readInModDB(std::string, aminoAcidsDBType&);
-		void addStaticMod(const aminoAcidsDBType&, bool);
+		void addStaticMod(const aminoAcidsDBType&);
 		
 	public:
 		//constructor
@@ -101,13 +97,17 @@ namespace aaDB{
 		~AADB(){}
 		
 		//modifiers
-		bool initialize(std::string modDBLoc, bool showWarnings = true);
-		bool initialize(const aminoAcidsDBType&, bool showWarnings = true);
+		bool initialize(std::string modDBLoc);
+		void initialize(const aminoAcidsDBType&);
+		void initialize();
+		void addMod(const AminoAcid&);
+		void clear();
 		
 		//properties
 		double calcMW(std::string sequence, bool addNTerm = true, bool addCTerm = true) const;
 		double getMW(std::string) const;
 		double getMW(char) const;
+		bool aaExists(std::string) const;
 		bool empty() const{
 			return aminoAcidsDB.empty();
 		}

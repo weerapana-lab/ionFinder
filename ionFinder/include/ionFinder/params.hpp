@@ -53,10 +53,11 @@ namespace IonFinder{
     //!default residues which are isobaric with a modification
     std::string const DEFAULT_AMBIGIOUS_RESIDUES = "";
 	std::string const CIT_AMB_RESIDUES = "NQ";
-	
+
 	double const CIT_NL_MASS = 43.0058;
 	double const DEFAULT_NEUTRAL_LOSS_MASS = CIT_NL_MASS;
-	
+	double const CIT_MOD_MASS = 0.984289;
+
 	class Params;
 	
 	class Params : public base::ParamsBase{
@@ -86,6 +87,9 @@ namespace IonFinder{
 		bool _calcNL;
 		//! Should c terminal modifications be incluced?
 		bool _includeCTermMod;
+
+		//! Mass of '*' on modified peptides
+		double _modMass;
 		
 		//! was a input directory specified
 		bool _inDirSpecified;
@@ -133,6 +137,7 @@ namespace IonFinder{
             _artifactNLIntFrac = 0.01;
 			_includeCTermMod = true;
 			_dtaFilterBase = DEFAULT_FILTER_FILE_NAME;
+			_modMass = 0;
 			_neutralLossMass = DEFAULT_NEUTRAL_LOSS_MASS;
 			_ambigiousResidues = DEFAULT_AMBIGIOUS_RESIDUES;
 			ofname = PEPTIDE_MOD_STATS_OFNAME;
@@ -164,6 +169,9 @@ namespace IonFinder{
 		}
 		bool getCalcNL() const{
 			return _calcNL;
+		}
+		double getModMass() const{
+		    return _modMass;
 		}
 		double getNeutralLossMass() const{
 			return _neutralLossMass;

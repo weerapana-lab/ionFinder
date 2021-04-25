@@ -37,7 +37,58 @@ def get_unique_modifications(modified_sequences):
     return list(ret)
 
 
-def extractModifications(modified_sequences):
+def extractModifications(modified_sequence, fixed_modifications=None):
+    seq_no_mod = ''
+    matches = list(MODIFICATION_REGEX.finditer(modified_sequence))
+    indecies = [True for _ in range(len(modified_sequence))]
+    modification_indecies = list()
+    for m in matches:
+        modification_indecies.append(m.start())
+        for i in range(len(indecies)):
+            if i in range(m.start() + 1, m.end()):
+                indecies[i] = False
+
+    new_modification_indecies = list()
+    for i, (char, boo) in enumerate(zip(modified_sequence, indecies)):
+        if boo:
+            if char != '_':
+                seq_no_mod += char
+            if i in modification_indecies:
+                new_modification_indecies.append(len(seq_no_mod))
+
+    amino_acids = utils.strToAminoAcids(seq_no_mod)
+    formula = MolecularFormula(seq_no_mod)
+
+    # add dynamic modifications
+    for i, site in enumerate(new_modification_indecies):
+        name = matches[i].group(2).lower().strip()
+        residue = matches[i].group(1)
+        if residue == '_':
+            if site == 0:
+                residue = 'N-TERM'
+            else: # May have to also add c-term at some point but I am too lazy to do it now.
+                raise ValueError('Invalid char in sequence: {}'.format(seq_no_mod))
+        mod_temp = atom_table.get_mod(name, residue)
+        formula.add_mod(name, residue)
+        amino_acids[site].mod += atom_table.calc_mass(mod_temp)
+
+    # add static modifications
+    for mod, residue in fixed_modifications:
+        mod_temp = atom_table.get_mod(mod, residue)
+        mass_temp = atom_table.calc_mass(mod_temp)
+        if residue == 'N_TERM':
+            amino_acids[0].mod += mass_temp
+            continue
+        for i, aa in enumerate(seq_no_mod):
+            if aa == residue:
+                formula.add_mod(mod, residue)
+                amino_acids[i+1].mod += mass_temp
+
+    return amino_acids, formula
+
+
+
+def extractAllModifications(modified_sequences, fixed_modifications=None):
     '''
     Extract and parse modifications from peptide sequences.
 
@@ -45,6 +96,8 @@ def extractModifications(modified_sequences):
     ----------
     modified_sequences: list
         A list of peptide sequences with modification.
+    fixed_modifications: list
+        A list of tuples wher the first elment is the 
 
     Returns
     -------
@@ -55,38 +108,9 @@ def extractModifications(modified_sequences):
     formulas = list()
     amino_acids = list()
     for s in modified_sequences:
-        seq_no_mod = ''
-        matches = list(MODIFICATION_REGEX.finditer(s))
-        indecies = [True for _ in range(len(s))]
-        modification_indecies = list()
-        for m in matches:
-            modification_indecies.append(m.start())
-            for i in range(len(indecies)):
-                if i in range(m.start() + 1, m.end()):
-                    indecies[i] = False
-
-        new_modification_indecies = list()
-        for i, (char, boo) in enumerate(zip(s, indecies)):
-            if boo:
-                if char != '_':
-                    seq_no_mod += char
-                if i in modification_indecies:
-                    new_modification_indecies.append(len(seq_no_mod))
-
-        amino_acids.append(utils.strToAminoAcids(seq_no_mod))
-        formulas.append(MolecularFormula(seq_no_mod))
-
-        for i, site in enumerate(new_modification_indecies):
-            name = matches[i].group(2).lower().strip()
-            residue = matches[i].group(1)
-            if residue == '_':
-                if site == 0:
-                    residue = 'N-TERM'
-                else: # May have to also add c-term at some point but I am too lazy to do it now.
-                    raise ValueError('Invalid char in sequence: {}'.format(seq_no_mod))
-            mod_temp = atom_table.get_mod(name, residue)
-            formulas[-1].add_mod(name, residue)
-            amino_acids[-1][site].mod += atom_table.calc_mass(mod_temp)
+        _amino_acids, formula = extractModifications(s, fixed_modifications)
+        formulas.append(formula)
+        amino_acids.append(_amino_acids)
 
     return amino_acids, formulas
 
@@ -170,7 +194,7 @@ def main():
         ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES].apply(lambda x: [i for i in x.split(';')][0])
 
     # parse sequences
-    seq_list, formulas = extractModifications(dat[maxquant_constants.MODIFIED_SEQUENCE].to_list())
+    seq_list, formulas = extractAllModifications(dat[maxquant_constants.MODIFIED_SEQUENCE].to_list(), fixed_modifications)
 
     # add formula column
     ret[tsv_constants.FORMULA] = pd.Series([str(x) for x in formulas])

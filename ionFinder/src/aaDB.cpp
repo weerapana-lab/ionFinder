@@ -68,14 +68,14 @@ void aaDB::AADB::initAADB()
     aminoAcidsDB["Y"] = aaDB::AminoAcid("Y", 163.06333);
     aminoAcidsDB["U"] = aaDB::AminoAcid("U", 150.95309);
     aminoAcidsDB["*"] = aaDB::AminoAcid("*", 0);
+    aminoAcidsDB["@"] = aaDB::AminoAcid("@", 0);
+    aminoAcidsDB["&"] = aaDB::AminoAcid("&", 0);
 }
 
 bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& modsTemp)
 {
 	std::ifstream inF(_modDBLoc);
 	if(!inF) return false;
-	
-	//std::cerr << _modDBLoc << std::endl;
 	
 	std::string line;
 	
@@ -93,29 +93,39 @@ bool aaDB::AADB::readInModDB(std::string _modDBLoc, aaDB::aminoAcidsDBType& mods
 				continue;
 			aaDB::AminoAcid temp (line);
 			modsTemp[temp.getSymbol()] = temp;
-		}//end of while
+		}// end of while
 	}
 	return true;
-}//end of function
+}// end of function
 
-void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp, bool showWarnings)
-{
-	for(aaDB::AADB::itType it = modsTemp.begin(); it != modsTemp.end(); ++it)
-	{
-		std::string tempSymbol = it->second.getSymbol();
-		//check that item from modsTemp exists in aadb
-		if(aminoAcidsDB.find(tempSymbol) == aminoAcidsDB.end())
-		{
-			if(showWarnings)
-				std::cerr << "Could not find " << tempSymbol << " in aaDB!" << NEW_LINE;
-			continue;
-		} else {
-			aminoAcidsDB[tempSymbol] += it->second.getMass();
-		}
-	}//end for
-}//end function
+//! Check if amino acid or modification exists in AADB.
+bool aaDB::AADB::aaExists(std::string aa) const {
+    return aminoAcidsDB.find(aa) != aminoAcidsDB.end();
+}
 
-bool aaDB::AADB::initialize(std::string modDBLoc, bool showWarnings)
+/**
+ * Add modification to amino acid
+ * @param aa AminoAcid with mass member set to modification mass
+ * @throws std::rumtime_error if aa.symbol does not exist in AADB
+ */
+void aaDB::AADB::addMod(const AminoAcid& aa) {
+    std::string tempSymbol = aa.getSymbol();
+    if(!aaExists(tempSymbol))
+        throw std::runtime_error("Unknown modification: " + tempSymbol);
+    else aminoAcidsDB[tempSymbol].addMod(aa.getMass());
+}
+
+void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp) {
+	for(const auto & it : modsTemp)
+	    addMod(it.second);
+}
+
+/**
+ * Initialize with static modifications file.
+ * @param modDBLoc
+ * @return true if all file I/O was successful.
+ */
+bool aaDB::AADB::initialize(std::string modDBLoc)
 {
 	//read in files containing aa masses and modifications
 	aaDB::aminoAcidsDBType modsTemp;
@@ -124,22 +134,32 @@ bool aaDB::AADB::initialize(std::string modDBLoc, bool showWarnings)
     initAADB();
 
 	//add static mods to aadb
-	addStaticMod(modsTemp, showWarnings);
+	addStaticMod(modsTemp);
 	
 	return true;
 }
 
-bool aaDB::AADB::initialize(const aaDB::aminoAcidsDBType& mods, bool showWarnings)
-{
+/**
+ * Initialize with modifications.
+ * @param mods Modifications to add to each amino acid.
+ */
+void aaDB::AADB::initialize(const aaDB::aminoAcidsDBType& mods){
     initAADB(); // init aaDB
-    addStaticMod(mods, showWarnings); //add static mods to aadb
-	return true;
+    addStaticMod(mods); //add static mods to aadb
 }
 
+//! Initialize with default amino acid masses.
+void aaDB::AADB::initialize(){
+   initAADB();
+}
+
+void aaDB::AADB::clear(){
+    aminoAcidsDB.clear();
+}
 
 double aaDB::AADB::getMW(std::string aa) const
 {
-	aaDB::AADB::itType it = aminoAcidsDB.find(aa);
+	auto it = aminoAcidsDB.find(aa);
 	if(it == aminoAcidsDB.end())
 		return -1;
 	return it->second.getMass();

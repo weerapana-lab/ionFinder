@@ -41,6 +41,7 @@
 #include <cmath>
 #include <limits>
 
+#include <constants.hpp>
 #include <ionFinder/ionFinder.hpp>
 #include <ionFinder/params.hpp>
 #include <dtafilter.hpp>
