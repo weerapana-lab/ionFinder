@@ -44,7 +44,6 @@ endif()
 message("${PYTHON_RUNTIME_OUTPUT_DIR}")
 if(NOT DEFINED PYTHON_RUNTIME_OUTPUT_DIR)
 	set(PYTHON_RUNTIME_OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin)
-	message("${PYTHON_RUNTIME_OUTPUT_DIR}")
 endif()
 set(RUN_MAKE_MS2_SCR_PATH ${PYTHON_SRC_DIR}/run_make_ms2.py
 		CACHE STRING "Path to run_make_ms2.py")
