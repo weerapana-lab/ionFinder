@@ -608,6 +608,9 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 		if(pars.getCalcNL()){
 			peptides.back().addNeutralLoss(pars.getNeutralLossMass(), pars.getLabelArtifactNL());
 		}
+        
+        // std::cout << scans[i].getPrecursor().getFile() << " -> " << scans[i].getScanNum() << NEW_LINE;
+        // peptides.back().printFragments(std::cout, false);
 
 		if(!msInterface.getScan(spectrum,
                                 scans[i].getPrecursor().getFile(),
