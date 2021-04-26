@@ -38,6 +38,24 @@ def get_unique_modifications(modified_sequences):
 
 
 def extractModifications(modified_sequence, fixed_modifications=None):
+    '''
+    Convert modified_sequence to list of AminoAcids and formula.
+
+    Parameters
+    ----------
+    modified_sequence: str
+        Peptide sequence with modifications.
+    fixed_modifications: list
+        A list of tuples wher the first elment is the modification the second is the residue.
+    
+    Returns
+    -------
+    amino_acids: list
+        A list of AminoAcids in the sequence
+    formula: MolecularFormula
+        Molecular formula for sequence
+    '''
+
     seq_no_mod = ''
     matches = list(MODIFICATION_REGEX.finditer(modified_sequence))
     indecies = [True for _ in range(len(modified_sequence))]
@@ -87,7 +105,6 @@ def extractModifications(modified_sequence, fixed_modifications=None):
     return amino_acids, formula
 
 
-
 def extractAllModifications(modified_sequences, fixed_modifications=None):
     '''
     Extract and parse modifications from peptide sequences.
@@ -97,7 +114,7 @@ def extractAllModifications(modified_sequences, fixed_modifications=None):
     modified_sequences: list
         A list of peptide sequences with modification.
     fixed_modifications: list
-        A list of tuples wher the first elment is the 
+        A list of tuples wher the first elment is the modification the second is the residue.
 
     Returns
     -------
@@ -116,7 +133,6 @@ def extractAllModifications(modified_sequences, fixed_modifications=None):
 
 
 def main():
-
     parser = argparse.ArgumentParser(prog='parse_maxquant',
                                      parents=[PARENT_PARSER],
                                      description='Convert MaxQuant output to proper input for ionFinder tsv input.',
