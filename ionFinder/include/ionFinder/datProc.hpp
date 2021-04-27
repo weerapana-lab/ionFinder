@@ -82,7 +82,7 @@ namespace IonFinder{
 
     void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
                                   const size_t beg, const size_t end,
-                                  const ms2::MsInterface& msInterface,
+                                  ms2::MsInterface& msInterface,
                                   std::vector<PeptideNamespace::Peptide>& peptides,
                                   const IonFinder::Params& pars,
                                   bool* success, std::atomic<size_t>& scansIndex);

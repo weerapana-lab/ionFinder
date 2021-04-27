@@ -432,7 +432,7 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 	bool* sucsses = new bool[nThread];
 
     // read ms files
-    // ms2::MsInterface msInterface;
+    ms2::MsInterface msInterface;
     // msInterface.read(scans.begin(), scans.end());
 
 	//split up input data for each thread
@@ -447,13 +447,13 @@ bool IonFinder::findFragmentsParallel(std::vector<Dtafilter::Scan>& scans,
 		//spawn thread
 		assert(threadIndex < nThread);
 		splitPeptides[threadIndex] = std::vector<PeptideNamespace::Peptide>();
-		threads.emplace_back(IonFinder::findFragments_, std::ref(scans), begNum, endNum,
-     							  std::ref(splitPeptides[threadIndex]), std::ref(pars),
-     							  sucsses + threadIndex, std::ref(scansIndex));
-		// threads.emplace_back(IonFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
-		// 							  msInterface,
-		// 							  std::ref(splitPeptides[threadIndex]), std::ref(pars),
-		// 							  sucsses + threadIndex, std::ref(scansIndex));
+		// threads.emplace_back(IonFinder::findFragments_, std::ref(scans), begNum, endNum,
+     	// 						  std::ref(splitPeptides[threadIndex]), std::ref(pars),
+     	// 						  sucsses + threadIndex, std::ref(scansIndex));
+		threads.emplace_back(IonFinder::findFragments_threadSafe, std::ref(scans), begNum, endNum,
+									  std::ref(msInterface),
+									  std::ref(splitPeptides[threadIndex]), std::ref(pars),
+									  sucsses + threadIndex, std::ref(scansIndex));
 		threadIndex++;
 	}
 
@@ -548,10 +548,9 @@ void IonFinder::findFragments_(std::vector<Dtafilter::Scan>& scans,
 {
     // read ms files
     ms2::MsInterface msInterface;
-    msInterface.read(scans.begin() + beg, scans.begin() + end, false);
+    msInterface.read(scans.begin() + beg, scans.begin() + end);
 
-    IonFinder::findFragments_threadSafe(scans, beg, end,
-                                        msInterface,
+    IonFinder::findFragments_threadSafe(scans, beg, end, msInterface,
                                         peptides, pars, success, scansIndex);
 }
 
@@ -567,7 +566,7 @@ void IonFinder::findFragments_(std::vector<Dtafilter::Scan>& scans,
  */
 void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 										 const size_t beg, const size_t end,
-                                         const ms2::MsInterface& msInterface,
+                                         ms2::MsInterface& msInterface,
 										 std::vector<PeptideNamespace::Peptide>& peptides,
 										 const IonFinder::Params& pars,
 										 bool* success, std::atomic<size_t>& scansIndex)
