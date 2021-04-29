@@ -23,7 +23,7 @@ SEARCH_ENGINES = {'Proteome Discoverer':{'scan': (SPECTRUM_NAME, re.compile(r',s
                   'MaxQuant':{'scan': (SPECTRUM_NAME, re.compile(r'\d+-\d+_(\d+)$')),
                               'msms': (MS_MS_SAMPLE_NAME, re.compile(r'^(?:[\w \+\-]+:\s*)?([\w\+\- ]+)$'))},
                   'Mascot': {'scan': (SPECTRUM_NAME, re.compile(r'Scan (\w+)')),
-                             'msms': (SPECTRUM_NAME, re.compile(r'Scan \w+.*\\([A-Za-z0-9_\-\+ ]+\.raw)'))}}
+                             'msms': (SPECTRUM_NAME, re.compile(r'Scan \w+.*\\([A-Za-z0-9_\-\+ ]+\.\w+)'))}}
 
 
 MODIFICATION_REGEX = re.compile(r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$')
