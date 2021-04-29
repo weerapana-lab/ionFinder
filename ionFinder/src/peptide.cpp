@@ -49,19 +49,19 @@ PeptideNamespace::IonType PeptideNamespace::strToIonType(char c){
  */
 PeptideNamespace::IonType PeptideNamespace::strToIonType(const std::string& s)
 {
-	if(s == "b")
-		return IonType::B;
-	else if(s == "y")
-		return IonType::Y;
-	else if(s == "m" || s == "M")
-		return IonType::M;
-	else if(utils::startsWith(s, "b-"))
-		return IonType::B_NL;
-	else if(utils::startsWith(s, "y-"))
-		return IonType::Y_NL;
-	else if(utils::startsWith(s, "m-") || utils::startsWith(s, "M-"))
-		return IonType::M_NL;
-	else throw std::runtime_error(s + " is an unknown IonType!");
+    if(s == "b")
+        return IonType::B;
+    else if(s == "y")
+        return IonType::Y;
+    else if(s == "m" || s == "M")
+        return IonType::M;
+    else if(utils::startsWith(s, "b-"))
+        return IonType::B_NL;
+    else if(utils::startsWith(s, "y-"))
+        return IonType::Y_NL;
+    else if(utils::startsWith(s, "m-") || utils::startsWith(s, "M-"))
+        return IonType::M_NL;
+    else throw std::runtime_error(s + " is an unknown IonType!");
 }
 
 /**
@@ -69,7 +69,7 @@ PeptideNamespace::IonType PeptideNamespace::strToIonType(const std::string& s)
  \return neutral loss
  */
 std::string PeptideNamespace::FragmentIon::getNLStr() const{
-	return std::string((_nlMass < 1 ? "" : "+")) + std::to_string((int)round(_nlMass));
+    return std::string((_nlMass < 1 ? "" : "+")) + std::to_string((int)round(_nlMass));
 }
 
 /**
@@ -79,47 +79,47 @@ std::string PeptideNamespace::FragmentIon::getNLStr() const{
  */
 void PeptideNamespace::FragmentIon::_initFragSpan(const std::string& sequence)
 {
-	int len = int(sequence.length());
-	
-	if(_b_y == 'b')
-	{
-		_beg = 0;
-		_end = _num - 1;
-	}
-	else if(_b_y == 'y')
-	{
-		_beg = len - _num;
-		_end = len - 1;
-	}
-	else if(_b_y == 'M' || _b_y == 'm')
-	{
-		_beg = 0;
-		_end = len - 1;
-	}
-	else throw std::runtime_error("Unknown IonType!");
-	_sequence = std::string(sequence.begin() + _beg, sequence.begin() + _end + 1);
-	//std::cout << _sequence << std::endl;
+    int len = int(sequence.length());
+    
+    if(_b_y == 'b')
+    {
+        _beg = 0;
+        _end = _num - 1;
+    }
+    else if(_b_y == 'y')
+    {
+        _beg = len - _num;
+        _end = len - 1;
+    }
+    else if(_b_y == 'M' || _b_y == 'm')
+    {
+        _beg = 0;
+        _end = len - 1;
+    }
+    else throw std::runtime_error("Unknown IonType!");
+    _sequence = std::string(sequence.begin() + _beg, sequence.begin() + _end + 1);
+    //std::cout << _sequence << std::endl;
 }
 
 std::string PeptideNamespace::ionTypeToStr(const PeptideNamespace::IonType& ionType)
 {
-	switch(ionType){
-		case IonType::B : return "b";
-			break;
-		case IonType::Y : return "y";
-			break;
-		case IonType::M : return "M";
-			break;
-		case IonType::B_NL : return "b_nl";
-			break;
-		case IonType::Y_NL : return "y_nl";
-			break;
-		case IonType::M_NL : return "M_nl";
-			break;
-	    case IonType::BLANK : return "blank";
-		default:
-			throw std::runtime_error("Not a valid option!");
-	}
+    switch(ionType){
+        case IonType::B : return "b";
+            break;
+        case IonType::Y : return "y";
+            break;
+        case IonType::M : return "M";
+            break;
+        case IonType::B_NL : return "b_nl";
+            break;
+        case IonType::Y_NL : return "y_nl";
+            break;
+        case IonType::M_NL : return "M_nl";
+            break;
+        case IonType::BLANK : return "blank";
+        default:
+            throw std::runtime_error("Not a valid option!");
+    }
 }
 
 /**
@@ -127,13 +127,13 @@ std::string PeptideNamespace::ionTypeToStr(const PeptideNamespace::IonType& ionT
  */
 std::string PeptideNamespace::Ion::makeChargeLable() const
 {
-	if(charge > 0)
-		return std::to_string(charge) + "+";
-	else if(charge < 0)
-		return std::to_string(charge) + "-";
-	else if(charge == 1)
-		return " +";
-	else return std::to_string(charge);
+    if(charge > 0)
+        return std::to_string(charge) + "+";
+    else if(charge < 0)
+        return std::to_string(charge) + "-";
+    else if(charge == 1)
+        return " +";
+    else return std::to_string(charge);
 }
 
 /**
@@ -141,7 +141,7 @@ std::string PeptideNamespace::Ion::makeChargeLable() const
  \param modMass mass to add
  */
 void PeptideNamespace::AminoAcid::_addMod(double modMass){
-	_modMass += modMass;
+    _modMass += modMass;
 }
 
 /**
@@ -150,9 +150,9 @@ void PeptideNamespace::AminoAcid::_addMod(double modMass){
  \param modMass mass to add
  */
 void PeptideNamespace::AminoAcid::setDynamicMod(char mod, double modMass){
-	_mod = mod;
-	_dynamicMod = true;
-	_addMod(modMass);
+    _mod = mod;
+    _dynamicMod = true;
+    _addMod(modMass);
 }
 
 /**
@@ -161,8 +161,8 @@ void PeptideNamespace::AminoAcid::setDynamicMod(char mod, double modMass){
  */
 void PeptideNamespace::AminoAcid::addStaticMod(double modMass)
 {
-	_staticMod = true;
-	_addMod(modMass);
+    _staticMod = true;
+    _addMod(modMass);
 }
 
 PeptideNamespace::AminoAcid::AminoAcid(double mass) : Ion() {
@@ -179,15 +179,15 @@ PeptideNamespace::AminoAcid::AminoAcid(double mass) : Ion() {
  */
 std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod, std::string chargeSep) const
 {
-	std::string str = std::string(1, _b_y);
-	str += isM() ? "" : std::to_string(_num); //add ion number if not M ion
-	str += includeMod ? _mod : ""; //add modification
-	
-	if(charge > 1)
-		str += chargeSep + makeChargeLable();
-	if(isNL())
-		str += getNLStr();
-	return str;
+    std::string str = std::string(1, _b_y);
+    str += isM() ? "" : std::to_string(_num); //add ion number if not M ion
+    str += includeMod ? _mod : ""; //add modification
+    
+    if(charge > 1)
+        str += chargeSep + makeChargeLable();
+    if(isNL())
+        str += getNLStr();
+    return str;
 }
 
 /**
@@ -196,101 +196,101 @@ std::string PeptideNamespace::FragmentIon::getLabel(bool includeMod, std::string
  */
 std::string PeptideNamespace::FragmentIon::getFormatedLabel() const
 {
-	std::string str = std::string(1, _b_y) + (isM() ? "" : "[" + std::to_string(_num) + "]");
-	
-	if(!_mod.empty())
-		str += " *\"" + _mod + "\"";
-	
-	if(charge > 1)
-		str += "^\"" + makeChargeLable() + "\"";
-	
-	if(isNL())
-		str += getNLStr();
-	
-	return str;
+    std::string str = std::string(1, _b_y) + (isM() ? "" : "[" + std::to_string(_num) + "]");
+    
+    if(!_mod.empty())
+        str += " *\"" + _mod + "\"";
+    
+    if(charge > 1)
+        str += "^\"" + makeChargeLable() + "\"";
+    
+    if(isNL())
+        str += getNLStr();
+    
+    return str;
 }
 
 void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
-											  const aaDB::AADB& aminoAcidsMasses)
+                                              const aaDB::AADB& aminoAcidsMasses)
 {
-	fragments.clear();
-	
-//	if(sequence == "GPDFGYVTR")
-//		std::cout << "Found!" << std::endl;
-	
-	double nTerm = aminoAcidsMasses.getMW("N_term");
-	double cTerm = aminoAcidsMasses.getMW("C_term");
-	
-	const PeptideNamespace::PepIonIt endIt = aminoAcids.end();
-	const PeptideNamespace::PepIonIt begIt = aminoAcids.begin();
-	size_t beg_end, end_beg;
-	
-	size_t len = aminoAcids.size();
-	for(size_t i = 0; i < len; i++)
-	{
-		beg_end = i + 1;
-		end_beg = i;
-		
-		std::string modsB = PeptideNamespace::concatMods(begIt, begIt + beg_end);
-		std::string modsY = PeptideNamespace::concatMods(begIt + end_beg, endIt);
-		
-		std::string ySeq = "";
-		std::string bSeq = "";
-		
-		for(int j = minCharge; j <= maxCharge; j++)
-		{
-			//add b ion
-			fragments.push_back(FragmentIon('b', //b_y
-											i + 1, //num
-											j, //charge
-											PeptideNamespace::calcMass(begIt, begIt + beg_end) + nTerm, //mass
-											modsB, //mod
-											sequence) //pepSequence
-								);
-			
-			//add y ion
-			if(i == 0){
-				fragments.push_back(FragmentIon('M', //b_y
-												0, //num
-												j, //charge
-												PeptideNamespace::calcMass(begIt + end_beg, endIt) + PeptideNamespace::H_MASS + cTerm, //mass
-												modsY, //mod
-												sequence) //pepSequence
-									);
-			}
-			else{
-				fragments.push_back(FragmentIon('y', //b_y
-												int(sequence.length() - i), //num
-												j, //charge
-												PeptideNamespace::calcMass(begIt + end_beg, endIt) + PeptideNamespace::H_MASS + cTerm, //mass
-												modsY ,//mod
-												sequence) //pepSequence
-									);
-			}//end of else
-		}//end of for j
-	}//enf of for i
-	
-	/*if(sequence == "DLAAFDKSHDQAVRTYQEHK"){
-		std::cout << NEW_LINE << NEW_LINE;
-		std::streamsize ss = std::cout.precision();
-		std::cout.precision(5);
-		for(int i = minCharge; i <= maxCharge; i++)
-		{
-			for(auto it = fragments.begin(); it != fragments.end(); ++it)
-			{
-				if(it->getCharge() == i)
-				{
-					std::cout << it->getLabel(false, "_") <<
-					'\t' << std::fixed << it->getMZ() << '\t';
-					++it;
-					std::cout << std::fixed << it->getLabel(false, "_") <<
-					'\t' << it->getMZ() << '\n';
-				}
-			}
-		}
-		std::cout.precision(ss);
-		std::cout << "POOP" << NEW_LINE;
-	}*/
+    fragments.clear();
+    
+//  if(sequence == "GPDFGYVTR")
+//      std::cout << "Found!" << std::endl;
+    
+    double nTerm = aminoAcidsMasses.getMW("N_term");
+    double cTerm = aminoAcidsMasses.getMW("C_term");
+    
+    const PeptideNamespace::PepIonIt endIt = aminoAcids.end();
+    const PeptideNamespace::PepIonIt begIt = aminoAcids.begin();
+    size_t beg_end, end_beg;
+    
+    size_t len = aminoAcids.size();
+    for(size_t i = 0; i < len; i++)
+    {
+        beg_end = i + 1;
+        end_beg = i;
+        
+        std::string modsB = PeptideNamespace::concatMods(begIt, begIt + beg_end);
+        std::string modsY = PeptideNamespace::concatMods(begIt + end_beg, endIt);
+        
+        std::string ySeq = "";
+        std::string bSeq = "";
+        
+        for(int j = minCharge; j <= maxCharge; j++)
+        {
+            //add b ion
+            fragments.push_back(FragmentIon('b', //b_y
+                                            i + 1, //num
+                                            j, //charge
+                                            PeptideNamespace::calcMass(begIt, begIt + beg_end) + nTerm, //mass
+                                            modsB, //mod
+                                            sequence) //pepSequence
+                                );
+            
+            //add y ion
+            if(i == 0){
+                fragments.push_back(FragmentIon('M', //b_y
+                                                0, //num
+                                                j, //charge
+                                                PeptideNamespace::calcMass(begIt + end_beg, endIt) + PeptideNamespace::H_MASS + cTerm, //mass
+                                                modsY, //mod
+                                                sequence) //pepSequence
+                                    );
+            }
+            else{
+                fragments.push_back(FragmentIon('y', //b_y
+                                                int(sequence.length() - i), //num
+                                                j, //charge
+                                                PeptideNamespace::calcMass(begIt + end_beg, endIt) + PeptideNamespace::H_MASS + cTerm, //mass
+                                                modsY ,//mod
+                                                sequence) //pepSequence
+                                    );
+            }//end of else
+        }//end of for j
+    }//enf of for i
+    
+    /*if(sequence == "DLAAFDKSHDQAVRTYQEHK"){
+        std::cout << NEW_LINE << NEW_LINE;
+        std::streamsize ss = std::cout.precision();
+        std::cout.precision(5);
+        for(int i = minCharge; i <= maxCharge; i++)
+        {
+            for(auto it = fragments.begin(); it != fragments.end(); ++it)
+            {
+                if(it->getCharge() == i)
+                {
+                    std::cout << it->getLabel(false, "_") <<
+                    '\t' << std::fixed << it->getMZ() << '\t';
+                    ++it;
+                    std::cout << std::fixed << it->getLabel(false, "_") <<
+                    '\t' << it->getMZ() << '\n';
+                }
+            }
+        }
+        std::cout.precision(ss);
+        std::cout << "POOP" << NEW_LINE;
+    }*/
 }
 
 /**
@@ -301,11 +301,11 @@ void PeptideNamespace::Peptide::calcFragments(int minCharge, int maxCharge,
  */
 size_t PeptideNamespace::Peptide::nModsInSpan(size_t beg, size_t end) const
 {
-	size_t ret = 0;
-	for(auto it = modLocs.begin(); it != modLocs.end(); ++it)
-		if(utils::inSpan(beg, end, *it))
-			ret++;
-	return ret;
+    size_t ret = 0;
+    for(auto it = modLocs.begin(); it != modLocs.end(); ++it)
+        if(utils::inSpan(beg, end, *it))
+            ret++;
+    return ret;
 }
 
 /**
@@ -316,27 +316,27 @@ size_t PeptideNamespace::Peptide::nModsInSpan(size_t beg, size_t end) const
  \return New PeptideNamespace::FragmentIon with specified \p lossMass.
  */
 PeptideNamespace::FragmentIon PeptideNamespace::FragmentIon::makeNLFrag(double lossMass,
-																		size_t numNL) const
+                                                                        size_t numNL) const
 {
-	PeptideNamespace::FragmentIon ret = FragmentIon(*this);
-	
-	//get new fragment type
-	PeptideNamespace::IonType ionType;
-	if(getBY() == 'b')
-		ionType = PeptideNamespace::IonType::B_NL;
-	else if(getBY() == 'y')
-		ionType = PeptideNamespace::IonType::Y_NL;
-	else if(getBY() == 'M' || getBY() == 'm')
-		ionType = PeptideNamespace::IonType::M_NL;
-	else throw std::runtime_error("Unknown ion type!");
-	ret.setIonType(ionType);
-	
-	//add mass and nlMass
-	ret.mass = mass - (lossMass / charge);
-	ret._nlMass = -1 * lossMass;
-	ret._numNl = numNL;
+    PeptideNamespace::FragmentIon ret = FragmentIon(*this);
+    
+    //get new fragment type
+    PeptideNamespace::IonType ionType;
+    if(getBY() == 'b')
+        ionType = PeptideNamespace::IonType::B_NL;
+    else if(getBY() == 'y')
+        ionType = PeptideNamespace::IonType::Y_NL;
+    else if(getBY() == 'M' || getBY() == 'm')
+        ionType = PeptideNamespace::IonType::M_NL;
+    else throw std::runtime_error("Unknown ion type!");
+    ret.setIonType(ionType);
+    
+    //add mass and nlMass
+    ret.mass = mass - (lossMass / charge);
+    ret._nlMass = -1 * lossMass;
+    ret._numNl = numNL;
 
-	return ret;
+    return ret;
 }
 
 PeptideNamespace::FragmentIon::FragmentIon(char b_y, int num, int charge, double mass, std::string mod,
@@ -384,27 +384,27 @@ PeptideNamespace::FragmentIon::FragmentIon(const PeptideNamespace::FragmentIon &
  */
 void PeptideNamespace::Peptide::addNeutralLoss(double lossMass, bool labelDecoyNL)
 {
-	//calculate neutral loss combinations
-	std::vector<double> neutralLossIons;
-	for(int i = 1; i <= nMod; i++)
-		neutralLossIons.push_back(i * lossMass);
-	
-	size_t len = fragments.size();
-	size_t nLosses = neutralLossIons.size();
-	for(size_t i = 0; i < len; i++)
-	{
-		for(size_t j = 0; j < nLosses; j++)
-		{
-			fragments.push_back(fragments[i].makeNLFrag(neutralLossIons[j], j + 1));
-			
-			//calc forceLabel
-			if(!labelDecoyNL){
-				size_t modCount_temp = nModsInSpan(fragments.back().getBegin(), fragments.back().getEnd());
-				bool forceLabel = (modCount_temp == fragments.back().getNumNl());
-				fragments.back().setForceLabel(forceLabel);
-			}//end if
-		}//end for j
-	}//end for i
+    //calculate neutral loss combinations
+    std::vector<double> neutralLossIons;
+    for(int i = 1; i <= nMod; i++)
+        neutralLossIons.push_back(i * lossMass);
+    
+    size_t len = fragments.size();
+    size_t nLosses = neutralLossIons.size();
+    for(size_t i = 0; i < len; i++)
+    {
+        for(size_t j = 0; j < nLosses; j++)
+        {
+            fragments.push_back(fragments[i].makeNLFrag(neutralLossIons[j], j + 1));
+            
+            //calc forceLabel
+            if(!labelDecoyNL){
+                size_t modCount_temp = nModsInSpan(fragments.back().getBegin(), fragments.back().getEnd());
+                bool forceLabel = (modCount_temp == fragments.back().getNumNl());
+                fragments.back().setForceLabel(forceLabel);
+            }//end if
+        }//end for j
+    }//end for i
 }//end function
 
 /**
@@ -417,17 +417,17 @@ void PeptideNamespace::Peptide::addNeutralLoss(double lossMass, bool labelDecoyN
  */
 double PeptideNamespace::Peptide::parseStaticMod(size_t startIndex)
 {
-	//get index of parentheses close
-	size_t end = sequence.find(')', startIndex);
-	if(end == std::string::npos)
-		throw std::runtime_error("Invalid peptide sequence: " + sequence);
-	
-	//get mass of modification
-	double ret = std::stod(sequence.substr(startIndex + 1, end - 1));
-	//erase modification from sequence
-	sequence.erase(sequence.begin() + startIndex, sequence.begin() + end + 1);
-	
-	return ret;
+    //get index of parentheses close
+    size_t end = sequence.find(')', startIndex);
+    if(end == std::string::npos)
+        throw std::runtime_error("Invalid peptide sequence: " + sequence);
+    
+    //get mass of modification
+    double ret = std::stod(sequence.substr(startIndex + 1, end - 1));
+    //erase modification from sequence
+    sequence.erase(sequence.begin() + startIndex, sequence.begin() + end + 1);
+    
+    return ret;
 }
 
 /**
@@ -438,75 +438,75 @@ double PeptideNamespace::Peptide::parseStaticMod(size_t startIndex)
  in the Peptide::aminoAcids member.
  */
 void PeptideNamespace::Peptide::fixDiffMod(const aaDB::AADB& aminoAcidsMasses,
-										   const char* diffmods)
+                                           const char* diffmods)
 {
-	//check if n term mod
-	double nTermMod = 0;
-	if(sequence[0] == '('){
-		nTermMod = parseStaticMod(0);
-	}
-	
-	//check that n term is not a diff mod
-	for(const char* p = diffmods; *p; p++)
-		if(sequence[0] == *p)
-			throw std::runtime_error("Invalid peptide sequence: " + sequence);
-	
-	//Check that first char is now a letter
-	if(!isalpha(sequence[0]))
-		throw std::runtime_error("Invalid peptide sequence: " + sequence);
-	
-	for(size_t i = 0; i < sequence.length(); i++)
-	{
-		//first check if current index is a modification.
-		if(sequence[i] == '(')
-		{
-			double m = parseStaticMod(i);
-			aminoAcids.back().addStaticMod(m);
-		}
-		for(const char* p = diffmods; *p; p++){
-			if(sequence[i] == *p){
-				aminoAcids.back().setDynamicMod(sequence[i],
-												aminoAcidsMasses.getMW(sequence[i]));
-				sequence.erase(i, 1);
-				modLocs.push_back(int(aminoAcids.size() - 1)); //add location of mod to modLocs
-				nMod++; //increment nMod
-			}
-		}
-		
-		//exit loop if at end of sequence
-		if(i >= sequence.length())
-			break;
-		
-		//Check that current char is letter
-		if(!isalpha(sequence[i]))
-			throw std::runtime_error("Invalid peptide sequence: " + sequence);
-		
-		//add new amino acid to
-		aminoAcids.emplace_back(aminoAcidsMasses.getMW(sequence[i]));
-	}//end for
-	
-	//add n-terminal modification
-	aminoAcids.begin()->addStaticMod(nTermMod);
+    //check if n term mod
+    double nTermMod = 0;
+    if(sequence[0] == '('){
+        nTermMod = parseStaticMod(0);
+    }
+    
+    //check that n term is not a diff mod
+    for(const char* p = diffmods; *p; p++)
+        if(sequence[0] == *p)
+            throw std::runtime_error("Invalid peptide sequence: " + sequence);
+    
+    //Check that first char is now a letter
+    if(!isalpha(sequence[0]))
+        throw std::runtime_error("Invalid peptide sequence: " + sequence);
+    
+    for(size_t i = 0; i < sequence.length(); i++)
+    {
+        //first check if current index is a modification.
+        if(sequence[i] == '(')
+        {
+            double m = parseStaticMod(i);
+            aminoAcids.back().addStaticMod(m);
+        }
+        for(const char* p = diffmods; *p; p++){
+            if(sequence[i] == *p){
+                aminoAcids.back().setDynamicMod(sequence[i],
+                                                aminoAcidsMasses.getMW(sequence[i]));
+                sequence.erase(i, 1);
+                modLocs.push_back(int(aminoAcids.size() - 1)); //add location of mod to modLocs
+                nMod++; //increment nMod
+            }
+        }
+        
+        //exit loop if at end of sequence
+        if(i >= sequence.length())
+            break;
+        
+        //Check that current char is letter
+        if(!isalpha(sequence[i]))
+            throw std::runtime_error("Invalid peptide sequence: " + sequence);
+        
+        //add new amino acid to
+        aminoAcids.emplace_back(aminoAcidsMasses.getMW(sequence[i]));
+    }//end for
+    
+    //add n-terminal modification
+    aminoAcids.begin()->addStaticMod(nTermMod);
 }
 
 double PeptideNamespace::Peptide::calcMass(const aaDB::AADB& aadb)
 {
-	if(!initialized)
-		throw std::runtime_error("Peptide must be initialized to calc mass!");
-	
-	initalizeFromMass(aadb.calcMW(sequence));
-	return getMass();
+    if(!initialized)
+        throw std::runtime_error("Peptide must be initialized to calc mass!");
+    
+    initalizeFromMass(aadb.calcMW(sequence));
+    return getMass();
 }
 
 void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars,
-										    std::string seqParFname, aaDB::AADB& aadb)
+                                            std::string seqParFname, aaDB::AADB& aadb)
 {
-	seqpar::SequestParamsFile spFile(seqParFname);
-	
-	if(!spFile.read())
-		throw std::runtime_error("Could not read sequest params file!");
-	
-	aadb.initialize(spFile.getAAMap());
+    seqpar::SequestParamsFile spFile(seqParFname);
+    
+    if(!spFile.read())
+        throw std::runtime_error("Could not read sequest params file!");
+    
+    aadb.initialize(spFile.getAAMap());
 }
 
 void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars, aaDB::AADB& aadb)
@@ -520,20 +520,20 @@ void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars, aaDB::
 }
 
 void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
-										   const aaDB::AADB& aadb,
-										   bool _calcFragments)
+                                           const aaDB::AADB& aadb,
+                                           bool _calcFragments)
 {
     if(sequence.empty())
         throw std::runtime_error("Attempting to initialize peptide with an empty sequence!");
 
-	if(aadb.empty())
-		throw std::runtime_error("Attempting to initialize Peptide with an empty AADB!");
-	
-	initialized = true;
-	calcMass(aadb);
-	fixDiffMod(aadb);
-	if(_calcFragments)
-		calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge(), aadb);
+    if(aadb.empty())
+        throw std::runtime_error("Attempting to initialize Peptide with an empty AADB!");
+    
+    initialized = true;
+    calcMass(aadb);
+    fixDiffMod(aadb);
+    if(_calcFragments)
+        calcFragments(pars.getMinFragCharge(), pars.getMaxFragCharge(), aadb);
 }
 
 /**
@@ -546,16 +546,16 @@ void PeptideNamespace::Peptide::initialize(const base::ParamsBase& pars,
 void PeptideNamespace::Peptide::printFragments(std::ostream& out,
         bool printHeader, bool printFoundIntensity) const
 {
-	assert(out);
+    assert(out);
 
-	if(printHeader) {
+    if(printHeader) {
         out << "index" << OUT_DELIM << "label" << OUT_DELIM << "mz";
         if(printFoundIntensity)
             out << OUT_DELIM << "foundIntensity";
         out << NEW_LINE;
     }
-	size_t len = fragments.size();
-	for(size_t i = 0; i < len; i++) {
+    size_t len = fragments.size();
+    for(size_t i = 0; i < len; i++) {
         out << i << OUT_DELIM <<
             fragments[i].getLabel() <<
             OUT_DELIM << fragments[i].getMZ();
@@ -571,12 +571,12 @@ void PeptideNamespace::Peptide::printFragments(std::ostream& out,
  */
 void PeptideNamespace::Peptide::removeUnlabeledFrags()
 {
-	for(auto it = fragments.begin(); it != fragments.end();)
-	{
-		if(!it->getFound())
-			fragments.erase(it);
-		else ++it;
-	}
+    for(auto it = fragments.begin(); it != fragments.end();)
+    {
+        if(!it->getFound())
+            fragments.erase(it);
+        else ++it;
+    }
 }
 
 /**
@@ -619,10 +619,10 @@ void PeptideNamespace::Peptide::normalizeLabelIntensity(double den)
 }
 
 double PeptideNamespace::calcMass(double mz, int charge){
-	return mz * charge - (charge * PeptideNamespace::H_MASS);
+    return mz * charge - (charge * PeptideNamespace::H_MASS);
 }
 double PeptideNamespace::calcMZ(double mass, int charge){
-	return (mass + (charge * PeptideNamespace::H_MASS)) / charge;
+    return (mass + (charge * PeptideNamespace::H_MASS)) / charge;
 }
 
 /**
@@ -635,10 +635,10 @@ double PeptideNamespace::calcMZ(double mass, int charge){
 */
 double PeptideNamespace::calcMass(PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
-	double ret = 0;
-	for(auto it = begin; it != end; ++it)
-		ret += it->getTotalMass();
-	return ret;
+    double ret = 0;
+    for(auto it = begin; it != end; ++it)
+        ret += it->getTotalMass();
+    return ret;
 }
 
 /**
@@ -651,10 +651,10 @@ double PeptideNamespace::calcMass(PeptideNamespace::PepIonIt begin, PeptideNames
  */
 std::string PeptideNamespace::concatMods(PeptideNamespace::PepIonIt begin, PeptideNamespace::PepIonIt end)
 {
-	std::string ret;
-	for(auto it = begin; it != end; ++it)
-		if(it->hasDynamicMod())
-			ret += it->getMod();
-	return ret;
+    std::string ret;
+    for(auto it = begin; it != end; ++it)
+        if(it->hasDynamicMod())
+            ret += it->getMod();
+    return ret;
 }
 
