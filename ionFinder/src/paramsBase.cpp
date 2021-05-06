@@ -144,7 +144,7 @@ void base::ParamsBase::printGitVersion(std::ostream& out) const{
             out << "WARN: there were uncommitted changes." << NEW_LINE;
     }
 	else {
-	    out << "WARN: failed to get the current git state. Is this a git repo?" << NEW_LINE;
+		out << "WARN: failed to get the current git state. Is this a git repo?" << NEW_LINE;
     }
 }
 

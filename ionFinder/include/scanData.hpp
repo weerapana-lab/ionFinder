@@ -116,7 +116,7 @@ namespace scanData{
 			_spectralCounts = sc;
 		}
 		void setPrecursor(const utils::msInterface::PrecursorScan& rhs){
-		    _precursor = rhs;
+			_precursor = rhs;
 		}
 
 		//properties

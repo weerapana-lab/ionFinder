@@ -71,7 +71,7 @@ int main(int argc, const char** argv)
 	/*
 	std::ofstream outF("/Users/Aaron/local/ionFinder/testFiles/int_co_test.tsv");
 	for(int i = 0; i < peptides.size(); i++){
-	    peptides[i].printFragments(outF, (i == 0), true);
+		peptides[i].printFragments(outF, (i == 0), true);
 	}
 	*/
 
@@ -84,8 +84,8 @@ int main(int argc, const char** argv)
 
 	/*
 	assert(IonFinder::printFragmentIntensities(peptideStats,
-	        "fragment_intensities_" +
-	        std::to_string(int(pars.getArtifactNLIntFrac() * 100)) + ".tsv"));
+			"fragment_intensities_" +
+			std::to_string(int(pars.getArtifactNLIntFrac() * 100)) + ".tsv"));
     */
 	
 	//write data

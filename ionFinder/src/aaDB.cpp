@@ -117,7 +117,7 @@ void aaDB::AADB::addMod(const AminoAcid& aa) {
 
 void aaDB::AADB::addStaticMod(const aaDB::aminoAcidsDBType& modsTemp) {
 	for(const auto & it : modsTemp)
-	    addMod(it.second);
+		addMod(it.second);
 }
 
 /**

@@ -109,19 +109,19 @@ namespace IonFinder{
 
 	class FragmentIon{
 	private:
-	    std::string _ionStr;
-	    double _intensity;
+		std::string _ionStr;
+		double _intensity;
 	public:
-	    FragmentIon() { _ionStr = ""; _intensity = 0.0; }
-	    FragmentIon(std::string ionStr, double intensity) {
-	        _ionStr = ionStr; _intensity = intensity;
+		FragmentIon() { _ionStr = ""; _intensity = 0.0; }
+		FragmentIon(std::string ionStr, double intensity) {
+			_ionStr = ionStr; _intensity = intensity;
         }
 
-	    //! less than for std::set
-	    bool operator < (const FragmentIon& rhs) const {
+		//! less than for std::set
+		bool operator < (const FragmentIon& rhs) const {
             return _ionStr < rhs._ionStr;
         }
-	    std::string getIonStr() const {
+		std::string getIonStr() const {
             return _ionStr;
         }
         double getIntensity() const {
@@ -226,7 +226,7 @@ namespace IonFinder{
 
 		//properties
 		bool canConsolidate(const PeptideStats& rhs) const {
-		    return _id == rhs._id;
+			return _id == rhs._id;
 		}
 		double totalFragmentIntensity() const;
         double totalFragmentIntensity(double min, double max = std::numeric_limits<double>::max()) const;

@@ -116,7 +116,7 @@ std::string PeptideNamespace::ionTypeToStr(const PeptideNamespace::IonType& ionT
 			break;
 		case IonType::M_NL : return "M_nl";
 			break;
-	    case IonType::BLANK : return "blank";
+		case IonType::BLANK : return "blank";
 		default:
 			throw std::runtime_error("Not a valid option!");
 	}
@@ -499,7 +499,7 @@ double PeptideNamespace::Peptide::calcMass(const aaDB::AADB& aadb)
 }
 
 void PeptideNamespace::initAminoAcidsMasses(const base::ParamsBase& pars,
-										    std::string seqParFname, aaDB::AADB& aadb)
+											std::string seqParFname, aaDB::AADB& aadb)
 {
 	seqpar::SequestParamsFile spFile(seqParFname);
 	

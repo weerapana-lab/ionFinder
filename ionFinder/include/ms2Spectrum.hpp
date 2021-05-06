@@ -88,11 +88,11 @@ namespace ms2{
 		}
 	public:
 		DataPoint(){
-		    _ion = nullptr;
+			_ion = nullptr;
 			initStats();
 		}
 		DataPoint(utils::msInterface::ScanIon* ion){
-		    _ion = ion;
+			_ion = ion;
 			initStats();
 		}
 		DataPoint(const DataPoint&);
@@ -151,7 +151,7 @@ namespace ms2{
 			return ionNum;
 		}
 		utils::msInterface::ScanIntensity getIntensity() const {
-		    return _ion->getIntensity();
+			return _ion->getIntensity();
         }
         utils::msInterface::ScanMZ getMZ() const {
             return _ion->getMZ();
@@ -228,7 +228,7 @@ namespace ms2{
 		template<typename _Tp> void normalizeIonInts(_Tp max)
 		{
 			static_assert(std::is_arithmetic<_Tp>::value, "Max must be arithmetic!");
-		    utils::msInterface::ScanIntensity den = getMaxInt() / max;
+			utils::msInterface::ScanIntensity den = getMaxInt() / max;
 			for(auto & ion : _ions)
 				ion.setIntensity(ion.getIntensity() / den);
 

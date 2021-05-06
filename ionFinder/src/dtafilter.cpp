@@ -83,7 +83,7 @@ bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
  \param scans Vector of scans to add to
  \param skipReverse Should reverse peptide matches be skipped?
  \param modFilter Which scans should be added to \p scans?
- 	0: only modified, 1: all peptides regardless of modification, 2: only unmodified pepeitde.
+	0: only modified, 1: all peptides regardless of modification, 2: only unmodified pepeitde.
  
  \return true if file I/O was successful.
  */
