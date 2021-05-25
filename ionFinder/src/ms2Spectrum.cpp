@@ -366,7 +366,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 
         if((*label)->getLabeledIon() && pars.getVerbose()){
             if(!seqPrinted){
-                std::cout << "In sequence: " << peptide.getSequence() << NEW_LINE;
+                std::cout << "In sequence: " << peptide.getFullSequence() << NEW_LINE;
                 seqPrinted = true;
             }
             std::cout << "\tDuplicate label found: " << (*label)->getLabel() << ", " <<
