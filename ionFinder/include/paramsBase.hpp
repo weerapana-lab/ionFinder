@@ -149,7 +149,7 @@ namespace base{
 			return _smodFile;
 		}
 		bool getSmodFileSpecified() const{
-		    return smodSpecified;
+			return smodSpecified;
 		}
 
 		bool getWDSpecified() const{

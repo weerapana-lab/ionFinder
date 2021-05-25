@@ -171,7 +171,7 @@ namespace IonFinder{
 			return _calcNL;
 		}
 		double getModMass() const{
-		    return _modMass;
+			return _modMass;
 		}
 		double getNeutralLossMass() const{
 			return _neutralLossMass;
@@ -206,19 +206,19 @@ namespace IonFinder{
 			return _fastaFile;
 		}
 		double getNlIntCo() const{
-		    return _minNlLabelIntensity;
+			return _minNlLabelIntensity;
 		}
 		bool getLabelArtifactNL() const {
-		    return _labelArtifactNL;
+			return _labelArtifactNL;
         }
         double getArtifactNLIntFrac() const {
-		    return _artifactNLIntFrac;
+			return _artifactNLIntFrac;
         }
 		int getGroupMod() const{
-		    return _groupMod;
+			return _groupMod;
 		}
 		bool getPrintIonIntensity() const {
-		    return _printIonIntensity;
+			return _printIonIntensity;
 		}
 		bool getPrintPeptideUID() const {
             return _printPeptideUID;

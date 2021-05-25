@@ -266,7 +266,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 		if(!strcmp(argv[i], "--citStats"))
 		{
-		    _modMass = CIT_MOD_MASS;
+			_modMass = CIT_MOD_MASS;
 			_neutralLossMass = CIT_NL_MASS;
 			_ambigiousResidues = CIT_AMB_RESIDUES;
 			_includeCTermMod = false;
@@ -515,7 +515,7 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
 		}
 	}
 	else if(_inputMode == TSV_INPUT_STR) {
-	    if(_inDirs.size() == 0) {
+		if(_inDirs.size() == 0) {
             std::cerr << "ERROR: Input file name is required when using tsv input mode!\n";
             usage();
             return false;
@@ -543,7 +543,7 @@ bool IonFinder::Params::getFlist(bool force)
 			_filterFiles[utils::baseName(_inDir)] = fname;
 		}
 		else{
-		    if(force) std::cerr << "WARN: ";
+			if(force) std::cerr << "WARN: ";
             else std::cerr << "ERROR: ";
 			std::cerr << "No filter file found in: " << _inDir << NEW_LINE;
 			if(force) return false;
