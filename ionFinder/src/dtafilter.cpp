@@ -26,8 +26,9 @@
 //
 
 #include <dtafilter.hpp>
+#include <utility>
 
-void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
+Dtafilter::Scan& Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 {
 	scanData::Scan::operator=(rhs);
     _parentProtein = rhs._parentProtein;
@@ -36,6 +37,7 @@ void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 	_matchDirection = rhs._matchDirection;
 	_sampleName = rhs._sampleName;
 	_unique = rhs._unique;
+	return *this;
 }
 
 /**
@@ -48,12 +50,12 @@ void Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
  */
 Dtafilter::Scan::MatchDirection Dtafilter::Scan::strToMatchDirection(std::string str)
 {
-	if(utils::strContains(REVERSE_MATCH, utils::toLower(str)))
+	if(utils::strContains(REVERSE_MATCH, utils::toLower(std::move(str))))
 		return MatchDirection::REVERSE;
 	return MatchDirection::FORWARD;
 }
 
-bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
+bool Dtafilter::Scan::parse_matchDir_ID_Protein(const std::string& str)
 {
 	std::vector<std::string> elems;
 	utils::split(str, '|', elems);
@@ -62,7 +64,7 @@ bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
 		_matchDirection = strToMatchDirection(elems.at(0));
 		_parentID = elems.at(1);
 		
-		size_t underScoreI = elems.at(2).find_last_of("_");
+		size_t underScoreI = elems.at(2).find_last_of('_');
 		_parentProtein = elems.at(2).substr(0, underScoreI);
 	}
 	catch(std::out_of_range& e){
@@ -87,8 +89,8 @@ bool Dtafilter::Scan::parse_matchDir_ID_Protein(std::string str)
  
  \return true if file I/O was successful.
  */
-bool Dtafilter::readFilterFile(std::string fname,
-							   std::string sampleName,
+bool Dtafilter::readFilterFile(const std::string& fname,
+							   const std::string& sampleName,
 							   std::vector<Dtafilter::Scan>& scans,
 							   bool skipReverse,
 							   int modFilter)

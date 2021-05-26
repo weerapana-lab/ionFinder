@@ -47,7 +47,7 @@ namespace IonFinder{
                                                         PRECURSOR_SCAN};
 	int const TSV_INPUT_OPTIONAL_COLNAMES_LEN = 10;
 	
-	bool readInputTsv(std::string ifname, std::vector<Dtafilter::Scan>&scans,
+	bool readInputTsv(const std::string& ifname, std::vector<Dtafilter::Scan>&scans,
 					  bool skipReverse = false, int modFilter = 1);
 }
 

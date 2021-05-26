@@ -122,7 +122,7 @@ namespace IonFinder{
 		bool _printPeptideUID;
 		
 		bool getFlist(bool force);
-		unsigned int computeThreads() const;
+		static unsigned int computeThreads() ;
 
 	public:
 		

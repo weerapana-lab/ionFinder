@@ -40,12 +40,12 @@ namespace Dtafilter{
 	
 	std::string const REVERSE_MATCH = "reverse_";
 	
-	bool readFilterFile(std::string fname, std::string sampleName,
+	bool readFilterFile(const std::string& fname, const std::string& sampleName,
 						std::vector<Dtafilter::Scan>& scans,
 						bool skipReverse = false, int modFilter = 1);
 	
 	class Scan : public scanData::Scan{
-		friend bool readFilterFile(std::string, std::string,
+		friend bool readFilterFile(const std::string&, const std::string&,
 								   std::vector<Dtafilter::Scan>&,
 								   bool, int);
 	public:
@@ -61,7 +61,7 @@ namespace Dtafilter{
 		std::string _sampleName;
 		bool _unique;
 		
-		bool parse_matchDir_ID_Protein(std::string);
+		bool parse_matchDir_ID_Protein(const std::string&);
 		
 	public:
 		Scan() : scanData::Scan(){
@@ -74,7 +74,7 @@ namespace Dtafilter{
 		}
 		
 		//modifiers
-		void operator = (const Scan&);
+		Scan& operator = (const Scan&);
         void setFormula(std::string s){
             _formula = s;
         }

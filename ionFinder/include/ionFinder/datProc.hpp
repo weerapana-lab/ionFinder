@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <map>
+#include <utility>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -75,13 +76,13 @@ namespace IonFinder{
 							   const IonFinder::Params&);
 
     void findFragments_(std::vector<Dtafilter::Scan>& scans,
-                        const size_t beg, const size_t end,
+                        size_t beg, size_t end,
                         std::vector<PeptideNamespace::Peptide>& peptides,
                         const IonFinder::Params& pars,
                         bool* success, std::atomic<size_t>& scansIndex);
 
     void findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
-                                  const size_t beg, const size_t end,
+                                  size_t beg, size_t end,
                                   ms2::MsInterface& msInterface,
                                   std::vector<PeptideNamespace::Peptide>& peptides,
                                   const IonFinder::Params& pars,
@@ -114,7 +115,7 @@ namespace IonFinder{
 	public:
 		FragmentIon() { _ionStr = ""; _intensity = 0.0; }
 		FragmentIon(std::string ionStr, double intensity) {
-			_ionStr = ionStr; _intensity = intensity;
+			_ionStr = std::move(ionStr); _intensity = intensity;
         }
 
 		//! less than for std::set
@@ -197,6 +198,7 @@ namespace IonFinder{
 			_scan = new Dtafilter::Scan;
 			initStats();
 			_fragDelim = FRAG_DELIM;
+            containsCit = ContainsCitType::FALSE;
 
 			//peptide data
 			sequence = "";
@@ -209,6 +211,7 @@ namespace IonFinder{
 			//PeptideStats data
 			_scan = new Dtafilter::Scan;
 			_fragDelim = FRAG_DELIM;
+            containsCit = ContainsCitType::FALSE;
 			initStats();
 
 			//Peptide data

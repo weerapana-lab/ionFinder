@@ -53,26 +53,19 @@ ms2::DataPoint::DataPoint(const ms2::DataPoint& rhs)
 std::string ms2::DataPoint::getLableColor() const
 {
     switch(ionType) {
-        case PeptideNamespace::IonType::BLANK :
-            return BLANK_COLOR;
+        case PeptideNamespace::IonType::BLANK : return BLANK_COLOR;
             break;
-        case PeptideNamespace::IonType::B :
-            return B_COLOR;
+        case PeptideNamespace::IonType::B : return B_COLOR;
             break;
-        case PeptideNamespace::IonType::Y :
-            return Y_COLOR;
+        case PeptideNamespace::IonType::Y : return Y_COLOR;
             break;
-        case PeptideNamespace::IonType::M :
-            return M_COLOR;
+        case PeptideNamespace::IonType::M : return M_COLOR;
             break;
-        case PeptideNamespace::IonType::B_NL :
-            return B_NL_COLOR;
+        case PeptideNamespace::IonType::B_NL : return B_NL_COLOR;
             break;
-        case PeptideNamespace::IonType::Y_NL :
-            return Y_NL_COLOR;
+        case PeptideNamespace::IonType::Y_NL : return Y_NL_COLOR;
             break;
-        case PeptideNamespace::IonType::M_NL :
-            return M_NL_COLOR;
+        case PeptideNamespace::IonType::M_NL : return M_NL_COLOR;
             break;
         default:
             throw std::runtime_error("Not a valid option!");
@@ -366,7 +359,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
 
         if((*label)->getLabeledIon() && pars.getVerbose()){
             if(!seqPrinted){
-                std::cout << "In sequence: " << peptide.getSequence() << NEW_LINE;
+                std::cout << "In sequence: " << peptide.getFullSequence() << NEW_LINE;
                 seqPrinted = true;
             }
             std::cout << "\tDuplicate label found: " << (*label)->getLabel() << ", " <<

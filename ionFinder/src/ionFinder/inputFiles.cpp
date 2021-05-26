@@ -75,7 +75,7 @@ bool Dtafilter::readFilterFiles(const IonFinder::Params& params,
  
  \returns true if all files were successfully read.
  */
-bool IonFinder::readInputTsv(std::string ifname,
+bool IonFinder::readInputTsv(const std::string& ifname,
 							 std::vector<Dtafilter::Scan>& scans,
 							 bool skipReverse, int modFilter)
 {
@@ -83,11 +83,10 @@ bool IonFinder::readInputTsv(std::string ifname,
 	if(!tsv.read()) return false;
 	
 	//iterate through columns to make sure all required cols exist
-	for(int i = 0; i < TSV_INPUT_REQUIRED_COLNAMES_LEN; i++)
-	{
-		if(!tsv.colExists(TSV_INPUT_REQUIRED_COLNAMES[i]))
+	for(const auto & i : TSV_INPUT_REQUIRED_COLNAMES) {
+		if(!tsv.colExists(i))
 		{
-			std::cerr << "\nError! Required column: " << TSV_INPUT_REQUIRED_COLNAMES[i] <<
+			std::cerr << "\nError! Required column: " << i <<
 			" not found in " << ifname << NEW_LINE;
 			return false;
 		}
