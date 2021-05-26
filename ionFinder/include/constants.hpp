@@ -30,6 +30,6 @@
 
 namespace constants {
     const char MOD_CHAR = '*';
-};
+}
 
 #endif //CONSTANTS_HPP

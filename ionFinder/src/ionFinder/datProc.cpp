@@ -252,7 +252,6 @@ double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
     //if(ionTypesCount.at(IonType::ART_NL).size() > 1)
     //    std::cout << "Found!\n";
 
-    bool all = true;
     std::vector<double> art_ints;
     art_ints.push_back(0);
     for(auto it : ionTypesCount.at(IonType::ART_NL))
