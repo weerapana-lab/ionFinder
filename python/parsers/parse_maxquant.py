@@ -139,6 +139,9 @@ def main():
                                      epilog="parse_maxquant was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
 
+    parser.add_argument('--fileExt', default='mzML',
+                        help='File extension to add to MS file names. Default is "mzML".')
+
     parser.add_argument('-g', '--groupMethod', choices=[0, 1, 2], default=1, type=int,
                         help='How many spectra per peptide? 0: include all scans, '
                              '1: Only show the best spectra per sequence, file and charge state, '
@@ -200,7 +203,7 @@ def main():
     # add columns to ret
     ret = pd.DataFrame()
     ret[tsv_constants.SAMPLE_NAME] = dat[maxquant_constants.EXPERIMENT]
-    ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.ms2'.format(x))
+    ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.{}'.format(x, args.fileExt))
 
     # get parent protein data
     ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS].apply(lambda x: [i for i in x.split(';')][0])
