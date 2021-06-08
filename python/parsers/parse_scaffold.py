@@ -250,6 +250,7 @@ def main():
 
     # extract precursorFile column
     dat[PRECURSOR_FILE] = dat[SEARCH_ENGINES[engine]['msms'][0]].apply(lambda x: SEARCH_ENGINES[engine]['msms'][1].search(x).group(1))
+    dat[PRECURSOR_FILE] = dat[PRECURSOR_FILE].apply(lambda x: '{}.{}'.format(os.path.splitext(x)[0], args.fileExt))
 
     # parse protein id and name
     # At some point should use re.findall

@@ -200,7 +200,7 @@ def main():
     # add columns to ret
     ret = pd.DataFrame()
     ret[tsv_constants.SAMPLE_NAME] = dat[maxquant_constants.EXPERIMENT]
-    ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.ms2'.format(x))
+    ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.{}'.format(x, args.fileExt))
 
     # get parent protein data
     ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS].apply(lambda x: [i for i in x.split(';')][0])
