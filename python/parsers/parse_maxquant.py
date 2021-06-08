@@ -139,9 +139,6 @@ def main():
                                      epilog="parse_maxquant was written by Aaron Maurais.\n"
                                             "Email questions or bugs to aaron.maurais@bc.edu")
 
-    parser.add_argument('--fileExt', default='mzML',
-                        help='File extension to add to MS file names. Default is "mzML".')
-
     parser.add_argument('-g', '--groupMethod', choices=[0, 1, 2], default=1, type=int,
                         help='How many spectra per peptide? 0: include all scans, '
                              '1: Only show the best spectra per sequence, file and charge state, '
