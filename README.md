@@ -6,7 +6,7 @@ Search MS2 spectra for diagnostic neutral loss ions.
 ## System requirements
 `ionFinder` in written in c++ 11 and be compiled on Linux or macOS. Windows is not supported. Additional helper scripts are written in Python 3.
 
-* **GCC** or compiler compatible with c++ 11
+* **GCC** or other compiler compatible with c++ 11
 * **Cmake** (>= 3.9)
 * *Python* (> 3.6) with **pandas** package installed.
 
