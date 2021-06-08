@@ -1,0 +1,47 @@
+DTASelect v2.0.39
+/home/mauraisa/sequest_data/Thompson_lab_samples/Ari/pad_auto/ms2/20190912_Thompson_PAD2_GlucTryp_t3
+/home/mauraisa/dbase/Human_uniprot-reviewed_Weerapana_Lab_10202017_rev.fasta
+SEQUEST 3.0 in SQT format.
+ --trypstat -m 0
+true	Use criteria
+0.0	Minimum peptide probability
+0.05	Peptide global false discovery rate
+0.0	Minimum protein probability
+1.0	Protein false discovery rate
+1	Minimum charge state
+16	Maximum charge state
+0.0	Minimum ion proportion
+1000	Maximum Sp rank
+-1.0	Minimum Sp score
+Require	Modified peptide inclusion
+Any	Tryptic status requirement
+false	Multiple, ambiguous IDs allowed
+Ignore	Peptide validation handling
+XCorr	Purge duplicate peptides by protein
+false	Include only loci with unique peptide
+true	Remove subset proteins
+Ignore	Locus validation handling
+0	Minimum modified peptides per locus
+2	Minimum peptides per locus
+
+Locus	Sequence Count	Spectrum Count	Sequence Coverage	Length	MolWt	pI	Validation Status	Descriptive Name
+Unique	FileName	XCorr	DeltCN	Conf%	M+H+	CalcM+H+	TotalIntensity	SpR	ZScore	IonProportion	Redundancy	Sequence
+sp|Q9Y2J8|PADI2_HUMAN	9	10	32.0%	665	75564	5.6	U	Protein-arginine deiminase type-2 OS=Homo sapiens GN=PADI2 PE=1 SV=2 
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.20880.20880.5	2.6238	0.1643	100.0	4467.315	4467.299	5188.1	28	3.944	13.5	1	R.ER*TVRLQYGSRVEAVYVLGTYLWTDVYSAAPAGAQTFSLK.H
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.10399.10399.4	2.7551	0.1766	100.0	2579.2197	2578.2173	7294.8	137	4.661	24.2	1	K.HSEHVWVEVVR*DGEAEEVATNGK.Q
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.14226.14226.3	2.6114	0.1983	100.0	1458.8047	1458.8069	7366.8	70	4.995	40.9	1	K.QR*WLLSPSTTLR.V
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.17506.17506.3	3.414	0.3161	100.0	2883.4211	2881.4365	8289.1	1	5.091	24.0	1	K.QR*WLLSPSTTLRVTMSQASTEASSDK.V
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.18008.18008.4	4.0442	0.2349	100.0	3211.6042	3210.6045	7361.4	66	4.742	20.4	1	K.KASWTWGPEGQGAILLVNCDR*ETPWLPK.E
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.19692.19692.3	2.4859	0.2779	100.0	2512.3154	2512.3142	6798.2	72	5.224	21.2	1	K.VGVFYVENPFFGQR*YIHILGR.R
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.14593.14593.3	4.0604	0.2447	100.0	2201.1587	2201.1606	10548.6	1	5.668	30.3	2	K.GFPVVLDSPR*DGNLKDFPVK.E
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.19532.19532.3	3.3357	0.2351	100.0	2651.2356	2651.242	7932.0	2	4.751	28.6	1	K.MDEDHR*AR*AFFPNMVNMIVLDK.D
+*	20190912_Thompson_PAD2_GlucTryp_t3_01.21240.21240.5	4.1598	0.2652	100.0	3763.8513	3761.8308	6888.5	24	5.202	17.6	1	R.GLLEPLGLECTFIDDISAYHKFLGEVHCGTNVR*.R
+	Proteins	Peptide IDs	Spectra
+Unfiltered	16474	24656	38738
+Filtered	1	9	10
+Forward matches	1	9	10
+Decoy matches	0	0	0
+Forward FP rate	0.0	0.0	0.0
+
+Classification	Nonredundant Proteins	Redundant Proteins
+Unclassified	0	0
