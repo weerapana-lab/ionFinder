@@ -50,7 +50,7 @@ ionFinder works with 2 input modes.
 
 ```bash
 ionFinder -i dtafilter --citStats <directory> [...] # dtafilter mode
-ionFinder -i tsv --citStats <tsv_file> 				# tsv mode
+ionFinder -i tsv --citStats <tsv_file>              # tsv mode
 ```
 
 Run:
