@@ -38,6 +38,8 @@ examples/MaxQuant/peptide_mod_stats.tsv
 examples/DTASelect-filter/peptide_mod_stats.tsv
 examples/Scaffold/peptide_mod_stats.tsv
 examples/tsv/peptide_mod_stats.tsv
+README.html
+README.pdf
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
