@@ -52,8 +52,7 @@ int main(int argc, const char** argv)
 		std::cout << "\nReading input .tsv files...";
 		for(auto file: pars.getInputDirs())
 		{
-            if(!IonFinder::readInputTsv(file,scans,
-                                         !pars.getIncludeReverse(), pars.getModFilter())) {
+            if(!IonFinder::readInputTsv(file,scans, !pars.getIncludeReverse(), pars.getModFilter())) {
                 std::cerr << "Failed to read input .tsv files!" << NEW_LINE;
                 return -1;
             }

@@ -37,6 +37,7 @@ Dtafilter::Scan& Dtafilter::Scan::operator = (const Dtafilter::Scan& rhs)
 	_matchDirection = rhs._matchDirection;
 	_sampleName = rhs._sampleName;
 	_unique = rhs._unique;
+
 	return *this;
 }
 
