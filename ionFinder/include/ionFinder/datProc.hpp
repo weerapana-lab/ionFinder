@@ -161,8 +161,11 @@ namespace IonFinder{
 		typedef std::map<IonType, IonStrings> IonTypesCountType;
 		IonTypesCountType ionTypesCount;
 		
-		//!Does peptide contain cit
+		//! Does the overall peptide contain cit?
 		ContainsCitType containsCit;
+
+        //! Does the site contain cit?
+        ContainsCitType thisContainsCit;
 
 		//!Fragment deliminator in output
 		std::string _fragDelim;
@@ -176,6 +179,8 @@ namespace IonFinder{
 		double mass;
 		//!Positions of modifications
 		std::vector<size_t> modLocs;
+		//!Position of this modification
+		size_t modIndex;
 
 		//!unique identifier of peptide
 		unsigned int _id;
@@ -199,6 +204,8 @@ namespace IonFinder{
 			initStats();
 			_fragDelim = FRAG_DELIM;
             containsCit = ContainsCitType::FALSE;
+            thisContainsCit = ContainsCitType::FALSE;
+            modIndex = std::string::npos;
 
 			//peptide data
 			sequence = "";
@@ -212,6 +219,8 @@ namespace IonFinder{
 			_scan = new Dtafilter::Scan;
 			_fragDelim = FRAG_DELIM;
             containsCit = ContainsCitType::FALSE;
+            thisContainsCit = ContainsCitType::FALSE;
+            modIndex = std::string::npos;
 			initStats();
 
 			//Peptide data
@@ -221,6 +230,7 @@ namespace IonFinder{
 			mass = p.getMass();
 			modLocs.clear();
 			modLocs.insert(modLocs.begin(), p.getModLocs().begin(), p.getModLocs().end());
+			modIndex = std::string::npos;
 			_id = p.getID();
 		}
 		PeptideStats(const PeptideStats&);

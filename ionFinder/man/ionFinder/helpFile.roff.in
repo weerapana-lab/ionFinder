@@ -40,7 +40,7 @@ Interpret \fB--matchTolerance\fR as ppm.
 Search ms2s with default settings for citrulline. Specifically \fB--citStats\fR sets the following flags:
 .TP
 .in +0.75i
-\fb--modMass 0.984 \fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ \fB--cTermMod\fR 0
+\fb--modMass 0.984 \fB--lossMass\fR 43.0058 \fB--calcNL\fR 1 \fB--isoAA\fR NQ \fB--cTermMod\fR 0 \fB-o\fR peptide_cit_stats.tsv
 
 Later specifications of the previous flags will override those set by \fB--citStats\fR.
 .in
