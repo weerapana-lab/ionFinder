@@ -218,8 +218,7 @@ namespace ms2{
 		scanData::Scan* _scanData;
 
 		ionVecType _dataPoints;
-        bool labelsInitalized;
-		
+
 		void makePoints(labels::Labels&, double, double, double, double, double);
 		void setLabelTop(size_t);
 		void removeUnlabeledIons();
@@ -235,7 +234,6 @@ namespace ms2{
 			plotHeight = 0;
 			_dataPoints = ionVecType();
 			_scanData = nullptr;
-            labelsInitalized = false;
 		}
 		~Spectrum() = default;
 		

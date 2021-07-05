@@ -295,7 +295,6 @@ void ms2::Spectrum::calcSNR(double snrConf)
 //! Remove ions with a signal to nose ratio below \p snrThreshold
 void ms2::Spectrum::removeSNRBelow(double snrThreshold, double snrConf)
 {
-    if(!labelsInitalized) initLabeledIons();
     calcSNR(snrConf);
     for(auto it = _dataPoints.begin(); it != _dataPoints.end();)
     {
@@ -314,7 +313,6 @@ void ms2::Spectrum::initLabeledIons()
     for(size_t i = 0; i < len; i++) {
         _dataPoints.emplace_back(&_ions[i]);
     }
-    labelsInitalized = true;
 }
 
 /**
@@ -328,7 +326,7 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
                                   const base::ParamsBase& pars,
                                   bool removeUnlabeledFrags, size_t labelTop)
 {
-    if(!labelsInitalized) initLabeledIons();
+    initLabeledIons();
     plotWidth = pars.getPlotWidth();
     plotHeight = pars.getPlotHeight();
     size_t len = peptide.getNumFragments();
@@ -348,6 +346,9 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
                    pars.getMaxMZSpecified() ? pars.getMaxMZ() : getMaxMZ(),
                    false);
     }
+    // apply snr filter
+    if(pars.getMinSNRSpecified())
+        removeSNRBelow(pars.getMinSnr(), pars.getSNRConf());
 
     //iterate through all calculated fragment ions and label ions on spectrum if they are found
     for(size_t i = 0; i < len; i++)
