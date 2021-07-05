@@ -30,7 +30,7 @@
 
 #include <cmath>
 #include <functional>
-#include <iostream>
+#include <vector>
 
 namespace statistics{
 
@@ -93,6 +93,12 @@ namespace statistics{
         return sum / double(v.size());
     }
 
+    /**
+     * Calculate mean of a numerical vector \p
+     * @tparam T
+     * @param v A vector of elements coercible to double
+     * @return mean
+     */
     template<class T> double mean(const std::vector<T>& v) {
         double sum = 0;
         for(auto n : v) sum += double(n);
@@ -114,6 +120,12 @@ namespace statistics{
         return sd;
     }
 
+    /**
+     * Calculate standard deviation of a numerical vector \p
+     * @tparam T
+     * @param v A vector of elements coercible to double
+     * @return standard deviation
+     */
     template<class T> double sd(const std::vector<T>& v){
         double mean = ::statistics::mean<T>(v);
         double ss = 0; // sum of squared differences
