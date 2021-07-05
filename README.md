@@ -8,7 +8,7 @@ Search MS2 spectra for diagnostic neutral loss ions.
 
 * **GCC** or other compiler compatible with c++ 11
 * **Cmake** (>= 3.9)
-* *Python* (> 3.6) with **pandas** package installed.
+* **Python** (> 3.6) with **pandas** package installed.
 
 ## Configuring
 The following example assumes that the program is being built in `~/code/ionFinder`
