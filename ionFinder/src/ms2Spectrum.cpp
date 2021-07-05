@@ -36,6 +36,8 @@ ms2::DataPoint& ms2::DataPoint::operator = (const ms2::DataPoint& rhs)
     ionType = rhs.ionType;
     ionNum = rhs.ionNum;
     _ion = rhs._ion;
+    _noise = rhs._noise;
+    _snr = rhs._snr;
     return *this;
 }
 
@@ -48,6 +50,8 @@ ms2::DataPoint::DataPoint(const ms2::DataPoint& rhs)
     ionType = rhs.ionType;
     ionNum = rhs.ionNum;
     _ion = rhs._ion;
+    _noise = rhs._noise;
+    _snr = rhs._snr;
 }
 
 std::string ms2::DataPoint::getLableColor() const
@@ -254,6 +258,66 @@ void ms2::Spectrum::removeIntensityBelow(double min_int)
     }
 
     updateRanges();
+}
+
+//! Calculate signal to nose ratio of ion intensities
+void ms2::Spectrum::calcSNR(double snrConf, std::ostream& out)
+{
+    // if(getPrecursor().getFile() == "20190912_Thompson_PAD62_GlucTryp_t2.mzML" && _scanNum == 17491)
+    //     std::cout << "Found!" << NEW_LINE;
+
+    double sd = statistics::sd<DataPoint>(_dataPoints, [](const DataPoint& i) -> double{return i.getIntensity();});
+    double mean = statistics::mean<DataPoint>(_dataPoints, [](const DataPoint& i) -> double{return i.getIntensity();});
+    std::vector<double> stats;
+    for(auto point : _dataPoints)
+        stats.push_back(abs(point.getIntensity() - mean) / sd);
+
+    auto dist = std::shared_ptr<statistics::ProbabilityDist>();
+    size_t len = _dataPoints.size();
+    if(len > 30)
+        dist = std::make_shared<statistics::NormDist>();
+    else dist = std::make_shared<statistics::TDist>(double(len - 1));
+
+    double noise = 0;
+    size_t noiseLen = 0;
+    for(size_t i = 0; i < len; i++){
+        double pVal = dist->pValue(stats[i]);
+        if(pVal > snrConf)
+            _dataPoints[i].setNoise(false);
+        else {
+            noise += _dataPoints[i].getIntensity();
+            noiseLen++;
+        }
+    }
+    noise /= double(noiseLen);
+
+    for(auto & _dataPoint : _dataPoints)
+        _dataPoint.setSNR(_dataPoint.getIntensity() / noise);
+
+    for(size_t i = 0; i < len; i++){
+        out << getPrecursor().getFile() << ',' << _scanNum << ',' <<
+             i << ',' << _dataPoints[i].getIntensity() << ',' <<
+             stats[i] << ',' << (_dataPoints[i].getNoise() ? "TRUE": "FALSE") << "," << _dataPoints[i].getSNR() << NEW_LINE;
+    }
+}
+
+//! Remove ions with a signal to nose ratio below \p snrThreshold
+void ms2::Spectrum::removeSNRBelow(double snrThreshold, double snrConf)
+{
+    std::string fname = "/Users/Aaron/Documents/School_Work/Mass_spec_data/Thompson_lab_samples/Ari/ionFinder_cuttoff_analysis_2/tables/test.csv";
+    std::ofstream outF;
+
+    // printIons(std::cout);
+
+    outF.open(fname, std::ios_base::app);
+    // outF.open(fname);
+    // std::string headers [] = {"file", "scan", "ionNum", "int", "stat", "pVal", "noise", "snr"} ;
+    // for(auto h : headers){
+    //     if(h == "file") outF << h;
+    //     else outF << "," << h;
+    // }
+    // outF << NEW_LINE;
+    calcSNR(snrConf, outF);
 }
 
 //! Copy ions from utils::Scan::_ions to labeledIons

@@ -64,6 +64,11 @@ namespace base{
 		int minFragCharge;
 		int maxFragCharge;
 		double minLabelIntensity;
+
+        //! Signal to nose cutoff for ions
+        double _minSNR;
+        //! Confidence interval for distinguishing signal from noise
+        double _snrConf;
 		
 		//match tolerance stuff
 		//!match tolerance for fragment ions in either ppm or Th
@@ -92,6 +97,7 @@ namespace base{
 		bool minMzSpecified;
 		bool maxMzSpecified;
 		bool minIntensitySpecified;
+		bool minSNRSpecified;
 		
 		bool verbose;
 		
@@ -117,6 +123,8 @@ namespace base{
 			matchTolerance = DEFAULT_MATCH_TOLERANCE;
 			_matchType = MatchType::PPM;
 			minLabelIntensity = 0;
+            _minSNR = 0;
+            _snrConf = 0.9;
 			multipleMatchCompare = "intensity";
 			
 			seqParSpecified = false;
@@ -128,6 +136,7 @@ namespace base{
 			maxMzSpecified = false;
 			minIntensity = 0;
 			minIntensitySpecified = false;
+			minSNRSpecified = false;
 			includeAllIons = true;
 			verbose = false;
 			smodSpecified = false;
@@ -190,6 +199,15 @@ namespace base{
 		bool getMinIntensitySpecified() const{
 			return minIntensitySpecified;
 		}
+		bool getMinSNRSpecified() const{
+		    return minSNRSpecified;
+		}
+		double getMinSnr() const{
+		    return _minSNR;
+		}
+		double getSNRConf() const {
+		    return _snrConf;
+        }
 		bool getIncludeAllIons() const{
 			return includeAllIons;
 		}

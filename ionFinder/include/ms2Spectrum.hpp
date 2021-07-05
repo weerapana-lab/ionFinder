@@ -35,6 +35,7 @@
 #include <cassert>
 #include <list>
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <iomanip>
 #include <type_traits>
@@ -43,6 +44,7 @@
 #include <msInterface/msScan.hpp>
 #include <peptide.hpp>
 #include <geometry.hpp>
+#include <statistics.hpp>
 #include <calcLableLocs.hpp>
 #include <scanData.hpp>
 #include <spectrum_constants.hpp>
@@ -76,6 +78,10 @@ namespace ms2{
 		bool topAbundant;
 		PeptideNamespace::IonType ionType;
 		int ionNum;
+		//! Is the ion statistically considered noise?
+        bool _noise;
+        //! Signal to noise ratio
+        double _snr;
 
 		//! Initialize DataPoint stats with default values.
 		void initStats(){
@@ -85,6 +91,8 @@ namespace ms2{
 			formatedLabel = NA_STR;
 			ionType = PeptideNamespace::IonType::BLANK;
 			ionNum = 0;
+			_noise = true;
+			_snr = 0;
 		}
 	public:
 		DataPoint(){
@@ -128,12 +136,24 @@ namespace ms2{
         void setIntensity(utils::msInterface::ScanIntensity intensity) {
             return _ion->setIntensity(intensity);
         }
+        void setSNR(double snr){
+		    _snr = snr;
+		}
+		void setNoise(bool noise){
+		    _noise = noise;
+		}
 		
 		std::string getLabel() const{
 			return label.getLabel();
 		}
 		bool getLabeledIon() const{
 			return labeledIon;
+		}
+		bool getNoise() const{
+		    return _noise;
+		}
+		double getSNR() const{
+		    return _snr;
 		}
 		bool getForceLabel() const{
 			return label.forceLabel;
@@ -203,6 +223,7 @@ namespace ms2{
 		void setLabelTop(size_t);
 		void removeUnlabeledIons();
 		void initLabeledIons();
+		void calcSNR(double snrConf, std::ostream& out);
 
 	public:
 		Spectrum() : utils::msInterface::Scan()
@@ -219,6 +240,7 @@ namespace ms2{
 		//modifiers
 		void clear();
         void removeIntensityBelow(double minInt);
+        void removeSNRBelow(double snrThreshold, double snrConf = 0.9);
         void setMZRange(double minMZ, double maxMZ, bool _sort = true);
 
 		/**

@@ -391,6 +391,27 @@ bool IonFinder::Params::getArgs(int argc, const char* const argv[])
             minIntensitySpecified = true;
             continue;
         }
+        if(!strcmp(argv[i], "-minSNR"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            _minSNR = std::stod(argv[i]);
+            minSNRSpecified = true;
+            continue;
+        }
+        if(!strcmp(argv[i], "--snrConf"))
+        {
+            if(!utils::isArg(argv[++i]))
+            {
+                usage(IonFinder::ARG_REQUIRED_STR + argv[i-1]);
+                return false;
+            }
+            _snrConf = std::stod(argv[i]);
+            continue;
+        }
         if(!strcmp(argv[i], "-y") || !strcmp(argv[i], "--height"))
         {
             if(!utils::isArg(argv[++i]))
