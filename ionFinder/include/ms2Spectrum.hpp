@@ -223,7 +223,7 @@ namespace ms2{
 		void setLabelTop(size_t);
 		void removeUnlabeledIons();
 		void initLabeledIons();
-		void calcSNR(double snrConf, std::ostream& out);
+		void calcSNR(double snrConf);
 
 	public:
 		Spectrum() : utils::msInterface::Scan()

@@ -261,11 +261,8 @@ void ms2::Spectrum::removeIntensityBelow(double min_int)
 }
 
 //! Calculate signal to nose ratio of ion intensities
-void ms2::Spectrum::calcSNR(double snrConf, std::ostream& out)
+void ms2::Spectrum::calcSNR(double snrConf)
 {
-    // if(getPrecursor().getFile() == "20190912_Thompson_PAD62_GlucTryp_t2.mzML" && _scanNum == 17491)
-    //     std::cout << "Found!" << NEW_LINE;
-
     double sd = statistics::sd<DataPoint>(_dataPoints, [](const DataPoint& i) -> double{return i.getIntensity();});
     double mean = statistics::mean<DataPoint>(_dataPoints, [](const DataPoint& i) -> double{return i.getIntensity();});
     std::vector<double> stats;
@@ -293,31 +290,19 @@ void ms2::Spectrum::calcSNR(double snrConf, std::ostream& out)
 
     for(auto & _dataPoint : _dataPoints)
         _dataPoint.setSNR(_dataPoint.getIntensity() / noise);
-
-    for(size_t i = 0; i < len; i++){
-        out << getPrecursor().getFile() << ',' << _scanNum << ',' <<
-             i << ',' << _dataPoints[i].getIntensity() << ',' <<
-             stats[i] << ',' << (_dataPoints[i].getNoise() ? "TRUE": "FALSE") << "," << _dataPoints[i].getSNR() << NEW_LINE;
-    }
 }
 
 //! Remove ions with a signal to nose ratio below \p snrThreshold
 void ms2::Spectrum::removeSNRBelow(double snrThreshold, double snrConf)
 {
-    std::string fname = "/Users/Aaron/Documents/School_Work/Mass_spec_data/Thompson_lab_samples/Ari/ionFinder_cuttoff_analysis_2/tables/test.csv";
-    std::ofstream outF;
-
-    // printIons(std::cout);
-
-    outF.open(fname, std::ios_base::app);
-    // outF.open(fname);
-    // std::string headers [] = {"file", "scan", "ionNum", "int", "stat", "pVal", "noise", "snr"} ;
-    // for(auto h : headers){
-    //     if(h == "file") outF << h;
-    //     else outF << "," << h;
-    // }
-    // outF << NEW_LINE;
-    calcSNR(snrConf, outF);
+    calcSNR(snrConf);
+    for(auto it = _dataPoints.begin(); it != _dataPoints.end();)
+    {
+        if(it->getIntensity() < snrThreshold)
+            _dataPoints.erase(it);
+        else ++it;
+    }
+    updateRanges();
 }
 
 //! Copy ions from utils::Scan::_ions to labeledIons
