@@ -643,7 +643,7 @@ void IonFinder::findFragments_threadSafe(std::vector<Dtafilter::Scan>& scans,
 
         // apply snr filter
         if(pars.getMinSNRSpecified())
-            spectrum.removeSNRBelow(pars.getMinSnr());
+            spectrum.removeSNRBelow(pars.getMinSnr(), pars.getSNRConf());
 
         //Filter ion intensities
         if(pars.getMinLabelIntensity() > 0)
