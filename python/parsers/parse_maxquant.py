@@ -203,11 +203,14 @@ def main():
     ret[tsv_constants.PRECURSOR_FILE] = dat[maxquant_constants.RAW_FILE].apply(lambda x: '{}.{}'.format(x, args.fileExt))
 
     # get parent protein data
-    ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS].apply(lambda x: [i for i in x.split(';')][0])
+    # ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS].apply(lambda x: [i for i in x.split(';')][0])
+    ret[tsv_constants.PARENT_ID] = dat[maxquant_constants.LEADING_PROTEINS]
     if maxquant_constants.GENE_NAMES in dat.columns:
-        ret[tsv_constants.PARENT_PROTEIN] = dat[maxquant_constants.GENE_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+        # ret[tsv_constants.PARENT_PROTEIN] = dat[maxquant_constants.GENE_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+        ret[tsv_constants.PARENT_PROTEIN] = dat[maxquant_constants.GENE_NAMES]
     if maxquant_constants.PROTEIN_NAMES in dat.columns:
-        ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+        # ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES].apply(lambda x: [i for i in x.split(';')][0])
+        ret[tsv_constants.PARENT_DESCRIPTION] = dat[maxquant_constants.PROTEIN_NAMES]
 
     # parse sequences
     seq_list, formulas = extractAllModifications(dat[maxquant_constants.MODIFIED_SEQUENCE].to_list(), fixed_modifications)
