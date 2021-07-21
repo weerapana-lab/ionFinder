@@ -33,6 +33,7 @@ add_executable(${ION_FINDER_TARGET}
         src/ionFinder/main.cpp
         src/scanData.cpp
         src/geometry.cpp
+        src/statistics.cpp
         src/calcLableLocs.cpp
         src/aaDB.cpp
         src/sequestParams.cpp

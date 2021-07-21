@@ -24,10 +24,11 @@ ionFinder/.idea/*
 *symbols.rds
 *.swp
 build/*
-python/parsers/modules/tsv_constants.py
 python/parsers/modules/scaffold_constants.py
 python/parsers/modules/maxquant_constants.py
 python/modules/spectrum_constants.py
+python/parsers/modules/tsv_constants.py
+python/bin
 examples/MaxQuant/msms_parsed.tsv
 examples/MaxQuant/peptide_cit_stats.tsv
 examples/DTASelect-filter/peptide_cit_stats.tsv

@@ -19,7 +19,7 @@ Command line options are processed from left to right. Options can be specified 
 .SS ION SEAECH SETTINGS
 .TP
 \fB-mt, --matchTolerance \fI<tolerance>\fR
-Tolerance in Thomsons (m/z units) or ppm for predicted fragment ions in .ms2 files. By default \fI<tolerance>\fR is interpreted as Th. To change the units of \fI<tolerance>\fR, use the \fB--matchTyep\fR argument. 10 ppm is the default.
+Tolerance in Thomson (m/z units) or ppm for predicted fragment ions in .ms2 files. By default \fI<tolerance>\fR is interpreted as Th. To change the units of \fI<tolerance>\fR, use the \fB--matchTyep\fR argument. 10 ppm is the default.
 .TP
 \fB--matchType\fR
 Specify how the \fB--matchTolerance\fR argument is interpreted. \fBppm\fR is the default.
@@ -55,18 +55,18 @@ Specify amino acids whose mass is ambiguous with the amino acids with the dynami
 Specify mass of neutral loss to search for. 
 .TP
 \fB--cTermMod\fR \fI<0/1>\fR
-Specify whether to allow c terminally modified peptidees. Default is \fB1\fR.
+Specify whether to allow c terminally modified peptides. Default is \fB1\fR.
 .TP
 .in +0.75i
 \fB0\fR
 .in +0.75i
-Do not allow c terminally modified peptidees.
+Do not allow c terminally modified peptides.
 .in
 .TP
 .in +0.75i
 \fB1\fR
 .in +0.75i
-Allow c terminally modified peptidees.
+Allow c terminally modified peptides.
 .in
 .TP
 \fB--calcNL\fR \fI<0/1>\fR
@@ -162,6 +162,12 @@ Minimum relative intensity to include from \fI.ms2\fR files. If this option is s
 .TP
 \fB-minNlLabInt \fI<relative_intensity>\fR
 Same as \fB-minLabInt\fR, but only applies to neutral loss ions.
+.TP
+\fB-minSNR \fI<snr>\fR
+Minimum signal to noise ratio (SNR) to include from \fI.ms2\fR files. If this option is set, only ion with SNRs above \fI<snr>\fR will be labeled. By default, all ions are considered in labeling regardless of SNR.
+.TP
+\fB--snrConf \fI<conf>\fR
+Confidence interval to use when estimating signal and noise threshold as a fraction of 1. Default is 0.9.
 .TP
 \fB--incAllIons \fI<0/1>\fR
 Specify whether to include unlabeled ions in spectrum output file. \fB1\fR is the default.

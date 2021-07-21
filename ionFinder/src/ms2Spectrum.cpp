@@ -36,6 +36,8 @@ ms2::DataPoint& ms2::DataPoint::operator = (const ms2::DataPoint& rhs)
     ionType = rhs.ionType;
     ionNum = rhs.ionNum;
     _ion = rhs._ion;
+    _noise = rhs._noise;
+    _snr = rhs._snr;
     return *this;
 }
 
@@ -48,6 +50,8 @@ ms2::DataPoint::DataPoint(const ms2::DataPoint& rhs)
     ionType = rhs.ionType;
     ionNum = rhs.ionNum;
     _ion = rhs._ion;
+    _noise = rhs._noise;
+    _snr = rhs._snr;
 }
 
 std::string ms2::DataPoint::getLableColor() const
@@ -256,6 +260,51 @@ void ms2::Spectrum::removeIntensityBelow(double min_int)
     updateRanges();
 }
 
+//! Calculate signal to nose ratio of ion intensities
+void ms2::Spectrum::calcSNR(double snrConf)
+{
+    double sd = statistics::sd<DataPoint>(_dataPoints, [](const DataPoint& i) -> double{return i.getIntensity();});
+    double mean = statistics::mean<DataPoint>(_dataPoints, [](const DataPoint& i) -> double{return i.getIntensity();});
+    std::vector<double> stats;
+    for(auto point : _dataPoints)
+        stats.push_back(abs(point.getIntensity() - mean) / sd);
+
+    auto dist = std::shared_ptr<statistics::ProbabilityDist>();
+    size_t len = _dataPoints.size();
+    if(len > 30)
+        dist = std::make_shared<statistics::NormDist>();
+    else dist = std::make_shared<statistics::TDist>(double(len - 1));
+
+    double noise = 0;
+    size_t noiseLen = 0;
+    for(size_t i = 0; i < len; i++){
+        double pVal = dist->pValue(stats[i]);
+        if(pVal > snrConf)
+            _dataPoints[i].setNoise(false);
+        else {
+            noise += _dataPoints[i].getIntensity();
+            noiseLen++;
+        }
+    }
+    noise /= double(noiseLen);
+
+    for(auto & _dataPoint : _dataPoints)
+        _dataPoint.setSNR(_dataPoint.getIntensity() / noise);
+}
+
+//! Remove ions with a signal to nose ratio below \p snrThreshold
+void ms2::Spectrum::removeSNRBelow(double snrThreshold, double snrConf)
+{
+    calcSNR(snrConf);
+    for(auto it = _dataPoints.begin(); it != _dataPoints.end();)
+    {
+        if(it->getSNR() < snrThreshold)
+            _dataPoints.erase(it);
+        else ++it;
+    }
+    updateRanges();
+}
+
 //! Copy ions from utils::Scan::_ions to labeledIons
 void ms2::Spectrum::initLabeledIons()
 {
@@ -297,6 +346,9 @@ void ms2::Spectrum::labelSpectrum(PeptideNamespace::Peptide& peptide,
                    pars.getMaxMZSpecified() ? pars.getMaxMZ() : getMaxMZ(),
                    false);
     }
+    // apply snr filter
+    if(pars.getMinSNRSpecified())
+        removeSNRBelow(pars.getMinSnr(), pars.getSNRConf());
 
     //iterate through all calculated fragment ions and label ions on spectrum if they are found
     for(size_t i = 0; i < len; i++)
