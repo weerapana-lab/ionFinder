@@ -26,7 +26,7 @@ You can set CMake configuration variables adding `-DVARIABLE=VALUE` options when
 | Variable | Description |
 | -------- | ----------- |
 | CMAKE_CXX_COMPILER | Defines the C++ compiler to use.|
-| PYTHON_EXE | Define python executable to use. |
+| PYTHON_EXE | Define python interpreter to use. |
 
 ## Building
 To *build* ionFinder run:
