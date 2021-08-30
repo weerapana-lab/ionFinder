@@ -333,8 +333,8 @@ Run \fR@ION_FINDER_TARGET@\fR from current working directory using default param
 \fB@ION_FINDER_TARGET@ --citStats\fR
 Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters for citrulline.  
 .TP
-\fB@ION_FINDER_TARGET@ --citStats --matchTolerance 50 --matchType ppm\fR
-Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters for citrulline with a 50 ppm fragment match tolerance.
+\fB@ION_FINDER_TARGET@ --modMass 79.9799 --lossMass 97.9770 --calcNL 1\fR
+Run \fR@ION_FINDER_TARGET@\fR from current working directory, searching for a neutral loss of 97.9770 on residues with a residues with a modification (indicated by a '*') with a mass of 79.9799.
 .TP
 \fB@ION_FINDER_TARGET@ --citStats --printSpectra\fR
 Run \fR@ION_FINDER_TARGET@\fR from current working directory using default parameters for citrulline and printing intermediate \fI.spectra\fR files. 
