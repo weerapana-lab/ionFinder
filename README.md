@@ -60,3 +60,9 @@ ionFinder --help
 to get a comprehensive list of optional arguments and settings.
 
 See the `examples` folder in the ionFinder parent directory for examples of each type of input file.
+
+# Citation
+
+Please cite:
+
+Maurais, A. J.;  Salinger, A. J.;  Tobin, M.;  Shaffer, S. A.;  Weerapana, E.; Thompson, P. R., A Streamlined Data Analysis Pipeline for the Identification of Sites of Citrullination. _Biochemistry_ **2021**.
