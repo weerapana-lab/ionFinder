@@ -269,7 +269,7 @@ double IonFinder::PeptideStats::calcIntCO(double fractionArtifact) const
         denominator = totalFragmentIntensity(cutoff);
         current_fractionArtifact = numerator / denominator;
 
-        if(isnan(current_fractionArtifact) ||
+        if(std::isnan(current_fractionArtifact) ||
            current_fractionArtifact <= fractionArtifact)
             return cutoff;
     }
