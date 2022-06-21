@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(ionFinder VERSION 1.0.1)
+project(ionFinder VERSION 1.0.2)
 
 SET(CMAKE_BUILD_TYPE Debug)
 set(ION_FINDER_TARGET ionFinder)

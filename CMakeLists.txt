@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.9)
-project(ionFinder VERSION 0.2.1)
+project(ionFinder VERSION 1.0.2)
 
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
