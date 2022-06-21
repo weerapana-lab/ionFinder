@@ -4,7 +4,7 @@ MAINTAINER "Aaron Maurais -- Weerapana Lab"
 
 # initialize
 RUN apt-get update && \
-    apt-get -y install cmake r-base man && \
+    apt-get -y install cmake r-base man less && \
     R -e "install.packages(c('Rcpp', 'ggplot2'))" && \
     mkdir -p /code/envoMatch /code/ionFinder/ionFinder /data
 
@@ -15,11 +15,11 @@ RUN cd /code/envoMatch && \
     pip install .
 
 # install ionFinder
-ADD ./ /code/ionFinder/ionFinder
+COPY ./ /code/ionFinder/ionFinder
 RUN cd /code/ionFinder && \
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_CXX_STANDARD_LIBRARIES="-lz" ../ionFinder && \
+    cmake ../ionFinder && \
     make && \
     cp -v bin/* /usr/local/bin
 
