@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.9)
-project(ionFinder VERSION 0.2.1)
+project(ionFinder VERSION 1.0.2)
 
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
@@ -12,6 +12,7 @@ if(BUILD_PEPTIDE_UTILS)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/cmake")
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/thirdparty")
 
+    option(SYSTEM_ZLIB "Use system zlib library" ON)
 	option(ENABLE_ZLIB "Add support for zlib decompression" ON)
 
 	if(${ENABLE_ZLIB})
