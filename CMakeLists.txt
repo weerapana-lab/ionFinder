@@ -12,6 +12,7 @@ if(BUILD_PEPTIDE_UTILS)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/cmake")
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/peptideUtils/thirdparty")
 
+    option(SYSTEM_ZLIB "Use system zlib library" ON)
 	option(ENABLE_ZLIB "Add support for zlib decompression" ON)
 
 	if(${ENABLE_ZLIB})
