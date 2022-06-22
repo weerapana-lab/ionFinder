@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import argparse
+from collections import Counter
 import pandas as pd
 from numpy import nan
 
@@ -22,8 +23,10 @@ SEARCH_ENGINES = {'Proteome Discoverer':{'scan': (SPECTRUM_NAME, re.compile(r',s
                                          'msms': (MS_MS_SAMPLE_NAME, re.compile(r'^Experiment [\w\-: ]+ from ([\w\- ]+)'))},
                   'MaxQuant':{'scan': (SPECTRUM_NAME, re.compile(r'\d+-\d+_(\d+)$')),
                               'msms': (MS_MS_SAMPLE_NAME, re.compile(r'^(?:[\w \+\-]+:\s*)?([\w\+\- ]+)$'))},
-                  'Mascot': {'scan': (SPECTRUM_NAME, re.compile(r'Scan (\w+)')),
-                             'msms': (SPECTRUM_NAME, re.compile(r'Scan \w+.*\\([A-Za-z0-9_\-\+ ]+\.\w+)'))}}
+                  'Mascot format 1': {'scan': (SPECTRUM_NAME, re.compile(r'Scan (\w+)')),
+                               'msms': (SPECTRUM_NAME, re.compile(r'Scan \w+.*\\([A-Za-z0-9_\-\+ ]+\.\w+)'))},
+                  'Mascot format 2': {'scan': (SPECTRUM_NAME, re.compile(r'^.+-\d+-\d+_(\d+)$')),
+                               'msms': (SPECTRUM_NAME, re.compile(r'^(.+)-\d+-\d+_\d+$'))}}
 
 
 MODIFICATION_REGEX = re.compile(r'^([nc]-term|[a-zA-Z])([\d]*): ([\w\-\> ]+)(?: \([A-Z]+\))? \(([\-\+]?\d+\.?\d*)\)$')
@@ -77,6 +80,11 @@ def detect_search_engine(dat):
     ----------
     dat: pd.DataFrame
         Initialized DataFrame from input_file.
+
+    Returns
+    -------
+    rey_key: str
+        The key for the appropite search engine in SEARCH_ENGINES
     '''
 
     sys.stdout.write('\nAtempting to find the appropriate regex for search engine...\n')
@@ -258,13 +266,13 @@ def main():
         matches = [(ACCESSION_REGEX.search(s), s) for s in dat[PROTEIN_ACCESSION_NUMBERS].values.tolist()]
         good_matches = [m for m, _ in matches if bool(m)]
         if len(dat.index) != len([m for m, _ in matches if m]):
-            sys.stderr.write('WARN: unable to parse acession for {} peptides!\n'.format(len(dat.index) -
+            sys.stderr.write('\nWARN: unable to parse protein acession for {} peptides!\n'.format(len(dat.index) -
                 len(good_matches)))
             if args.verbose:
                 sys.stderr.write('Bad acession(s):\n')
-                bad_acessions = set(dat[[not bool(m) for m, _ in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
-                for acession in bad_acessions:
-                    sys.stderr.write('\t{}\n'.format(acession))
+                bad_acessions = Counter(dat[[not bool(m) for m, _ in matches]][PROTEIN_ACCESSION_NUMBERS].values.tolist())
+                for acession in bad_acessions.items():
+                    sys.stderr.write('\t{} -> {} times\n'.format(*acession))
             if args.bad_id_filter:
                 nBefore = len(dat.index)
                 dat = dat[[bool(x) for x, _ in matches]]
