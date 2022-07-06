@@ -147,6 +147,9 @@ else()
     WriteBlankGitHeader()
 endif()
 
+install(TARGETS ionFinder
+		RUNTIME DESTINATION bin)
+
 option(BUILD_DOC "Build documentation" OFF)
 if(BUILD_DOC MATCHES ON)
 # check if Doxygen is installed

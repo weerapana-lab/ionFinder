@@ -1,8 +1,9 @@
+
 option(COPY_PYTHON_TO_BUILD "Copy python files to build directory?" ON)
 find_program(BASH bash DOC "Path to bash interpreter.")
 
 # Add required python modules here for now
-#find_python_module(matplotlib REQUIRED)
+# find_python_module(matplotlib REQUIRED)
 find_python_module(pandas REQUIRED)
 find_program(RSCRIPT Rscript Doc "Path to Rscript command.")
 set(SRC_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts)
@@ -56,8 +57,8 @@ set(PYTHON_BUILD_SCRIPT ${SRC_SCRIPTS_DIR}/addPythonFiles.sh
 		CACHE STRING "Path to addPythonFiles.sh")
 
 string(CONCAT MAKE_MS2_MAIN_ARGS
-	${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
-	"', '" ${RSCRIPT})
+	   ${CMAKE_CURRENT_SOURCE_DIR}/../rscripts/makeMs2.R
+       "', '" ${RSCRIPT})
 add_custom_command(OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2
 		DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${MAKE_MS2_SRC_PATH}
 		COMMENT "Adding make_ms2 executable."
@@ -70,8 +71,7 @@ add_custom_command(OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2
 			${MAKE_MS2_SRC_PATH}
 		)
 add_custom_target(make_ms2 ALL
-	DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2
-		)
+	              DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/make_ms2)
 
 	add_custom_command(OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/run_make_ms2
 		DEPENDS $<$<BOOL:${COPY_PYTHON_TO_BUILD}>:python_copy> ${RUN_MAKE_MS2_SCR_PATH}
@@ -83,8 +83,7 @@ add_custom_target(make_ms2 ALL
 			${RUN_MAKE_MS2_SCR_PATH}
 		)
 add_custom_target(run_make_ms2 ALL
-	DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/run_make_ms2
-		)
+	              DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/run_make_ms2)
 
 add_custom_command(
 	OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_scaffold
@@ -97,8 +96,7 @@ add_custom_command(
 			${PARSE_SCAFFOLD_PATH}
 		)
 add_custom_target(parse_scaffold ALL
-	DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_scaffold
-		)
+                  DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_scaffold)
 
 add_custom_command(
 	OUTPUT ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_maxquant
@@ -111,6 +109,28 @@ add_custom_command(
 			${PARSE_MAXQUANT_PATH}
 		)
 add_custom_target(parse_maxquant ALL
-	DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_maxquant
-		)
+	              DEPENDS ${PYTHON_RUNTIME_OUTPUT_DIR}/parse_maxquant)
 
+install(CODE "execute_process(COMMAND ${BASH} ${PYTHON_BUILD_SCRIPT}
+                                --pythonExe ${PYTHON_EXE}
+                                --binDir ${CMAKE_INSTALL_PREFIX}/bin
+                                ${RUN_MAKE_MS2_SCR_PATH}
+                              COMMAND_ECHO NONE)"
+)
+install(CODE "execute_process(COMMAND ${BASH} ${PYTHON_BUILD_SCRIPT}
+			                    --pythonExe ${PYTHON_EXE}
+                                --binDir ${CMAKE_INSTALL_PREFIX}/bin
+                                --mainArgs \"${MAKE_MS2_MAIN_ARGS}\"
+                                ${MAKE_MS2_SRC_PATH})"
+)
+install(CODE "execute_process(COMMAND ${BASH} ${PYTHON_BUILD_SCRIPT}
+ 			                    --pythonExe ${PYTHON_EXE}
+                                --binDir ${CMAKE_INSTALL_PREFIX}/bin
+                                ${PARSE_MAXQUANT_PATH})"
+)
+install(CODE "execute_process(COMMAND ${BASH} ${PYTHON_BUILD_SCRIPT}
+ 			                    --pythonExe ${PYTHON_EXE}
+                                --binDir ${CMAKE_INSTALL_PREFIX}/bin
+                                ${PARSE_SCAFFOLD_PATH})"
+)
+ 
