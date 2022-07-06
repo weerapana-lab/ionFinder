@@ -135,7 +135,7 @@ def main():
                                              args.round_to,
                                              ' '.join(item))
 
-        jobName = JOB_TYPES[args.jobType]['makeJob'](args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir)
+        jobName = JOB_TYPES[args.jobType]['makeJob'](args.mem, args.ppn, args.walltime, nThread, makeMs2_args, wd, progDir, shell=args.shell)
         command = '{} {}'.format(JOB_TYPES[args.jobType]['qsub'], jobName)
         if args.verbose:
             sys.stdout.write('{}\n'.format(command))
