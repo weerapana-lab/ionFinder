@@ -31,7 +31,7 @@ int main(int argc, const char** argv)
 {
 	IonFinder::Params pars;
 	if(!pars.getArgs(argc, argv))
-		return -1;
+		return 1;
 	
 	pars.printVersion(std::cout);
 
@@ -43,7 +43,7 @@ int main(int argc, const char** argv)
 		if(!Dtafilter::readFilterFiles(pars, scans))
 		{
 			std::cerr << "Failed to read DTASelect-filter files!" << NEW_LINE;
-			return -1;
+			return 1;
 		}
 		else std::cout << "Done!\n";
 	}
@@ -54,7 +54,7 @@ int main(int argc, const char** argv)
 		{
             if(!IonFinder::readInputTsv(file,scans, !pars.getIncludeReverse(), pars.getModFilter())) {
                 std::cerr << "Failed to read input .tsv files!" << NEW_LINE;
-                return -1;
+                return 1;
             }
         }
 		std::cout << "Done!\n";
@@ -91,7 +91,7 @@ int main(int argc, const char** argv)
 	if(!IonFinder::printPeptideStats(peptideStats, pars))
 	{
 		std::cerr << "Failed to write peptide stats!" << NEW_LINE;
-		return -1;
+		return 1;
 	}
 	std::cout << "\nResults written to: " << pars.makeOfname() << NEW_LINE;
 	
